@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yatradham SEO Pipeline</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#4f46e5',
+                        primaryHover: '#4338ca',
+                        surface: '#ffffff',
+                        background: '#f8fafc',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f8fafc; color: #0f172a; }
+        .tab-btn { transition: all 0.2s ease-in-out; }
+        .tab-btn.active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; }
+        .sub-tab-btn.active { background-color: #4f46e5; color: white; border-color: #4f46e5; }
+        .panel { display: none; animation: fadeIn 0.3s ease; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* Custom scrollbar for outputs */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b shadow-sm sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-primary text-white p-2 rounded-lg shadow-md">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800 tracking-tight">Yatradham SEO Pipeline</h1>
+                    <p class="text-xs text-slate-500 font-medium">Automated Scraping & AI Content Generation</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span id="modeBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 shadow-sm border border-amber-200">
+                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full mr-1.5"></span> TEST MODE
+                </span>
+                <button onclick="clearCache()" class="px-3 py-1.5 text-xs font-medium text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Clear Cache / Start Fresh
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Stats Row -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8" id="statsContainer">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition">
+                <p class="text-sm font-medium text-slate-500 mb-1">Total Packages</p>
+                <h3 class="text-3xl font-bold text-slate-800" id="statTotal">0</h3>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition">
+                <p class="text-sm font-medium text-slate-500 mb-1">Pending Review</p>
+                <h3 class="text-3xl font-bold text-amber-500" id="statPending">0</h3>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition">
+                <p class="text-sm font-medium text-slate-500 mb-1">Approved</p>
+                <h3 class="text-3xl font-bold text-emerald-500" id="statApproved">0</h3>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition">
+                <p class="text-sm font-medium text-slate-500 mb-1">Rejected</p>
+                <h3 class="text-3xl font-bold text-rose-500" id="statRejected">0</h3>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition">
+                <p class="text-sm font-medium text-slate-500 mb-1">Avg QA Score</p>
+                <div class="flex items-end gap-1">
+                    <h3 class="text-3xl font-bold text-primary" id="statAvg">0</h3>
+                    <span class="text-sm text-slate-400 mb-1">/100</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navigation -->
+        <div class="border-b border-slate-200 mb-6">
+            <nav class="-mb-px flex space-x-8">
+                <button class="tab-btn active py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700" onclick="showTab('scrape')">
+                    Input & Scrape
+                </button>
+                <button class="tab-btn py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700" onclick="showTab('outputs')">
+                    SEO Outputs Review
+                </button>
+                <button class="tab-btn py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700" onclick="showTab('studio')">
+                    <span class="inline-flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        AI Content Studio
+                    </span>
+                </button>
+                <button class="tab-btn py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700" onclick="showTab('export')">
+                    Export Data
+                </button>
+            </nav>
+        </div>
+
+        <!-- PANEL: SCRAPE -->
+        <div class="panel active" id="scrapePanel">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex gap-2">
+                    <button class="sub-tab-btn active px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showSubTab('single')">Single URL</button>
+                    <button class="sub-tab-btn px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showSubTab('batch')">Batch URLs</button>
+                    <button class="sub-tab-btn px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showSubTab('json')">Manual JSON</button>
+                </div>
+                
+                <div class="p-6">
+                    <!-- Single URL -->
+                    <div id="singleSubPanel">
+                        <div class="mb-4 p-4 rounded-lg bg-blue-50 border border-blue-100 flex items-start">
+                            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <p class="text-sm text-blue-800">Paste any Yatradham package URL below. The app will automatically scrape the page and generate all 19 SEO sections.</p>
+                        </div>
+                        <div class="flex gap-3 mb-4">
+                            <input type="text" id="singleUrl" class="flex-1 block w-full rounded-md border-slate-300 border px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="https://wellness.yatradham.org/3-days-best-yoga-retreat-in-rishikesh">
+                            <button id="btnSingle" class="inline-flex justify-center items-center rounded-md border border-transparent bg-primary px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-primaryHover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition" onclick="scrapeSingle()">
+                                Scrape & Process
+                            </button>
+                        </div>
+                        <div id="singleResult" class="mt-4"></div>
+                    </div>
+
+                    <!-- Batch URLs -->
+                    <div id="batchSubPanel" style="display:none;">
+                        <div class="mb-4 p-4 rounded-lg bg-indigo-50 border border-indigo-100 flex items-start">
+                            <svg class="w-5 h-5 text-indigo-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <p class="text-sm text-indigo-800">Paste multiple Yatradham URLs below (one per line). Processing runs in the background concurrently, preventing timeouts.</p>
+                        </div>
+                        <textarea id="batchUrls" rows="8" class="block w-full rounded-md border-slate-300 border px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm font-mono mb-4" placeholder="https://wellness.yatradham.org/package-1&#10;https://wellness.yatradham.org/package-2"></textarea>
+                        <button id="btnBatch" class="inline-flex justify-center items-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition w-full md:w-auto" onclick="scrapeBatch()">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            Start Background Batch Process
+                        </button>
+                        <div id="batchResult" class="mt-4"></div>
+                    </div>
+
+                    <!-- Manual JSON -->
+                    <div id="jsonSubPanel" style="display:none;">
+                        <div class="mb-4 p-4 rounded-lg bg-slate-50 border border-slate-200 flex items-start">
+                            <p class="text-sm text-slate-700">Paste a JSON array of packages manually. Each package needs at least a <code>name</code> field.</p>
+                        </div>
+                        <textarea id="batchInput" rows="6" class="block w-full rounded-md border-slate-300 border px-4 py-3 text-sm font-mono focus:border-primary focus:ring-primary shadow-sm mb-4" placeholder='[{"name":"Package Name","destination":"City","duration":"3 Days"}]'></textarea>
+                        <button class="inline-flex justify-center rounded-md border border-transparent bg-slate-800 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-slate-700 transition" onclick="processBatch()">
+                            Process JSON
+                        </button>
+                        <div id="jsonResult" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: OUTPUTS -->
+        <div class="panel" id="outputsPanel">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                <div class="p-4 border-b border-slate-200 bg-slate-50 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-1 gap-4 w-full">
+                        <div class="relative flex-1 max-w-md">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                            <input type="text" id="searchInput" class="block w-full pl-10 rounded-md border-slate-300 border px-4 py-2 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="Search packages, keywords..." onkeyup="debounceLoad()">
+                        </div>
+                        <select id="statusFilter" class="block rounded-md border-slate-300 border px-4 py-2 text-sm focus:border-primary focus:ring-primary shadow-sm bg-white" onchange="loadOutputs()">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <button class="flex-1 md:flex-none inline-flex justify-center items-center rounded-md bg-slate-50 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 transition" onclick="toggleSelectAll()">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Select All
+                        </button>
+                        <button class="flex-1 md:flex-none inline-flex justify-center items-center rounded-md bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition" onclick="bulkAction('approve')">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Approve Selected
+                        </button>
+                        <button class="flex-1 md:flex-none inline-flex justify-center items-center rounded-md bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100 border border-rose-200 transition" onclick="bulkAction('reject')">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Reject Selected
+                        </button>
+                        <button class="inline-flex justify-center items-center p-2 rounded-md text-slate-500 hover:bg-slate-100 border border-transparent transition" onclick="loadOutputs()" title="Refresh">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Outputs List Container -->
+                <div id="outputsList" class="divide-y divide-slate-100">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: AI CONTENT STUDIO -->
+        <div class="panel" id="studioPanel">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- LEFT: Input Form -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex gap-2">
+                        <button class="studio-mode-btn active px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showStudioMode('quick')">⚡ Quick Prompt</button>
+                        <button class="studio-mode-btn px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showStudioMode('structured')">📋 Structured Form</button>
+                    </div>
+                    
+                    <div class="p-6">
+                        <!-- Quick Prompt Mode -->
+                        <div id="quickModePanel">
+                            <div class="mb-4 p-4 rounded-lg bg-violet-50 border border-violet-100 flex items-start">
+                                <svg class="w-5 h-5 text-violet-500 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                                <p class="text-sm text-violet-800">Describe what you want in plain English. The AI will figure out the best content type, structure, and SEO strategy for you.</p>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Content Type</label>
+                                <select id="quickContentType" class="block w-full rounded-md border-slate-300 border px-4 py-2.5 text-sm focus:border-primary focus:ring-primary shadow-sm bg-white">
+                                    <option value="blog_post">📝 Blog Post</option>
+                                    <option value="landing_page">🚀 Landing Page</option>
+                                    <option value="destination_guide">🗺️ Destination Guide</option>
+                                    <option value="social_media">📱 Social Media Captions</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Your Prompt</label>
+                                <textarea id="quickPrompt" rows="5" class="block w-full rounded-md border-slate-300 border px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="e.g., Write a blog about the top 10 yoga retreats in Rishikesh for beginners, focusing on affordability and authentic experiences"></textarea>
+                            </div>
+                            
+                            <button id="btnQuickGenerate" class="w-full inline-flex justify-center items-center rounded-md border border-transparent bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-violet-700 transition" onclick="generateQuick()">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                Generate Content
+                            </button>
+                        </div>
+                        
+                        <!-- Structured Form Mode -->
+                        <div id="structuredModePanel" style="display:none;">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Content Type *</label>
+                                    <select id="structContentType" class="block w-full rounded-md border-slate-300 border px-4 py-2.5 text-sm focus:border-primary focus:ring-primary shadow-sm bg-white">
+                                        <option value="blog_post">📝 Blog Post</option>
+                                        <option value="landing_page">🚀 Landing Page</option>
+                                        <option value="destination_guide">🗺️ Destination Guide</option>
+                                        <option value="social_media">📱 Social Media Captions</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Topic / Title *</label>
+                                    <input type="text" id="structTopic" class="block w-full rounded-md border-slate-300 border px-4 py-2.5 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="e.g., Top 10 Yoga Retreats in Rishikesh">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Target SEO Keyword</label>
+                                    <input type="text" id="structKeyword" class="block w-full rounded-md border-slate-300 border px-4 py-2.5 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="e.g., yoga retreat rishikesh">
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Target Audience</label>
+                                        <input type="text" id="structAudience" class="block w-full rounded-md border-slate-300 border px-4 py-2.5 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="e.g., Spiritual seekers aged 25-45">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Word Count</label>
+                                        <input type="number" id="structWordCount" class="block w-full rounded-md border-slate-300 border px-4 py-2.5 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="1500" min="200" max="5000">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Tone</label>
+                                    <select id="structTone" class="block w-full rounded-md border-slate-300 border px-4 py-2.5 text-sm focus:border-primary focus:ring-primary shadow-sm bg-white">
+                                        <option value="">Auto (Let AI decide)</option>
+                                        <option value="informational">📖 Informational</option>
+                                        <option value="persuasive">💪 Persuasive</option>
+                                        <option value="inspirational">✨ Inspirational</option>
+                                        <option value="casual">😊 Casual & Friendly</option>
+                                        <option value="professional">👔 Professional</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Additional Instructions</label>
+                                    <textarea id="structInstructions" rows="3" class="block w-full rounded-md border-slate-300 border px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="Any specific points to cover, URLs to reference, things to avoid..."></textarea>
+                                </div>
+                                
+                                <button id="btnStructGenerate" class="w-full inline-flex justify-center items-center rounded-md border border-transparent bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-violet-700 transition" onclick="generateStructured()">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    Generate Content
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RIGHT: Preview -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                        <h3 class="text-sm font-semibold text-slate-700">Content Preview</h3>
+                        <div id="studioActions" class="flex gap-2" style="display:none;">
+                            <button onclick="copyContent()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                Copy
+                            </button>
+                            <button onclick="downloadContent()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-violet-600 border border-violet-600 rounded-md hover:bg-violet-700 transition">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+                    <div id="studioPreview" class="p-6 flex-grow overflow-y-auto max-h-[600px] prose prose-sm prose-slate">
+                        <div class="flex flex-col items-center justify-center text-center py-16 text-slate-400">
+                            <svg class="w-16 h-16 mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            <p class="text-sm font-medium">Your generated content will appear here</p>
+                            <p class="text-xs mt-1">Choose a mode on the left and click Generate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: EXPORT -->
+        <div class="panel" id="exportPanel">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 max-w-2xl mx-auto text-center">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800 mb-2">Export Data to CSV</h3>
+                <p class="text-slate-500 mb-8">Download all 19 generated SEO sections mapped to CMS-ready columns.</p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/export/csv?status=approved" class="inline-flex justify-center items-center rounded-lg border border-transparent bg-emerald-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-emerald-700 transition">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        Download Approved Only
+                    </a>
+                    <a href="/export/csv?status=" class="inline-flex justify-center items-center rounded-lg border border-slate-300 bg-white px-6 py-3 text-base font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition">
+                        Download Everything
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const API = '';
+        let debounceTimer;
+
+        // UI Helpers
+        let allSelected = false;
+        function toggleSelectAll() {
+            allSelected = !allSelected;
+            document.querySelectorAll('.bulk-check').forEach(cb => cb.checked = allSelected);
+        }
+
+        function showTab(name) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+            document.getElementById(name + 'Panel').classList.add('active');
+            event.target.classList.add('active');
+            if (name === 'outputs') loadOutputs();
+        }
+
+        function showSubTab(name) {
+            document.querySelectorAll('[id$="SubPanel"]').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.sub-tab-btn').forEach(t => {
+                t.classList.remove('active', 'bg-slate-50');
+                t.classList.add('bg-white', 'text-slate-700');
+            });
+            document.getElementById(name + 'SubPanel').style.display = 'block';
+            event.target.classList.add('active');
+            event.target.classList.remove('bg-white', 'text-slate-700');
+        }
+
+        function showAlert(containerId, type, message) {
+            const colors = {
+                success: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+                error: 'bg-rose-50 text-rose-800 border-rose-200',
+                info: 'bg-blue-50 text-blue-800 border-blue-200'
+            };
+            const icons = {
+                success: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>',
+                error: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>',
+                info: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>'
+            };
+            document.getElementById(containerId).innerHTML = `
+                <div class="p-4 rounded-lg border flex items-start ${colors[type]} mb-4">
+                    <svg class="w-5 h-5 mt-0.5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">${icons[type]}</svg>
+                    <div class="text-sm">${message}</div>
+                </div>`;
+        }
+
+        // API Calls
+        async function loadStats() {
+            try {
+                const r = await fetch(API + '/stats');
+                const d = await r.json();
+                document.getElementById('statTotal').textContent = d.total;
+                document.getElementById('statPending').textContent = d.pending;
+                document.getElementById('statApproved').textContent = d.approved;
+                document.getElementById('statRejected').textContent = d.rejected;
+                document.getElementById('statAvg').textContent = d.average_qa_score;
+            } catch(e) { console.error(e); }
+        }
+
+        async function scrapeSingle() {
+            const url = document.getElementById('singleUrl').value.trim();
+            if (!url) { alert('Please enter a URL'); return; }
+
+            const btn = document.getElementById('btnSingle');
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Processing...`;
+            document.getElementById('singleResult').innerHTML = '';
+
+            try {
+                const r = await fetch(API + '/scrape', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({url})
+                });
+                const d = await r.json();
+                if (d.success) {
+                    showAlert('singleResult', 'success', `<strong>Success!</strong> Package "${d.package.name}" processed.<br>ID: #${d.id} | Keyword: ${d.output.primary_keyword} | Score: ${d.output.qa_score}/100`);
+                    loadStats();
+                } else {
+                    showAlert('singleResult', 'error', `Error: ${d.detail || 'Unknown server error'}`);
+                }
+            } catch(e) {
+                showAlert('singleResult', 'error', `Network Error: ${e.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Scrape & Process';
+            }
+        }
+
+        async function scrapeBatch() {
+            const raw = document.getElementById('batchUrls').value.trim();
+            const urls = raw.split('\n').map(u => u.trim()).filter(u => u);
+            if (!urls.length) { alert('Please enter at least one URL'); return; }
+
+            const btn = document.getElementById('btnBatch');
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Sending to Background...`;
+            document.getElementById('batchResult').innerHTML = '';
+
+            try {
+                const r = await fetch(API + '/batch-urls', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({urls})
+                });
+                const d = await r.json();
+                if (d.success) {
+                    showAlert('batchResult', 'success', d.message);
+                } else {
+                    showAlert('batchResult', 'error', d.detail || 'Failed to start batch');
+                }
+            } catch(e) {
+                showAlert('batchResult', 'error', `Network Error: ${e.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Start Background Batch Process`;
+            }
+        }
+
+        function debounceLoad() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(loadOutputs, 400);
+        }
+
+        async function loadOutputs(silent = false) {
+            const status = document.getElementById('statusFilter').value;
+            const search = document.getElementById('searchInput').value;
+            let url = API + '/outputs?';
+            if (status) url += `status=${status}&`;
+            if (search) url += `search=${encodeURIComponent(search)}`;
+
+            try {
+                const r = await fetch(url);
+                const d = await r.json();
+                renderOutputs(d.outputs, silent);
+            } catch(e) { console.error(e); }
+        }
+
+        function renderOutputs(outputs, silent) {
+            const container = document.getElementById('outputsList');
+            
+            // Preserve checked state
+            const checkedIds = Array.from(document.querySelectorAll('.bulk-check:checked')).map(cb => cb.value);
+            // Preserve expanded details state
+            const expandedIds = Array.from(document.querySelectorAll('[id^="details-"]:not(.hidden)')).map(el => el.id.replace('details-', ''));
+
+            if (!outputs.length) {
+                if (!silent) {
+                    container.innerHTML = `<div class="p-8 text-center text-slate-500"><svg class="w-12 h-12 mx-auto text-slate-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>No packages found matching criteria</div>`;
+                }
+                return;
+            }
+
+            const statusColors = {
+                pending: 'bg-amber-100 text-amber-800 border-amber-200',
+                approved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                rejected: 'bg-rose-100 text-rose-800 border-rose-200'
+            };
+
+            container.innerHTML = outputs.map(o => `
+                <div class="p-5 hover:bg-slate-50 transition group">
+                    <div class="flex items-start gap-4">
+                        <div class="pt-1">
+                            <input type="checkbox" class="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary bulk-check" value="${o.id}">
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="text-lg font-semibold text-slate-800 truncate pr-4">${o.package_input.name}</h4>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize shrink-0 ${statusColors[o.status]}">${o.status}</span>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500 mb-3">
+                                <span class="inline-flex items-center" title="Target Keyword">
+                                    <svg class="w-4 h-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+                                    ${o.primary_keyword}
+                                </span>
+                                <span class="inline-flex items-center" title="QA Score">
+                                    <svg class="w-4 h-4 mr-1 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                    ${o.qa_score}/100
+                                </span>
+                                <a href="${o.package_input.url}" target="_blank" class="text-primary hover:underline inline-flex items-center">
+                                    Source Link <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                </a>
+                            </div>
+                            
+                            <!-- Badges -->
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                ${o.qa_flags.map(f => `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-800"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>${f}</span>`).join('')}
+                                ${o.qa_flags.length === 0 ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Passed SEO Checks</span>` : ''}
+                            </div>
+
+                            <button onclick="toggleOutputDetails(${o.id})" class="text-sm text-primary font-medium hover:text-primaryHover focus:outline-none">View full generated content &darr;</button>
+                            
+                            <div id="details-${o.id}" class="hidden mt-4 bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">SEO Meta</div>
+                                <div class="p-4 border-b border-slate-100">
+                                    <p class="text-sm mb-1"><span class="font-medium text-slate-700">Title Tag:</span> <span class="text-blue-600 font-medium">${o.title_tag}</span></p>
+                                    <p class="text-sm"><span class="font-medium text-slate-700">Meta Desc:</span> <span class="text-slate-600">${o.meta_description}</span></p>
+                                </div>
+                                <div class="bg-slate-50 px-4 py-2 border-y border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">Content Preview</div>
+                                <div class="p-4 bg-slate-50">
+                                    <pre class="text-xs text-slate-700 font-mono whitespace-pre-wrap max-h-64 overflow-y-auto bg-white p-3 border rounded shadow-inner">${JSON.stringify(o.sections, null, 2)}</pre>
+                                </div>
+                                <div class="p-3 border-t border-slate-200 bg-slate-50 flex gap-2 justify-end">
+                                    <button class="px-3 py-1.5 text-xs font-medium rounded text-emerald-700 bg-emerald-100 hover:bg-emerald-200 transition" onclick="updateStatus(${o.id}, 'approved')">Approve</button>
+                                    <button class="px-3 py-1.5 text-xs font-medium rounded text-rose-700 bg-rose-100 hover:bg-rose-200 transition" onclick="updateStatus(${o.id}, 'rejected')">Reject</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Restore checked state after re-render
+            checkedIds.forEach(id => {
+                const cb = container.querySelector(`.bulk-check[value="${id}"]`);
+                if (cb) cb.checked = true;
+            });
+            // Restore expanded details after re-render
+            expandedIds.forEach(id => {
+                const el = document.getElementById('details-' + id);
+                if (el) el.classList.remove('hidden');
+            });
+        }
+
+        function toggleOutputDetails(id) {
+            const el = document.getElementById('details-' + id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+        async function updateStatus(id, status) {
+            try {
+                await fetch(API + '/outputs/' + id, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({status})
+                });
+                loadOutputs();
+                loadStats();
+            } catch(e) { console.error(e); }
+        }
+
+        async function bulkAction(action) {
+            const checkboxes = document.querySelectorAll('.bulk-check:checked');
+            const ids = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            if (!ids.length) { alert('Select at least one item'); return; }
+
+            try {
+                await fetch(API + '/bulk-action', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ids, action})
+                });
+                loadOutputs();
+                loadStats();
+            } catch(e) { console.error(e); }
+        }
+
+        async function clearCache() {
+            if (!confirm("Are you sure you want to clear all cached SEO outputs and start fresh? This cannot be undone.")) {
+                return;
+            }
+            try {
+                const res = await fetch(API + '/clear-cache', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    alert(data.message || "Cache cleared successfully!");
+                    loadStats();
+                    loadOutputs();
+                } else {
+                    alert("Error clearing cache: " + (data.detail || "Unknown error"));
+                }
+            } catch(e) {
+                alert("Failed to clear cache: " + e.message);
+            }
+        }
+
+        // ===== AI Content Studio Functions =====
+        let lastGeneratedContent = null;
+
+        function showStudioMode(mode) {
+            document.getElementById('quickModePanel').style.display = mode === 'quick' ? 'block' : 'none';
+            document.getElementById('structuredModePanel').style.display = mode === 'structured' ? 'block' : 'none';
+            document.querySelectorAll('.studio-mode-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.backgroundColor = '';
+                b.style.color = '';
+            });
+            event.currentTarget.classList.add('active');
+            event.currentTarget.style.backgroundColor = '#7c3aed';
+            event.currentTarget.style.color = 'white';
+        }
+
+        function setGenerateLoading(btnId, loading) {
+            const btn = document.getElementById(btnId);
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Generating...`;
+                btn.classList.add('opacity-75');
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> Generate Content`;
+                btn.classList.remove('opacity-75');
+            }
+        }
+
+        async function generateQuick() {
+            const contentType = document.getElementById('quickContentType').value;
+            const prompt = document.getElementById('quickPrompt').value.trim();
+            if (!prompt) { alert('Please enter a prompt'); return; }
+
+            setGenerateLoading('btnQuickGenerate', true);
+            showPreviewLoading();
+
+            try {
+                const res = await fetch(API + '/generate-content', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content_type: contentType,
+                        topic: prompt,
+                        additional_instructions: prompt
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    lastGeneratedContent = data.result;
+                    renderPreview(data.result);
+                } else {
+                    showPreviewError(data.detail || 'Generation failed');
+                }
+            } catch(e) {
+                showPreviewError(e.message);
+            } finally {
+                setGenerateLoading('btnQuickGenerate', false);
+            }
+        }
+
+        async function generateStructured() {
+            const contentType = document.getElementById('structContentType').value;
+            const topic = document.getElementById('structTopic').value.trim();
+            if (!topic) { alert('Please enter a topic'); return; }
+
+            setGenerateLoading('btnStructGenerate', true);
+            showPreviewLoading();
+
+            try {
+                const res = await fetch(API + '/generate-content', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content_type: contentType,
+                        topic: topic,
+                        target_keyword: document.getElementById('structKeyword').value.trim() || null,
+                        audience: document.getElementById('structAudience').value.trim() || null,
+                        tone: document.getElementById('structTone').value || null,
+                        word_count: parseInt(document.getElementById('structWordCount').value) || null,
+                        additional_instructions: document.getElementById('structInstructions').value.trim() || null
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    lastGeneratedContent = data.result;
+                    renderPreview(data.result);
+                } else {
+                    showPreviewError(data.detail || 'Generation failed');
+                }
+            } catch(e) {
+                showPreviewError(e.message);
+            } finally {
+                setGenerateLoading('btnStructGenerate', false);
+            }
+        }
+
+        function showPreviewLoading() {
+            document.getElementById('studioActions').style.display = 'none';
+            document.getElementById('studioPreview').innerHTML = `
+                <div class="flex flex-col items-center justify-center text-center py-16">
+                    <svg class="animate-spin w-10 h-10 text-violet-500 mb-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    <p class="text-sm font-medium text-slate-600">AI is generating your content...</p>
+                    <p class="text-xs text-slate-400 mt-1">This may take 15-30 seconds</p>
+                </div>`;
+        }
+
+        function showPreviewError(msg) {
+            document.getElementById('studioPreview').innerHTML = `
+                <div class="p-4 rounded-lg bg-rose-50 border border-rose-200 text-sm text-rose-700">
+                    <strong>Error:</strong> ${msg}
+                </div>`;
+        }
+
+        function renderPreview(result) {
+            document.getElementById('studioActions').style.display = 'flex';
+            const preview = document.getElementById('studioPreview');
+            let html = '';
+
+            const type = result.content_type || '';
+            const typeLabels = { blog_post: '📝 Blog Post', landing_page: '🚀 Landing Page', destination_guide: '🗺️ Destination Guide', social_media: '📱 Social Media' };
+
+            html += `<div class="mb-4 px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-violet-100 text-violet-700 rounded-full">${typeLabels[type] || type}</div>`;
+
+            if (result.title || result.headline) {
+                html += `<h1 class="text-xl font-bold text-slate-800 mb-2">${result.title || result.headline}</h1>`;
+            }
+            if (result.subheadline) {
+                html += `<p class="text-base text-slate-500 mb-4 italic">${result.subheadline}</p>`;
+            }
+            if (result.meta_description) {
+                html += `<div class="mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100 text-xs">
+                    <span class="font-semibold text-blue-700">Meta Description (${result.meta_description.length} chars):</span>
+                    <p class="text-blue-800 mt-1">${result.meta_description}</p>
+                </div>`;
+            }
+
+            // Blog / Guide content (markdown)
+            if (result.content || result.full_content || result.hero_text) {
+                const raw = result.content || result.full_content || result.hero_text;
+                html += `<div class="prose prose-sm prose-slate max-w-none">${markdownToHtml(raw)}</div>`;
+            }
+
+            // Landing page sections
+            if (result.why_choose && Array.isArray(result.why_choose)) {
+                html += `<h3 class="font-semibold text-slate-700 mt-6 mb-2">Why Choose This</h3><ul class="list-disc pl-5 space-y-1 text-sm text-slate-600">`;
+                result.why_choose.forEach(b => html += `<li>${b}</li>`);
+                html += `</ul>`;
+            }
+            if (result.whats_included && Array.isArray(result.whats_included)) {
+                html += `<h3 class="font-semibold text-slate-700 mt-6 mb-2">What's Included</h3><ul class="list-disc pl-5 space-y-1 text-sm text-slate-600">`;
+                result.whats_included.forEach(b => html += `<li>${b}</li>`);
+                html += `</ul>`;
+            }
+            if (result.faq && Array.isArray(result.faq)) {
+                html += `<h3 class="font-semibold text-slate-700 mt-6 mb-2">FAQ</h3>`;
+                result.faq.forEach(f => {
+                    html += `<div class="mb-3"><p class="font-medium text-sm text-slate-700">${f.q || f.question}</p><p class="text-sm text-slate-500">${f.a || f.answer}</p></div>`;
+                });
+            }
+
+            // Social media captions
+            if (result.captions && Array.isArray(result.captions)) {
+                result.captions.forEach((c, i) => {
+                    html += `<div class="mb-4 p-4 rounded-lg border ${i % 2 === 0 ? 'bg-pink-50 border-pink-100' : 'bg-blue-50 border-blue-100'}">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${c.platform === 'instagram' ? 'bg-pink-200 text-pink-700' : 'bg-blue-200 text-blue-700'}">${c.platform || 'social'}</span>
+                        </div>
+                        <p class="text-sm text-slate-700 whitespace-pre-wrap">${c.caption}</p>
+                        ${c.hashtags ? `<p class="text-xs text-slate-400 mt-2">${c.hashtags.map(h => '#' + h.replace('#','')).join(' ')}</p>` : ''}
+                    </div>`;
+                });
+            }
+
+            // Tags
+            if (result.suggested_tags && Array.isArray(result.suggested_tags)) {
+                html += `<div class="mt-6 flex flex-wrap gap-2">`;
+                result.suggested_tags.forEach(t => html += `<span class="px-2 py-1 text-xs bg-slate-100 text-slate-600 rounded-full">${t}</span>`);
+                html += `</div>`;
+            }
+
+            preview.innerHTML = html;
+        }
+
+        function markdownToHtml(md) {
+            if (!md) return '';
+            return md
+                .replace(/### (.*?)$/gm, '<h3 class="font-semibold text-slate-700 mt-4 mb-1">$1</h3>')
+                .replace(/## (.*?)$/gm, '<h2 class="font-bold text-slate-800 mt-5 mb-2 text-lg">$1</h2>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/^- (.*?)$/gm, '<li class="ml-4 text-sm text-slate-600">$1</li>')
+                .replace(/^\d+\. (.*?)$/gm, '<li class="ml-4 text-sm text-slate-600">$1</li>')
+                .replace(/\n\n/g, '</p><p class="text-sm text-slate-600 mb-2">')
+                .replace(/\n/g, '<br>')
+                .replace(/^/, '<p class="text-sm text-slate-600 mb-2">')
+                .replace(/$/, '</p>');
+        }
+
+        function copyContent() {
+            if (!lastGeneratedContent) return;
+            const text = JSON.stringify(lastGeneratedContent, null, 2);
+            navigator.clipboard.writeText(text).then(() => alert('Content copied to clipboard!'));
+        }
+
+        function downloadContent() {
+            if (!lastGeneratedContent) return;
+            const content = lastGeneratedContent.content || lastGeneratedContent.full_content || JSON.stringify(lastGeneratedContent, null, 2);
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `yatradham_${lastGeneratedContent.content_type || 'content'}_${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize and auto-poll
+        loadStats();
+        setInterval(loadStats, 3000);
+        
+        // Auto-refresh outputs if on the outputs tab
+        setInterval(() => {
+            if (document.getElementById('outputsPanel').classList.contains('active')) {
+                loadOutputs(true); // pass true to indicate silent refresh (don't clear UI)
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
