@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 import requests
 import concurrent.futures
 from fastapi import FastAPI, HTTPException, BackgroundTasks
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, HttpUrl
 
@@ -55,7 +55,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 def root():
-    return {"message": "Yatradham SEO Pipeline", "docs": "/docs", "dashboard": "/static/index.html"}
+    return FileResponse("static/index.html")
 
 
 import logging
