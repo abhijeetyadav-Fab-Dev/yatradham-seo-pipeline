@@ -1,35 +1,25 @@
-"""Title agent: hard 60-char limit, natural language, SEO-optimized."""
+"""Title tag agent: 50-60 chars, optimized for click-through rate."""
 import json
 from typing import Dict, Any
 from llm_client import LLMClient
 
 
-SYSTEM_PROMPT = """You are an elite SEO title tag specialist for Yatradham, India's leading wellness travel platform.
+SYSTEM_PROMPT = """You are an elite SEO title tag specialist for YatraDham.Org, India's first dedicated religious tourism and wellness travel platform.
 
-Given a primary keyword and package details, output a JSON object with:
-- title_tag: a compelling, search-optimized title, MAXIMUM 60 characters including spaces.
+Given a package name and destination, write ONE compelling SEO title tag.
 
-STRICT Rules:
-- MUST be under 60 chars total. Count every character including spaces and separators.
-- MUST include the primary keyword or a close variant in the first half of the title.
-- MUST include the destination/location if provided.
-- End with "| Yatradham" as the brand suffix when there is room (aim for it).
-- Use pipe (|) or dash (–) as separators.
-- Write naturally for humans — no keyword stuffing or ALL CAPS.
-- Include a benefit or differentiator when possible (e.g., "Best", "Top-Rated", duration).
-- Never truncate mid-word. If the title is too long, rewrite shorter — do NOT just cut it off.
+STRICT RULES:
+- MUST be EXACTLY between 50 and 60 characters including spaces. Count carefully.
+- MUST include the destination (city/state).
+- Format: "Primary Benefit/Feature in Destination | YatraDham"
+- NEVER repeat words unnecessarily (e.g., "Retreat Retreat").
+- NEVER include the exact package name if it makes the title too long or repetitive.
+- Keep it punchy and clickable.
 
-GOOD examples (follow these patterns):
-- "7-Day Yoga Retreat in Rishikesh | Yatradham"
-- "Panchakarma Detox in Almora – 14 Days | Yatradham"
-- "Best Wellness Retreat in Rajasthan | Yatradham"
-- "3-Day Ayurveda Retreat in Nepal | Yatradham"
-- "Weight Loss Retreat Rishikesh – 21 Days"
-
-BAD examples (never do these):
-- "Natural Healing Program" (no location, no brand, no hook)
-- "14 Days Heal" (truncated mid-thought)
-- "Weight Management and" (incomplete sentence)
+GOOD examples:
+- "Ayurvedic Stress Relief Retreat in Kerala | YatraDham" (55 chars)
+- "3-Day Panchakarma Detox in Almora | YatraDham.Org" (49 chars)
+- "Yoga & Meditation Ashram Stay in Rishikesh | YatraDham" (54 chars)
 
 Output valid JSON only: {"title_tag": "your title here"}"""
 
@@ -44,7 +34,8 @@ Package Name: {name}
 Destination: {destination}
 Duration: {duration}
 
-Generate ONE perfect SEO title tag under 60 characters. It must include the keyword, the destination, and ideally "| Yatradham" at the end."""
+Generate ONE perfect SEO title tag between 50 and 60 characters.
+CRITICAL: Do NOT repeat words. End with " | YatraDham"."""
 
     content = client.chat_completion(
         messages=[
@@ -55,37 +46,47 @@ Generate ONE perfect SEO title tag under 60 characters. It must include the keyw
         temperature=0.4,
         response_format={"type": "json_object"},
     )
+
     try:
-        result = json.loads(content)
+        clean = content.strip()
+        if clean.startswith("```json"):
+            clean = clean[7:]
+        elif clean.startswith("```"):
+            clean = clean[3:]
+        if clean.endswith("```"):
+            clean = clean[:-3]
+        clean = clean.strip()
+        if "{" in clean and "}" in clean:
+            clean = clean[clean.find("{"):clean.rfind("}") + 1]
+        result = json.loads(clean)
     except json.JSONDecodeError:
         result = {}
 
     title = result.get("title_tag", "")
 
-    # Enforce 60 char limit — smart truncation, never mid-word
-    if len(title) > 60:
-        # Try to keep "| Yatradham" if possible
-        if "| Yatradham" in title:
-            prefix = title.split("| Yatradham")[0].strip()
-            while len(prefix + " | Yatradham") > 60:
-                prefix = prefix.rsplit(" ", 1)[0]
-            title = prefix + " | Yatradham"
-        else:
-            title = title[:57].rsplit(" ", 1)[0] + "..."
+    # Basic anti-repetition check
+    if title and name and title.lower().count(name.lower()[:15]) > 1:
+        title = ""
 
-    # Fallback: build a decent title from the data if LLM returned junk
-    if not title or len(title) < 15:
-        parts = []
-        if duration:
-            parts.append(duration)
-        parts.append(primary_keyword or name)
-        if destination:
-            parts.append(f"in {destination}")
-        base = " ".join(parts)
-        if len(base + " | Yatradham") <= 60:
-            title = base + " | Yatradham"
+    if not title:
+        dest = destination if destination else "India"
+        if "ayurved" in name.lower() or "ayurved" in primary_keyword.lower():
+            title = f"Ayurvedic Retreat in {dest} | YatraDham"
+        elif "yoga" in name.lower() or "yoga" in primary_keyword.lower():
+            title = f"Yoga Retreat in {dest} | YatraDham"
         else:
-            title = base[:60]
+            title = f"Wellness Retreat in {dest} | YatraDham"
+
+    # Enforce length (rough approximation without cutting words)
+    if len(title) > 60:
+        parts = title.split(" | ")
+        if len(parts) == 2:
+            main_part = parts[0]
+            if len(main_part) > 45:
+                main_part = main_part[:42] + "..."
+            title = f"{main_part} | YatraDham"
+        else:
+            title = title[:57] + "..."
 
     result["title_tag"] = title
     return result
