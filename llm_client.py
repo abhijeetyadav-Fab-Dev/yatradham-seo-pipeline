@@ -7,11 +7,12 @@ from openai import OpenAI
 
 DEFAULT_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
 FALLBACK_MODELS = [
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "google/gemma-3-27b-it:free",
+    "mistralai/mistral-small-3.1-24b-instruct:free",
     "nvidia/nemotron-3-ultra-550b-a55b:free",
-    "nvidia/nemotron-3-nano-30b-a3b:free",
     "nvidia/nemotron-nano-9b-v2:free",
     "openai/gpt-oss-20b:free",
-    "google/gemma-4-31b-it:free",
 ]
 
 
@@ -27,9 +28,9 @@ class LLMClient:
         self.dry_run = os.getenv("DRY_RUN", "false").lower() == "true"
         self.client: Optional[OpenAI] = None
         if self.api_key and not self.dry_run:
-            self.client = OpenAI(base_url=self.base_url, api_key=self.api_key)
+            self.client = OpenAI(base_url=self.base_url, api_key=self.api_key, timeout=30.0)
         self.last_call_time = 0.0
-        self.min_interval = 3.5  # seconds between calls for free tier (20/min)
+        self.min_interval = 2.0  # seconds between calls
 
     def _wait_for_rate_limit(self):
         elapsed = time.time() - self.last_call_time
@@ -49,49 +50,56 @@ class LLMClient:
         if self.dry_run or not self.client:
             return self._mock_response(messages)
 
-        use_model = model or self.model
+        primary_model = model or self.model
+        models_to_try = [primary_model] + [m for m in FALLBACK_MODELS if m != primary_model]
         attempt = 0
         current_max_tokens = max_tokens
-        backoff_time = 2.0
+        backoff_time = 1.5
 
         while attempt < retries:
             self._wait_for_rate_limit()
+            active_model = models_to_try[attempt % len(models_to_try)]
             try:
                 kwargs = {
-                    "model": use_model,
+                    "model": active_model,
                     "messages": messages,
                     "max_tokens": current_max_tokens,
                     "temperature": temperature,
+                    "timeout": 25.0,
                 }
                 if response_format:
                     kwargs["response_format"] = response_format
 
                 resp = self.client.chat.completions.create(**kwargs)
                 content = resp.choices[0].message.content or ""
-                return content
+                if content.strip():
+                    return content
+                logger.warning(f"Empty content received from {active_model}, retrying next model...")
+                attempt += 1
             except Exception as e:
                 err_str = str(e).lower()
-                logger.warning(f"LLM API Error on attempt {attempt + 1}: {err_str}")
+                logger.warning(f"LLM API Error on model {active_model} (attempt {attempt + 1}/{retries}): {err_str}")
                 
                 if "max_tokens" in err_str or "token" in err_str or "context" in err_str:
                     current_max_tokens = max(500, current_max_tokens // 2)
                     attempt += 1
                     continue
                 if "rate limit" in err_str or "429" in err_str:
-                    time.sleep(backoff_time * 2)
-                    backoff_time *= 2
+                    time.sleep(backoff_time)
+                    backoff_time = min(backoff_time * 1.5, 6.0)
                     attempt += 1
                     continue
                 
                 attempt += 1
                 if attempt >= retries:
-                    logger.error(f"Failed LLM call after {retries} attempts.")
-                    raise
+                    logger.error(f"Failed LLM call across {retries} attempts and candidate models.")
+                    # Return safe mock response rather than crashing the pipeline
+                    return self._mock_response(messages)
                 
                 time.sleep(backoff_time)
-                backoff_time *= 1.5
+                backoff_time = min(backoff_time * 1.3, 5.0)
 
-        return ""
+        return self._mock_response(messages)
 
     def _mock_response(self, messages: List[Dict[str, str]]) -> str:
         """Return a mock JSON response for dry-run testing."""
