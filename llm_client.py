@@ -359,4 +359,6 @@ Hashtags: #Yatradham #WellnessRetreat #SpiritualJourney #YogaLife"""
             return json.dumps({"meta_description": "Join our 7-day yoga retreat in Rishikesh. Experience meditation, wellness, and peace. Book now for a transformative journey!"})
         if "qa" in system_msg.lower():
             return json.dumps({"score": 82, "flags": ["PASS"], "notes": "All 19 sections present. Readability good."})
-        return json.dumps({"result": "mock"})
+        
+        # If no specific mock is found, return invalid JSON to trigger the agent's built-in fallback logic
+        return "invalid_json_trigger_fallback"
