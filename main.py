@@ -275,6 +275,13 @@ def update_provider_settings(request: ProviderSettingsRequest):
     return {"success": True, "message": f"Successfully updated {request.provider} configuration."}
 
 
+@app.post("/test-provider")
+def test_provider_endpoint(request: ProviderSettingsRequest):
+    """Test a provider API key live and return latency & status."""
+    res = client.test_provider(request.provider, request.api_key, request.model)
+    return res
+
+
 class ContentGenerateRequest(BaseModel):
     content_type: str  # blog_post, landing_page, destination_guide, social_media
     topic: str
@@ -286,6 +293,7 @@ class ContentGenerateRequest(BaseModel):
     provider: Optional[str] = None
     api_key: Optional[str] = None
     model: Optional[str] = None
+    keys: Optional[Dict[str, str]] = None
 
 
 @app.post("/generate-content")
@@ -298,11 +306,15 @@ def generate_content(request: ContentGenerateRequest):
     if not request.topic or len(request.topic.strip()) < 3:
         raise HTTPException(status_code=400, detail="Topic must be at least 3 characters")
     
-    # If request contains a direct provider key, configure on client
+    # Configure any keys passed directly in payload
+    if request.keys:
+        for p, k in request.keys.items():
+            if k and isinstance(k, str) and k.strip():
+                client.set_custom_keys(p, k.strip())
+
     if request.api_key:
         provider = request.provider
-        if not provider:
-            # Auto-detect provider from key format
+        if not provider or provider == "auto":
             key = request.api_key.strip()
             if key.startswith("gsk_"):
                 provider = "groq"
@@ -312,18 +324,8 @@ def generate_content(request: ContentGenerateRequest):
                 provider = "openrouter"
         client.set_custom_keys(provider, request.api_key.strip(), request.model)
 
-    # Check if any real LLM providers are available
-    has_real_provider = bool(client.groq_client or client.gemini_client or client.openrouter_client)
-    active_provider = "mock (no API keys configured)"
-    if client.groq_client:
-        active_provider = "groq"
-    elif client.gemini_client:
-        active_provider = "gemini"
-    elif client.openrouter_client:
-        active_provider = "openrouter"
-
     try:
-        logger.info(f"Generating {request.content_type} content for topic: {request.topic} [provider={active_provider}]")
+        logger.info(f"Generating {request.content_type} content for topic: {request.topic}")
         result = content_creator_agent.run(
             content_type=request.content_type,
             topic=request.topic,
@@ -334,10 +336,21 @@ def generate_content(request: ContentGenerateRequest):
             word_count=request.word_count,
             additional_instructions=request.additional_instructions,
         )
-        logger.info(f"Successfully generated {request.content_type} for: {request.topic}")
-        response = {"success": True, "result": result, "provider": active_provider}
-        if not has_real_provider:
-            response["warning"] = "No API keys configured. Showing template content. Set GROQ_API_KEY or GEMINI_API_KEY on Render, or use the 🔑 Keys button to add your free API key."
+        
+        used_provider = client.last_provider_used or "unknown"
+        logger.info(f"Successfully generated {request.content_type} using [{used_provider}] for: {request.topic}")
+        
+        response = {
+            "success": True, 
+            "result": result, 
+            "provider": used_provider,
+            "model": client.last_model_used
+        }
+        
+        if "mock" in used_provider:
+            err_detail = client.last_error or "No API keys configured or providers unreachable."
+            response["warning"] = f"{err_detail}. Use the 🔑 Keys button to add or test your free Groq/Gemini key."
+            
         return response
     except Exception as e:
         logger.exception(f"Error generating content: {e}")

@@ -158,29 +158,55 @@ def run(
 ) -> Dict[str, Any]:
     """Generate net-new content based on user requirements using robust markdown parsing."""
     
-    system_prompt = CONTENT_TYPE_PROMPTS.get(content_type, CONTENT_TYPE_PROMPTS["blog_post"])
+    base_prompt = CONTENT_TYPE_PROMPTS.get(content_type, CONTENT_TYPE_PROMPTS["blog_post"])
     
-    parts = [f"Topic: {topic}"]
-    if target_keyword:
-        parts.append(f"Target SEO Keyword: {target_keyword}")
-    if audience:
-        parts.append(f"Target Audience: {audience}")
-    if tone:
-        parts.append(f"Writing Tone: {tone}")
+    # Dynamic word count guidance
+    word_guidance = ""
+    target_tokens = 4000
     if word_count:
-        parts.append(f"Target Word Count: {word_count} words")
+        target_tokens = min(8000, max(3000, int(word_count * 1.6)))
+        word_guidance = f"""
+CRITICAL LENGTH REQUIREMENT:
+- Target Length: ~{word_count} words.
+- This MUST be an in-depth, thorough, and comprehensive piece. Do NOT summarize or write a brief overview.
+- Elaborate extensively on every section with detailed descriptions, step-by-step schedules, rich context, practical travel information, tips, and comprehensive FAQs.
+"""
+
+    custom_rules = []
+    if target_keyword:
+        custom_rules.append(f"- Primary SEO Keyword: '{target_keyword}' (Integrate naturally in Title, Meta Description, H2s, H3s, and throughout content without keyword stuffing).")
+    if audience:
+        custom_rules.append(f"- Target Audience: {audience} (Tailor perspective, depth, and relevance to them).")
+    if tone and tone.lower() != "auto":
+        custom_rules.append(f"- Desired Tone of Voice: {tone}.")
     if additional_instructions:
-        parts.append(f"Additional Instructions: {additional_instructions}")
-    
-    user_msg = "\n".join(parts) + "\n\nGenerate the content now. Output ONLY the requested markdown format."
-    
-    # Generate content (without JSON format constraint)
+        custom_rules.append(f"- MANDATORY USER INSTRUCTIONS:\n{additional_instructions}")
+
+    rules_block = "\n".join(custom_rules) if custom_rules else ""
+
+    enhanced_system_prompt = f"""{base_prompt}
+
+{word_guidance}
+
+ADDITIONAL CRITICAL CONSTRAINTS:
+{rules_block}
+"""
+
+    user_msg = f"""Topic: {topic}
+{f"Target Keyword: {target_keyword}" if target_keyword else ""}
+{f"Target Audience: {audience}" if audience else ""}
+{f"Target Length: ~{word_count} words" if word_count else ""}
+
+Please generate the complete, high-quality, comprehensive {content_type.replace('_', ' ')} for Yatradham.Org now.
+Follow all formatting rules and markdown heading conventions strictly."""
+
+    # Generate content
     content = client.chat_completion(
         messages=[
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": enhanced_system_prompt},
             {"role": "user", "content": user_msg},
         ],
-        max_tokens=4000,
+        max_tokens=target_tokens,
         temperature=0.7,
     )
 

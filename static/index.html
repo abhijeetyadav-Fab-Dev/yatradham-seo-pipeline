@@ -229,12 +229,62 @@
                         </div>
                     </div>
 
-                    <!-- Custom Key Input Bar (Optional) -->
-                    <div id="providerKeyBanner" class="bg-violet-50 border-b border-violet-100 px-6 py-2.5 flex items-center justify-between text-xs text-violet-900" style="display:none;">
-                        <span id="providerKeyLabel">Enter API Key:</span>
-                        <div class="flex gap-2 items-center">
-                            <input type="password" id="customProviderKey" class="rounded border-violet-200 px-2 py-1 text-xs w-48 font-mono" placeholder="Paste key (stored locally)">
-                            <button onclick="saveProviderKey()" class="px-2.5 py-1 rounded bg-violet-600 text-white font-medium hover:bg-violet-700">Save</button>
+                    <!-- Multi-Provider Key Configuration Manager -->
+                    <div id="providerKeyBanner" class="bg-violet-50/80 border-b border-violet-100 px-6 py-4 text-xs text-slate-700" style="display:none;">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-bold text-violet-900 text-sm flex items-center">
+                                <svg class="w-4 h-4 mr-1.5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                                AI Provider API Keys (Stored Securely in Browser)
+                            </span>
+                            <button onclick="toggleKeyModal()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">&times;</button>
+                        </div>
+                        <p class="text-slate-500 mb-3 leading-relaxed">Add free API keys from <a href="https://console.groq.com" target="_blank" class="text-violet-600 underline font-medium">Groq Console</a> or <a href="https://aistudio.google.com" target="_blank" class="text-violet-600 underline font-medium">Google AI Studio</a> to generate instant, full-length content with 0 cost.</p>
+                        
+                        <div class="space-y-3">
+                            <!-- Groq Key -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 min-w-[140px]">
+                                    <span class="font-semibold text-slate-800">🚀 Groq Key:</span>
+                                </div>
+                                <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                                    <input type="password" id="key_groq" class="rounded border-slate-300 px-3 py-1.5 text-xs w-full font-mono focus:border-violet-500" placeholder="gsk_...">
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="saveSingleKey('groq')" class="px-3 py-1.5 rounded bg-violet-600 text-white font-medium hover:bg-violet-700 transition">Save</button>
+                                    <button onclick="testKeyLive('groq')" id="btnTest_groq" class="px-3 py-1.5 rounded bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 border border-slate-300 transition">⚡ Test</button>
+                                    <span id="status_groq" class="text-xs ml-1"></span>
+                                </div>
+                            </div>
+
+                            <!-- Gemini Key -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 min-w-[140px]">
+                                    <span class="font-semibold text-slate-800">✨ Gemini Key:</span>
+                                </div>
+                                <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                                    <input type="password" id="key_gemini" class="rounded border-slate-300 px-3 py-1.5 text-xs w-full font-mono focus:border-violet-500" placeholder="AIzaSy...">
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="saveSingleKey('gemini')" class="px-3 py-1.5 rounded bg-violet-600 text-white font-medium hover:bg-violet-700 transition">Save</button>
+                                    <button onclick="testKeyLive('gemini')" id="btnTest_gemini" class="px-3 py-1.5 rounded bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 border border-slate-300 transition">⚡ Test</button>
+                                    <span id="status_gemini" class="text-xs ml-1"></span>
+                                </div>
+                            </div>
+
+                            <!-- OpenRouter Key -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 min-w-[140px]">
+                                    <span class="font-semibold text-slate-800">🌐 OpenRouter:</span>
+                                </div>
+                                <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                                    <input type="password" id="key_openrouter" class="rounded border-slate-300 px-3 py-1.5 text-xs w-full font-mono focus:border-violet-500" placeholder="sk-or-...">
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="saveSingleKey('openrouter')" class="px-3 py-1.5 rounded bg-violet-600 text-white font-medium hover:bg-violet-700 transition">Save</button>
+                                    <button onclick="testKeyLive('openrouter')" id="btnTest_openrouter" class="px-3 py-1.5 rounded bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 border border-slate-300 transition">⚡ Test</button>
+                                    <span id="status_openrouter" class="text-xs ml-1"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
@@ -667,34 +717,80 @@
             } catch(e) { return {}; }
         }
 
-        function toggleProviderKeyInput() {
-            const provider = document.getElementById('studioProviderSelect').value;
-            const banner = document.getElementById('providerKeyBanner');
+        function loadStoredKeysIntoUI() {
             const keys = getStoredKeys();
-            if (provider !== 'auto') {
-                banner.style.display = 'flex';
-                document.getElementById('providerKeyLabel').innerText = `API Key for ${provider.toUpperCase()}:`;
-                document.getElementById('customProviderKey').value = keys[provider] || '';
-            } else {
-                banner.style.display = 'none';
-            }
+            if (document.getElementById('key_groq')) document.getElementById('key_groq').value = keys.groq || '';
+            if (document.getElementById('key_gemini')) document.getElementById('key_gemini').value = keys.gemini || '';
+            if (document.getElementById('key_openrouter')) document.getElementById('key_openrouter').value = keys.openrouter || '';
         }
 
         function toggleKeyModal() {
             const banner = document.getElementById('providerKeyBanner');
-            banner.style.display = banner.style.display === 'none' ? 'flex' : 'none';
+            const isHidden = banner.style.display === 'none';
+            banner.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                loadStoredKeysIntoUI();
+            }
         }
 
-        function saveProviderKey() {
+        function toggleProviderKeyInput() {
+            // When user switches dropdown, if it's a specific provider, make sure banner or keys are clear
             const provider = document.getElementById('studioProviderSelect').value;
-            const key = document.getElementById('customProviderKey').value.trim();
-            const keys = getStoredKeys();
             if (provider !== 'auto') {
-                keys[provider] = key;
-                localStorage.setItem('yatradham_ai_keys', JSON.stringify(keys));
-                alert(`Saved API key for ${provider.toUpperCase()} locally!`);
-            } else {
-                alert('Please select a specific provider first (Groq, Gemini, or OpenRouter).');
+                const keys = getStoredKeys();
+                if (!keys[provider]) {
+                    toggleKeyModal();
+                }
+            }
+        }
+
+        function saveSingleKey(provider) {
+            const input = document.getElementById(`key_${provider}`);
+            if (!input) return;
+            const key = input.value.trim();
+            const keys = getStoredKeys();
+            keys[provider] = key;
+            localStorage.setItem('yatradham_ai_keys', JSON.stringify(keys));
+            
+            const statusEl = document.getElementById(`status_${provider}`);
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="text-emerald-600 font-semibold">Saved!</span>`;
+                setTimeout(() => { statusEl.innerHTML = ''; }, 2500);
+            }
+        }
+
+        async function testKeyLive(provider) {
+            const input = document.getElementById(`key_${provider}`);
+            const key = input ? input.value.trim() : '';
+            const statusEl = document.getElementById(`status_${provider}`);
+            const btn = document.getElementById(`btnTest_${provider}`);
+            
+            if (!key) {
+                if (statusEl) statusEl.innerHTML = `<span class="text-rose-600 font-semibold">Enter a key first</span>`;
+                return;
+            }
+            
+            if (btn) btn.disabled = true;
+            if (statusEl) statusEl.innerHTML = `<span class="text-slate-400">Testing...</span>`;
+            
+            try {
+                const res = await fetch(API + '/test-provider', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ provider, api_key: key })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (statusEl) statusEl.innerHTML = `<span class="text-emerald-600 font-semibold">✅ ${data.latency_ms}ms (${data.model})</span>`;
+                    saveSingleKey(provider);
+                } else {
+                    if (statusEl) statusEl.innerHTML = `<span class="text-rose-600 font-semibold" title="${data.error || ''}">❌ Failed</span>`;
+                    alert(`Connection failed for ${provider.toUpperCase()}:\n${data.error || 'Unknown error'}`);
+                }
+            } catch(e) {
+                if (statusEl) statusEl.innerHTML = `<span class="text-rose-600 font-semibold">❌ Network error</span>`;
+            } finally {
+                if (btn) btn.disabled = false;
             }
         }
 
@@ -715,7 +811,7 @@
             const btn = document.getElementById(btnId);
             if (loading) {
                 btn.disabled = true;
-                btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Generating...`;
+                btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Generating with AI...`;
                 btn.classList.add('opacity-75');
             } else {
                 btn.disabled = false;
@@ -740,7 +836,8 @@
                 const payload = {
                     content_type: contentType,
                     topic: prompt,
-                    additional_instructions: prompt
+                    additional_instructions: prompt,
+                    keys: keys
                 };
                 if (provider !== 'auto') {
                     payload.provider = provider;
@@ -755,7 +852,7 @@
                 const data = await res.json();
                 if (data.success) {
                     lastGeneratedContent = data.result;
-                    renderPreview(data.result, data.provider, data.warning);
+                    renderPreview(data.result, data.provider, data.warning, data.model);
                 } else {
                     showPreviewError(data.detail || 'Generation failed');
                 }
@@ -786,7 +883,8 @@
                     audience: document.getElementById('structAudience').value.trim() || null,
                     tone: document.getElementById('structTone').value || null,
                     word_count: parseInt(document.getElementById('structWordCount').value) || null,
-                    additional_instructions: document.getElementById('structInstructions').value.trim() || null
+                    additional_instructions: document.getElementById('structInstructions').value.trim() || null,
+                    keys: keys
                 };
                 if (provider !== 'auto') {
                     payload.provider = provider;
@@ -801,7 +899,7 @@
                 const data = await res.json();
                 if (data.success) {
                     lastGeneratedContent = data.result;
-                    renderPreview(data.result, data.provider, data.warning);
+                    renderPreview(data.result, data.provider, data.warning, data.model);
                 } else {
                     showPreviewError(data.detail || 'Generation failed');
                 }
@@ -820,8 +918,8 @@
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
-                    <p class="text-sm font-medium text-slate-600">AI is generating your content...</p>
-                    <p class="text-xs text-slate-400 mt-1">This may take 15-30 seconds</p>
+                    <p class="text-sm font-medium text-slate-600">AI is generating deep, comprehensive content...</p>
+                    <p class="text-xs text-slate-400 mt-1">This may take 10-25 seconds</p>
                 </div>`;
         }
 
@@ -832,7 +930,7 @@
                 </div>`;
         }
 
-        function renderPreview(result, provider, warning) {
+        function renderPreview(result, provider, warning, model) {
             document.getElementById('studioActions').style.display = 'flex';
             const preview = document.getElementById('studioPreview');
             let html = '';
@@ -842,7 +940,7 @@
                 <div class="mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start">
                     <svg class="w-5 h-5 mr-3 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     <div>
-                        <strong class="font-bold">Using Fallback Template.</strong> ${warning}
+                        <strong class="font-bold">Notice:</strong> ${warning}
                     </div>
                 </div>`;
             }
@@ -850,15 +948,32 @@
             const type = result.content_type || '';
             const typeLabels = { blog_post: '📝 Blog Post', landing_page: '🚀 Landing Page', destination_guide: '🗺️ Destination Guide', social_media: '📱 Social Media' };
 
-            html += `<div class="flex items-center gap-2 mb-4">
+            // Calculate approximate word count
+            let fullText = (result.title || '') + ' ' + (result.content || result.hero_text || '');
+            if (result.why_choose) fullText += ' ' + result.why_choose.join(' ');
+            if (result.faq) fullText += ' ' + result.faq.map(f => (f.q||'') + ' ' + (f.a||'')).join(' ');
+            const wordCount = fullText.trim().split(/\s+/).filter(Boolean).length;
+
+            html += `<div class="flex flex-wrap items-center gap-2 mb-4">
                 <div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-violet-100 text-violet-700 rounded-full">${typeLabels[type] || type}</div>`;
             
-            if (provider) {
+            if (provider && !provider.includes('mock')) {
                 const provIcons = { groq: '🚀', gemini: '✨', openrouter: '🌐' };
-                html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-slate-100 text-slate-600 rounded-full border border-slate-200">
-                    <span class="mr-1">${provIcons[provider] || '🤖'}</span> ${provider.toUpperCase()}
+                html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                    <span class="mr-1">${provIcons[provider] || '✨'}</span> ${provider.toUpperCase()} ${model ? `(${model})` : ''}
+                </div>`;
+            } else if (provider && provider.includes('mock')) {
+                html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-amber-100 text-amber-800 rounded-full border border-amber-200">
+                    ⚠️ Mock / Fallback
                 </div>`;
             }
+
+            if (wordCount > 10) {
+                html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-medium bg-slate-100 text-slate-600 rounded-full border border-slate-200">
+                    📊 ~${wordCount.toLocaleString()} words
+                </div>`;
+            }
+
             html += `</div>`;
 
             if (result.title || result.headline) {
