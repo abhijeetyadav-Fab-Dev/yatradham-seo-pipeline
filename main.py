@@ -42,7 +42,7 @@ class BatchURLRequest(BaseModel):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print(f"Server starting | DRY_RUN={client.dry_run} | Model={client.model}")
+    print(f"Server starting | DRY_RUN={client.dry_run}")
     yield
     print("Server shutting down")
 
@@ -299,11 +299,31 @@ def generate_content(request: ContentGenerateRequest):
         raise HTTPException(status_code=400, detail="Topic must be at least 3 characters")
     
     # If request contains a direct provider key, configure on client
-    if request.provider and request.api_key:
-        client.set_custom_keys(request.provider, request.api_key, request.model)
+    if request.api_key:
+        provider = request.provider
+        if not provider:
+            # Auto-detect provider from key format
+            key = request.api_key.strip()
+            if key.startswith("gsk_"):
+                provider = "groq"
+            elif key.startswith("AI") or len(key) == 39:
+                provider = "gemini"
+            else:
+                provider = "openrouter"
+        client.set_custom_keys(provider, request.api_key.strip(), request.model)
+
+    # Check if any real LLM providers are available
+    has_real_provider = bool(client.groq_client or client.gemini_client or client.openrouter_client)
+    active_provider = "mock (no API keys configured)"
+    if client.groq_client:
+        active_provider = "groq"
+    elif client.gemini_client:
+        active_provider = "gemini"
+    elif client.openrouter_client:
+        active_provider = "openrouter"
 
     try:
-        logger.info(f"Generating {request.content_type} content for topic: {request.topic}")
+        logger.info(f"Generating {request.content_type} content for topic: {request.topic} [provider={active_provider}]")
         result = content_creator_agent.run(
             content_type=request.content_type,
             topic=request.topic,
@@ -315,7 +335,10 @@ def generate_content(request: ContentGenerateRequest):
             additional_instructions=request.additional_instructions,
         )
         logger.info(f"Successfully generated {request.content_type} for: {request.topic}")
-        return {"success": True, "result": result}
+        response = {"success": True, "result": result, "provider": active_provider}
+        if not has_real_provider:
+            response["warning"] = "No API keys configured. Showing template content. Set GROQ_API_KEY or GEMINI_API_KEY on Render, or use the 🔑 Keys button to add your free API key."
+        return response
     except Exception as e:
         logger.exception(f"Error generating content: {e}")
         raise HTTPException(status_code=500, detail=f"Content generation failed: {str(e)}")
