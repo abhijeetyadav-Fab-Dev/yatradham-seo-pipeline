@@ -1,0 +1,104 @@
+{
+  "nodes": [
+    {
+      "id": "browser_captures_05_outputs_review_seo_outputs_review_ui",
+      "label": "SEO Outputs Review UI",
+      "file_type": "image",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_05_outputs_review_yatradham_seo_pipeline",
+      "label": "Yatradham SEO Pipeline",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_05_outputs_review_qa_metrics",
+      "label": "QA Metrics Panel",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_05_outputs_review_package_review_item",
+      "label": "Package Review Item",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_05_outputs_review_qa_warnings",
+      "label": "QA Warnings",
+      "file_type": "concept",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "browser_captures_05_outputs_review_seo_outputs_review_ui",
+      "target": "browser_captures_05_outputs_review_yatradham_seo_pipeline",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "browser_captures_05_outputs_review_seo_outputs_review_ui",
+      "target": "browser_captures_05_outputs_review_qa_metrics",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "browser_captures_05_outputs_review_seo_outputs_review_ui",
+      "target": "browser_captures_05_outputs_review_package_review_item",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "browser_captures_05_outputs_review_package_review_item",
+      "target": "browser_captures_05_outputs_review_qa_warnings",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\05_outputs_review.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

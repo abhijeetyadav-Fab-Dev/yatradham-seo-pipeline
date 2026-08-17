@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "browser_captures_04_generation_state_generation_ui",
+      "label": "AI Content Generation UI State",
+      "file_type": "image",
+      "rationale": "UI screenshot demonstrating the loading state while AI generates content based on user prompt 'Complete Spiritual Guide for Kedarnath Darshan and Dharamshala booking'. Shows a split-pane layout with input on the left and a loading preview on the right.",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\04_generation_state.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_04_generation_state_ai_content_studio",
+      "label": "AI Content Studio",
+      "file_type": "concept",
+      "rationale": "Key feature area allowing users to provide plain English prompts to automatically determine content type, structure, and SEO strategy.",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\04_generation_state.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_04_generation_state_dashboard_metrics",
+      "label": "Dashboard Metrics Header",
+      "file_type": "concept",
+      "rationale": "Top-level KPI cards displaying Total Packages, Pending Review, Approved, Rejected, and Avg QA Score, providing persistent context across tabs.",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\04_generation_state.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "browser_captures_04_generation_state_generation_ui",
+      "target": "browser_captures_04_generation_state_ai_content_studio",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\04_generation_state.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "browser_captures_04_generation_state_generation_ui",
+      "target": "browser_captures_04_generation_state_dashboard_metrics",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\04_generation_state.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "browser_captures_04_generation_state_ui_components",
+      "label": "Yatradham SEO Pipeline UI Components",
+      "nodes": [
+        "browser_captures_04_generation_state_generation_ui",
+        "browser_captures_04_generation_state_ai_content_studio",
+        "browser_captures_04_generation_state_dashboard_metrics"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\04_generation_state.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

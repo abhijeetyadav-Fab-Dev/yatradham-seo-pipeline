@@ -1,0 +1,4600 @@
+{
+  "nodes": [
+    {
+      "id": "agents_init",
+      "label": "__init__.py",
+      "file_type": "code",
+      "source_file": "agents/__init__.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_agent",
+      "label": "content_agent.py",
+      "file_type": "code",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_agent_extract_json_from_response",
+      "label": "_extract_json_from_response()",
+      "file_type": "code",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L82",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_agent_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L99",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_agent_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_agent_rationale_1",
+      "label": "Content agent: generates all 19 structured sections from scraped page data.",
+      "file_type": "rationale",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_agent_rationale_83",
+      "label": "Robustly extract JSON from LLM response, handling markdown blocks and conversati",
+      "file_type": "rationale",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L83",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_creator_agent",
+      "label": "content_creator_agent.py",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_creator_agent_parse_markdown_sections",
+      "label": "_parse_markdown_sections()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L128",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_creator_agent_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L149",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_creator_agent_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_creator_agent_rationale_1",
+      "label": "Content Creator Agent: Generates net-new SEO content from scratch.",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_creator_agent_rationale_129",
+      "label": "Parse a markdown string into a dictionary based on H1 headings.",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L129",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_content_creator_agent_rationale_159",
+      "label": "Generate net-new content based on user requirements using robust markdown parsin",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L159",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_keyword_agent",
+      "label": "keyword_agent.py",
+      "file_type": "code",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_keyword_agent_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L19",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_keyword_agent_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_keyword_agent_rationale_1",
+      "label": "Keyword agent: enforces 2-4 word primary keyword.",
+      "file_type": "rationale",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_meta_agent",
+      "label": "meta_agent.py",
+      "file_type": "code",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_meta_agent_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L35",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_meta_agent_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_meta_agent_rationale_1",
+      "label": "Meta description agent: 145-155 chars, natural language, no repetition.",
+      "file_type": "rationale",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_qa_agent",
+      "label": "qa_agent.py",
+      "file_type": "code",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_qa_agent_flesch_estimate",
+      "label": "_flesch_estimate()",
+      "file_type": "code",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L31",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_qa_agent_check_sections",
+      "label": "_check_sections()",
+      "file_type": "code",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L40",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_qa_agent_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_qa_agent_check_banned",
+      "label": "_check_banned()",
+      "file_type": "code",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L58",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_qa_agent_check_sentences",
+      "label": "_check_sentences()",
+      "file_type": "code",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L64",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_qa_agent_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L70",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_qa_agent_rationale_1",
+      "label": "QA agent: validates all 19 sections + readability.",
+      "file_type": "rationale",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_title_agent",
+      "label": "title_agent.py",
+      "file_type": "code",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_title_agent_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L27",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_title_agent_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "agents_title_agent_rationale_1",
+      "label": "Title tag agent: 50-60 chars, optimized for click-through rate.",
+      "file_type": "rationale",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "database",
+      "label": "database.py",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_get_conn",
+      "label": "get_conn()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L11",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_init_db",
+      "label": "init_db()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L17",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_sections_to_dict",
+      "label": "_sections_to_dict()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L46",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_dict_to_sections",
+      "label": "_dict_to_sections()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L50",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_save_output",
+      "label": "save_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L54",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_update_output",
+      "label": "update_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L82",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_get_output",
+      "label": "get_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L118",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_list_outputs",
+      "label": "list_outputs()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L127",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_bulk_update_status",
+      "label": "bulk_update_status()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L143",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_delete_output",
+      "label": "delete_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L155",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_clear_all_outputs",
+      "label": "clear_all_outputs()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L164",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_get_stats",
+      "label": "get_stats()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L174",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_row_to_output",
+      "label": "_row_to_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L191",
+      "_origin": "ast"
+    },
+    {
+      "id": "row",
+      "label": "Row",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "database_rationale_1",
+      "label": "SQLite database with JSON storage for sections.",
+      "file_type": "rationale",
+      "source_file": "database.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "e2e_browser_test",
+      "label": "e2e_browser_test.py",
+      "file_type": "code",
+      "source_file": "e2e_browser_test.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "e2e_browser_test_run",
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "e2e_browser_test.py",
+      "source_location": "L11",
+      "_origin": "ast"
+    },
+    {
+      "id": "e2e_test",
+      "label": "e2e_test.py",
+      "file_type": "code",
+      "source_file": "e2e_test.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "live_qa",
+      "label": "live_qa.py",
+      "file_type": "code",
+      "source_file": "live_qa.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "live_qa_run_live_qa",
+      "label": "run_live_qa()",
+      "file_type": "code",
+      "source_file": "live_qa.py",
+      "source_location": "L5",
+      "_origin": "ast"
+    },
+    {
+      "id": "llm_client",
+      "label": "llm_client.py",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "llm_client_llmclient",
+      "label": "LLMClient",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L22",
+      "_origin": "ast"
+    },
+    {
+      "id": "llm_client_llmclient_init",
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L23",
+      "_origin": "ast"
+    },
+    {
+      "id": "llm_client_llmclient_wait_for_rate_limit",
+      "label": "._wait_for_rate_limit()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L34",
+      "_origin": "ast"
+    },
+    {
+      "id": "llm_client_llmclient_chat_completion",
+      "label": ".chat_completion()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L40",
+      "_origin": "ast"
+    },
+    {
+      "id": "llm_client_llmclient_mock_response",
+      "label": "._mock_response()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L96",
+      "_origin": "ast"
+    },
+    {
+      "id": "llm_client_rationale_1",
+      "label": "OpenRouter LLM client with token-limit retry and rate limiting.",
+      "file_type": "rationale",
+      "source_file": "llm_client.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "llm_client_rationale_97",
+      "label": "Return a mock JSON response for dry-run testing.",
+      "file_type": "rationale",
+      "source_file": "llm_client.py",
+      "source_location": "L97",
+      "_origin": "ast"
+    },
+    {
+      "id": "main",
+      "label": "main.py",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_urlrequest",
+      "label": "URLRequest",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L35",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_py_basemodel",
+      "label": "BaseModel",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_batchurlrequest",
+      "label": "BatchURLRequest",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L39",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_lifespan",
+      "label": "lifespan()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L44",
+      "_origin": "ast"
+    },
+    {
+      "id": "fastapi",
+      "label": "FastAPI",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_root",
+      "label": "root()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L57",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_scrape_and_process",
+      "label": "scrape_and_process()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L67",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_process_batch_background",
+      "label": "process_batch_background()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L110",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_batch_urls",
+      "label": "batch_urls()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L151",
+      "_origin": "ast"
+    },
+    {
+      "id": "backgroundtasks",
+      "label": "BackgroundTasks",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_process_single",
+      "label": "process_single()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L171",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_batch_process",
+      "label": "batch_process()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L182",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_get_outputs",
+      "label": "get_outputs()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L197",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_get_single_output",
+      "label": "get_single_output()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L204",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_update_single_output",
+      "label": "update_single_output()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L212",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_bulk_action",
+      "label": "bulk_action()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L235",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_delete_single_output",
+      "label": "delete_single_output()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L245",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_clear_cache",
+      "label": "clear_cache()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L253",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_contentgeneraterequest",
+      "label": "ContentGenerateRequest",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L260",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_generate_content",
+      "label": "generate_content()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L271",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_stats",
+      "label": "stats()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L300",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_export_csv",
+      "label": "export_csv()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L305",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_1",
+      "label": "FastAPI server with .env auto-loading, URL auto-scraping, batch processing, expo",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_68",
+      "label": "Scrape a Yatradham URL and auto-process through all 5 agents.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L68",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_152",
+      "label": "Scrape and process multiple URLs automatically in the background.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L152",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_172",
+      "label": "Process a single package through all 5 agents (manual JSON input).",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L172",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_183",
+      "label": "Process multiple packages from JSON (manual input).",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L183",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_198",
+      "label": "List all SEO outputs with optional filter.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L198",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_236",
+      "label": "Bulk approve or reject outputs.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L236",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_254",
+      "label": "Wipe all outputs from the database to start fresh.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L254",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_272",
+      "label": "Generate net-new SEO content from scratch using AI.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L272",
+      "_origin": "ast"
+    },
+    {
+      "id": "main_rationale_306",
+      "label": "Export outputs to CSV.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L306",
+      "_origin": "ast"
+    },
+    {
+      "id": "models",
+      "label": "models.py",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_packageinput",
+      "label": "PackageInput",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L7",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_py_basemodel",
+      "label": "BaseModel",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_quickfacts",
+      "label": "QuickFacts",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L18",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_programsession",
+      "label": "ProgramSession",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L29",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_programhighlights",
+      "label": "ProgramHighlights",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L34",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_itineraryday",
+      "label": "ItineraryDay",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L41",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_pricingrow",
+      "label": "PricingRow",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L46",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_nearbylocation",
+      "label": "NearbyLocation",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L51",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_faqitem",
+      "label": "FAQItem",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L57",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_sectionedcontent",
+      "label": "SectionedContent",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L62",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_seooutput",
+      "label": "SEOOutput",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L93",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_batchrequest",
+      "label": "BatchRequest",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L107",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_bulkactionrequest",
+      "label": "BulkActionRequest",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L111",
+      "_origin": "ast"
+    },
+    {
+      "id": "models_rationale_1",
+      "label": "Pydantic models for the SEO pipeline.",
+      "file_type": "rationale",
+      "source_file": "models.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "pipeline",
+      "label": "pipeline.py",
+      "file_type": "code",
+      "source_file": "pipeline.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "pipeline_process_package",
+      "label": "process_package()",
+      "file_type": "code",
+      "source_file": "pipeline.py",
+      "source_location": "L10",
+      "_origin": "ast"
+    },
+    {
+      "id": "pipeline_rationale_1",
+      "label": "Orchestrator: runs all 5 agents in sequence.",
+      "file_type": "rationale",
+      "source_file": "pipeline.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "pipeline_rationale_11",
+      "label": "Run the full pipeline on a single package.",
+      "file_type": "rationale",
+      "source_file": "pipeline.py",
+      "source_location": "L11",
+      "_origin": "ast"
+    },
+    {
+      "id": "scraper",
+      "label": "scraper.py",
+      "file_type": "code",
+      "source_file": "scraper.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "scraper_extract_package_data",
+      "label": "extract_package_data()",
+      "file_type": "code",
+      "source_file": "scraper.py",
+      "source_location": "L7",
+      "_origin": "ast"
+    },
+    {
+      "id": "scraper_py_any",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast"
+    },
+    {
+      "id": "scraper_rationale_1",
+      "label": "Extract structured data from Yatradham HTML pages.",
+      "file_type": "rationale",
+      "source_file": "scraper.py",
+      "source_location": "L1",
+      "_origin": "ast"
+    },
+    {
+      "id": "scraper_rationale_8",
+      "label": "Extract basic package metadata and raw text for LLM processing.",
+      "file_type": "rationale",
+      "source_file": "scraper.py",
+      "source_location": "L8",
+      "_origin": "ast"
+    }
+  ],
+  "edges": [
+    {
+      "source": "agents_content_agent",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent",
+      "target": "re",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent",
+      "target": "llm_client",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent",
+      "target": "agents_content_agent_extract_json_from_response",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent",
+      "target": "agents_content_agent_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent_run",
+      "target": "agents_content_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent_run",
+      "target": "llm_client_llmclient",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent_run",
+      "target": "agents_content_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent_run",
+      "target": "agents_content_agent_extract_json_from_response",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L137",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent_rationale_1",
+      "target": "agents_content_agent",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent_rationale_83",
+      "target": "agents_content_agent_extract_json_from_response",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent",
+      "target": "re",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent",
+      "target": "llm_client",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent",
+      "target": "agents_content_creator_agent_parse_markdown_sections",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L128",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent",
+      "target": "agents_content_creator_agent_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent_run",
+      "target": "llm_client_llmclient",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent_run",
+      "target": "agents_content_creator_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent_run",
+      "target": "agents_content_creator_agent_parse_markdown_sections",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L195",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent_rationale_1",
+      "target": "agents_content_creator_agent",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent_rationale_129",
+      "target": "agents_content_creator_agent_parse_markdown_sections",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L129",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent_rationale_159",
+      "target": "agents_content_creator_agent_run",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent",
+      "target": "llm_client",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent",
+      "target": "agents_keyword_agent_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent_run",
+      "target": "agents_keyword_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent_run",
+      "target": "llm_client_llmclient",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent_run",
+      "target": "agents_keyword_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent_rationale_1",
+      "target": "agents_keyword_agent",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent",
+      "target": "re",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent",
+      "target": "llm_client",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent",
+      "target": "agents_meta_agent_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent_run",
+      "target": "agents_meta_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent_run",
+      "target": "llm_client_llmclient",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent_run",
+      "target": "agents_meta_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent_rationale_1",
+      "target": "agents_meta_agent",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "re",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "llm_client",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "agents_qa_agent_flesch_estimate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "agents_qa_agent_check_sections",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_check_sections",
+      "target": "agents_qa_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "agents_qa_agent_check_banned",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "agents_qa_agent_check_sentences",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L64",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "agents_qa_agent_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_run",
+      "target": "agents_qa_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_run",
+      "target": "llm_client_llmclient",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_run",
+      "target": "agents_qa_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_run",
+      "target": "agents_qa_agent_check_sections",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L73",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_run",
+      "target": "agents_qa_agent_check_banned",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_run",
+      "target": "agents_qa_agent_check_sentences",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_run",
+      "target": "agents_qa_agent_flesch_estimate",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L84",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent_rationale_1",
+      "target": "agents_qa_agent",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent",
+      "target": "llm_client",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent",
+      "target": "agents_title_agent_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent_run",
+      "target": "agents_title_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent_run",
+      "target": "llm_client_llmclient",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent_run",
+      "target": "agents_title_agent_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent_rationale_1",
+      "target": "agents_title_agent",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "sqlite3",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "os",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "models",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_get_conn",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_init_db",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_sections_to_dict",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_sections_to_dict",
+      "target": "models_sectionedcontent",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_dict_to_sections",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_dict_to_sections",
+      "target": "models_sectionedcontent",
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_save_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_save_output",
+      "target": "models_seooutput",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_update_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_update_output",
+      "target": "models_seooutput",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L82",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_get_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L118",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_get_output",
+      "target": "models_seooutput",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L118",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_list_outputs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L127",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_list_outputs",
+      "target": "models_seooutput",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L127",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_bulk_update_status",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L143",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_delete_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L155",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_clear_all_outputs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L164",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_get_stats",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L174",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_get_stats",
+      "target": "database_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L174",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "database_row_to_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L191",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_row_to_output",
+      "target": "row",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L191",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_row_to_output",
+      "target": "models_seooutput",
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L191",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_init_db",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_dict_to_sections",
+      "target": "models_sectionedcontent",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_save_output",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_save_output",
+      "target": "database_sections_to_dict",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_update_output",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_update_output",
+      "target": "database_sections_to_dict",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L104",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_get_output",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L119",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_get_output",
+      "target": "database_row_to_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L124",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_list_outputs",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L128",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_list_outputs",
+      "target": "database_row_to_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L140",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_bulk_update_status",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L146",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_delete_output",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L156",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_clear_all_outputs",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L165",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_get_stats",
+      "target": "database_get_conn",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L175",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_row_to_output",
+      "target": "models_seooutput",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L192",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_row_to_output",
+      "target": "database_dict_to_sections",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L198",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_rationale_1",
+      "target": "database",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_browser_test",
+      "target": "asyncio",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_browser_test.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_browser_test",
+      "target": "os",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_browser_test.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_browser_test",
+      "target": "sys",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_browser_test.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_browser_test",
+      "target": "playwright_async_api",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_browser_test.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_browser_test",
+      "target": "e2e_browser_test_run",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_browser_test.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_test",
+      "target": "sys",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_test.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_test",
+      "target": "os",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_test.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_test",
+      "target": "time",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_test.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_test",
+      "target": "fastapi_testclient",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_test.py",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "e2e_test",
+      "target": "main",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "e2e_test.py",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "live_qa",
+      "target": "asyncio",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "live_qa.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "live_qa",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "live_qa.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "live_qa",
+      "target": "playwright_async_api",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "live_qa.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "live_qa",
+      "target": "live_qa_run_live_qa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "live_qa.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client",
+      "target": "os",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client",
+      "target": "time",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client",
+      "target": "openai",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client",
+      "target": "logging",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client",
+      "target": "llm_client_llmclient",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client_llmclient",
+      "target": "llm_client_llmclient_init",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client_llmclient",
+      "target": "llm_client_llmclient_wait_for_rate_limit",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client_llmclient",
+      "target": "llm_client_llmclient_chat_completion",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client_llmclient",
+      "target": "llm_client_llmclient_mock_response",
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client_llmclient_chat_completion",
+      "target": "llm_client_llmclient_mock_response",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L50",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client_llmclient_chat_completion",
+      "target": "llm_client_llmclient_wait_for_rate_limit",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client_rationale_1",
+      "target": "llm_client",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "llm_client_rationale_97",
+      "target": "llm_client_llmclient_mock_response",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "llm_client.py",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "os",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "csv",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "io",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "datetime",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "contextlib",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "requests",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "concurrent_futures",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "fastapi",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "fastapi_responses",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "fastapi_staticfiles",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "pydantic",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "dotenv",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "models",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "llm_client",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "pipeline",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "scraper",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "agents",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_urlrequest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_urlrequest",
+      "target": "main_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L35",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_batchurlrequest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batchurlrequest",
+      "target": "main_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_lifespan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_lifespan",
+      "target": "fastapi",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_root",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "logging",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L61",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_scrape_and_process",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_scrape_and_process",
+      "target": "main_urlrequest",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L67",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_process_batch_background",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L110",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_batch_urls",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batch_urls",
+      "target": "main_batchurlrequest",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batch_urls",
+      "target": "backgroundtasks",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_process_single",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L171",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_process_single",
+      "target": "models_packageinput",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L171",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_batch_process",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L182",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batch_process",
+      "target": "models_batchrequest",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L182",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_get_outputs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L197",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_get_single_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L204",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_update_single_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L212",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_update_single_output",
+      "target": "main_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L212",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_bulk_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L235",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_bulk_action",
+      "target": "models_bulkactionrequest",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L235",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_delete_single_output",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L245",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_clear_cache",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L253",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_contentgeneraterequest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L260",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_contentgeneraterequest",
+      "target": "main_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L260",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_generate_content",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L271",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_generate_content",
+      "target": "main_contentgeneraterequest",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L271",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_stats",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L300",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "main_export_csv",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L305",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "uvicorn",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L393",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_scrape_and_process",
+      "target": "models_packageinput",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batch_urls",
+      "target": "main_process_batch_background",
+      "relation": "indirect_call",
+      "context": "argument",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_1",
+      "target": "main",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_68",
+      "target": "main_scrape_and_process",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_152",
+      "target": "main_batch_urls",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L152",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_172",
+      "target": "main_process_single",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L172",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_183",
+      "target": "main_batch_process",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L183",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_198",
+      "target": "main_get_outputs",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L198",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_236",
+      "target": "main_bulk_action",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L236",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_254",
+      "target": "main_clear_cache",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L254",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_272",
+      "target": "main_generate_content",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L272",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_rationale_306",
+      "target": "main_export_csv",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L306",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "pydantic",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "datetime",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_packageinput",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_packageinput",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_quickfacts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_quickfacts",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_programsession",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_programsession",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L29",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_programhighlights",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_programhighlights",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_itineraryday",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_itineraryday",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L41",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_pricingrow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_pricingrow",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_nearbylocation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_nearbylocation",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_faqitem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_faqitem",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_sectionedcontent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_sectionedcontent",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_seooutput",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L93",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_seooutput",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L93",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_batchrequest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_batchrequest",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models",
+      "target": "models_bulkactionrequest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_bulkactionrequest",
+      "target": "models_py_basemodel",
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L111",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "models_rationale_1",
+      "target": "models",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "datetime",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "models",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "llm_client",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "agents",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "pipeline_process_package",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "models_packageinput",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "llm_client_llmclient",
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "models_seooutput",
+      "relation": "references",
+      "context": "return_type",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "models_seooutput",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_rationale_1",
+      "target": "pipeline",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_rationale_11",
+      "target": "pipeline_process_package",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "scraper",
+      "target": "re",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scraper.py",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "scraper",
+      "target": "typing",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scraper.py",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "scraper",
+      "target": "bs4",
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "scraper.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "scraper",
+      "target": "scraper_extract_package_data",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scraper.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "scraper_extract_package_data",
+      "target": "scraper_py_any",
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "scraper.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "scraper_rationale_1",
+      "target": "scraper",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "scraper.py",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "scraper_rationale_8",
+      "target": "scraper_extract_package_data",
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "scraper.py",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_agent",
+      "target": "llm_client_llmclient",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_content_creator_agent",
+      "target": "llm_client_llmclient",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_keyword_agent",
+      "target": "llm_client_llmclient",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_meta_agent",
+      "target": "llm_client_llmclient",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_qa_agent",
+      "target": "llm_client_llmclient",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/qa_agent.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "agents_title_agent",
+      "target": "llm_client_llmclient",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "models_seooutput",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "models_sectionedcontent",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database",
+      "target": "models_packageinput",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "models_packageinput",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "models_seooutput",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "models_batchrequest",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "models_bulkactionrequest",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_init_db",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_save_output",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_get_output",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_list_outputs",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_update_output",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_bulk_update_status",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_delete_output",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_clear_all_outputs",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "database_get_stats",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L22",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "llm_client_llmclient",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "pipeline_process_package",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "scraper_extract_package_data",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "models_sectionedcontent",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L226",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "models_seooutput",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "models_packageinput",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "models_sectionedcontent",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "llm_client_llmclient",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main",
+      "target": "agents_content_creator_agent",
+      "relation": "imports_from",
+      "context": "submodule_import",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "agents_keyword_agent",
+      "relation": "imports_from",
+      "context": "submodule_import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "agents_title_agent",
+      "relation": "imports_from",
+      "context": "submodule_import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "agents_meta_agent",
+      "relation": "imports_from",
+      "context": "submodule_import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "agents_content_agent",
+      "relation": "imports_from",
+      "context": "submodule_import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline",
+      "target": "agents_qa_agent",
+      "relation": "imports_from",
+      "context": "submodule_import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_dict_to_sections",
+      "target": "models_sectionedcontent",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_row_to_output",
+      "target": "models_seooutput",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L192",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "database_row_to_output",
+      "target": "models_packageinput",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L194",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_process_batch_background",
+      "target": "scraper_extract_package_data",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L124",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_process_batch_background",
+      "target": "models_packageinput",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L125",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_process_batch_background",
+      "target": "pipeline_process_package",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L138",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_process_batch_background",
+      "target": "database_save_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L139",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "models_sectionedcontent",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "models_seooutput",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L36",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_urlrequest",
+      "target": "models_packageinput",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batchurlrequest",
+      "target": "models_packageinput",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_contentgeneraterequest",
+      "target": "models_packageinput",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_urlrequest",
+      "target": "models_seooutput",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batchurlrequest",
+      "target": "models_seooutput",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_contentgeneraterequest",
+      "target": "models_seooutput",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_urlrequest",
+      "target": "models_batchrequest",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batchurlrequest",
+      "target": "models_batchrequest",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_contentgeneraterequest",
+      "target": "models_batchrequest",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_urlrequest",
+      "target": "models_bulkactionrequest",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batchurlrequest",
+      "target": "models_bulkactionrequest",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_contentgeneraterequest",
+      "target": "models_bulkactionrequest",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L21",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_urlrequest",
+      "target": "llm_client_llmclient",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L23",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batchurlrequest",
+      "target": "llm_client_llmclient",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L23",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_contentgeneraterequest",
+      "target": "llm_client_llmclient",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L23",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_urlrequest",
+      "target": "models_sectionedcontent",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L226",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batchurlrequest",
+      "target": "models_sectionedcontent",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L226",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_contentgeneraterequest",
+      "target": "models_sectionedcontent",
+      "relation": "uses",
+      "confidence": "INFERRED",
+      "source_file": "main.py",
+      "source_location": "L226",
+      "weight": 0.8,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_scrape_and_process",
+      "target": "scraper_extract_package_data",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_scrape_and_process",
+      "target": "pipeline_process_package",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_scrape_and_process",
+      "target": "database_save_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L93",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_process_single",
+      "target": "pipeline_process_package",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L174",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_process_single",
+      "target": "database_save_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L175",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batch_process",
+      "target": "pipeline_process_package",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L188",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_batch_process",
+      "target": "database_save_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L189",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_get_outputs",
+      "target": "database_list_outputs",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L199",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_get_single_output",
+      "target": "database_get_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L205",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_update_single_output",
+      "target": "database_get_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L213",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_update_single_output",
+      "target": "models_sectionedcontent",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L227",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_update_single_output",
+      "target": "database_update_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L230",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_bulk_action",
+      "target": "database_bulk_update_status",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L240",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_delete_single_output",
+      "target": "database_delete_output",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L246",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_clear_cache",
+      "target": "database_clear_all_outputs",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L255",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_stats",
+      "target": "database_get_stats",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L301",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_export_csv",
+      "target": "database_list_outputs",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L307",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "main_generate_content",
+      "target": "agents_content_creator_agent_run",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "main.py",
+      "source_location": "L282",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "agents_keyword_agent_run",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pipeline.py",
+      "source_location": "L15",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "agents_title_agent_run",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pipeline.py",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "agents_meta_agent_run",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pipeline.py",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "agents_content_agent_run",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pipeline.py",
+      "source_location": "L27",
+      "weight": 1.0,
+      "_origin": "ast"
+    },
+    {
+      "source": "pipeline_process_package",
+      "target": "agents_qa_agent_run",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "pipeline.py",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

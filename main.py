@@ -43,6 +43,13 @@ class BatchURLRequest(BaseModel):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print(f"Server starting | DRY_RUN={client.dry_run}")
+    # Run graphify on startup to keep codebase graph synchronized
+    try:
+        import subprocess
+        subprocess.run(["graphify", "update", "."], capture_output=True, text=True, timeout=15)
+        print("Graphify knowledge graph synchronized on startup.")
+    except Exception as e:
+        print(f"Graphify startup sync skipped: {e}")
     yield
     print("Server shutting down")
 

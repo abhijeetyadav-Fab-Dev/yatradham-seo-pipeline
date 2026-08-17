@@ -1,0 +1,104 @@
+{
+  "nodes": [
+    {
+      "id": "browser_captures_01_dashboard_yatradhamseopipeline",
+      "label": "Yatradham SEO Pipeline",
+      "file_type": "image",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_01_dashboard_inputandscrape",
+      "label": "Input & Scrape",
+      "file_type": "image",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_01_dashboard_seooutputsreview",
+      "label": "SEO Outputs Review",
+      "file_type": "image",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_01_dashboard_aicontentstudio",
+      "label": "AI Content Studio",
+      "file_type": "image",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "browser_captures_01_dashboard_scrapeandprocess",
+      "label": "Scrape & Process",
+      "file_type": "image",
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "browser_captures_01_dashboard_yatradhamseopipeline",
+      "target": "browser_captures_01_dashboard_inputandscrape",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "browser_captures_01_dashboard_yatradhamseopipeline",
+      "target": "browser_captures_01_dashboard_seooutputsreview",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "browser_captures_01_dashboard_yatradhamseopipeline",
+      "target": "browser_captures_01_dashboard_aicontentstudio",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "browser_captures_01_dashboard_inputandscrape",
+      "target": "browser_captures_01_dashboard_scrapeandprocess",
+      "relation": "conceptually_related_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "C:\\Users\\ydtva\\yatradham-seo-pipeline (16)\\yatradham-seo-pipeline\\browser_captures\\01_dashboard.png",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
