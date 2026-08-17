@@ -220,10 +220,10 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <select id="studioProviderSelect" class="rounded-md border-slate-300 border px-3 py-1.5 text-xs font-semibold focus:border-violet-500 focus:ring-violet-500 bg-white shadow-sm" onchange="toggleProviderKeyInput()">
-                                <option value="auto">⚡ Auto Engine (Fast Multi-Fallback)</option>
-                                <option value="groq">🚀 Groq (Free Llama 3.3 70B - ~300 tok/s)</option>
-                                <option value="gemini">✨ Gemini 2.5 Flash (Free Google AI Studio)</option>
-                                <option value="openrouter">🌐 OpenRouter (Free Tier Models)</option>
+                                <option value="auto">⚡ Auto Engine (Groq Llama 3.3 ➔ Gemini 2.0 ➔ Fallbacks)</option>
+                                <option value="groq">🚀 Groq: Llama 3.3 70B & Llama 3.1 8B (~300+ tok/s - Recommended)</option>
+                                <option value="gemini">✨ Google Gemini 2.0 Flash (Free Google AI Studio)</option>
+                                <option value="openrouter">🌐 OpenRouter (Last Fallback - 50 req/day limit)</option>
                             </select>
                             <button onclick="toggleKeyModal()" class="px-2.5 py-1.5 text-xs font-medium rounded text-slate-600 bg-white border border-slate-300 hover:bg-slate-50 transition" title="Add Custom Provider Key">🔑 Keys</button>
                         </div>
