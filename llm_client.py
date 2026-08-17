@@ -18,7 +18,12 @@ OPENROUTER_FALLBACK_MODELS = [
 GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile"
 GROQ_FALLBACK_MODELS = [
     "llama-3.3-70b-versatile",
+    "meta-llama/llama-4-scout-17b-16e-instruct",
+    "meta-llama/llama-4-maverick-17b-128e-instruct",
     "llama-3.1-8b-instant",
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b",
+    "qwen/qwen3-32b",
     "gemma2-9b-it",
 ]
 
@@ -26,6 +31,7 @@ GEMINI_DEFAULT_MODEL = "gemini-2.0-flash"
 GEMINI_FALLBACK_MODELS = [
     "gemini-2.0-flash",
     "gemini-1.5-flash",
+    "gemini-2.5-flash",
     "gemini-1.5-pro",
 ]
 
@@ -112,6 +118,24 @@ class LLMClient:
             if model: self.openrouter_model = model
             self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=25.0)
 
+    def _discover_active_models(self, client_inst: OpenAI, provider: str) -> List[str]:
+        """Dynamically query the provider's live models list to avoid model_not_found errors."""
+        try:
+            res = client_inst.models.list()
+            model_ids = [m.id for m in res.data if not any(x in m.id for x in ["whisper", "embedding", "guard", "vision", "audio", "tts", "moderation"])]
+            if model_ids:
+                return model_ids
+        except Exception:
+            pass
+        
+        if provider == "groq":
+            return GROQ_FALLBACK_MODELS
+        elif provider == "gemini":
+            return GEMINI_FALLBACK_MODELS
+        elif provider == "openrouter":
+            return OPENROUTER_FALLBACK_MODELS
+        return []
+
     def test_provider(self, provider: str, api_key: str, model: Optional[str] = None) -> Dict[str, Any]:
         """Test a provider API key with a fast 1-word prompt to verify connection."""
         clean_key = (api_key or "").strip().strip("'\"")
@@ -121,16 +145,17 @@ class LLMClient:
         t0 = time.time()
         try:
             if provider == "groq":
-                test_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=10.0)
-                test_model = model or self.groq_model
+                test_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=12.0)
             elif provider == "gemini":
-                test_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=10.0)
-                test_model = model or self.gemini_model
+                test_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=12.0)
             elif provider == "openrouter":
-                test_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=10.0)
-                test_model = model or self.openrouter_model
+                test_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=12.0)
             else:
                 return {"success": False, "error": f"Unknown provider: {provider}"}
+            
+            # Discover live supported models from API
+            available_models = self._discover_active_models(test_client, provider)
+            test_model = model or (available_models[0] if available_models else (self.groq_model if provider == "groq" else self.gemini_model))
             
             resp = test_client.chat.completions.create(
                 model=test_model,
@@ -174,13 +199,23 @@ class LLMClient:
         # Build list of available clients/providers to attempt in priority order
         providers = []
         if self.groq_client:
-            primary_groq = model if (model and "llama" in model) else self.groq_model
-            for gm in [primary_groq] + [m for m in GROQ_FALLBACK_MODELS if m != primary_groq]:
+            live_groq = self._discover_active_models(self.groq_client, "groq")
+            models_to_try = [model] if model else []
+            for gm in live_groq + GROQ_FALLBACK_MODELS:
+                if gm and gm not in models_to_try:
+                    models_to_try.append(gm)
+            for gm in models_to_try:
                 providers.append(("groq", self.groq_client, gm))
+                
         if self.gemini_client:
-            primary_gem = model if (model and "gemini" in model) else self.gemini_model
-            for gm in [primary_gem] + [m for m in GEMINI_FALLBACK_MODELS if m != primary_gem]:
+            live_gem = self._discover_active_models(self.gemini_client, "gemini")
+            models_to_try = [model] if model else []
+            for gm in live_gem + GEMINI_FALLBACK_MODELS:
+                if gm and gm not in models_to_try:
+                    models_to_try.append(gm)
+            for gm in models_to_try:
                 providers.append(("gemini", self.gemini_client, gm))
+                
         if self.openrouter_client:
             primary_or = model or self.openrouter_model
             for or_model in [primary_or] + [m for m in OPENROUTER_FALLBACK_MODELS if m != primary_or]:
