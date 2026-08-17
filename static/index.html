@@ -213,9 +213,29 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- LEFT: Input Form -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex gap-2">
-                        <button class="studio-mode-btn active px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showStudioMode('quick')">⚡ Quick Prompt</button>
-                        <button class="studio-mode-btn px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showStudioMode('structured')">📋 Structured Form</button>
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex gap-2">
+                            <button class="studio-mode-btn active px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showStudioMode('quick')">⚡ Quick Prompt</button>
+                            <button class="studio-mode-btn px-4 py-2 text-sm font-medium rounded-md text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 transition" onclick="showStudioMode('structured')">📋 Structured Form</button>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select id="studioProviderSelect" class="rounded-md border-slate-300 border px-3 py-1.5 text-xs font-semibold focus:border-violet-500 focus:ring-violet-500 bg-white shadow-sm" onchange="toggleProviderKeyInput()">
+                                <option value="auto">⚡ Auto Engine (Fast Multi-Fallback)</option>
+                                <option value="groq">🚀 Groq (Free Llama 3.3 70B - ~300 tok/s)</option>
+                                <option value="gemini">✨ Gemini 2.5 Flash (Free Google AI Studio)</option>
+                                <option value="openrouter">🌐 OpenRouter (Free Tier Models)</option>
+                            </select>
+                            <button onclick="toggleKeyModal()" class="px-2.5 py-1.5 text-xs font-medium rounded text-slate-600 bg-white border border-slate-300 hover:bg-slate-50 transition" title="Add Custom Provider Key">🔑 Keys</button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Key Input Bar (Optional) -->
+                    <div id="providerKeyBanner" class="bg-violet-50 border-b border-violet-100 px-6 py-2.5 flex items-center justify-between text-xs text-violet-900" style="display:none;">
+                        <span id="providerKeyLabel">Enter API Key:</span>
+                        <div class="flex gap-2 items-center">
+                            <input type="password" id="customProviderKey" class="rounded border-violet-200 px-2 py-1 text-xs w-48 font-mono" placeholder="Paste key (stored locally)">
+                            <button onclick="saveProviderKey()" class="px-2.5 py-1 rounded bg-violet-600 text-white font-medium hover:bg-violet-700">Save</button>
+                        </div>
                     </div>
                     
                     <div class="p-6">
@@ -641,6 +661,43 @@
         // ===== AI Content Studio Functions =====
         let lastGeneratedContent = null;
 
+        function getStoredKeys() {
+            try {
+                return JSON.parse(localStorage.getItem('yatradham_ai_keys') || '{}');
+            } catch(e) { return {}; }
+        }
+
+        function toggleProviderKeyInput() {
+            const provider = document.getElementById('studioProviderSelect').value;
+            const banner = document.getElementById('providerKeyBanner');
+            const keys = getStoredKeys();
+            if (provider !== 'auto') {
+                banner.style.display = 'flex';
+                document.getElementById('providerKeyLabel').innerText = `API Key for ${provider.toUpperCase()}:`;
+                document.getElementById('customProviderKey').value = keys[provider] || '';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        function toggleKeyModal() {
+            const banner = document.getElementById('providerKeyBanner');
+            banner.style.display = banner.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        function saveProviderKey() {
+            const provider = document.getElementById('studioProviderSelect').value;
+            const key = document.getElementById('customProviderKey').value.trim();
+            const keys = getStoredKeys();
+            if (provider !== 'auto') {
+                keys[provider] = key;
+                localStorage.setItem('yatradham_ai_keys', JSON.stringify(keys));
+                alert(`Saved API key for ${provider.toUpperCase()} locally!`);
+            } else {
+                alert('Please select a specific provider first (Groq, Gemini, or OpenRouter).');
+            }
+        }
+
         function showStudioMode(mode) {
             document.getElementById('quickModePanel').style.display = mode === 'quick' ? 'block' : 'none';
             document.getElementById('structuredModePanel').style.display = mode === 'structured' ? 'block' : 'none';
@@ -672,18 +729,28 @@
             const prompt = document.getElementById('quickPrompt').value.trim();
             if (!prompt) { alert('Please enter a prompt'); return; }
 
+            const provider = document.getElementById('studioProviderSelect').value;
+            const keys = getStoredKeys();
+            const apiKey = provider !== 'auto' ? keys[provider] : null;
+
             setGenerateLoading('btnQuickGenerate', true);
             showPreviewLoading();
 
             try {
+                const payload = {
+                    content_type: contentType,
+                    topic: prompt,
+                    additional_instructions: prompt
+                };
+                if (provider !== 'auto') {
+                    payload.provider = provider;
+                    if (apiKey) payload.api_key = apiKey;
+                }
+
                 const res = await fetch(API + '/generate-content', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        content_type: contentType,
-                        topic: prompt,
-                        additional_instructions: prompt
-                    })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -704,22 +771,32 @@
             const topic = document.getElementById('structTopic').value.trim();
             if (!topic) { alert('Please enter a topic'); return; }
 
+            const provider = document.getElementById('studioProviderSelect').value;
+            const keys = getStoredKeys();
+            const apiKey = provider !== 'auto' ? keys[provider] : null;
+
             setGenerateLoading('btnStructGenerate', true);
             showPreviewLoading();
 
             try {
+                const payload = {
+                    content_type: contentType,
+                    topic: topic,
+                    target_keyword: document.getElementById('structKeyword').value.trim() || null,
+                    audience: document.getElementById('structAudience').value.trim() || null,
+                    tone: document.getElementById('structTone').value || null,
+                    word_count: parseInt(document.getElementById('structWordCount').value) || null,
+                    additional_instructions: document.getElementById('structInstructions').value.trim() || null
+                };
+                if (provider !== 'auto') {
+                    payload.provider = provider;
+                    if (apiKey) payload.api_key = apiKey;
+                }
+
                 const res = await fetch(API + '/generate-content', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        content_type: contentType,
-                        topic: topic,
-                        target_keyword: document.getElementById('structKeyword').value.trim() || null,
-                        audience: document.getElementById('structAudience').value.trim() || null,
-                        tone: document.getElementById('structTone').value || null,
-                        word_count: parseInt(document.getElementById('structWordCount').value) || null,
-                        additional_instructions: document.getElementById('structInstructions').value.trim() || null
-                    })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (data.success) {

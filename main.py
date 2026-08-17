@@ -257,6 +257,24 @@ def clear_cache():
     return {"success": True, "message": f"Cleared {count} items from cache.", "deleted_count": count}
 
 
+class ProviderSettingsRequest(BaseModel):
+    provider: str  # groq, gemini, openrouter
+    api_key: str
+    model: Optional[str] = None
+
+
+@app.post("/settings/provider")
+def update_provider_settings(request: ProviderSettingsRequest):
+    """Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime."""
+    valid_providers = ["groq", "gemini", "openrouter"]
+    if request.provider not in valid_providers:
+        raise HTTPException(status_code=400, detail=f"Provider must be one of: {', '.join(valid_providers)}")
+    
+    client.set_custom_keys(request.provider, request.api_key, request.model)
+    logger.info(f"Updated settings for provider: {request.provider}")
+    return {"success": True, "message": f"Successfully updated {request.provider} configuration."}
+
+
 class ContentGenerateRequest(BaseModel):
     content_type: str  # blog_post, landing_page, destination_guide, social_media
     topic: str
@@ -265,6 +283,9 @@ class ContentGenerateRequest(BaseModel):
     tone: Optional[str] = None
     word_count: Optional[int] = None
     additional_instructions: Optional[str] = None
+    provider: Optional[str] = None
+    api_key: Optional[str] = None
+    model: Optional[str] = None
 
 
 @app.post("/generate-content")
@@ -277,6 +298,10 @@ def generate_content(request: ContentGenerateRequest):
     if not request.topic or len(request.topic.strip()) < 3:
         raise HTTPException(status_code=400, detail="Topic must be at least 3 characters")
     
+    # If request contains a direct provider key, configure on client
+    if request.provider and request.api_key:
+        client.set_custom_keys(request.provider, request.api_key, request.model)
+
     try:
         logger.info(f"Generating {request.content_type} content for topic: {request.topic}")
         result = content_creator_agent.run(

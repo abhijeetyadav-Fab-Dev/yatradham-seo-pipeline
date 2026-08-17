@@ -5,15 +5,18 @@ import json
 from typing import Optional, Dict, Any, List
 from openai import OpenAI
 
-DEFAULT_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
-FALLBACK_MODELS = [
+DEFAULT_OPENROUTER_MODEL = "meta-llama/llama-3.3-70b-instruct:free"
+OPENROUTER_FALLBACK_MODELS = [
     "meta-llama/llama-3.3-70b-instruct:free",
     "google/gemma-3-27b-it:free",
     "mistralai/mistral-small-3.1-24b-instruct:free",
-    "nvidia/nemotron-3-ultra-550b-a55b:free",
-    "nvidia/nemotron-nano-9b-v2:free",
+    "nvidia/nemotron-3-super-120b-a12b:free",
     "openai/gpt-oss-20b:free",
+    "nvidia/nemotron-nano-9b-v2:free",
 ]
+
+GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile"
+GEMINI_DEFAULT_MODEL = "gemini-1.5-flash"
 
 
 import logging
@@ -22,15 +25,68 @@ logger = logging.getLogger("llm_client")
 
 class LLMClient:
     def __init__(self):
-        self.api_key = os.getenv("OPENROUTER_API_KEY", "")
-        self.base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
-        self.model = os.getenv("OPENROUTER_MODEL", DEFAULT_MODEL)
+        # OpenRouter config
+        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY", "")
+        self.openrouter_base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+        self.openrouter_model = os.getenv("OPENROUTER_MODEL", DEFAULT_OPENROUTER_MODEL)
+        
+        # Groq config (Fast free tier: ~300+ tok/s)
+        self.groq_api_key = os.getenv("GROQ_API_KEY", "")
+        self.groq_model = os.getenv("GROQ_MODEL", GROQ_DEFAULT_MODEL)
+        
+        # Gemini config (Google AI Studio free tier: 15 RPM)
+        self.gemini_api_key = os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "")
+        self.gemini_model = os.getenv("GEMINI_MODEL", GEMINI_DEFAULT_MODEL)
+        
+        # Active provider preference (groq -> gemini -> openrouter)
+        self.provider = os.getenv("LLM_PROVIDER", "").lower()
         self.dry_run = os.getenv("DRY_RUN", "false").lower() == "true"
-        self.client: Optional[OpenAI] = None
-        if self.api_key and not self.dry_run:
-            self.client = OpenAI(base_url=self.base_url, api_key=self.api_key, timeout=30.0)
+        
+        self.openrouter_client: Optional[OpenAI] = None
+        self.groq_client: Optional[OpenAI] = None
+        self.gemini_client: Optional[OpenAI] = None
+        
+        self._init_clients()
         self.last_call_time = 0.0
-        self.min_interval = 2.0  # seconds between calls
+        self.min_interval = 1.0  # seconds between calls
+
+    def _init_clients(self):
+        if self.dry_run:
+            return
+        if self.openrouter_api_key:
+            self.openrouter_client = OpenAI(
+                base_url=self.openrouter_base_url,
+                api_key=self.openrouter_api_key,
+                timeout=25.0
+            )
+        if self.groq_api_key:
+            self.groq_client = OpenAI(
+                base_url="https://api.groq.com/openai/v1",
+                api_key=self.groq_api_key,
+                timeout=20.0
+            )
+        if self.gemini_api_key:
+            # Google AI Studio provides OpenAI-compatible endpoint
+            self.gemini_client = OpenAI(
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+                api_key=self.gemini_api_key,
+                timeout=25.0
+            )
+
+    def set_custom_keys(self, provider: str, api_key: str, model: Optional[str] = None):
+        """Allow setting keys dynamically from UI or runtime."""
+        if provider == "groq":
+            self.groq_api_key = api_key
+            if model: self.groq_model = model
+            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=api_key, timeout=20.0)
+        elif provider == "gemini":
+            self.gemini_api_key = api_key
+            if model: self.gemini_model = model
+            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=api_key, timeout=25.0)
+        elif provider == "openrouter":
+            self.openrouter_api_key = api_key
+            if model: self.openrouter_model = model
+            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=api_key, timeout=25.0)
 
     def _wait_for_rate_limit(self):
         elapsed = time.time() - self.last_call_time
@@ -45,60 +101,49 @@ class LLMClient:
         max_tokens: int = 4000,
         temperature: float = 0.7,
         response_format: Optional[Dict[str, str]] = None,
-        retries: int = 4,
+        retries: int = 3,
     ) -> str:
-        if self.dry_run or not self.client:
+        if self.dry_run:
             return self._mock_response(messages)
 
-        primary_model = model or self.model
-        models_to_try = [primary_model] + [m for m in FALLBACK_MODELS if m != primary_model]
-        attempt = 0
-        current_max_tokens = max_tokens
-        backoff_time = 1.5
+        # Build list of available clients/providers to attempt in priority order
+        providers = []
+        if self.groq_client:
+            providers.append(("groq", self.groq_client, model or self.groq_model))
+        if self.gemini_client:
+            providers.append(("gemini", self.gemini_client, model or self.gemini_model))
+        if self.openrouter_client:
+            primary_or = model or self.openrouter_model
+            for or_model in [primary_or] + [m for m in OPENROUTER_FALLBACK_MODELS if m != primary_or]:
+                providers.append(("openrouter", self.openrouter_client, or_model))
 
-        while attempt < retries:
+        if not providers:
+            # Fallback to mock if no keys are configured
+            return self._mock_response(messages)
+
+        for provider_name, client_inst, active_model in providers:
             self._wait_for_rate_limit()
-            active_model = models_to_try[attempt % len(models_to_try)]
             try:
                 kwargs = {
                     "model": active_model,
                     "messages": messages,
-                    "max_tokens": current_max_tokens,
+                    "max_tokens": max_tokens,
                     "temperature": temperature,
                     "timeout": 25.0,
                 }
-                if response_format:
+                if response_format and provider_name != "groq":
+                    # Groq supports json_object on specific models; safe pass
                     kwargs["response_format"] = response_format
 
-                resp = self.client.chat.completions.create(**kwargs)
+                resp = client_inst.chat.completions.create(**kwargs)
                 content = resp.choices[0].message.content or ""
                 if content.strip():
                     return content
-                logger.warning(f"Empty content received from {active_model}, retrying next model...")
-                attempt += 1
             except Exception as e:
-                err_str = str(e).lower()
-                logger.warning(f"LLM API Error on model {active_model} (attempt {attempt + 1}/{retries}): {err_str}")
-                
-                if "max_tokens" in err_str or "token" in err_str or "context" in err_str:
-                    current_max_tokens = max(500, current_max_tokens // 2)
-                    attempt += 1
-                    continue
-                if "rate limit" in err_str or "429" in err_str:
-                    time.sleep(backoff_time)
-                    backoff_time = min(backoff_time * 1.5, 6.0)
-                    attempt += 1
-                    continue
-                
-                attempt += 1
-                if attempt >= retries:
-                    logger.error(f"Failed LLM call across {retries} attempts and candidate models.")
-                    # Return safe mock response rather than crashing the pipeline
-                    return self._mock_response(messages)
-                
-                time.sleep(backoff_time)
-                backoff_time = min(backoff_time * 1.3, 5.0)
+                logger.warning(f"Provider {provider_name} ({active_model}) call failed: {e}. Trying next provider...")
+                continue
 
+        # If all providers fail, return safe mock
         return self._mock_response(messages)
 
     def _mock_response(self, messages: List[Dict[str, str]]) -> str:
