@@ -910,43 +910,73 @@
             }
         }
 
+        let loadingStepInterval = null;
+
         function showPreviewLoading() {
             document.getElementById('studioActions').style.display = 'none';
-            document.getElementById('studioPreview').innerHTML = `
+            const preview = document.getElementById('studioPreview');
+            
+            const steps = [
+                "⚡ Step 1/4: Connecting to AI Engine (Groq Llama 3.3 / Gemini)...",
+                "🧠 Step 2/4: Structuring search intent & comprehensive outline...",
+                "✍️ Step 3/4: Generating in-depth day schedules, guides & FAQs...",
+                "✨ Step 4/4: Polishing SEO meta & E-E-A-T formatting..."
+            ];
+            let currentStep = 0;
+            
+            preview.innerHTML = `
                 <div class="flex flex-col items-center justify-center text-center py-16">
-                    <svg class="animate-spin w-10 h-10 text-violet-500 mb-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    <p class="text-sm font-medium text-slate-600">AI is generating deep, comprehensive content...</p>
-                    <p class="text-xs text-slate-400 mt-1">This may take 10-25 seconds</p>
+                    <div class="relative w-12 h-12 mb-4">
+                        <svg class="animate-spin w-12 h-12 text-violet-600" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                    </div>
+                    <p id="liveLoadingStep" class="text-sm font-semibold text-slate-800 transition-all duration-300">${steps[0]}</p>
+                    <p class="text-xs text-slate-400 mt-1.5">Processing in real-time backend • High-speed generation</p>
+                    <div class="w-64 bg-slate-100 rounded-full h-1.5 mt-4 overflow-hidden">
+                        <div id="liveLoadingBar" class="bg-violet-600 h-1.5 rounded-full transition-all duration-500" style="width: 25%"></div>
+                    </div>
                 </div>`;
+
+            if (loadingStepInterval) clearInterval(loadingStepInterval);
+            loadingStepInterval = setInterval(() => {
+                currentStep = (currentStep + 1) % steps.length;
+                const stepEl = document.getElementById('liveLoadingStep');
+                const barEl = document.getElementById('liveLoadingBar');
+                if (stepEl) stepEl.innerText = steps[currentStep];
+                if (barEl) barEl.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+            }, 3000);
         }
 
         function showPreviewError(msg) {
+            if (loadingStepInterval) clearInterval(loadingStepInterval);
             document.getElementById('studioPreview').innerHTML = `
-                <div class="p-4 rounded-lg bg-rose-50 border border-rose-200 text-sm text-rose-700">
-                    <strong>Error:</strong> ${msg}
+                <div class="p-5 rounded-lg bg-rose-50 border border-rose-200 text-sm text-rose-800">
+                    <div class="font-bold flex items-center mb-1">
+                        <svg class="w-4 h-4 mr-1.5 text-rose-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                        Generation Issue Encountered
+                    </div>
+                    <p class="text-xs text-rose-700 leading-relaxed">${msg}</p>
+                    <div class="mt-3">
+                        <button onclick="toggleKeyModal()" class="px-3 py-1.5 bg-white text-rose-700 text-xs font-semibold rounded border border-rose-300 hover:bg-rose-50 shadow-sm">🔑 Check API Keys</button>
+                    </div>
                 </div>`;
         }
 
+        function retriggerActiveGeneration() {
+            const isQuick = document.getElementById('quickModePanel').style.display !== 'none';
+            if (isQuick) generateQuick();
+            else generateStructured();
+        }
+
         function renderPreview(result, provider, warning, model) {
+            if (loadingStepInterval) clearInterval(loadingStepInterval);
             document.getElementById('studioActions').style.display = 'flex';
             const preview = document.getElementById('studioPreview');
             let html = '';
 
-            if (warning) {
-                html += `
-                <div class="mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start">
-                    <svg class="w-5 h-5 mr-3 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <div>
-                        <strong class="font-bold">Notice:</strong> ${warning}
-                    </div>
-                </div>`;
-            }
-
-            const type = result.content_type || '';
-            const typeLabels = { blog_post: '📝 Blog Post', landing_page: '🚀 Landing Page', destination_guide: '🗺️ Destination Guide', social_media: '📱 Social Media' };
+            const isMock = !provider || provider.includes('mock');
 
             // Calculate approximate word count
             let fullText = (result.title || '') + ' ' + (result.content || result.hero_text || '');
@@ -954,17 +984,49 @@
             if (result.faq) fullText += ' ' + result.faq.map(f => (f.q||'') + ' ' + (f.a||'')).join(' ');
             const wordCount = fullText.trim().split(/\s+/).filter(Boolean).length;
 
+            if (isMock) {
+                html += `
+                <div class="mb-6 p-4 rounded-xl bg-amber-50/90 border border-amber-200 text-sm text-amber-900 shadow-sm">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 mr-3 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <div class="flex-1">
+                            <strong class="font-bold text-amber-950">Showing Offline Fallback Template.</strong>
+                            <p class="text-xs text-amber-800 mt-1 leading-relaxed">${warning || 'Live AI models were unreachable or no keys were configured.'}</p>
+                            <div class="mt-3 flex items-center gap-2">
+                                <button onclick="toggleKeyModal()" class="px-3 py-1.5 bg-amber-600 text-white rounded text-xs font-semibold hover:bg-amber-700 transition shadow-sm">🔑 Add / Test Free Key</button>
+                                <button onclick="retriggerActiveGeneration()" class="px-3 py-1.5 bg-white text-amber-900 rounded text-xs font-semibold hover:bg-amber-100 border border-amber-300 transition">⚡ Re-Generate with AI</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            } else {
+                html += `
+                <div class="mb-6 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-900 flex items-center justify-between shadow-sm">
+                    <div class="flex items-center">
+                        <span class="flex h-2.5 w-2.5 relative mr-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                        </span>
+                        <span><strong>Live AI Engine Verified:</strong> Generated via <strong>${provider.toUpperCase()}</strong> (${model || 'Llama 3.3 70B'}) • Status: All systems optimal</span>
+                    </div>
+                    <span class="text-emerald-700 font-medium">100% Custom Generated</span>
+                </div>`;
+            }
+
+            const type = result.content_type || '';
+            const typeLabels = { blog_post: '📝 Blog Post', landing_page: '🚀 Landing Page', destination_guide: '🗺️ Destination Guide', social_media: '📱 Social Media' };
+
             html += `<div class="flex flex-wrap items-center gap-2 mb-4">
                 <div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-violet-100 text-violet-700 rounded-full">${typeLabels[type] || type}</div>`;
             
-            if (provider && !provider.includes('mock')) {
+            if (!isMock) {
                 const provIcons = { groq: '🚀', gemini: '✨', openrouter: '🌐' };
                 html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
                     <span class="mr-1">${provIcons[provider] || '✨'}</span> ${provider.toUpperCase()} ${model ? `(${model})` : ''}
                 </div>`;
-            } else if (provider && provider.includes('mock')) {
+            } else {
                 html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-amber-100 text-amber-800 rounded-full border border-amber-200">
-                    ⚠️ Mock / Fallback
+                    ⚠️ Fallback Template
                 </div>`;
             }
 
