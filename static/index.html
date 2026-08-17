@@ -755,7 +755,7 @@
                 const data = await res.json();
                 if (data.success) {
                     lastGeneratedContent = data.result;
-                    renderPreview(data.result);
+                    renderPreview(data.result, data.provider, data.warning);
                 } else {
                     showPreviewError(data.detail || 'Generation failed');
                 }
@@ -801,7 +801,7 @@
                 const data = await res.json();
                 if (data.success) {
                     lastGeneratedContent = data.result;
-                    renderPreview(data.result);
+                    renderPreview(data.result, data.provider, data.warning);
                 } else {
                     showPreviewError(data.detail || 'Generation failed');
                 }
@@ -832,15 +832,34 @@
                 </div>`;
         }
 
-        function renderPreview(result) {
+        function renderPreview(result, provider, warning) {
             document.getElementById('studioActions').style.display = 'flex';
             const preview = document.getElementById('studioPreview');
             let html = '';
 
+            if (warning) {
+                html += `
+                <div class="mb-6 p-4 rounded-lg bg-amber-50 border border-amber-200 text-sm text-amber-800 flex items-start">
+                    <svg class="w-5 h-5 mr-3 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <div>
+                        <strong class="font-bold">Using Fallback Template.</strong> ${warning}
+                    </div>
+                </div>`;
+            }
+
             const type = result.content_type || '';
             const typeLabels = { blog_post: '📝 Blog Post', landing_page: '🚀 Landing Page', destination_guide: '🗺️ Destination Guide', social_media: '📱 Social Media' };
 
-            html += `<div class="mb-4 px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-violet-100 text-violet-700 rounded-full">${typeLabels[type] || type}</div>`;
+            html += `<div class="flex items-center gap-2 mb-4">
+                <div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-violet-100 text-violet-700 rounded-full">${typeLabels[type] || type}</div>`;
+            
+            if (provider) {
+                const provIcons = { groq: '🚀', gemini: '✨', openrouter: '🌐' };
+                html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-slate-100 text-slate-600 rounded-full border border-slate-200">
+                    <span class="mr-1">${provIcons[provider] || '🤖'}</span> ${provider.toUpperCase()}
+                </div>`;
+            }
+            html += `</div>`;
 
             if (result.title || result.headline) {
                 html += `<h1 class="text-xl font-bold text-slate-800 mb-2">${result.title || result.headline}</h1>`;
