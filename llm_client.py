@@ -230,13 +230,16 @@ class LLMClient:
         for provider_name, client_inst, active_model in providers:
             self._wait_for_rate_limit()
             try:
+                safe_temp = max(0.2, min(temperature, 0.65))
                 kwargs = {
                     "model": active_model,
                     "messages": messages,
                     "max_tokens": max_tokens,
-                    "temperature": temperature,
+                    "temperature": safe_temp,
                     "timeout": 35.0,
                 }
+                if provider_name in ["groq", "openrouter"]:
+                    kwargs["top_p"] = 0.95
                 if response_format and provider_name != "groq":
                     kwargs["response_format"] = response_format
 

@@ -146,6 +146,19 @@ def _parse_markdown_sections(text: str) -> Dict[str, str]:
     return sections
 
 
+def _sanitize_repetition(text: str) -> str:
+    """Strip LLM repetition loops (repeated single characters, phrases, or unicode loops)."""
+    if not text:
+        return ""
+    # Remove repeated single characters (e.g. 琪琪琪... or aaaaa...)
+    text = re.sub(r'(.)\1{4,}', r'\1', text)
+    # Remove repeated 2-5 character patterns (e.g. abcabcabc...)
+    text = re.sub(r'(.{2,6}?)\1{4,}', r'\1', text)
+    # Remove repeated word loops (e.g. "word word word word word")
+    text = re.sub(r'\b(\w+)(?:\s+\1\b){3,}', r'\1', text, flags=re.IGNORECASE)
+    return text.strip()
+
+
 def run(
     content_type: str,
     topic: str,
@@ -207,7 +220,7 @@ Follow all formatting rules and markdown heading conventions strictly."""
             {"role": "user", "content": user_msg},
         ],
         max_tokens=target_tokens,
-        temperature=0.7,
+        temperature=0.6,
     )
 
     # Clean markdown blocks if LLM still includes them
@@ -224,12 +237,12 @@ Follow all formatting rules and markdown heading conventions strictly."""
     result = {}
     
     if content_type in ["blog_post", "destination_guide"]:
-        result["title"] = sections.get("TITLE", topic)
-        result["meta_description"] = sections.get("META DESCRIPTION", "")
-        result["content"] = sections.get("CONTENT", content) # fallback to full content if parsing fails
+        result["title"] = _sanitize_repetition(sections.get("TITLE", topic))
+        result["meta_description"] = _sanitize_repetition(sections.get("META DESCRIPTION", ""))
+        result["content"] = _sanitize_repetition(sections.get("CONTENT", content))
         
         tags_str = sections.get("SUGGESTED TAGS", "")
-        result["suggested_tags"] = [t.strip() for t in tags_str.split(",")] if tags_str else []
+        result["suggested_tags"] = [_sanitize_repetition(t) for t in tags_str.split(",") if _sanitize_repetition(t)] if tags_str else []
         
         if content_type == "destination_guide":
             hl_str = sections.get("KEY HIGHLIGHTS", "")
