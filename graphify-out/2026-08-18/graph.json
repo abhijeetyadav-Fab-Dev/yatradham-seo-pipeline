@@ -420,7 +420,7 @@
       "label": "._mock_response()",
       "file_type": "code",
       "source_file": "llm_client.py",
-      "source_location": "L264",
+      "source_location": "L291",
       "_callable": true,
       "_origin": "ast",
       "id": "llm_client_llmclient_mock_response",
@@ -1098,9 +1098,9 @@
       "label": "Return a useful mock response when no LLM provider is available. For content\u2026",
       "file_type": "rationale",
       "source_file": "llm_client.py",
-      "source_location": "L265",
+      "source_location": "L292",
       "_origin": "ast",
-      "id": "llm_client_rationale_265",
+      "id": "llm_client_rationale_292",
       "community": 13,
       "community_name": "LLMClient",
       "norm_label": "return a useful mock response when no llm provider is available. for content..."
@@ -1674,7 +1674,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L234",
+      "source_location": "L248",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_content_creator_agent_run",
@@ -1686,7 +1686,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L240",
+      "source_location": "L254",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_content_creator_agent_run",
@@ -4323,7 +4323,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "llm_client.py",
-      "source_location": "L264",
+      "source_location": "L291",
       "weight": 1.0,
       "_origin": "ast",
       "source": "llm_client_llmclient",
@@ -4521,10 +4521,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "llm_client.py",
-      "source_location": "L265",
+      "source_location": "L292",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "llm_client_rationale_265",
+      "source": "llm_client_rationale_292",
       "target": "llm_client_llmclient_mock_response",
       "confidence_score": 1.0
     },
@@ -5016,5 +5016,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "fce400f6ee0591950f6b9518f68ebccc07e03a67"
+  "built_at_commit": "d8fc97757a98377abb926c87c2ec2fd1d65b68d8"
 }
