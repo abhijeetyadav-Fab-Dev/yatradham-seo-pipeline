@@ -179,14 +179,14 @@ def _generate_long_form_blog(
     word_count: int = 3000,
     additional_instructions: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """2-Stage chained generation for 2,500 - 3,500 word comprehensive master guides with zero cutoffs."""
+    """3-Phase chained generation for 3,000+ word comprehensive master guides with zero cutoffs."""
     
     brand_context = """You are an expert SEO Content Writer for Yatradham.Org (India's leading spiritual & wellness tourism platform since 2016).
-Tone: Warm, respectful, informative, highly detailed, E-E-A-T compliant.
+Tone: Warm, devout, informative, highly detailed, E-E-A-T compliant.
 Rules:
-- Write in rich, descriptive detail. Expand every single sub-activity with practical timings, benefits, and tips.
-- Do NOT use generic summaries or brevity. Every day must contain Morning, Mid-Day, Evening, and Night routines with full paragraphs.
-- Incorporate keywords naturally without stuffing.
+- Write in rich, descriptive detail with full paragraphs. Expand every single sub-activity with practical timings, benefits, and tips.
+- Do NOT use brief summaries.
+- Incorporate primary and related keywords naturally without keyword stuffing.
 """
     custom_rules = []
     if target_keyword:
@@ -199,14 +199,14 @@ Rules:
         custom_rules.append(f"User Instructions:\n{additional_instructions}")
     rules_text = "\n".join(custom_rules)
 
-    # PASS 1: Meta, Intro, Planning Essentials, Days 1-3 (~1,500 words)
-    prompt_part1 = f"""{brand_context}
+    # PHASE 1: Meta, Intro, Planning Essentials, Days 1-3 (~1,000 words)
+    prompt_phase1 = f"""{brand_context}
 {rules_text}
 
-TASK: Generate PART 1 of an exhaustive, 3,000-word master travel guide on: "{topic}".
-Target word count for Part 1: ~1,500 words.
+TASK: Generate PHASE 1 of a comprehensive 3,000-word master travel guide on: "{topic}".
+Target word count for Phase 1: ~1,000 words.
 
-Structure to generate for PART 1:
+Structure to generate for PHASE 1:
 # TITLE
 [Compelling, SEO-Optimized Title]
 
@@ -218,25 +218,25 @@ Structure to generate for PART 1:
 
 # CONTENT
 ## Introduction & Spiritual Significance
-(Write ~350-400 words detailing the history, spiritual allure of the destination, why it's unique, and setting the intention for the journey).
+(Write ~300-350 words detailing the history, spiritual allure of the destination, why it's unique, and setting the intention for the journey).
 
 ## Pre-Travel Planning & Preparation
-(Write ~350-400 words covering Best Time to Visit, How to Reach, Verified Accommodation through Yatradham, What to Pack, and Cultural Etiquette).
+(Write ~300-350 words covering Best Time to Visit, How to Reach, Verified Accommodation through Yatradham, What to Pack, and Cultural Etiquette).
 
 ## Day 1: Arrival, Settling In & River Grounding
-(Write ~300 words with full Morning Arrival, Afternoon Relaxation, Evening Aarti at Ghats, and Night routines).
+(Write ~250-300 words with Morning Arrival, Afternoon Relaxation, Evening Aarti at Ghats, and Night routines).
 
 ## Day 2: Yoga Foundations & Breath Awareness (Pranayama)
-(Write ~300 words with Sunrise Asana, Guided Meditation, Mid-day healthy meals, and Evening reflection).
+(Write ~250-300 words with Sunrise Asana, Guided Meditation, Mid-day healthy meals, and Evening reflection).
 
 ## Day 3: Nature Immersion & Himalayan Trails
-(Write ~300 words detailing Waterfall/Forest trails, Mindful walking, Herbal teas, and Sound/Yin relaxation).
+(Write ~250-300 words detailing Waterfall/Forest trails, Mindful walking, Herbal teas, and Sound/Yin relaxation).
 
 CRITICAL: Output rich, full paragraphs. Output ONLY markdown headings specified above."""
 
     part1_raw = client.chat_completion(
-        messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_part1}],
-        max_tokens=4000,
+        messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase1}],
+        max_tokens=3000,
         temperature=0.6,
     )
     
@@ -247,15 +247,15 @@ CRITICAL: Output rich, full paragraphs. Output ONLY markdown headings specified 
     tags = [_sanitize_repetition(t) for t in tags_str.split(",") if _sanitize_repetition(t)] if tags_str else []
     content_part1 = _sanitize_repetition(sections_part1.get("CONTENT", part1_raw))
 
-    # PASS 2: Days 4-7, Practical Logistics, FAQs (5+ detailed), Conclusion (~1,500 words)
-    prompt_part2 = f"""{brand_context}
+    # PHASE 2: Days 4-7 In-Depth Journey (~1,200 words)
+    prompt_phase2 = f"""{brand_context}
 {rules_text}
 
-TASK: Generate PART 2 (the seamless second half) of the 3,000-word master travel guide on: "{topic}".
-Target word count for Part 2: ~1,500 words.
+TASK: Generate PHASE 2 (Days 4 through 7) of the 3,000-word master travel guide on: "{topic}".
+Target word count for Phase 2: ~1,200 words.
 
 We have already completed Introduction, Planning, and Days 1-3.
-Now generate the remainder of the guide starting directly with Day 4:
+Now generate Days 4 through 7 with full, in-depth Morning, Mid-Day, Evening, and Night routines:
 
 ## Day 4: Ayurvedic Therapies & Holistic Body Detox
 (Write ~300 words covering Dosha assessment, Abhyanga/Shirodhara therapies, Sattvic nutrition principles, and restorative rest).
@@ -267,29 +267,49 @@ Now generate the remainder of the guide starting directly with Day 4:
 (Write ~300 words covering Forest/Cave meditation, Tibetan bowl sound healing, optional nature exploration, and reflection circles).
 
 ## Day 7: Integration, Personal Wellness Plan & Departure
-(Write ~300 words covering Sunrise integration flow, building a home wellness routine, closing circle, and farewell).
-
-## Practical Travel Logistics & Budget Guide
-(Write ~350 words detailing transport options, verified Yatradham accommodation booking tips, estimated costs, and safety).
-
-## Frequently Asked Questions (FAQs)
-(Write 5-6 comprehensive FAQs with full, detailed paragraph answers covering packing, beginner suitability, solo travel safety, dietary needs, and booking).
-
-## Conclusion & Begin Your Spiritual Journey
-(Write ~200 words with an inspiring closing reflection and a warm, soft CTA inviting readers to explore verified stays on Yatradham.org).
+(Write ~300 words covering Sunrise integration flow, building a 30-day home wellness routine, closing circle, and farewell).
 
 CRITICAL: Start immediately with `## Day 4`. Output ONLY markdown text."""
 
     part2_raw = client.chat_completion(
-        messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_part2}],
-        max_tokens=4000,
+        messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase2}],
+        max_tokens=3000,
         temperature=0.6,
     )
     
     content_part2 = _sanitize_repetition(_clean_markdown(part2_raw))
 
-    # Stitch Part 1 and Part 2 seamlessly
-    full_content = f"{content_part1}\n\n{content_part2}"
+    # PHASE 3: Logistics, FAQs & Conclusion (~800 words)
+    prompt_phase3 = f"""{brand_context}
+{rules_text}
+
+TASK: Generate PHASE 3 (the grand finale) of the 3,000-word master travel guide on: "{topic}".
+Target word count for Phase 3: ~800 words.
+
+We have already completed Days 1 through 7.
+Now generate the final essential sections:
+
+## Practical Travel Logistics & Budget Guide
+(Write ~350 words detailing transport options, verified Yatradham accommodation booking advantages, estimated costs for various budgets, and safety guidelines).
+
+## Frequently Asked Questions (FAQs)
+(Write 6 comprehensive FAQs with full, detailed paragraph answers covering packing essentials, beginner suitability for retreats, solo female travel safety, dietary accommodations, Ayurvedic preparation, and booking verified stays).
+
+## Conclusion: Begin Your Transformative Journey
+(Write ~200 words with an inspiring closing reflection and a warm, soft CTA inviting readers to book verified stays and plan their journey on Yatradham.Org).
+
+CRITICAL: Start immediately with `## Practical Travel Logistics & Budget Guide`. Output ONLY markdown text."""
+
+    part3_raw = client.chat_completion(
+        messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase3}],
+        max_tokens=3000,
+        temperature=0.6,
+    )
+    
+    content_part3 = _sanitize_repetition(_clean_markdown(part3_raw))
+
+    # Stitch Phase 1, Phase 2, and Phase 3 seamlessly
+    full_content = f"{content_part1}\n\n{content_part2}\n\n{content_part3}"
 
     return {
         "title": title,

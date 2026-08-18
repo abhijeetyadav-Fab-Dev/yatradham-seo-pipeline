@@ -4,17 +4,69 @@
   "graph": {},
   "nodes": [
     {
-      "label": "LLMClient",
+      "label": "BatchURLRequest",
       "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L42",
+      "source_file": "main.py",
+      "source_location": "L39",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "llm_client_llmclient",
-      "community": 13,
-      "community_name": "LLMClient",
-      "norm_label": "llmclient"
+      "id": "main_batchurlrequest",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "batchurlrequest"
+    },
+    {
+      "label": "ContentGenerateRequest",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L292",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "main_contentgeneraterequest",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "contentgeneraterequest"
+    },
+    {
+      "label": "ProviderSettingsRequest",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L267",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "main_providersettingsrequest",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "providersettingsrequest"
+    },
+    {
+      "label": "URLRequest",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L35",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "main_urlrequest",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "urlrequest"
+    },
+    {
+      "label": "SectionedContent",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L62",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "models_sectionedcontent",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "sectionedcontent"
     },
     {
       "label": "SEOOutput",
@@ -95,19 +147,6 @@
       "norm_label": "nearbylocation"
     },
     {
-      "label": "PackageInput",
-      "file_type": "code",
-      "source_file": "models.py",
-      "source_location": "L7",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "models_packageinput",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "packageinput"
-    },
-    {
       "label": "PricingRow",
       "file_type": "code",
       "source_file": "models.py",
@@ -160,81 +199,30 @@
       "norm_label": "quickfacts"
     },
     {
-      "label": "SectionedContent",
+      "label": "LLMClient",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L42",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "llmclient"
+    },
+    {
+      "label": "PackageInput",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L62",
+      "source_location": "L7",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "models_sectionedcontent",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "sectionedcontent"
-    },
-    {
-      "label": "BatchURLRequest",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L39",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "main_batchurlrequest",
+      "id": "models_packageinput",
       "community": 7,
       "community_name": "process_package",
-      "norm_label": "batchurlrequest"
-    },
-    {
-      "label": "ContentGenerateRequest",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L292",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "main_contentgeneraterequest",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "contentgeneraterequest"
-    },
-    {
-      "label": "ProviderSettingsRequest",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L267",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "main_providersettingsrequest",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "providersettingsrequest"
-    },
-    {
-      "label": "URLRequest",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L35",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "main_urlrequest",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "urlrequest"
-    },
-    {
-      "label": "delete_output()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L155",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_delete_output",
-      "community": 0,
-      "community_name": "main.py",
-      "norm_label": "delete_output()"
+      "norm_label": "packageinput"
     },
     {
       "label": "get_stats()",
@@ -261,6 +249,54 @@
       "norm_label": "delete_single_output()"
     },
     {
+      "label": "export_csv()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L373",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_export_csv",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "export_csv()"
+    },
+    {
+      "label": "generate_content()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L307",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_generate_content",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "generate_content()"
+    },
+    {
+      "label": "get_outputs()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L204",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_get_outputs",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "get_outputs()"
+    },
+    {
+      "label": "get_single_output()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L211",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_get_single_output",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "get_single_output()"
+    },
+    {
       "label": "lifespan()",
       "file_type": "code",
       "source_file": "main.py",
@@ -271,6 +307,18 @@
       "community": 0,
       "community_name": "main.py",
       "norm_label": "lifespan()"
+    },
+    {
+      "label": "root()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L64",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_root",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "root()"
     },
     {
       "label": "stats()",
@@ -285,160 +333,28 @@
       "norm_label": "stats()"
     },
     {
-      "label": "run()",
-      "file_type": "code",
-      "source_file": "agents/keyword_agent.py",
-      "source_location": "L19",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_keyword_agent_run",
-      "community": 1,
-      "community_name": "keyword_agent.py",
-      "norm_label": "run()"
-    },
-    {
-      "label": "list_outputs()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L127",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_list_outputs",
-      "community": 11,
-      "community_name": "list_outputs",
-      "norm_label": "list_outputs()"
-    },
-    {
-      "label": "export_csv()",
+      "label": "test_provider_endpoint()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L373",
+      "source_location": "L286",
       "_callable": true,
       "_origin": "ast",
-      "id": "main_export_csv",
-      "community": 11,
-      "community_name": "list_outputs",
-      "norm_label": "export_csv()"
+      "id": "main_test_provider_endpoint",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "test_provider_endpoint()"
     },
     {
-      "label": "get_outputs()",
+      "label": "update_provider_settings()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L204",
+      "source_location": "L274",
       "_callable": true,
       "_origin": "ast",
-      "id": "main_get_outputs",
-      "community": 11,
-      "community_name": "list_outputs",
-      "norm_label": "get_outputs()"
-    },
-    {
-      "label": "root()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L64",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_root",
-      "community": 11,
-      "community_name": "list_outputs",
-      "norm_label": "root()"
-    },
-    {
-      "label": "._discover_active_models()",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L121",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "llm_client_llmclient_discover_active_models",
-      "community": 12,
-      "community_name": "._discover_active_models",
-      "norm_label": "._discover_active_models()"
-    },
-    {
-      "label": ".set_custom_keys()",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L102",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "llm_client_llmclient_set_custom_keys",
-      "community": 12,
-      "community_name": "._discover_active_models",
-      "norm_label": ".set_custom_keys()"
-    },
-    {
-      "label": ".test_provider()",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L139",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "llm_client_llmclient_test_provider",
-      "community": 12,
-      "community_name": "._discover_active_models",
-      "norm_label": ".test_provider()"
-    },
-    {
-      "label": ".chat_completion()",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L186",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "llm_client_llmclient_chat_completion",
-      "community": 13,
-      "community_name": "LLMClient",
-      "norm_label": ".chat_completion()"
-    },
-    {
-      "label": ".__init__()",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L43",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "llm_client_llmclient_init",
-      "community": 13,
-      "community_name": "LLMClient",
-      "norm_label": ".__init__()"
-    },
-    {
-      "label": "._init_clients()",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L80",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "llm_client_llmclient_init_clients",
-      "community": 13,
-      "community_name": "LLMClient",
-      "norm_label": "._init_clients()"
-    },
-    {
-      "label": "._mock_response()",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L291",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "llm_client_llmclient_mock_response",
-      "community": 13,
-      "community_name": "LLMClient",
-      "norm_label": "._mock_response()"
-    },
-    {
-      "label": "._wait_for_rate_limit()",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L180",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "llm_client_llmclient_wait_for_rate_limit",
-      "community": 13,
-      "community_name": "LLMClient",
-      "norm_label": "._wait_for_rate_limit()"
+      "id": "main_update_provider_settings",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "update_provider_settings()"
     },
     {
       "label": "_extract_json_from_response()",
@@ -462,30 +378,6 @@
       "id": "agents_content_agent_run",
       "community": 14,
       "community_name": "content_agent.py",
-      "norm_label": "run()"
-    },
-    {
-      "label": "run()",
-      "file_type": "code",
-      "source_file": "agents/meta_agent.py",
-      "source_location": "L35",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_meta_agent_run",
-      "community": 15,
-      "community_name": "llm_client.py",
-      "norm_label": "run()"
-    },
-    {
-      "label": "run()",
-      "file_type": "code",
-      "source_file": "agents/title_agent.py",
-      "source_location": "L27",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_title_agent_run",
-      "community": 16,
-      "community_name": "title_agent.py",
       "norm_label": "run()"
     },
     {
@@ -513,6 +405,30 @@
       "norm_label": "clear_all_outputs()"
     },
     {
+      "label": "delete_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L155",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_delete_output",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "delete_output()"
+    },
+    {
+      "label": "_dict_to_sections()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L50",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_dict_to_sections",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "_dict_to_sections()"
+    },
+    {
       "label": "get_conn()",
       "file_type": "code",
       "source_file": "database.py",
@@ -523,6 +439,18 @@
       "community": 2,
       "community_name": "database.py",
       "norm_label": "get_conn()"
+    },
+    {
+      "label": "get_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L118",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_get_output",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "get_output()"
     },
     {
       "label": "init_db()",
@@ -537,16 +465,28 @@
       "norm_label": "init_db()"
     },
     {
-      "label": "save_output()",
+      "label": "list_outputs()",
       "file_type": "code",
       "source_file": "database.py",
-      "source_location": "L54",
+      "source_location": "L127",
       "_callable": true,
       "_origin": "ast",
-      "id": "database_save_output",
+      "id": "database_list_outputs",
       "community": 2,
       "community_name": "database.py",
-      "norm_label": "save_output()"
+      "norm_label": "list_outputs()"
+    },
+    {
+      "label": "_row_to_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L191",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_row_to_output",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "_row_to_output()"
     },
     {
       "label": "_sections_to_dict()",
@@ -573,54 +513,6 @@
       "norm_label": "update_output()"
     },
     {
-      "label": "_dict_to_sections()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L50",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_dict_to_sections",
-      "community": 3,
-      "community_name": "get_output",
-      "norm_label": "_dict_to_sections()"
-    },
-    {
-      "label": "get_output()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L118",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_get_output",
-      "community": 3,
-      "community_name": "get_output",
-      "norm_label": "get_output()"
-    },
-    {
-      "label": "_row_to_output()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L191",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_row_to_output",
-      "community": 3,
-      "community_name": "get_output",
-      "norm_label": "_row_to_output()"
-    },
-    {
-      "label": "get_single_output()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L211",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_get_single_output",
-      "community": 3,
-      "community_name": "get_output",
-      "norm_label": "get_single_output()"
-    },
-    {
       "label": "update_single_output()",
       "file_type": "code",
       "source_file": "main.py",
@@ -628,9 +520,45 @@
       "_callable": true,
       "_origin": "ast",
       "id": "main_update_single_output",
-      "community": 3,
-      "community_name": "get_output",
+      "community": 2,
+      "community_name": "database.py",
       "norm_label": "update_single_output()"
+    },
+    {
+      "label": "bulk_action()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L242",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_bulk_action",
+      "community": 4,
+      "community_name": "models.py",
+      "norm_label": "bulk_action()"
+    },
+    {
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L19",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_keyword_agent_run",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "run()"
+    },
+    {
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L35",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_meta_agent_run",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "run()"
     },
     {
       "label": "_check_banned()",
@@ -641,7 +569,7 @@
       "_origin": "ast",
       "id": "agents_qa_agent_check_banned",
       "community": 5,
-      "community_name": "qa_agent.py",
+      "community_name": "pipeline.py",
       "norm_label": "_check_banned()"
     },
     {
@@ -653,7 +581,7 @@
       "_origin": "ast",
       "id": "agents_qa_agent_check_sections",
       "community": 5,
-      "community_name": "qa_agent.py",
+      "community_name": "pipeline.py",
       "norm_label": "_check_sections()"
     },
     {
@@ -665,7 +593,7 @@
       "_origin": "ast",
       "id": "agents_qa_agent_check_sentences",
       "community": 5,
-      "community_name": "qa_agent.py",
+      "community_name": "pipeline.py",
       "norm_label": "_check_sentences()"
     },
     {
@@ -677,7 +605,7 @@
       "_origin": "ast",
       "id": "agents_qa_agent_flesch_estimate",
       "community": 5,
-      "community_name": "qa_agent.py",
+      "community_name": "pipeline.py",
       "norm_label": "_flesch_estimate()"
     },
     {
@@ -689,8 +617,44 @@
       "_origin": "ast",
       "id": "agents_qa_agent_run",
       "community": 5,
-      "community_name": "qa_agent.py",
+      "community_name": "pipeline.py",
       "norm_label": "run()"
+    },
+    {
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L27",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_title_agent_run",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "run()"
+    },
+    {
+      "label": "_clean_markdown()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L162",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_clean_markdown",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "_clean_markdown()"
+    },
+    {
+      "label": "_generate_long_form_blog()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L173",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_generate_long_form_blog",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "_generate_long_form_blog()"
     },
     {
       "label": "_parse_markdown_sections()",
@@ -701,19 +665,19 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_parse_markdown_sections",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "_parse_markdown_sections()"
     },
     {
       "label": "run()",
       "file_type": "code",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L162",
+      "source_location": "L305",
       "_callable": true,
       "_origin": "ast",
       "id": "agents_content_creator_agent_run",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "run()"
     },
     {
@@ -725,8 +689,116 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_sanitize_repetition",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "_sanitize_repetition()"
+    },
+    {
+      "label": ".chat_completion()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L186",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient_chat_completion",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": ".chat_completion()"
+    },
+    {
+      "label": "._discover_active_models()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L121",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient_discover_active_models",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "._discover_active_models()"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L43",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient_init",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": "._init_clients()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L80",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient_init_clients",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "._init_clients()"
+    },
+    {
+      "label": "._mock_response()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L291",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient_mock_response",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "._mock_response()"
+    },
+    {
+      "label": ".set_custom_keys()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L102",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient_set_custom_keys",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": ".set_custom_keys()"
+    },
+    {
+      "label": ".test_provider()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L139",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient_test_provider",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": ".test_provider()"
+    },
+    {
+      "label": "._wait_for_rate_limit()",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L180",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "llm_client_llmclient_wait_for_rate_limit",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "._wait_for_rate_limit()"
+    },
+    {
+      "label": "save_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L54",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_save_output",
+      "community": 7,
+      "community_name": "process_package",
+      "norm_label": "save_output()"
     },
     {
       "label": "batch_process()",
@@ -753,18 +825,6 @@
       "norm_label": "batch_urls()"
     },
     {
-      "label": "bulk_action()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L242",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_bulk_action",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "bulk_action()"
-    },
-    {
       "label": "clear_cache()",
       "file_type": "code",
       "source_file": "main.py",
@@ -775,18 +835,6 @@
       "community": 7,
       "community_name": "process_package",
       "norm_label": "clear_cache()"
-    },
-    {
-      "label": "generate_content()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L307",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_generate_content",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "generate_content()"
     },
     {
       "label": "process_batch_background()",
@@ -823,30 +871,6 @@
       "community": 7,
       "community_name": "process_package",
       "norm_label": "scrape_and_process()"
-    },
-    {
-      "label": "test_provider_endpoint()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L286",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_test_provider_endpoint",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "test_provider_endpoint()"
-    },
-    {
-      "label": "update_provider_settings()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L274",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_update_provider_settings",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "update_provider_settings()"
     },
     {
       "label": "process_package()",
@@ -941,6 +965,17 @@
       "norm_label": "fastapi"
     },
     {
+      "label": "get",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "get",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "get"
+    },
+    {
       "label": "main.py",
       "file_type": "code",
       "source_file": "main.py",
@@ -950,6 +985,17 @@
       "community": 0,
       "community_name": "main.py",
       "norm_label": "main.py"
+    },
+    {
+      "label": "BaseModel",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "main_py_basemodel",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "basemodel"
     },
     {
       "label": "FastAPI server with .env auto-loading, URL auto-scraping, batch processing,\u2026",
@@ -963,37 +1009,59 @@
       "norm_label": "fastapi server with .env auto-loading, url auto-scraping, batch processing,..."
     },
     {
-      "label": "keyword_agent.py",
-      "file_type": "code",
-      "source_file": "agents/keyword_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_keyword_agent",
-      "community": 1,
-      "community_name": "keyword_agent.py",
-      "norm_label": "keyword_agent.py"
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "agents_keyword_agent_py_any",
-      "community": 1,
-      "community_name": "keyword_agent.py",
-      "norm_label": "any"
-    },
-    {
-      "label": "Keyword agent: enforces 2-4 word primary keyword.",
+      "label": "List all SEO outputs with optional filter.",
       "file_type": "rationale",
-      "source_file": "agents/keyword_agent.py",
-      "source_location": "L1",
+      "source_file": "main.py",
+      "source_location": "L205",
       "_origin": "ast",
-      "id": "agents_keyword_agent_rationale_1",
-      "community": 1,
-      "community_name": "keyword_agent.py",
-      "norm_label": "keyword agent: enforces 2-4 word primary keyword."
+      "id": "main_rationale_205",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "list all seo outputs with optional filter."
+    },
+    {
+      "label": "Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L275",
+      "_origin": "ast",
+      "id": "main_rationale_275",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "dynamically configure llm providers (groq, gemini, openrouter) at runtime."
+    },
+    {
+      "label": "Test a provider API key live and return latency & status.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L287",
+      "_origin": "ast",
+      "id": "main_rationale_287",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "test a provider api key live and return latency & status."
+    },
+    {
+      "label": "Generate net-new SEO content from scratch using AI.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L308",
+      "_origin": "ast",
+      "id": "main_rationale_308",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "generate net-new seo content from scratch using ai."
+    },
+    {
+      "label": "Export outputs to CSV.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L374",
+      "_origin": "ast",
+      "id": "main_rationale_374",
+      "community": 0,
+      "community_name": "main.py",
+      "norm_label": "export outputs to csv."
     },
     {
       "label": "__init__.py",
@@ -1005,105 +1073,6 @@
       "community": 10,
       "community_name": "__init__.py",
       "norm_label": "__init__.py"
-    },
-    {
-      "label": "get",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "get",
-      "community": 11,
-      "community_name": "list_outputs",
-      "norm_label": "get"
-    },
-    {
-      "label": "List all SEO outputs with optional filter.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L205",
-      "_origin": "ast",
-      "id": "main_rationale_205",
-      "community": 11,
-      "community_name": "list_outputs",
-      "norm_label": "list all seo outputs with optional filter."
-    },
-    {
-      "label": "Export outputs to CSV.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L374",
-      "_origin": "ast",
-      "id": "main_rationale_374",
-      "community": 11,
-      "community_name": "list_outputs",
-      "norm_label": "export outputs to csv."
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "llm_client_py_any",
-      "community": 12,
-      "community_name": "._discover_active_models",
-      "norm_label": "any"
-    },
-    {
-      "label": "OpenAI",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "openai",
-      "community": 12,
-      "community_name": "._discover_active_models",
-      "norm_label": "openai"
-    },
-    {
-      "label": "Allow setting keys dynamically from UI or runtime.",
-      "file_type": "rationale",
-      "source_file": "llm_client.py",
-      "source_location": "L103",
-      "_origin": "ast",
-      "id": "llm_client_rationale_103",
-      "community": 12,
-      "community_name": "._discover_active_models",
-      "norm_label": "allow setting keys dynamically from ui or runtime."
-    },
-    {
-      "label": "Dynamically query the provider's live models list to avoid model_not_found\u2026",
-      "file_type": "rationale",
-      "source_file": "llm_client.py",
-      "source_location": "L122",
-      "_origin": "ast",
-      "id": "llm_client_rationale_122",
-      "community": 12,
-      "community_name": "._discover_active_models",
-      "norm_label": "dynamically query the provider's live models list to avoid model_not_found..."
-    },
-    {
-      "label": "Test a provider API key with a fast 1-word prompt to verify connection.",
-      "file_type": "rationale",
-      "source_file": "llm_client.py",
-      "source_location": "L140",
-      "_origin": "ast",
-      "id": "llm_client_rationale_140",
-      "community": 12,
-      "community_name": "._discover_active_models",
-      "norm_label": "test a provider api key with a fast 1-word prompt to verify connection."
-    },
-    {
-      "label": "Return a useful mock response when no LLM provider is available. For content\u2026",
-      "file_type": "rationale",
-      "source_file": "llm_client.py",
-      "source_location": "L292",
-      "_origin": "ast",
-      "id": "llm_client_rationale_292",
-      "community": 13,
-      "community_name": "LLMClient",
-      "norm_label": "return a useful mock response when no llm provider is available. for content..."
     },
     {
       "label": "content_agent.py",
@@ -1150,94 +1119,6 @@
       "norm_label": "robustly extract json from llm response, handling markdown blocks and..."
     },
     {
-      "label": "meta_agent.py",
-      "file_type": "code",
-      "source_file": "agents/meta_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_meta_agent",
-      "community": 15,
-      "community_name": "llm_client.py",
-      "norm_label": "meta_agent.py"
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "agents_meta_agent_py_any",
-      "community": 15,
-      "community_name": "llm_client.py",
-      "norm_label": "any"
-    },
-    {
-      "label": "llm_client.py",
-      "file_type": "code",
-      "source_file": "llm_client.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "llm_client",
-      "community": 15,
-      "community_name": "llm_client.py",
-      "norm_label": "llm_client.py"
-    },
-    {
-      "label": "Meta description agent: 145-155 chars, natural language, no repetition.",
-      "file_type": "rationale",
-      "source_file": "agents/meta_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_meta_agent_rationale_1",
-      "community": 15,
-      "community_name": "llm_client.py",
-      "norm_label": "meta description agent: 145-155 chars, natural language, no repetition."
-    },
-    {
-      "label": "OpenRouter LLM client with token-limit retry and rate limiting.",
-      "file_type": "rationale",
-      "source_file": "llm_client.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "llm_client_rationale_1",
-      "community": 15,
-      "community_name": "llm_client.py",
-      "norm_label": "openrouter llm client with token-limit retry and rate limiting."
-    },
-    {
-      "label": "title_agent.py",
-      "file_type": "code",
-      "source_file": "agents/title_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_title_agent",
-      "community": 16,
-      "community_name": "title_agent.py",
-      "norm_label": "title_agent.py"
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "agents_title_agent_py_any",
-      "community": 16,
-      "community_name": "title_agent.py",
-      "norm_label": "any"
-    },
-    {
-      "label": "Title tag agent: 50-60 chars, optimized for click-through rate.",
-      "file_type": "rationale",
-      "source_file": "agents/title_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_title_agent_rationale_1",
-      "community": 16,
-      "community_name": "title_agent.py",
-      "norm_label": "title tag agent: 50-60 chars, optimized for click-through rate."
-    },
-    {
       "label": "database.py",
       "file_type": "code",
       "source_file": "database.py",
@@ -1249,25 +1130,14 @@
       "norm_label": "database.py"
     },
     {
-      "label": "SQLite database with JSON storage for sections.",
-      "file_type": "rationale",
-      "source_file": "database.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "database_rationale_1",
-      "community": 2,
-      "community_name": "database.py",
-      "norm_label": "sqlite database with json storage for sections."
-    },
-    {
       "label": "Any",
       "file_type": "code",
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
       "id": "main_py_any",
-      "community": 3,
-      "community_name": "get_output",
+      "community": 2,
+      "community_name": "database.py",
       "norm_label": "any"
     },
     {
@@ -1277,8 +1147,8 @@
       "source_location": "",
       "_origin": "ast",
       "id": "put",
-      "community": 3,
-      "community_name": "get_output",
+      "community": 2,
+      "community_name": "database.py",
       "norm_label": "put"
     },
     {
@@ -1288,9 +1158,20 @@
       "source_location": "",
       "_origin": "ast",
       "id": "row",
-      "community": 3,
-      "community_name": "get_output",
+      "community": 2,
+      "community_name": "database.py",
       "norm_label": "row"
+    },
+    {
+      "label": "SQLite database with JSON storage for sections.",
+      "file_type": "rationale",
+      "source_file": "database.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "database_rationale_1",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "sqlite database with json storage for sections."
     },
     {
       "label": "models.py",
@@ -1315,15 +1196,15 @@
       "norm_label": "basemodel"
     },
     {
-      "label": "pipeline.py",
-      "file_type": "code",
-      "source_file": "pipeline.py",
-      "source_location": "L1",
+      "label": "Bulk approve or reject outputs.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L243",
       "_origin": "ast",
-      "id": "pipeline",
+      "id": "main_rationale_243",
       "community": 4,
       "community_name": "models.py",
-      "norm_label": "pipeline.py"
+      "norm_label": "bulk approve or reject outputs."
     },
     {
       "label": "Pydantic models for the SEO pipeline.",
@@ -1337,15 +1218,48 @@
       "norm_label": "pydantic models for the seo pipeline."
     },
     {
-      "label": "Orchestrator: runs all 5 agents in sequence.",
-      "file_type": "rationale",
-      "source_file": "pipeline.py",
+      "label": "keyword_agent.py",
+      "file_type": "code",
+      "source_file": "agents/keyword_agent.py",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "pipeline_rationale_1",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "orchestrator: runs all 5 agents in sequence."
+      "id": "agents_keyword_agent",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "keyword_agent.py"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "agents_keyword_agent_py_any",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "any"
+    },
+    {
+      "label": "meta_agent.py",
+      "file_type": "code",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_meta_agent",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "meta_agent.py"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "agents_meta_agent_py_any",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "any"
     },
     {
       "label": "qa_agent.py",
@@ -1355,7 +1269,7 @@
       "_origin": "ast",
       "id": "agents_qa_agent",
       "community": 5,
-      "community_name": "qa_agent.py",
+      "community_name": "pipeline.py",
       "norm_label": "qa_agent.py"
     },
     {
@@ -1366,8 +1280,74 @@
       "_origin": "ast",
       "id": "agents_qa_agent_py_any",
       "community": 5,
-      "community_name": "qa_agent.py",
+      "community_name": "pipeline.py",
       "norm_label": "any"
+    },
+    {
+      "label": "title_agent.py",
+      "file_type": "code",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_title_agent",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "title_agent.py"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "agents_title_agent_py_any",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "any"
+    },
+    {
+      "label": "llm_client.py",
+      "file_type": "code",
+      "source_file": "llm_client.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "llm_client",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "llm_client.py"
+    },
+    {
+      "label": "pipeline.py",
+      "file_type": "code",
+      "source_file": "pipeline.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pipeline",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "pipeline.py"
+    },
+    {
+      "label": "Keyword agent: enforces 2-4 word primary keyword.",
+      "file_type": "rationale",
+      "source_file": "agents/keyword_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_keyword_agent_rationale_1",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "keyword agent: enforces 2-4 word primary keyword."
+    },
+    {
+      "label": "Meta description agent: 145-155 chars, natural language, no repetition.",
+      "file_type": "rationale",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_meta_agent_rationale_1",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "meta description agent: 145-155 chars, natural language, no repetition."
     },
     {
       "label": "QA agent: validates all 19 sections + readability.",
@@ -1377,8 +1357,41 @@
       "_origin": "ast",
       "id": "agents_qa_agent_rationale_1",
       "community": 5,
-      "community_name": "qa_agent.py",
+      "community_name": "pipeline.py",
       "norm_label": "qa agent: validates all 19 sections + readability."
+    },
+    {
+      "label": "Title tag agent: 50-60 chars, optimized for click-through rate.",
+      "file_type": "rationale",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_title_agent_rationale_1",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "title tag agent: 50-60 chars, optimized for click-through rate."
+    },
+    {
+      "label": "OpenRouter LLM client with token-limit retry and rate limiting.",
+      "file_type": "rationale",
+      "source_file": "llm_client.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "llm_client_rationale_1",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "openrouter llm client with token-limit retry and rate limiting."
+    },
+    {
+      "label": "Orchestrator: runs all 5 agents in sequence.",
+      "file_type": "rationale",
+      "source_file": "pipeline.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pipeline_rationale_1",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "orchestrator: runs all 5 agents in sequence."
     },
     {
       "label": "content_creator_agent.py",
@@ -1388,7 +1401,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "content_creator_agent.py"
     },
     {
@@ -1399,8 +1412,30 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_py_any",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "any"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "llm_client_py_any",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "any"
+    },
+    {
+      "label": "OpenAI",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "openai",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "openai"
     },
     {
       "label": "Content Creator Agent: Generates net-new SEO content from scratch.",
@@ -1410,7 +1445,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_1",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "content creator agent: generates net-new seo content from scratch."
     },
     {
@@ -1421,7 +1456,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_129",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "parse a markdown string into a dictionary based on h1 headings."
     },
     {
@@ -1432,19 +1467,74 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_150",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "strip llm repetition loops (repeated single characters, phrases, or unicode..."
+    },
+    {
+      "label": "2-Stage chained generation for 2,500 - 3,500 word comprehensive master guides\u2026",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L182",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_rationale_182",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "2-stage chained generation for 2,500 - 3,500 word comprehensive master guides..."
     },
     {
       "label": "Generate net-new content based on user requirements using robust markdown\u2026",
       "file_type": "rationale",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L172",
+      "source_location": "L315",
       "_origin": "ast",
-      "id": "agents_content_creator_agent_rationale_172",
+      "id": "agents_content_creator_agent_rationale_315",
       "community": 6,
-      "community_name": "content_creator_agent.py",
+      "community_name": "LLMClient",
       "norm_label": "generate net-new content based on user requirements using robust markdown..."
+    },
+    {
+      "label": "Allow setting keys dynamically from UI or runtime.",
+      "file_type": "rationale",
+      "source_file": "llm_client.py",
+      "source_location": "L103",
+      "_origin": "ast",
+      "id": "llm_client_rationale_103",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "allow setting keys dynamically from ui or runtime."
+    },
+    {
+      "label": "Dynamically query the provider's live models list to avoid model_not_found\u2026",
+      "file_type": "rationale",
+      "source_file": "llm_client.py",
+      "source_location": "L122",
+      "_origin": "ast",
+      "id": "llm_client_rationale_122",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "dynamically query the provider's live models list to avoid model_not_found..."
+    },
+    {
+      "label": "Test a provider API key with a fast 1-word prompt to verify connection.",
+      "file_type": "rationale",
+      "source_file": "llm_client.py",
+      "source_location": "L140",
+      "_origin": "ast",
+      "id": "llm_client_rationale_140",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "test a provider api key with a fast 1-word prompt to verify connection."
+    },
+    {
+      "label": "Return a useful mock response when no LLM provider is available. For content\u2026",
+      "file_type": "rationale",
+      "source_file": "llm_client.py",
+      "source_location": "L292",
+      "_origin": "ast",
+      "id": "llm_client_rationale_292",
+      "community": 6,
+      "community_name": "LLMClient",
+      "norm_label": "return a useful mock response when no llm provider is available. for content..."
     },
     {
       "label": "BackgroundTasks",
@@ -1456,17 +1546,6 @@
       "community": 7,
       "community_name": "process_package",
       "norm_label": "backgroundtasks"
-    },
-    {
-      "label": "BaseModel",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "main_py_basemodel",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "basemodel"
     },
     {
       "label": "post",
@@ -1535,17 +1614,6 @@
       "norm_label": "process multiple packages from json (manual input)."
     },
     {
-      "label": "Bulk approve or reject outputs.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L243",
-      "_origin": "ast",
-      "id": "main_rationale_243",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "bulk approve or reject outputs."
-    },
-    {
       "label": "Wipe all outputs from the database to start fresh.",
       "file_type": "rationale",
       "source_file": "main.py",
@@ -1555,39 +1623,6 @@
       "community": 7,
       "community_name": "process_package",
       "norm_label": "wipe all outputs from the database to start fresh."
-    },
-    {
-      "label": "Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L275",
-      "_origin": "ast",
-      "id": "main_rationale_275",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "dynamically configure llm providers (groq, gemini, openrouter) at runtime."
-    },
-    {
-      "label": "Test a provider API key live and return latency & status.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L287",
-      "_origin": "ast",
-      "id": "main_rationale_287",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "test a provider api key live and return latency & status."
-    },
-    {
-      "label": "Generate net-new SEO content from scratch using AI.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L308",
-      "_origin": "ast",
-      "id": "main_rationale_308",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "generate net-new seo content from scratch using ai."
     },
     {
       "label": "Scrape a Yatradham URL and auto-process through all 5 agents.",
@@ -1674,7 +1709,67 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L248",
+      "source_location": "L243",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent_generate_long_form_blog",
+      "target": "agents_content_creator_agent_clean_markdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L243",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent_generate_long_form_blog",
+      "target": "agents_content_creator_agent_parse_markdown_sections",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L244",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent_generate_long_form_blog",
+      "target": "agents_content_creator_agent_sanitize_repetition",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L319",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent_run",
+      "target": "agents_content_creator_agent_generate_long_form_blog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L368",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent_run",
+      "target": "agents_content_creator_agent_clean_markdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L369",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_content_creator_agent_run",
@@ -1686,7 +1781,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L254",
+      "source_location": "L375",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_content_creator_agent_run",
@@ -2514,7 +2609,19 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L162",
+      "source_location": "L173",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent_generate_long_form_blog",
+      "target": "agents_content_creator_agent_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L305",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_content_creator_agent_run",
@@ -3422,6 +3529,28 @@
       "confidence": "EXTRACTED",
       "source_file": "agents/content_creator_agent.py",
       "source_location": "L162",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent",
+      "target": "agents_content_creator_agent_clean_markdown",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L173",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent",
+      "target": "agents_content_creator_agent_generate_long_form_blog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L305",
       "weight": 1.0,
       "_origin": "ast",
       "source": "agents_content_creator_agent",
@@ -4411,10 +4540,21 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L172",
+      "source_location": "L182",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "agents_content_creator_agent_rationale_172",
+      "source": "agents_content_creator_agent_rationale_182",
+      "target": "agents_content_creator_agent_generate_long_form_blog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L315",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent_rationale_315",
       "target": "agents_content_creator_agent_run",
       "confidence_score": 1.0
     },
@@ -4816,7 +4956,19 @@
       "context": "parameter_type",
       "confidence": "INFERRED",
       "source_file": "agents/content_creator_agent.py",
-      "source_location": "L165",
+      "source_location": "L175",
+      "weight": 0.8,
+      "_origin": "ast",
+      "source": "agents_content_creator_agent_generate_long_form_blog",
+      "target": "llm_client_llmclient",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "uses",
+      "context": "parameter_type",
+      "confidence": "INFERRED",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L308",
       "weight": 0.8,
       "_origin": "ast",
       "source": "agents_content_creator_agent_run",
@@ -5016,5 +5168,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d8fc97757a98377abb926c87c2ec2fd1d65b68d8"
+  "built_at_commit": "154391bfdbe69082a65fd301759e9b5bbc4af5e1"
 }

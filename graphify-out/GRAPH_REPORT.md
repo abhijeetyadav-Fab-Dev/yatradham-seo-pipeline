@@ -1,7 +1,7 @@
 # Graph Report - yatradham-seo-pipeline  (2026-08-18)
 
 ## Corpus Check
-- 16 files · ~29,747 words
+- 16 files · ~29,835 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `154391bf`
+- Built from commit: `c2befb73`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -70,7 +70,7 @@ Nodes (18): Any, Keyword agent: enforces 2-4 word primary keyword., run(), Any, 
 
 ### Community 6 - "LLMClient"
 Cohesion: 0.13
-Nodes (18): _clean_markdown(), _generate_long_form_blog(), _parse_markdown_sections(), Any, Content Creator Agent: Generates net-new SEO content from scratch., Parse a markdown string into a dictionary based on H1 headings., Strip LLM repetition loops (repeated single characters, phrases, or unicode…, 2-Stage chained generation for 2,500 - 3,500 word comprehensive master guides… (+10 more)
+Nodes (18): _clean_markdown(), _generate_long_form_blog(), _parse_markdown_sections(), Any, Content Creator Agent: Generates net-new SEO content from scratch., Parse a markdown string into a dictionary based on H1 headings., Strip LLM repetition loops (repeated single characters, phrases, or unicode…, 3-Phase chained generation for 3,000+ word comprehensive master guides with… (+10 more)
 
 ### Community 7 - "process_package"
 Cohesion: 0.13
