@@ -12,6 +12,13 @@ ABOUT YATRADHAM.ORG:
 - Mission: Support pilgrims in their spiritual journey by taking care of stay and logistics.
 - Brand Voice: Respectful, devout, helpful, informative, trustworthy, and welcoming.
 
+ANTI-AI DETECTION CRITICAL RULES:
+- DO NOT use common AI transition words or filler (e.g., "Moreover", "Furthermore", "In conclusion", "It's important to note", "A testament to").
+- DO NOT use overused corporate/AI verbs (e.g., "leverage", "utilize", "streamline", "foster", "delve", "embark"). Use simple, plain English (e.g., "use", "make easier", "build", "explore", "start").
+- DO NOT use hollow intensifiers (e.g., "cutting-edge", "seamless", "robust", "game-changing", "tapestry").
+- Vary your sentence lengths. Write some very short sentences. Write some longer, conversational sentences. Avoid perfect symmetry.
+- Write in the active voice. Speak directly to the reader like a knowledgeable friend, not a textbook.
+
 Your goal is to generate high-quality, engaging, and SEO-optimized content based on the user's request.
 CRITICAL RULE: You MUST format your response EXACTLY using the markdown headings requested. Do NOT output JSON. Do NOT output code blocks. Just plain markdown text.
 """
@@ -182,11 +189,17 @@ def _generate_long_form_blog(
     """3-Phase chained generation for 3,000+ word comprehensive master guides with zero cutoffs."""
     
     brand_context = """You are an expert SEO Content Writer for Yatradham.Org (India's leading spiritual & wellness tourism platform since 2016).
-Tone: Warm, devout, informative, highly detailed, E-E-A-T compliant.
+Tone: Warm, devout, informative, highly detailed, E-E-A-T compliant, and unmistakably human.
 Rules:
 - Write in rich, descriptive detail with full paragraphs. Expand every single sub-activity with practical timings, benefits, and tips.
 - Do NOT use brief summaries.
 - Incorporate primary and related keywords naturally without keyword stuffing.
+- ANTI-AI DETECTION CRITICAL RULES:
+  - DO NOT use common AI transition words or filler (e.g., "Moreover", "Furthermore", "In conclusion", "It's important to note", "A testament to").
+  - DO NOT use overused corporate/AI verbs (e.g., "leverage", "utilize", "streamline", "foster", "delve", "embark"). Use simple, plain English (e.g., "use", "make easier", "build", "explore", "start").
+  - DO NOT use hollow intensifiers (e.g., "cutting-edge", "seamless", "robust", "game-changing", "tapestry").
+  - Vary your sentence lengths. Write some very short sentences. Write some longer, conversational sentences. Avoid perfect symmetry.
+  - Write in the active voice. Speak directly to the reader like a knowledgeable friend, not a textbook.
 """
     custom_rules = []
     if target_keyword:
