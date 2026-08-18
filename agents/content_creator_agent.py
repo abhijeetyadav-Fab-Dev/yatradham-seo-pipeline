@@ -216,12 +216,18 @@ Rules:
     prompt_phase1 = f"""{brand_context}
 {rules_text}
 
-TASK: Generate PHASE 1 of a comprehensive 3,000-word master travel guide on: "{topic}".
-Target word count for Phase 1: ~1,000 words.
+TASK: Generate PHASE 1 of a 3,000-word master travel guide on: "{topic}".
+Target word count: ~1,000 words.
+
+ANTI-DETECTION INSTRUCTIONS: 
+- Write with HIGH PERPLEXITY and HIGH BURSTINESS.
+- Use contractions (don't, you'll, we've).
+- Write conversationally, as if you actually traveled there last month. Use a few brief personal-sounding anecdotes or observations (e.g., "When you step off the train...", "I usually tell travelers to...").
+- AVOID perfectly balanced paragraphs. AVOID robotic list formatting.
 
 Structure to generate for PHASE 1:
 # TITLE
-[Compelling, SEO-Optimized Title]
+[Compelling, Human-sounding Title]
 
 # META DESCRIPTION
 [Engaging Meta Description (150-160 characters)]
@@ -230,22 +236,22 @@ Structure to generate for PHASE 1:
 [Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
 
 # CONTENT
-## Introduction & Spiritual Significance
-(Write ~300-350 words detailing the history, spiritual allure of the destination, why it's unique, and setting the intention for the journey).
+## Why This Place Changes You
+(Write ~300 words detailing the spiritual allure in a narrative, storytelling format).
 
-## Pre-Travel Planning & Preparation
-(Write ~300-350 words covering Best Time to Visit, How to Reach, Verified Accommodation through Yatradham, What to Pack, and Cultural Etiquette).
+## What You Actually Need to Know Before Going
+(Write ~300 words covering Best Time, How to Reach, Verified Accommodation through Yatradham, and Packing. Format casually, not like a textbook).
 
-## Day 1: Arrival, Settling In & River Grounding
-(Write ~250-300 words with Morning Arrival, Afternoon Relaxation, Evening Aarti at Ghats, and Night routines).
+## Day 1: Arriving and Slowing Down
+(Write ~200 words. Tell them what to do on their first day. Do NOT use strict "Morning/Evening" subheadings. Just weave it into a story).
 
-## Day 2: Yoga Foundations & Breath Awareness (Pranayama)
-(Write ~250-300 words with Sunrise Asana, Guided Meditation, Mid-day healthy meals, and Evening reflection).
+## Day 2: Getting into the Rhythm
+(Write ~200 words about early asanas, food, and reflection).
 
-## Day 3: Nature Immersion & Himalayan Trails
-(Write ~250-300 words detailing Waterfall/Forest trails, Mindful walking, Herbal teas, and Sound/Yin relaxation).
+## Day 3: Stepping Off the Paved Roads
+(Write ~200 words about trails, nature, and quiet moments).
 
-CRITICAL: Output rich, full paragraphs. Output ONLY markdown headings specified above."""
+CRITICAL: Output rich, narrative paragraphs. Output ONLY markdown headings specified above."""
 
     part1_raw = client.chat_completion(
         messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase1}],
@@ -264,23 +270,28 @@ CRITICAL: Output rich, full paragraphs. Output ONLY markdown headings specified 
     prompt_phase2 = f"""{brand_context}
 {rules_text}
 
-TASK: Generate PHASE 2 (Days 4 through 7) of the 3,000-word master travel guide on: "{topic}".
-Target word count for Phase 2: ~1,200 words.
+TASK: Generate PHASE 2 (Days 4 through 7) of the 3,000-word guide on: "{topic}".
+Target word count: ~1,200 words.
 
-We have already completed Introduction, Planning, and Days 1-3.
-Now generate Days 4 through 7 with full, in-depth Morning, Mid-Day, Evening, and Night routines:
+ANTI-DETECTION INSTRUCTIONS: 
+- Write with HIGH PERPLEXITY and HIGH BURSTINESS.
+- Use contractions. Write like an experienced traveler giving advice.
+- AVOID perfectly balanced paragraphs. DO NOT use "Morning/Mid-Day/Evening/Night" sub-subheadings. Tell the day as a flowing narrative.
 
-## Day 4: Ayurvedic Therapies & Holistic Body Detox
-(Write ~300 words covering Dosha assessment, Abhyanga/Shirodhara therapies, Sattvic nutrition principles, and restorative rest).
+We have already completed Days 1-3.
+Now generate Days 4 through 7:
 
-## Day 5: Sacred Temples & Cultural Immersion
-(Write ~300 words covering Ancient Temple visits, Triveni Ghat rituals, Satsang, and Seva/Selfless service).
+## Day 4: Detox and Real Healing
+(Write ~300 words. Describe the Ayurvedic therapies and Sattvic food as an experience, not a schedule).
 
-## Day 6: Deep Meditation, Sound Healing & Adventure
-(Write ~300 words covering Forest/Cave meditation, Tibetan bowl sound healing, optional nature exploration, and reflection circles).
+## Day 5: The Temples and the Culture
+(Write ~300 words. Talk about ancient temples, Triveni Ghat, and Seva/Selfless service in a narrative way).
 
-## Day 7: Integration, Personal Wellness Plan & Departure
-(Write ~300 words covering Sunrise integration flow, building a 30-day home wellness routine, closing circle, and farewell).
+## Day 6: Finding Silence
+(Write ~300 words. Focus on deep meditation, sound healing, and campfire reflections).
+
+## Day 7: Packing Up and Taking It With You
+(Write ~300 words. Cover the closing flow, building a home routine, and the emotional departure).
 
 CRITICAL: Start immediately with `## Day 4`. Output ONLY markdown text."""
 
@@ -296,22 +307,26 @@ CRITICAL: Start immediately with `## Day 4`. Output ONLY markdown text."""
     prompt_phase3 = f"""{brand_context}
 {rules_text}
 
-TASK: Generate PHASE 3 (the grand finale) of the 3,000-word master travel guide on: "{topic}".
-Target word count for Phase 3: ~800 words.
+TASK: Generate PHASE 3 (the finale) of the 3,000-word guide on: "{topic}".
+Target word count: ~800 words.
 
-We have already completed Days 1 through 7.
-Now generate the final essential sections:
+ANTI-DETECTION INSTRUCTIONS: 
+- Write with HIGH PERPLEXITY and HIGH BURSTINESS. Use contractions.
+- AVOID generic conclusions like "In conclusion" or "Ultimately".
 
-## Practical Travel Logistics & Budget Guide
-(Write ~350 words detailing transport options, verified Yatradham accommodation booking advantages, estimated costs for various budgets, and safety guidelines).
+We have completed Days 1 through 7.
+Now generate the final sections:
 
-## Frequently Asked Questions (FAQs)
-(Write 6 comprehensive FAQs with full, detailed paragraph answers covering packing essentials, beginner suitability for retreats, solo female travel safety, dietary accommodations, Ayurvedic preparation, and booking verified stays).
+## The Real Logistics: Costs and Commutes
+(Write ~350 words detailing transport, Yatradham verified bookings, realistic budgets, and safety. Keep it conversational).
 
-## Conclusion: Begin Your Transformative Journey
-(Write ~200 words with an inspiring closing reflection and a warm, soft CTA inviting readers to book verified stays and plan their journey on Yatradham.Org).
+## Frequently Asked Questions
+(Write 6 conversational FAQs. Answer them like a human expert, not a corporate brochure).
 
-CRITICAL: Start immediately with `## Practical Travel Logistics & Budget Guide`. Output ONLY markdown text."""
+## Final Thoughts Before You Go
+(Write ~200 words. Give an inspiring, non-generic sign-off and a natural CTA for Yatradham.Org).
+
+CRITICAL: Start immediately with `## The Real Logistics: Costs and Commutes`. Output ONLY markdown text."""
 
     part3_raw = client.chat_completion(
         messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase3}],
