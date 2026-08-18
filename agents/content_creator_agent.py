@@ -176,12 +176,26 @@ def run(
     # Dynamic word count guidance
     word_guidance = ""
     target_tokens = 4000
-    if word_count:
+    if word_count and word_count >= 1500:
+        target_tokens = 8192
+        word_guidance = f"""
+CRITICAL LENGTH & COMPLETENESS REQUIREMENT:
+- Target Length: ~{word_count} words.
+- This MUST be a full-length, exhaustive long-form piece that finishes completely from Introduction to Conclusion.
+- DO NOT STOP EARLY. Complete EVERY SINGLE DAY from Day 1 through Day 7 in full detail.
+- Pacing Guidelines to hit ~{word_count} words:
+  * Introduction & Spiritual Background: ~300 words
+  * Pre-Travel & Planning Essentials: ~300 words
+  * Day 1 through Day 7 Breakdown: ~300-350 words PER DAY (covering Morning, Mid-Day, Evening, and Night routines in rich detail)
+  * Practical Logistics (Transport, Verified Accommodation, Budget, Packing): ~300 words
+  * Frequently Asked Questions (at least 5 detailed Q&As with full paragraphs): ~350 words
+  * Conclusion & Yatradham Booking Soft CTA: ~200 words
+"""
+    elif word_count:
         target_tokens = min(8000, max(3000, int(word_count * 1.6)))
         word_guidance = f"""
 CRITICAL LENGTH REQUIREMENT:
 - Target Length: ~{word_count} words.
-- This MUST be an in-depth, thorough, and comprehensive piece. Do NOT summarize or write a brief overview.
 - Elaborate extensively on every section with detailed descriptions, step-by-step schedules, rich context, practical travel information, tips, and comprehensive FAQs.
 """
 

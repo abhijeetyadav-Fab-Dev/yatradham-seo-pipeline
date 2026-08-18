@@ -244,7 +244,34 @@ class LLMClient:
                     kwargs["response_format"] = response_format
 
                 resp = client_inst.chat.completions.create(**kwargs)
-                content = resp.choices[0].message.content or ""
+                choice = resp.choices[0]
+                content = choice.message.content or ""
+                finish_reason = getattr(choice, 'finish_reason', None)
+
+                # Seamlessly continue if response was cut off mid-way by token limit
+                continuation_pass = 0
+                while finish_reason == "length" and continuation_pass < 2 and content.strip():
+                    continuation_pass += 1
+                    logger.info(f"Response truncated (finish_reason=length). Running auto-continuation pass {continuation_pass}...")
+                    try:
+                        cont_messages = messages + [
+                            {"role": "assistant", "content": content},
+                            {"role": "user", "content": "Continue generating the rest of the content seamlessly from where you stopped. Do not repeat any text already written above."}
+                        ]
+                        cont_kwargs = dict(kwargs)
+                        cont_kwargs["messages"] = cont_messages
+                        cont_resp = client_inst.chat.completions.create(**cont_kwargs)
+                        cont_choice = cont_resp.choices[0]
+                        cont_text = cont_choice.message.content or ""
+                        if cont_text.strip():
+                            content += "\n" + cont_text.strip()
+                            finish_reason = getattr(cont_choice, 'finish_reason', None)
+                        else:
+                            break
+                    except Exception as cont_err:
+                        logger.warning(f"Auto-continuation pass failed: {cont_err}")
+                        break
+
                 if content.strip():
                     self.last_provider_used = provider_name
                     self.last_model_used = active_model
