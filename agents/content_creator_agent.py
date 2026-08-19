@@ -284,7 +284,7 @@ def _generate_long_form_blog(
     word_count: int = 3000,
     additional_instructions: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """3-Phase chained generation for 3,000+ word comprehensive master guides adhering to top SEO ranking guardrails."""
+    """Single-pass unified generation for 3,000+ word comprehensive master guides adhering to top SEO ranking guardrails."""
     
     brand_context = """You are an elite SEO Content Strategist & Travel Writer for Yatradham.Org (India's premier spiritual & wellness tourism platform since 2016).
 
@@ -309,16 +309,20 @@ CORE SEO & EDITORIAL GUARDRAILS (Inspired by Top-Ranking Industry Standards):
         custom_rules.append(f"User Instructions:\n{additional_instructions}")
     rules_text = "\n".join(custom_rules)
 
-    # -------------------------------------------------------------
-    # PHASE 1: Meta, Intro Hook, Planning Essentials & Days 1-3 (~1,000 words)
-    # -------------------------------------------------------------
-    prompt_phase1 = f"""{brand_context}
+    master_prompt = f"""{brand_context}
 {rules_text}
 
-TASK: Generate PHASE 1 of a 3,000-word comprehensive SEO guide on: "{topic}".
-Target word count: ~1,000 words.
+TASK: Generate a complete, exhaustive, 3,000-word master travel and wellness guide on: "{topic}".
+Target word count: ~{word_count or 3000} words.
 
-Structure to generate:
+CRITICAL INSTRUCTIONS:
+- Write in rich, descriptive narrative detail across all sections.
+- Cover every single day (Day 1 through Day 7) with full practical depth, timings, meal details, and tips.
+- Do NOT skip any days. Do NOT provide brief bullet summaries where full paragraphs are required.
+- Do NOT generate multiple FAQ or Conclusion sections. Follow the exact structure below once from top to bottom.
+
+EXACT OUTPUT STRUCTURE REQUIRED:
+
 # TITLE
 [Search-optimized, high CTR title with target keyword]
 
@@ -333,125 +337,69 @@ Structure to generate:
 (Write ~300 words. Open with an engaging hook. Explain the unique spiritual and rejuvenating energy of the destination).
 
 ## What You Actually Need to Know Before Going
-(Write ~300 words covering Best Time to Visit, How to Reach with airport/train options, Verified Stay Advice via Yatradham.Org, and a quick bulleted packing checklist).
+(Write ~350 words covering Best Time to Visit, How to Reach with airport/train routes, Verified Stay Advice via Yatradham.Org, and a quick bulleted packing checklist).
 
 ## Day 1: Arriving and Slowing Down
-(Write ~200 words. Arrival flow, settling into your stay, first peaceful river/temple visit, and sattvic welcome meal).
+(Write ~250 words. Arrival flow, settling into your stay, first peaceful river/temple visit, and sattvic welcome meal).
 
 ## Day 2: Getting into the Rhythm
-(Write ~200 words. Early sunrise practice/darshan, nourishing breakfast, mid-day reflection or workshop, and quiet evening).
+(Write ~250 words. Early sunrise practice/darshan, nourishing breakfast, mid-day reflection or workshop, and quiet evening).
 
 ## Day 3: Stepping Off the Paved Roads
-(Write ~200 words. Nature trails, hidden spots, waterfall/temple walks, and local cultural interaction).
-
-CRITICAL: Output rich, narrative paragraphs. Output ONLY markdown headings specified above."""
-
-    part1_raw = client.chat_completion(
-        messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase1}],
-        max_tokens=3000,
-        temperature=0.6,
-    )
-    
-    cleaned_part1 = _clean_markdown(part1_raw)
-    sections_part1 = _parse_markdown_sections(cleaned_part1)
-    title = _sanitize_repetition(sections_part1.get("TITLE", topic))
-    meta_desc = _sanitize_repetition(sections_part1.get("META DESCRIPTION", ""))
-    tags_str = sections_part1.get("SUGGESTED TAGS", "")
-    tags = [_sanitize_repetition(t) for t in tags_str.split(",") if _sanitize_repetition(t)] if tags_str else []
-    
-    part1_content_raw = sections_part1.get("CONTENT", "")
-    if not part1_content_raw:
-        h2_idx = cleaned_part1.find("## ")
-        if h2_idx != -1:
-            part1_content_raw = cleaned_part1[h2_idx:]
-        else:
-            part1_content_raw = cleaned_part1
-
-    content_part1 = _sanitize_repetition(part1_content_raw)
-
-    # -------------------------------------------------------------
-    # PHASE 2: Days 4 through 7 Continuation (~1,200 words)
-    # -------------------------------------------------------------
-    prompt_phase2 = f"""TASK: Continue generating PHASE 2 (Days 4 through 7) for our 3,000-word guide on: "{topic}".
-Target word count: ~1,200 words.
-
-We have already completed Phase 1 (Days 1, 2, and 3). 
-Now write ONLY Days 4 through 7 in continuous, narrative detail:
+(Write ~250 words. Nature trails, hidden spots, waterfall/temple walks, and local cultural interaction).
 
 ## Day 4: Detox, Healing & Deep Practices
-(Write ~300 words. Focus on Ayurvedic therapies, herbal care, dosha balance, and sattvic rejuvenation).
+(Write ~250 words. Focus on Ayurvedic therapies, herbal care, dosha balance, and sattvic rejuvenation).
 
 ## Day 5: Ancient Temples & Living Culture
-(Write ~300 words. Sacred shrines, evening Ganga Aarti at the ghats, cultural immersion, and seva/selfless service).
+(Write ~250 words. Sacred shrines, evening Ganga Aarti at the ghats, cultural immersion, and seva/selfless service).
 
 ## Day 6: Finding Silence & Inner Stillness
-(Write ~300 words. Deep meditation, sound healing, mindful walking, and peaceful evening campfire reflection).
+(Write ~250 words. Deep meditation, sound healing, mindful walking, and peaceful evening campfire reflection).
 
 ## Day 7: Packing Up & Taking the Peace Home
-(Write ~300 words. Closing gratitude rituals, buying local herbs/souvenirs, building a home routine, and checkout).
-
-CRITICAL CONSTRAINTS:
-- Start immediately with `## Day 4: Detox, Healing & Deep Practices`.
-- Write ONLY Days 4, 5, 6, and 7.
-- DO NOT write FAQs or conclusion in this phase.
-- Output ONLY markdown headings and detailed narrative paragraphs."""
-
-    # Pass conversation history so model knows exactly what came before
-    part2_raw = client.chat_completion(
-        messages=[
-            {"role": "system", "content": brand_context},
-            {"role": "user", "content": prompt_phase1},
-            {"role": "assistant", "content": cleaned_part1},
-            {"role": "user", "content": prompt_phase2},
-        ],
-        max_tokens=3000,
-        temperature=0.6,
-    )
-    
-    content_part2 = _sanitize_repetition(_clean_markdown(part2_raw))
-
-    # -------------------------------------------------------------
-    # PHASE 3: Key Rules, Logistics, Single FAQ & Conclusion (~800 words)
-    # -------------------------------------------------------------
-    prompt_phase3 = f"""TASK: Generate PHASE 3 (the finale) for our 3,000-word guide on: "{topic}".
-Target word count: ~800 words.
-
-We have already written the complete 7-Day Itinerary (Days 1 through 7).
-DO NOT summarize or list Days 1 through 7 again.
-
-Generate ONLY these 4 high-value closing sections:
+(Write ~250 words. Closing gratitude rituals, buying local herbs/souvenirs, building a home routine, and checkout).
 
 ## 3 Key Takeaways for a Seamless Journey
 (Provide 3 actionable, high-impact bulleted rules for travelers covering pacing, local etiquette, and verified booking).
 
 ## The Real Logistics: Costs, Stays & Commutes
-(Write ~300 words detailing flight/train connections, realistic daily budget ranges in INR, local commute tips, and the advantages of booking verified dharamshalas and wellness stays through Yatradham.Org).
+(Write ~350 words detailing flight/train connections, realistic daily budget ranges in INR, local commute tips, and the advantages of booking verified dharamshalas and wellness stays through Yatradham.Org).
 
 ## Frequently Asked Questions
-(Provide 6 distinct, search-focused FAQs with thorough, direct answers. Cover budget, beginner friendliness, solo travel safety, packing, and best booking seasons).
+(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo travel safety, packing, meals, and best booking seasons).
 
 ## Final Thoughts & Planning Your Trip
 (Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org).
 
-CRITICAL: Start immediately with `## 3 Key Takeaways for a Seamless Journey`. Output ONLY markdown text."""
+CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structure completely."""
 
-    part3_raw = client.chat_completion(
+    raw_response = client.chat_completion(
         messages=[
             {"role": "system", "content": brand_context},
-            {"role": "user", "content": prompt_phase1},
-            {"role": "assistant", "content": cleaned_part1},
-            {"role": "user", "content": prompt_phase2},
-            {"role": "assistant", "content": content_part2},
-            {"role": "user", "content": prompt_phase3},
+            {"role": "user", "content": master_prompt}
         ],
-        max_tokens=3000,
+        max_tokens=6000,
         temperature=0.6,
     )
-    
-    content_part3 = _sanitize_repetition(_clean_markdown(part3_raw))
 
-    # Stitch Phase 1, Phase 2, and Phase 3 seamlessly
-    full_content = f"{content_part1}\n\n{content_part2}\n\n{content_part3}"
+    cleaned = _clean_markdown(raw_response)
+    sections = _parse_markdown_sections(cleaned)
+
+    title = _sanitize_repetition(sections.get("TITLE", topic))
+    meta_desc = _sanitize_repetition(sections.get("META DESCRIPTION", ""))
+    tags_str = sections.get("SUGGESTED TAGS", "")
+    tags = [_sanitize_repetition(t) for t in tags_str.split(",") if _sanitize_repetition(t)] if tags_str else []
+
+    part_content = sections.get("CONTENT", "")
+    if not part_content:
+        h2_idx = cleaned.find("## ")
+        if h2_idx != -1:
+            part_content = cleaned[h2_idx:]
+        else:
+            part_content = cleaned
+
+    full_content = _sanitize_repetition(part_content)
 
     return {
         "title": title,
