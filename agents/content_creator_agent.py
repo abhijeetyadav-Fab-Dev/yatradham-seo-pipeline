@@ -190,7 +190,34 @@ def _sanitize_repetition(text: str) -> str:
     return text.strip()
 
 
+def _strip_thinking_tags(text: str) -> str:
+    """Remove LLM chain-of-thought / reasoning blocks that leak into output.
+    
+    Models like DeepSeek, Gemini Thinking, and QwQ wrap internal reasoning
+    in <think>...</think>, <reasoning>...</reasoning>, etc.  These must be
+    stripped BEFORE any other processing so they don't pollute the blog.
+    """
+    if not text:
+        return ""
+    # Strip all common reasoning tag pairs (greedy, across newlines)
+    for tag in ("think", "thinking", "reasoning", "reflection", "inner_monologue", "scratchpad"):
+        text = re.sub(
+            rf"<{tag}>.*?</{tag}>",
+            "",
+            text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+    # Also strip orphan opening tags that never close (model got cut off mid-think)
+    for tag in ("think", "thinking", "reasoning", "reflection", "inner_monologue", "scratchpad"):
+        idx = text.find(f"<{tag}>")
+        if idx != -1:
+            text = text[:idx]
+    return text.strip()
+
+
 def _clean_markdown(content: str) -> str:
+    # First strip any leaked reasoning / thinking blocks
+    content = _strip_thinking_tags(content)
     content = content.strip()
     if content.startswith("```markdown"):
         content = content[11:]
