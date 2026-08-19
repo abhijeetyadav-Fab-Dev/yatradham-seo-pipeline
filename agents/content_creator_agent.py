@@ -284,24 +284,23 @@ def _generate_long_form_blog(
     word_count: int = 3000,
     additional_instructions: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """3-Phase chained generation for 3,000+ word comprehensive master guides with zero cutoffs."""
+    """3-Phase chained generation for 3,000+ word comprehensive master guides adhering to top SEO ranking guardrails."""
     
-    brand_context = """You are an expert SEO Content Writer for Yatradham.Org (India's leading spiritual & wellness tourism platform since 2016).
-Tone: Warm, devout, informative, highly detailed, E-E-A-T compliant, and unmistakably human.
-Rules:
-- Write in rich, descriptive detail with full paragraphs. Expand every single sub-activity with practical timings, benefits, and tips.
-- Do NOT use brief summaries.
-- Incorporate primary and related keywords naturally without keyword stuffing.
-- ANTI-AI DETECTION CRITICAL RULES:
-  - DO NOT use common AI transition words or filler (e.g., "Moreover", "Furthermore", "In conclusion", "It's important to note", "A testament to").
-  - DO NOT use overused corporate/AI verbs (e.g., "leverage", "utilize", "streamline", "foster", "delve", "embark"). Use simple, plain English (e.g., "use", "make easier", "build", "explore", "start").
-  - DO NOT use hollow intensifiers (e.g., "cutting-edge", "seamless", "robust", "game-changing", "tapestry").
-  - Vary your sentence lengths. Write some very short sentences. Write some longer, conversational sentences. Avoid perfect symmetry.
-  - Write in the active voice. Speak directly to the reader like a knowledgeable friend, not a textbook.
+    brand_context = """You are an elite SEO Content Strategist & Travel Writer for Yatradham.Org (India's premier spiritual & wellness tourism platform since 2016).
+
+CORE SEO & EDITORIAL GUARDRAILS (Inspired by Top-Ranking Industry Standards):
+1. Search Intent First: Answer real pilgrim and traveler questions with practical, high-value, actionable advice—never fluffy filler.
+2. Clear Structural Hierarchy: Use logical H2s and H3s with natural keyword inclusion. Make content scannable with bullet points for rules, checklists, and key takeaways.
+3. Deep E-E-A-T & Practical Specificity: Provide exact timings, realistic pricing in INR, route comparisons, verified dharamshala/ashram advice, and local nuances.
+4. Strategic Brand Integration: Seamlessly highlight Yatradham.Org as the trusted platform for verified bookings, clean dharamshalas, and transparent pricing.
+5. ANTI-AI DETECTION / HUMAN WRITING STANDARDS:
+   - Write with high perplexity and burstiness. Mix short, punchy statements with descriptive, narrative sentences.
+   - Use active voice, contractions (you'll, don't, we've), and conversational advice.
+   - STRICTLY FORBIDDEN AI SLOP: "delve into", "tapestry of", "testament to", "nestled in", "seamlessly", "moreover", "furthermore", "in conclusion", "it's important to note".
 """
     custom_rules = []
     if target_keyword:
-        custom_rules.append(f"Target Primary Keyword: '{target_keyword}' (Integrate naturally in headings and body).")
+        custom_rules.append(f"Target Primary Keyword: '{target_keyword}' (Integrate naturally in H1, H2s, and body text).")
     if audience:
         custom_rules.append(f"Target Audience: {audience}.")
     if tone and tone.lower() != "auto":
@@ -310,44 +309,40 @@ Rules:
         custom_rules.append(f"User Instructions:\n{additional_instructions}")
     rules_text = "\n".join(custom_rules)
 
-    # PHASE 1: Meta, Intro, Planning Essentials, Days 1-3 (~1,000 words)
+    # -------------------------------------------------------------
+    # PHASE 1: Meta, Intro Hook, Planning Essentials & Days 1-3 (~1,000 words)
+    # -------------------------------------------------------------
     prompt_phase1 = f"""{brand_context}
 {rules_text}
 
-TASK: Generate PHASE 1 of a 3,000-word master travel guide on: "{topic}".
+TASK: Generate PHASE 1 of a 3,000-word comprehensive SEO guide on: "{topic}".
 Target word count: ~1,000 words.
 
-ANTI-DETECTION INSTRUCTIONS: 
-- Write with HIGH PERPLEXITY and HIGH BURSTINESS.
-- Use contractions (don't, you'll, we've).
-- Write conversationally, as if you actually traveled there last month. Use a few brief personal-sounding anecdotes or observations (e.g., "When you step off the train...", "I usually tell travelers to...").
-- AVOID perfectly balanced paragraphs. AVOID robotic list formatting.
-
-Structure to generate for PHASE 1:
+Structure to generate:
 # TITLE
-[Compelling, Human-sounding Title]
+[Search-optimized, high CTR title with target keyword]
 
 # META DESCRIPTION
-[Engaging Meta Description (150-160 characters)]
+[Engaging meta description with keyword and value hook (150-160 characters)]
 
 # SUGGESTED TAGS
 [Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
 
 # CONTENT
 ## Why This Place Changes You
-(Write ~300 words detailing the spiritual allure in a narrative, storytelling format).
+(Write ~300 words. Open with an engaging hook. Explain the unique spiritual and rejuvenating energy of the destination).
 
 ## What You Actually Need to Know Before Going
-(Write ~300 words covering Best Time, How to Reach, Verified Accommodation through Yatradham, and Packing. Format casually, not like a textbook).
+(Write ~300 words covering Best Time to Visit, How to Reach with airport/train options, Verified Stay Advice via Yatradham.Org, and a quick bulleted packing checklist).
 
 ## Day 1: Arriving and Slowing Down
-(Write ~200 words. Tell them what to do on their first day. Do NOT use strict "Morning/Evening" subheadings. Just weave it into a story).
+(Write ~200 words. Arrival flow, settling into your stay, first peaceful river/temple visit, and sattvic welcome meal).
 
 ## Day 2: Getting into the Rhythm
-(Write ~200 words about early asanas, food, and reflection).
+(Write ~200 words. Early sunrise practice/darshan, nourishing breakfast, mid-day reflection or workshop, and quiet evening).
 
 ## Day 3: Stepping Off the Paved Roads
-(Write ~200 words about trails, nature, and quiet moments).
+(Write ~200 words. Nature trails, hidden spots, waterfall/temple walks, and local cultural interaction).
 
 CRITICAL: Output rich, narrative paragraphs. Output ONLY markdown headings specified above."""
 
@@ -364,7 +359,6 @@ CRITICAL: Output rich, narrative paragraphs. Output ONLY markdown headings speci
     tags_str = sections_part1.get("SUGGESTED TAGS", "")
     tags = [_sanitize_repetition(t) for t in tags_str.split(",") if _sanitize_repetition(t)] if tags_str else []
     
-    # If explicit CONTENT section wasn't captured, extract all text starting from first ## header
     part1_content_raw = sections_part1.get("CONTENT", "")
     if not part1_content_raw:
         h2_idx = cleaned_part1.find("## ")
@@ -375,72 +369,81 @@ CRITICAL: Output rich, narrative paragraphs. Output ONLY markdown headings speci
 
     content_part1 = _sanitize_repetition(part1_content_raw)
 
-    # PHASE 2: Days 4-7 In-Depth Journey (~1,200 words)
-    prompt_phase2 = f"""{brand_context}
-{rules_text}
-
-TASK: Generate PHASE 2 (Days 4 through 7) of the 3,000-word guide on: "{topic}".
+    # -------------------------------------------------------------
+    # PHASE 2: Days 4 through 7 Continuation (~1,200 words)
+    # -------------------------------------------------------------
+    prompt_phase2 = f"""TASK: Continue generating PHASE 2 (Days 4 through 7) for our 3,000-word guide on: "{topic}".
 Target word count: ~1,200 words.
 
-ANTI-DETECTION INSTRUCTIONS: 
-- Write with HIGH PERPLEXITY and HIGH BURSTINESS.
-- Use contractions. Write like an experienced traveler giving advice.
-- AVOID perfectly balanced paragraphs. DO NOT use "Morning/Mid-Day/Evening/Night" sub-subheadings. Tell the day as a flowing narrative.
+We have already completed Phase 1 (Days 1, 2, and 3). 
+Now write ONLY Days 4 through 7 in continuous, narrative detail:
 
-We have already completed Days 1-3.
-Now generate Days 4 through 7:
+## Day 4: Detox, Healing & Deep Practices
+(Write ~300 words. Focus on Ayurvedic therapies, herbal care, dosha balance, and sattvic rejuvenation).
 
-## Day 4: Detox and Real Healing
-(Write ~300 words. Describe the Ayurvedic therapies and Sattvic food as an experience, not a schedule).
+## Day 5: Ancient Temples & Living Culture
+(Write ~300 words. Sacred shrines, evening Ganga Aarti at the ghats, cultural immersion, and seva/selfless service).
 
-## Day 5: The Temples and the Culture
-(Write ~300 words. Talk about ancient temples, Triveni Ghat, and Seva/Selfless service in a narrative way).
+## Day 6: Finding Silence & Inner Stillness
+(Write ~300 words. Deep meditation, sound healing, mindful walking, and peaceful evening campfire reflection).
 
-## Day 6: Finding Silence
-(Write ~300 words. Focus on deep meditation, sound healing, and campfire reflections).
+## Day 7: Packing Up & Taking the Peace Home
+(Write ~300 words. Closing gratitude rituals, buying local herbs/souvenirs, building a home routine, and checkout).
 
-## Day 7: Packing Up and Taking It With You
-(Write ~300 words. Cover the closing flow, building a home routine, and the emotional departure).
+CRITICAL CONSTRAINTS:
+- Start immediately with `## Day 4: Detox, Healing & Deep Practices`.
+- Write ONLY Days 4, 5, 6, and 7.
+- DO NOT write FAQs or conclusion in this phase.
+- Output ONLY markdown headings and detailed narrative paragraphs."""
 
-CRITICAL: Start immediately with `## Day 4`. Output ONLY markdown text."""
-
+    # Pass conversation history so model knows exactly what came before
     part2_raw = client.chat_completion(
-        messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase2}],
+        messages=[
+            {"role": "system", "content": brand_context},
+            {"role": "user", "content": prompt_phase1},
+            {"role": "assistant", "content": cleaned_part1},
+            {"role": "user", "content": prompt_phase2},
+        ],
         max_tokens=3000,
         temperature=0.6,
     )
     
     content_part2 = _sanitize_repetition(_clean_markdown(part2_raw))
 
-    # PHASE 3: Logistics, FAQs & Conclusion (~800 words)
-    prompt_phase3 = f"""{brand_context}
-{rules_text}
-
-TASK: Generate PHASE 3 (the finale) of the 3,000-word guide on: "{topic}".
+    # -------------------------------------------------------------
+    # PHASE 3: Key Rules, Logistics, Single FAQ & Conclusion (~800 words)
+    # -------------------------------------------------------------
+    prompt_phase3 = f"""TASK: Generate PHASE 3 (the finale) for our 3,000-word guide on: "{topic}".
 Target word count: ~800 words.
 
-ANTI-DETECTION INSTRUCTIONS: 
-- Write with HIGH PERPLEXITY and HIGH BURSTINESS. Use contractions.
-- AVOID generic conclusions like "In conclusion" or "Ultimately".
+We have already written the complete 7-Day Itinerary (Days 1 through 7).
+DO NOT summarize or list Days 1 through 7 again.
 
-IMPORTANT: We have ALREADY written the complete Day 1 through Day 7 itinerary above.
-DO NOT summarize, list, or write about Day 1, Day 2, Day 3, Day 4, Day 5, Day 6, or Day 7 again!
+Generate ONLY these 4 high-value closing sections:
 
-Generate ONLY these exact 3 sections:
+## 3 Key Takeaways for a Seamless Journey
+(Provide 3 actionable, high-impact bulleted rules for travelers covering pacing, local etiquette, and verified booking).
 
-## The Real Logistics: Costs and Commutes
-(Write ~350 words detailing flight/train transport, local commutes, verified accommodation bookings via Yatradham.Org, realistic budgets in INR, and practical safety tips. Keep it conversational).
+## The Real Logistics: Costs, Stays & Commutes
+(Write ~300 words detailing flight/train connections, realistic daily budget ranges in INR, local commute tips, and the advantages of booking verified dharamshalas and wellness stays through Yatradham.Org).
 
 ## Frequently Asked Questions
-(Write 6 distinct, useful questions and in-depth conversational answers for real pilgrims/travelers. Do NOT repeat questions).
+(Provide 6 distinct, search-focused FAQs with thorough, direct answers. Cover budget, beginner friendliness, solo travel safety, packing, and best booking seasons).
 
-## Final Thoughts Before You Go
-(Write ~200 words. Give an inspiring, non-generic sign-off and a natural recommendation to book verified stays with Yatradham.Org).
+## Final Thoughts & Planning Your Trip
+(Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org).
 
-CRITICAL: Start immediately with `## The Real Logistics: Costs and Commutes`. DO NOT list days. Output ONLY markdown text."""
+CRITICAL: Start immediately with `## 3 Key Takeaways for a Seamless Journey`. Output ONLY markdown text."""
 
     part3_raw = client.chat_completion(
-        messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase3}],
+        messages=[
+            {"role": "system", "content": brand_context},
+            {"role": "user", "content": prompt_phase1},
+            {"role": "assistant", "content": cleaned_part1},
+            {"role": "user", "content": prompt_phase2},
+            {"role": "assistant", "content": content_part2},
+            {"role": "user", "content": prompt_phase3},
+        ],
         max_tokens=3000,
         temperature=0.6,
     )
