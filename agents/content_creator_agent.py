@@ -158,30 +158,59 @@ def _sanitize_repetition(text: str) -> str:
     if not text:
         return ""
     
-    # 1. Clean catastrophic loops
+    # 1. Clean catastrophic loops (characters and single words)
     text = re.sub(r'(.)\1{4,}', r'\1', text)
     text = re.sub(r'(.{2,6}?)\1{4,}', r'\1', text)
     text = re.sub(r'\b(\w+)(?:\s+\1\b){3,}', r'\1', text, flags=re.IGNORECASE)
     
-    # 2. AI "Slop" Word Replacements (Beats Copyleaks Word-Frequency detection)
+    # 2. Clean multi-line loops (LLM gets stuck repeating the same 2-3 sentences/bullet points)
+    # This regex looks for blocks of text (at least 20 chars) that repeat at least 3 times
+    text = re.sub(r'(.{20,}?)(?:\s*\1){2,}', r'\1', text, flags=re.DOTALL)
+    
+    # 3. Clean consecutive identical lines
+    lines = text.split('\n')
+    cleaned_lines = []
+    for line in lines:
+        if not cleaned_lines or cleaned_lines[-1].strip() != line.strip():
+            cleaned_lines.append(line)
+    text = '\n'.join(cleaned_lines)
+
+    # 4. AI "Slop" Word Replacements (Beats Copyleaks Word-Frequency detection)
     ai_phrases = {
-        r'\b(D|d)elve into\b': r'\1iscover',
-        r'\b(E|e)mbark on\b': r'\1tart',
-        r'\b(L|l)everage\b': r'\1se',
-        r'\b(U|u)tilize\b': r'\1se',
-        r'\b(T|t)apestry of\b': r'\1lend of',
-        r'\b(S|s)eamless(ly)?\b': r'\1mooth\2',
-        r'\b(R|r)obust\b': r'\1eliable',
-        r'\b(F|f)oster(ing)?\b': r'\1uild\2',
-        r'\b(C|c)utting-edge\b': r'\1xcellent',
-        r'\b(T|t)estament to\b': r'\1roof of',
-        r'\b(M|m)oreover,?\b': r'\1lso,',
-        r'\b(F|f)urthermore,?\b': r'\1n addition,',
-        r'\b(U|u)ltimately,?\b': r'\1n the end,',
-        r'\b(I|i)t is important to note that\b': r'\1emember that',
-        r'\b(B|b)eacon of\b': r'\1enter of',
-        r'\b(N|n)estled\b': r'\1ocated',
-        r'\b(V|v)ibrant\b': r'\1ively'
+        r'\bDelve into\b': 'Discover',
+        r'\bdelve into\b': 'discover',
+        r'\bEmbark on\b': 'Start',
+        r'\bembark on\b': 'start',
+        r'\bLeverage\b': 'Use',
+        r'\bleverage\b': 'use',
+        r'\bUtilize\b': 'Use',
+        r'\butilize\b': 'use',
+        r'\bTapestry of\b': 'Blend of',
+        r'\btapestry of\b': 'blend of',
+        r'\bSeamless(ly)?\b': r'Smooth\1',
+        r'\bseamless(ly)?\b': r'smooth\1',
+        r'\bRobust\b': 'Reliable',
+        r'\brobust\b': 'reliable',
+        r'\bFoster(ing)?\b': r'Build\1',
+        r'\bfoster(ing)?\b': r'build\1',
+        r'\bCutting-edge\b': 'Excellent',
+        r'\bcutting-edge\b': 'excellent',
+        r'\bTestament to\b': 'Proof of',
+        r'\btestament to\b': 'proof of',
+        r'\bMoreover,?\b': 'Also,',
+        r'\bmoreover,?\b': 'also,',
+        r'\bFurthermore,?\b': 'In addition,',
+        r'\bfurthermore,?\b': 'in addition,',
+        r'\bUltimately,?\b': 'In the end,',
+        r'\bultimately,?\b': 'in the end,',
+        r'\bIt is important to note that\b': 'Remember that',
+        r'\bit is important to note that\b': 'remember that',
+        r'\bBeacon of\b': 'Center of',
+        r'\bbeacon of\b': 'center of',
+        r'\bNestled\b': 'Located',
+        r'\bnestled\b': 'located',
+        r'\bVibrant\b': 'Lively',
+        r'\bvibrant\b': 'lively'
     }
     
     for pattern, replacement in ai_phrases.items():
