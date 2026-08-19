@@ -164,8 +164,13 @@ def _sanitize_repetition(text: str) -> str:
     text = re.sub(r'\b(\w+)(?:\s+\1\b){3,}', r'\1', text, flags=re.IGNORECASE)
     
     # 2. Clean multi-line loops (LLM gets stuck repeating the same 2-3 sentences/bullet points)
-    # This regex looks for blocks of text (at least 20 chars) that repeat at least 3 times
-    text = re.sub(r'(.{20,}?)(?:\s*\1){2,}', r'\1', text, flags=re.DOTALL)
+    # Replaced catastrophic backtracking regex with a safer block-based deduplication
+    blocks = re.split(r'\n\s*\n', text)
+    cleaned_blocks = []
+    for block in blocks:
+        if not cleaned_blocks or cleaned_blocks[-1].strip() != block.strip():
+            cleaned_blocks.append(block)
+    text = '\n\n'.join(cleaned_blocks)
     
     # 3. Clean consecutive identical lines
     lines = text.split('\n')
