@@ -1,7 +1,7 @@
-"""OpenRouter LLM client with token-limit retry and rate limiting."""
 import os
 import time
 import json
+import re
 from typing import Optional, Dict, Any, List
 from openai import OpenAI
 
@@ -183,6 +183,26 @@ class LLMClient:
             time.sleep(self.min_interval - elapsed)
         self.last_call_time = time.time()
 
+    def _strip_reasoning(self, text: str) -> str:
+        """Strip internal thinking/reasoning tags leaked from thinking models."""
+        if not text:
+            return ""
+        for tag in ("think", "thinking", "reasoning", "reflection", "inner_monologue", "scratchpad"):
+            text = re.sub(rf"<{tag}>.*?</{tag}>", "", text, flags=re.DOTALL | re.IGNORECASE)
+        for tag in ("think", "thinking", "reasoning", "reflection"):
+            pattern = rf"<{tag}>"
+            while re.search(pattern, text, flags=re.IGNORECASE):
+                m = re.search(pattern, text, flags=re.IGNORECASE)
+                start_pos = m.start()
+                rest = text[m.end():]
+                header_match = re.search(r'(?:\n|^)(#{1,3}\s+[^\n]+)', rest)
+                if header_match:
+                    text = text[:start_pos] + rest[header_match.start():]
+                else:
+                    text = text[:start_pos]
+                    break
+        return text.strip()
+
     def chat_completion(
         self,
         messages: List[Dict[str, str]],
@@ -273,10 +293,11 @@ class LLMClient:
                         break
 
                 if content.strip():
+                    cleaned_content = self._strip_reasoning(content)
                     self.last_provider_used = provider_name
                     self.last_model_used = active_model
                     self.last_error = None
-                    return content
+                    return cleaned_content
             except Exception as e:
                 err_msg = str(e)
                 self.errors[f"{provider_name}:{active_model}"] = err_msg

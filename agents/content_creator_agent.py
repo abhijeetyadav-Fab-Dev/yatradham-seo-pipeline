@@ -133,7 +133,7 @@ Hashtags: [#tag1 #tag2]"""
 
 
 def _parse_markdown_sections(text: str) -> Dict[str, str]:
-    """Parse a markdown string into a dictionary based on H1 headings."""
+    """Parse a markdown string into a dictionary based on H1 headings and H2 transitions."""
     sections = {}
     current_heading = None
     current_content = []
@@ -144,6 +144,12 @@ def _parse_markdown_sections(text: str) -> Dict[str, str]:
                 sections[current_heading] = '\n'.join(current_content).strip()
             current_heading = line[2:].strip()
             current_content = []
+        elif line.startswith('## ') and current_heading in ['SUGGESTED TAGS', 'TAGS', 'META DESCRIPTION', 'TITLE', None]:
+            # Transitioned into main content without an explicit # CONTENT H1 header
+            if current_heading:
+                sections[current_heading] = '\n'.join(current_content).strip()
+            current_heading = 'CONTENT'
+            current_content = [line]
         elif current_heading:
             current_content.append(line)
 
@@ -163,8 +169,7 @@ def _sanitize_repetition(text: str) -> str:
     text = re.sub(r'(.{2,6}?)\1{4,}', r'\1', text)
     text = re.sub(r'\b(\w+)(?:\s+\1\b){3,}', r'\1', text, flags=re.IGNORECASE)
     
-    # 2. Clean multi-line loops (LLM gets stuck repeating the same 2-3 sentences/bullet points)
-    # Replaced catastrophic backtracking regex with a safer block-based deduplication
+    # 2. Clean multi-line loops (LLM gets stuck repeating identical blocks)
     blocks = re.split(r'\n\s*\n', text)
     cleaned_blocks = []
     for block in blocks:
@@ -228,12 +233,11 @@ def _strip_thinking_tags(text: str) -> str:
     """Remove LLM chain-of-thought / reasoning blocks that leak into output.
     
     Models like DeepSeek, Gemini Thinking, and QwQ wrap internal reasoning
-    in <think>...</think>, <reasoning>...</reasoning>, etc.  These must be
-    stripped BEFORE any other processing so they don't pollute the blog.
+    in <think>...</think>, <reasoning>...</reasoning>, etc.
     """
     if not text:
         return ""
-    # Strip all common reasoning tag pairs (greedy, across newlines)
+    # 1. Strip all closed reasoning tag pairs
     for tag in ("think", "thinking", "reasoning", "reflection", "inner_monologue", "scratchpad"):
         text = re.sub(
             rf"<{tag}>.*?</{tag}>",
@@ -241,11 +245,20 @@ def _strip_thinking_tags(text: str) -> str:
             text,
             flags=re.DOTALL | re.IGNORECASE,
         )
-    # Also strip orphan opening tags that never close (model got cut off mid-think)
-    for tag in ("think", "thinking", "reasoning", "reflection", "inner_monologue", "scratchpad"):
-        idx = text.find(f"<{tag}>")
-        if idx != -1:
-            text = text[:idx]
+    # 2. Handle unclosed reasoning tags (e.g. model drafted inside <think> and got cut off or didn't close)
+    for tag in ("think", "thinking", "reasoning", "reflection"):
+        pattern = rf"<{tag}>"
+        while re.search(pattern, text, flags=re.IGNORECASE):
+            m = re.search(pattern, text, flags=re.IGNORECASE)
+            start_pos = m.start()
+            rest = text[m.end():]
+            # Look for where actual markdown content or headers start after <think>
+            header_match = re.search(r'(?:\n|^)(#{1,3}\s+[^\n]+)', rest)
+            if header_match:
+                text = text[:start_pos] + rest[header_match.start():]
+            else:
+                text = text[:start_pos]
+                break
     return text.strip()
 
 
@@ -344,12 +357,23 @@ CRITICAL: Output rich, narrative paragraphs. Output ONLY markdown headings speci
         temperature=0.6,
     )
     
-    sections_part1 = _parse_markdown_sections(_clean_markdown(part1_raw))
+    cleaned_part1 = _clean_markdown(part1_raw)
+    sections_part1 = _parse_markdown_sections(cleaned_part1)
     title = _sanitize_repetition(sections_part1.get("TITLE", topic))
     meta_desc = _sanitize_repetition(sections_part1.get("META DESCRIPTION", ""))
     tags_str = sections_part1.get("SUGGESTED TAGS", "")
     tags = [_sanitize_repetition(t) for t in tags_str.split(",") if _sanitize_repetition(t)] if tags_str else []
-    content_part1 = _sanitize_repetition(sections_part1.get("CONTENT", part1_raw))
+    
+    # If explicit CONTENT section wasn't captured, extract all text starting from first ## header
+    part1_content_raw = sections_part1.get("CONTENT", "")
+    if not part1_content_raw:
+        h2_idx = cleaned_part1.find("## ")
+        if h2_idx != -1:
+            part1_content_raw = cleaned_part1[h2_idx:]
+        else:
+            part1_content_raw = cleaned_part1
+
+    content_part1 = _sanitize_repetition(part1_content_raw)
 
     # PHASE 2: Days 4-7 In-Depth Journey (~1,200 words)
     prompt_phase2 = f"""{brand_context}
@@ -399,19 +423,21 @@ ANTI-DETECTION INSTRUCTIONS:
 - Write with HIGH PERPLEXITY and HIGH BURSTINESS. Use contractions.
 - AVOID generic conclusions like "In conclusion" or "Ultimately".
 
-We have completed Days 1 through 7.
-Now generate the final sections:
+IMPORTANT: We have ALREADY written the complete Day 1 through Day 7 itinerary above.
+DO NOT summarize, list, or write about Day 1, Day 2, Day 3, Day 4, Day 5, Day 6, or Day 7 again!
+
+Generate ONLY these exact 3 sections:
 
 ## The Real Logistics: Costs and Commutes
-(Write ~350 words detailing transport, Yatradham verified bookings, realistic budgets, and safety. Keep it conversational).
+(Write ~350 words detailing flight/train transport, local commutes, verified accommodation bookings via Yatradham.Org, realistic budgets in INR, and practical safety tips. Keep it conversational).
 
 ## Frequently Asked Questions
-(Write 6 conversational FAQs. Answer them like a human expert, not a corporate brochure).
+(Write 6 distinct, useful questions and in-depth conversational answers for real pilgrims/travelers. Do NOT repeat questions).
 
 ## Final Thoughts Before You Go
-(Write ~200 words. Give an inspiring, non-generic sign-off and a natural CTA for Yatradham.Org).
+(Write ~200 words. Give an inspiring, non-generic sign-off and a natural recommendation to book verified stays with Yatradham.Org).
 
-CRITICAL: Start immediately with `## The Real Logistics: Costs and Commutes`. Output ONLY markdown text."""
+CRITICAL: Start immediately with `## The Real Logistics: Costs and Commutes`. DO NOT list days. Output ONLY markdown text."""
 
     part3_raw = client.chat_completion(
         messages=[{"role": "system", "content": brand_context}, {"role": "user", "content": prompt_phase3}],
