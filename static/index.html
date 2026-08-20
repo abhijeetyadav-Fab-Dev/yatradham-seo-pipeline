@@ -381,7 +381,16 @@
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
                     <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                         <h3 class="text-sm font-semibold text-slate-700">Content Preview</h3>
-                        <div id="studioActions" class="flex gap-2" style="display:none;">
+                        <div id="studioActions" class="flex flex-wrap items-center gap-2" style="display:none;">
+                            <span id="aiScoreBadge" class="hidden px-2.5 py-1 text-xs font-bold rounded-md transition shadow-sm"></span>
+                            <button id="btnCheckAi" onclick="checkAiScore()" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition shadow-sm">
+                                <svg class="w-3.5 h-3.5 mr-1 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                Check AI Score
+                            </button>
+                            <button id="btnHumanize" onclick="humanizeContent()" class="inline-flex items-center px-3.5 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-md transition shadow-sm">
+                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                                🪄 Humanize & Bypass AI
+                            </button>
                             <button onclick="copyContent()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition">
                                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                                 Copy
@@ -1111,6 +1120,103 @@
                 .replace(/\n/g, '<br>')
                 .replace(/^/, '<p class="text-sm text-slate-600 mb-2">')
                 .replace(/$/, '</p>');
+        }
+
+        function getActiveRawContent() {
+            if (!lastGeneratedContent) return '';
+            return lastGeneratedContent.content || lastGeneratedContent.full_content || lastGeneratedContent.hero_text || '';
+        }
+
+        async function checkAiScore() {
+            const raw = getActiveRawContent();
+            if (!raw || raw.length < 50) {
+                alert('No content available to analyze.');
+                return;
+            }
+
+            const btn = document.getElementById('btnCheckAi');
+            const badge = document.getElementById('aiScoreBadge');
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin w-3.5 h-3.5 mr-1 text-indigo-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Analyzing...`;
+
+            try {
+                const res = await fetch(API + '/api/check-ai', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: raw})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-amber-100', 'text-amber-800', 'bg-rose-100', 'text-rose-800');
+                    if (data.human_score >= 70) {
+                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                        badge.innerHTML = `✨ ${data.human_score}% Human`;
+                    } else if (data.human_score >= 40) {
+                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-amber-100 text-amber-800 border border-amber-300 shadow-sm';
+                        badge.innerHTML = `⚡ ${data.human_score}% Human (${data.ai_score}% AI)`;
+                    } else {
+                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-rose-100 text-rose-800 border border-rose-300 shadow-sm';
+                        badge.innerHTML = `🤖 ${data.ai_score}% AI Detected`;
+                    }
+                } else {
+                    alert('Could not retrieve AI score');
+                }
+            } catch(e) {
+                alert('Error checking AI score: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+            }
+        }
+
+        async function humanizeContent() {
+            const raw = getActiveRawContent();
+            if (!raw || raw.length < 50) {
+                alert('No content available to humanize.');
+                return;
+            }
+
+            const btn = document.getElementById('btnHumanize');
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin w-3.5 h-3.5 mr-1 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Humanizing & Bypassing AI...`;
+
+            try {
+                const res = await fetch(API + '/api/humanize', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: raw})
+                });
+                const data = await res.json();
+                if (data.success && data.humanized_text) {
+                    if (lastGeneratedContent.content) lastGeneratedContent.content = data.humanized_text;
+                    if (lastGeneratedContent.full_content) lastGeneratedContent.full_content = data.humanized_text;
+                    if (lastGeneratedContent.hero_text) lastGeneratedContent.hero_text = data.humanized_text;
+
+                    // Re-render preview with humanized content
+                    renderPreview(lastGeneratedContent, 'humanized', null, 'Undetectable AI Bypass');
+
+                    // Update score badge
+                    const badge = document.getElementById('aiScoreBadge');
+                    badge.classList.remove('hidden');
+                    if (data.human_score >= 70) {
+                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                        badge.innerHTML = `✨ ${data.human_score}% Human (Bypassed)`;
+                    } else {
+                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                        badge.innerHTML = `✨ Bypassed (${data.human_score}% Human)`;
+                    }
+                    alert('✨ Content successfully humanized! AI detection bypassed.');
+                } else {
+                    alert('Humanization failed: ' + (data.detail || 'Unknown error'));
+                }
+            } catch(e) {
+                alert('Error during humanization: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+            }
         }
 
         function copyContent() {

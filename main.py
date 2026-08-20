@@ -457,6 +457,141 @@ def export_csv(status: Optional[str] = "approved"):
     return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": f"attachment; filename={filename}"})
 
 
+class CheckAIRequest(BaseModel):
+    text: str
+
+
+class HumanizeRequest(BaseModel):
+    text: str
+
+
+def query_undetectable_detector(text: str) -> dict:
+    url = "https://www.undetectableai.pro/api/detector"
+    sample = text[:2000].strip()
+    if not sample:
+        return {"score": 0}
+    try:
+        resp = requests.post(
+            url,
+            json={"text": sample},
+            headers={
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Origin": "https://www.undetectableai.pro",
+                "Referer": "https://www.undetectableai.pro/detector"
+            },
+            timeout=15
+        )
+        if resp.status_code == 200:
+            return resp.json()
+        logger.warning(f"Detector returned status {resp.status_code}: {resp.text}")
+    except Exception as e:
+        logger.error(f"Error querying detector: {e}")
+    return {"score": 50, "error": "Detector unavailable"}
+
+
+def humanize_single_chunk(text_chunk: str) -> str:
+    url = "https://www.undetectableai.pro/api/process-free"
+    words = text_chunk.strip().split()
+    if len(words) < 30:
+        return text_chunk
+    
+    try:
+        import time
+        resp = requests.post(
+            url,
+            json={
+                "text": text_chunk.strip(),
+                "sessionId": f"yatradham_{int(time.time()*1000)}"
+            },
+            headers={
+                "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Origin": "https://www.undetectableai.pro",
+                "Referer": "https://www.undetectableai.pro/"
+            },
+            timeout=35
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get("code") == "success":
+                return data.get("text", text_chunk)
+    except Exception as e:
+        logger.error(f"Error in humanize_single_chunk: {e}")
+    return text_chunk
+
+
+def humanize_markdown_content(markdown_text: str) -> str:
+    """Humanize multi-section markdown text while preserving headings and structure."""
+    if not markdown_text or len(markdown_text.strip()) < 50:
+        return markdown_text
+
+    import re
+    import time
+    sections = re.split(r'(?=\n##\s+)', markdown_text)
+    humanized_sections = []
+
+    for sec in sections:
+        sec_clean = sec.strip()
+        if not sec_clean:
+            continue
+        
+        header_match = re.match(r'^(#{1,3}\s+[^\n]+)\n*(.*)$', sec_clean, re.DOTALL)
+        if header_match:
+            header_line = header_match.group(1)
+            body_text = header_match.group(2).strip()
+            
+            if body_text and len(body_text.split()) >= 30:
+                rewritten_body = humanize_single_chunk(body_text)
+                humanized_sections.append(f"{header_line}\n\n{rewritten_body}")
+                time.sleep(0.3)
+            else:
+                humanized_sections.append(sec_clean)
+        else:
+            if len(sec_clean.split()) >= 30:
+                rewritten = humanize_single_chunk(sec_clean)
+                humanized_sections.append(rewritten)
+                time.sleep(0.3)
+            else:
+                humanized_sections.append(sec_clean)
+
+    return "\n\n".join(humanized_sections)
+
+
+@app.post("/api/check-ai")
+def check_ai_endpoint(req: CheckAIRequest):
+    res = query_undetectable_detector(req.text)
+    score = res.get("score", 0)
+    human_score = max(0.0, min(100.0, round(100.0 - score, 2)))
+    status = "human" if human_score >= 70 else ("mixed" if human_score >= 40 else "ai")
+    return {
+        "success": True,
+        "ai_score": score,
+        "human_score": human_score,
+        "status": status,
+        "verdict": f"{human_score}% Human / {score}% AI"
+    }
+
+
+@app.post("/api/humanize")
+def humanize_endpoint(req: HumanizeRequest):
+    if not req.text or len(req.text.strip()) < 30:
+        raise HTTPException(status_code=400, detail="Text must be at least 30 words")
+    
+    humanized = humanize_markdown_content(req.text)
+    det_res = query_undetectable_detector(humanized)
+    score = det_res.get("score", 0)
+    human_score = max(0.0, min(100.0, round(100.0 - score, 2)))
+
+    return {
+        "success": True,
+        "humanized_text": humanized,
+        "ai_score": score,
+        "human_score": human_score,
+        "verdict": f"{human_score}% Human / {score}% AI"
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
