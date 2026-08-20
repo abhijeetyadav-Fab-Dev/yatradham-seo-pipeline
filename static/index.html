@@ -49,8 +49,11 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-slate-800 tracking-tight">Yatradham SEO Pipeline</h1>
-                    <p class="text-xs text-slate-500 font-medium">Automated Scraping & AI Content Generation</p>
+                    <div class="flex items-center gap-2.5">
+                        <h1 class="text-xl font-bold text-slate-800 tracking-tight">Yatradham SEO Pipeline</h1>
+                        <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-sm">v2.4 Live TAT & Humanizer</span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Automated Scraping & AI Content Generation</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
@@ -109,6 +112,11 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                         AI Content Studio
                     </span>
+                </button>
+                <button class="tab-btn py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 inline-flex items-center gap-1.5" onclick="showTab('humanizer')">
+                    <span>🪄</span>
+                    <span>AI Humanizer & Scanner</span>
+                    <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-full border border-emerald-200">Bypass</span>
                 </button>
                 <button class="tab-btn py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700" onclick="showTab('export')">
                     Export Data
@@ -382,9 +390,9 @@
                 
                 <!-- RIGHT: Preview -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
                         <h3 class="text-sm font-semibold text-slate-700">Content Preview</h3>
-                        <div id="studioActions" class="flex flex-wrap items-center gap-2" style="display:none;">
+                        <div id="studioActions" class="flex flex-wrap items-center gap-2">
                             <span id="aiScoreBadge" class="hidden px-2.5 py-1 text-xs font-bold rounded-md transition shadow-sm"></span>
                             <button id="btnCheckAi" onclick="checkAiScore()" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition shadow-sm">
                                 <svg class="w-3.5 h-3.5 mr-1 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
@@ -409,6 +417,63 @@
                             <svg class="w-16 h-16 mb-4 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                             <p class="text-sm font-medium">Your generated content will appear here</p>
                             <p class="text-xs mt-1">Choose a mode on the left and click Generate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: AI HUMANIZER & SCANNER WORKSPACE -->
+        <div class="panel" id="humanizerPanel">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- LEFT: Input & Controls -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg font-bold text-slate-800">🪄 AI Text Humanizer & Scanner</span>
+                            <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">100% Free Bypass</span>
+                        </div>
+                        <button onclick="loadSampleToHumanizer()" class="text-xs text-violet-600 hover:underline font-medium">Load Generated Blog</button>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4">Paste any AI text below to check its detection probability or instantly rewrite it to bypass AI detectors.</p>
+                    
+                    <textarea id="standaloneInput" rows="14" class="block w-full rounded-lg border-slate-300 border p-4 text-sm font-sans focus:border-emerald-500 focus:ring-emerald-500 shadow-sm leading-relaxed" placeholder="Paste your blog, article, or text here to check AI score and humanize..."></textarea>
+                    
+                    <div class="flex items-center justify-between text-xs text-slate-400 mt-2 mb-4">
+                        <span id="standaloneWordCount">Words: 0 | Chars: 0</span>
+                        <span class="text-slate-400">Min 30 words recommended</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mt-auto">
+                        <button id="btnStandaloneCheck" onclick="scanStandaloneAi()" class="inline-flex justify-center items-center rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition active:scale-95">
+                            <svg class="w-4 h-4 mr-1.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            Check AI Score
+                        </button>
+                        <button id="btnStandaloneHumanize" onclick="humanizeStandalone()" class="inline-flex justify-center items-center rounded-lg border border-transparent bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition active:scale-95">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            🪄 Humanize (Bypass)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Humanized Output -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold text-slate-800">Humanized Output</span>
+                            <span id="standaloneScoreBadge" class="hidden px-2.5 py-0.5 text-xs font-bold rounded-full shadow-sm"></span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="copyStandaloneOutput()" class="px-2.5 py-1 text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded hover:bg-slate-100 transition">Copy</button>
+                            <button onclick="downloadStandaloneOutput()" class="px-2.5 py-1 text-xs font-medium text-white bg-emerald-600 rounded hover:bg-emerald-700 transition">Download</button>
+                        </div>
+                    </div>
+                    
+                    <div id="standaloneOutputContainer" class="flex-grow p-4 bg-slate-50 rounded-lg border border-slate-200 overflow-y-auto max-h-[420px] text-sm text-slate-700 leading-relaxed font-sans whitespace-pre-wrap">
+                        <div class="text-center py-20 text-slate-400">
+                            <svg class="w-12 h-12 mx-auto mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <p class="font-medium">Humanized text will appear here</p>
+                            <p class="text-xs mt-1">Paste text on the left and click Humanize</p>
                         </div>
                     </div>
                 </div>
@@ -947,7 +1012,6 @@
         let loadingStartTime = null;
 
         function showPreviewLoading() {
-            document.getElementById('studioActions').style.display = 'none';
             const preview = document.getElementById('studioPreview');
             
             const steps = [
@@ -1285,6 +1349,139 @@
                 btn.disabled = false;
                 btn.innerHTML = origHtml;
             }
+        }
+
+        // Standalone Humanizer Handlers
+        const standaloneInput = document.getElementById('standaloneInput');
+        if (standaloneInput) {
+            standaloneInput.addEventListener('input', () => {
+                const text = standaloneInput.value.trim();
+                const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+                document.getElementById('standaloneWordCount').innerText = `Words: ${words.toLocaleString()} | Chars: ${text.length.toLocaleString()}`;
+            });
+        }
+
+        function loadSampleToHumanizer() {
+            const raw = getActiveRawContent();
+            if (!raw) {
+                alert('No blog has been generated in this session yet. Generate a blog in Content Studio first or paste your text directly.');
+                return;
+            }
+            const inputEl = document.getElementById('standaloneInput');
+            inputEl.value = raw;
+            inputEl.dispatchEvent(new Event('input'));
+        }
+
+        async function scanStandaloneAi() {
+            const text = document.getElementById('standaloneInput').value.trim();
+            if (!text || text.length < 30) {
+                alert('Please enter at least 30 words to scan.');
+                return;
+            }
+
+            const btn = document.getElementById('btnStandaloneCheck');
+            const badge = document.getElementById('standaloneScoreBadge');
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-1.5 text-indigo-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Scanning...`;
+
+            try {
+                const res = await fetch(API + '/api/check-ai', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: text})
+                });
+                const data = await res.json();
+                if (data.success) {
+                    badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-amber-100', 'text-amber-800', 'bg-rose-100', 'text-rose-800');
+                    if (data.human_score >= 70) {
+                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                        badge.innerHTML = `✨ ${data.human_score}% Human`;
+                    } else if (data.human_score >= 40) {
+                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-300 shadow-sm';
+                        badge.innerHTML = `⚡ ${data.human_score}% Human (${data.ai_score}% AI)`;
+                    } else {
+                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-rose-100 text-rose-800 border border-rose-300 shadow-sm';
+                        badge.innerHTML = `🤖 ${data.ai_score}% AI Detected`;
+                    }
+                } else {
+                    alert('Scan failed: ' + (data.detail || 'Unknown error'));
+                }
+            } catch(e) {
+                alert('Error checking AI score: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+            }
+        }
+
+        let lastStandaloneHumanizedText = '';
+
+        async function humanizeStandalone() {
+            const text = document.getElementById('standaloneInput').value.trim();
+            if (!text || text.length < 30) {
+                alert('Please enter at least 30 words to humanize.');
+                return;
+            }
+
+            const btn = document.getElementById('btnStandaloneHumanize');
+            const outputContainer = document.getElementById('standaloneOutputContainer');
+            const badge = document.getElementById('standaloneScoreBadge');
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-1.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Humanizing & Bypassing...`;
+
+            try {
+                const res = await fetch(API + '/api/humanize', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text: text})
+                });
+                const data = await res.json();
+                if (data.success && data.humanized_text) {
+                    lastStandaloneHumanizedText = data.humanized_text;
+                    outputContainer.innerHTML = markdownToHtml(data.humanized_text);
+
+                    badge.classList.remove('hidden');
+                    if (data.human_score >= 70) {
+                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                        badge.innerHTML = `✨ ${data.human_score}% Human (Bypassed)`;
+                    } else {
+                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                        badge.innerHTML = `✨ Bypassed (${data.human_score}% Human)`;
+                    }
+                    alert('✨ Text successfully humanized and bypassed!');
+                } else {
+                    alert('Humanization failed: ' + (data.detail || 'Unknown error'));
+                }
+            } catch(e) {
+                alert('Error during humanization: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+            }
+        }
+
+        function copyStandaloneOutput() {
+            if (!lastStandaloneHumanizedText) {
+                alert('No humanized output to copy yet.');
+                return;
+            }
+            navigator.clipboard.writeText(lastStandaloneHumanizedText).then(() => alert('Humanized text copied to clipboard!'));
+        }
+
+        function downloadStandaloneOutput() {
+            if (!lastStandaloneHumanizedText) {
+                alert('No humanized output to download yet.');
+                return;
+            }
+            const blob = new Blob([lastStandaloneHumanizedText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `humanized_text_${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function copyContent() {
