@@ -8,6 +8,8 @@ from datetime import datetime
 from contextlib import asynccontextmanager
 
 import requests
+import urllib.request
+import urllib.error
 import concurrent.futures
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import StreamingResponse, FileResponse

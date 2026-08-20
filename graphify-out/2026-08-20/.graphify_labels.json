@@ -6,7 +6,7 @@
   "4": "models.py",
   "5": "pipeline.py",
   "6": "content_creator_agent.py",
-  "7": "batch_urls",
+  "7": "scrape_and_process",
   "8": "e2e_browser_test.py",
   "9": "live_qa.py",
   "10": "__init__.py",
@@ -14,9 +14,9 @@
   "12": "get",
   "13": "._discover_active_models",
   "14": "process_package",
-  "15": "scrape_and_process",
-  "16": "humanize_endpoint",
+  "15": "batch_urls",
+  "16": "ProviderSettingsRequest",
   "17": "meta_agent.py",
   "18": "title_agent.py",
-  "19": "check_ai_endpoint"
+  "19": "BaseModel"
 }
