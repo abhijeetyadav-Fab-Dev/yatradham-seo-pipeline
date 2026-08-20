@@ -374,19 +374,65 @@ EXACT OUTPUT STRUCTURE REQUIRED:
 - **Afternoon & Evening:** (Write ~150 words. Mindful checkout, luggage assistance via Yatradham stay, departure transit, and final reflections).
 - **Practical Insider Tip:** (Late checkout advice and maintaining daily habits at home).
 
-## 3 Key Takeaways for a Smooth Journey
-- **Pace yourself, don’t rush** – (Actionable advice on balancing activity with deep rest)
-- **Respect local customs & etiquette** – (Actionable advice on temple norms and cultural sensitivity)
-- **Book verified stays through Yatradham.Org** – (Actionable advice on ensuring clean, reliable accommodation)
+## 3 Key Takeaways From This 7-Day Journey
+### 1. Pacing Drives True Rejuvenation
+(Write 2-3 paragraphs. Explain why rushing ruins a spiritual wellness trip and how allocating 2-3 hours per practice creates long-lasting benefits).
+
+### 2. High-Value Experiences Win Over Crowded Sightseeing
+(Write 2-3 paragraphs. Explain why personalized Ayurveda, quiet meditation, and authentic ashram stays deliver 10x more value than tourist traps).
+
+### 3. Local Etiquette & Trust Build the Connection
+(Write 2-3 paragraphs. Detail temple customs, sacred river protocols, and respecting local culture).
+
+## 4 Ways Yatradham.Org Makes Your Journey Seamless & Safe
+### 1. Verified Accommodations & Transparent Pricing
+(Explain how Yatradham vets dharamshalas, ashrams, and wellness retreats for hygiene, transparent rates with zero hidden broker fees).
+- Zero surprise checkout charges
+- Verified photos and guest reviews
+- Prime locations near sacred ghats
+
+### 2. Dedicated Yatra & Transport Coordination
+(Explain how Yatradham assists with reliable local transfers, station pickups, and transparent taxi rates).
+- Pre-negotiated fares from Dehradun and Haridwar
+- Trusted, background-verified drivers
+- Direct helpline for route updates
+
+### 3. Tailored Spiritual & Wellness Itineraries
+(Explain how Yatradham guides travelers to authentic ashram schedules, certified Ayurvedic doctors, and genuine meditation halls).
+- Curated daily routines for beginners and seasoned seekers
+- Direct access to authentic temple aarti timings
+- Guidance on sattvic dining options
+
+### 4. 24/7 Pilgrim Support & Flexible Booking
+(Explain Yatradham's dedicated customer support for seamless date adjustments and on-ground help).
+- Round-the-clock helpline
+- Flexible cancellation on select partner properties
+- Real-time WhatsApp assistance
+
+## 3 Actionable Tips to Plan Your Journey Today
+### 1. Plan Around Search & Seasonal Intent
+(Explain how choosing shoulder months like October-November or February-March maximizes weather comfort and avoids peak holiday surges).
+
+### 2. Book Your Verified Stay in Advance
+(Explain why booking verified ashrams and dharamshalas early prevents last-minute scams and ensures clean rooms near the ghats).
+
+### 3. Maintain Consistency With Daily Routines
+(Explain how keeping simple morning and evening habits built during the trip anchors your wellness routine when returning home).
 
 ## The Real Logistics: Costs, Stays & Commutes
-(Write ~400 words detailing flight/train connections with fares in INR, daily budget breakdowns from budget to luxury, local commute rates, and why booking verified dharamshalas and wellness stays through Yatradham.Org guarantees transparent pricing and safety).
+(Write ~400 words detailing flight/train connections with fares in INR, realistic daily budget breakdowns from budget to luxury, local commute rates, and why booking verified dharamshalas and wellness stays through Yatradham.Org guarantees transparent pricing and safety).
 
 ## Frequently Asked Questions
-(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo travel safety, packing, meals, and best booking seasons).
+(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo female safety, packing, sattvic meals, and best booking seasons).
 
 ## Final Thoughts & Planning Your Trip
 (Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org).
+
+## Related Articles & Recommended Reading
+(Provide 3 formatted internal article suggestions for readers planning spiritual/wellness travel):
+- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)
 
 CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structure completely."""
 
@@ -423,21 +469,64 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
         finale_prompt = f"""You have successfully written the complete Day 1 through Day 7 itinerary above for: "{topic}".
 DO NOT rewrite or repeat Day 1 through Day 7.
 
-Now generate ONLY the closing sections to complete the 3,000-word guide:
+Now generate ONLY the closing sections to complete the 3,000-word guide adhering to our SEO ranking guardrails:
 
-## 3 Key Takeaways for a Seamless Journey
-(Provide 3 actionable, high-impact bulleted rules for travelers covering pacing, local etiquette, and verified booking).
+## 3 Key Takeaways From This 7-Day Journey
+### 1. Pacing Drives True Rejuvenation
+(Write 2-3 paragraphs explaining why unhurried pacing creates long-lasting wellness benefits).
+
+### 2. High-Value Experiences Win Over Crowded Sightseeing
+(Write 2-3 paragraphs on why authentic Ayurveda and meditation deliver 10x more value than tourist traps).
+
+### 3. Local Etiquette & Trust Build the Connection
+(Write 2-3 paragraphs detailing sacred river protocols, temple dress codes, and respectful travel).
+
+## 4 Ways Yatradham.Org Makes Your Journey Seamless & Safe
+### 1. Verified Accommodations & Transparent Pricing
+- Zero surprise checkout charges
+- Verified photos and guest reviews
+- Prime locations near sacred ghats
+
+### 2. Dedicated Yatra & Transport Coordination
+- Pre-negotiated fares from Dehradun and Haridwar
+- Trusted, background-verified drivers
+- Direct helpline for route updates
+
+### 3. Tailored Spiritual & Wellness Itineraries
+- Curated daily routines for beginners and seasoned seekers
+- Direct access to authentic temple aarti timings
+- Guidance on sattvic dining options
+
+### 4. 24/7 Pilgrim Support & Flexible Booking
+- Round-the-clock helpline
+- Flexible cancellation on select partner properties
+- Real-time WhatsApp assistance
+
+## 3 Actionable Tips to Plan Your Journey Today
+### 1. Plan Around Search & Seasonal Intent
+(Explain how choosing shoulder months like October-November or February-March maximizes weather comfort).
+
+### 2. Book Your Verified Stay in Advance
+(Explain why booking verified ashrams and dharamshalas early prevents last-minute scams).
+
+### 3. Maintain Consistency With Daily Routines
+(Explain how keeping simple morning and evening habits built during the trip anchors your wellness routine back home).
 
 ## The Real Logistics: Costs, Stays & Commutes
-(Write ~350 words detailing flight/train connections, realistic daily budget ranges in INR, local commute tips, and the advantages of booking verified dharamshalas and wellness stays through Yatradham.Org).
+(Write ~400 words detailing flight/train connections with fares in INR, realistic daily budget breakdowns from budget to luxury, local commute rates, and why booking verified dharamshalas through Yatradham.Org guarantees safety).
 
 ## Frequently Asked Questions
-(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo travel safety, packing, meals, and best booking seasons).
+(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo female safety, packing, meals, and best booking seasons).
 
 ## Final Thoughts & Planning Your Trip
 (Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org).
 
-CRITICAL: Start immediately with `## 3 Key Takeaways for a Seamless Journey`. Output ONLY markdown text."""
+## Related Articles & Recommended Reading
+- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)
+
+CRITICAL: Start immediately with `## 3 Key Takeaways From This 7-Day Journey`. Output ONLY markdown text."""
 
         finale_raw = client.chat_completion(
             messages=[
