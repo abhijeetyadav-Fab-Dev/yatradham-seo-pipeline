@@ -910,7 +910,7 @@
             showPreviewLoading();
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 90000);
+            const timeoutId = setTimeout(() => controller.abort(), 180000);
 
             try {
                 const payload = {
@@ -941,7 +941,7 @@
             } catch(e) {
                 clearTimeout(timeoutId);
                 if (e.name === 'AbortError') {
-                    showPreviewError('Generation timed out (took >90s). Please check your API keys or try again.');
+                    showPreviewError('Generation timed out. Please check your API keys or try again.');
                 } else {
                     showPreviewError(e.message);
                 }
@@ -963,7 +963,7 @@
             showPreviewLoading();
 
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 90000);
+            const timeoutId = setTimeout(() => controller.abort(), 180000);
 
             try {
                 const payload = {
@@ -998,7 +998,7 @@
             } catch(e) {
                 clearTimeout(timeoutId);
                 if (e.name === 'AbortError') {
-                    showPreviewError('Generation timed out (took >90s). Please check your API keys or try again.');
+                    showPreviewError('Generation timed out. Please check your API keys or try again.');
                 } else {
                     showPreviewError(e.message);
                 }

@@ -115,8 +115,13 @@ class LLMClient:
             if model: self.openrouter_model = model
             self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=25.0)
 
+    _model_cache = {}
+
     def _discover_active_models(self, client_inst: OpenAI, provider: str) -> List[str]:
-        """Dynamically query the provider's live models list to avoid model_not_found errors."""
+        """Dynamically query the provider's live models list to avoid model_not_found errors with memory cache."""
+        if provider in self._model_cache:
+            return self._model_cache[provider]
+
         try:
             res = client_inst.models.list()
             model_ids = []
@@ -126,6 +131,7 @@ class LLMClient:
                     continue
                 model_ids.append(mid)
             if model_ids:
+                self._model_cache[provider] = model_ids
                 return model_ids
         except Exception:
             pass
@@ -274,12 +280,13 @@ class LLMClient:
             self._wait_for_rate_limit()
             try:
                 safe_temp = max(0.2, min(temperature, 0.65))
+                safe_max_tokens = min(max_tokens, 4096) if provider_name == "groq" else max_tokens
                 kwargs = {
                     "model": active_model,
                     "messages": messages,
-                    "max_tokens": max_tokens,
+                    "max_tokens": safe_max_tokens,
                     "temperature": safe_temp,
-                    "timeout": 35.0,
+                    "timeout": 45.0,
                 }
                 if provider_name in ["groq", "openrouter"]:
                     kwargs["top_p"] = 0.95

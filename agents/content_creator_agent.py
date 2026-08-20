@@ -460,7 +460,7 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
             {"role": "system", "content": brand_context},
             {"role": "user", "content": master_prompt}
         ],
-        max_tokens=6000,
+        max_tokens=4000,
         temperature=0.6,
     )
 
