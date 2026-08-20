@@ -1,7 +1,10 @@
 """Content Creator Agent: Generates net-new SEO content from scratch."""
 import re
+import logging
 from typing import Dict, Any, Optional
 from llm_client import LLMClient
+
+logger = logging.getLogger("content_creator_agent")
 
 
 SYSTEM_PROMPT = """You are an expert SEO Content Writer and Marketer for Yatradham.org.
