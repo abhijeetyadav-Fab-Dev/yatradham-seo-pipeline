@@ -316,10 +316,10 @@ TASK: Generate a complete, exhaustive, 3,000-word master travel and wellness gui
 Target word count: ~{word_count or 3000} words.
 
 CRITICAL INSTRUCTIONS:
-- Write in rich, descriptive narrative detail across all sections.
-- Cover every single day (Day 1 through Day 7) with full practical depth, timings, meal details, and tips.
-- Do NOT skip any days. Do NOT provide brief bullet summaries where full paragraphs are required.
-- Do NOT generate multiple FAQ or Conclusion sections. Follow the exact structure below once from top to bottom.
+- Write in rich, descriptive narrative detail across all sections with full paragraphs.
+- For EVERY single day (Day 1 through Day 7), provide the complete breakdown: Morning, Afternoon, Evening, and a Practical Insider Tip.
+- Do NOT skip any days or compress them into single short paragraphs. Each day must be rich with practical advice, timings, and local context.
+- Follow the exact structure below once from top to bottom.
 
 EXACT OUTPUT STRUCTURE REQUIRED:
 
@@ -333,38 +333,54 @@ EXACT OUTPUT STRUCTURE REQUIRED:
 [Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
 
 # CONTENT
-## Why This Place Changes You
-(Write ~300 words. Open with an engaging hook. Explain the unique spiritual and rejuvenating energy of the destination).
+## Introduction: The Sacred Energy & Spiritual Allure
+(Write ~300 words. Open with an engaging hook. Explain the history, spiritual allure, and why this journey resets your body and mind).
 
-## What You Actually Need to Know Before Going
+## Essential Planning & Preparation Before You Go
 (Write ~350 words covering Best Time to Visit, How to Reach with airport/train routes, Verified Stay Advice via Yatradham.Org, and a quick bulleted packing checklist).
 
-## Day 1: Arriving and Slowing Down
-(Write ~250 words. Arrival flow, settling into your stay, first peaceful river/temple visit, and sattvic welcome meal).
+## Day 1: Arrival, Settling In & Gentle Immersion
+- **Morning & Afternoon:** (Write ~150 words. Arrival flow, checking into your Yatradham-verified stay, exploring the serene surroundings, and settling in).
+- **Evening:** (Write ~150 words. First stroll along the sacred river/ghats, witnessing evening rituals/aarti, and enjoying a light sattvic welcome dinner).
+- **Practical Insider Tip:** (Specific timings, route notes, and check-in guidance).
 
-## Day 2: Getting into the Rhythm
-(Write ~250 words. Early sunrise practice/darshan, nourishing breakfast, mid-day reflection or workshop, and quiet evening).
+## Day 2: Awakening the Body & Mindful Movement
+- **Morning:** (Write ~150 words. Sunrise yoga/darshan session, pranayama breathwork, and nourishing breakfast).
+- **Afternoon & Evening:** (Write ~150 words. Introduction to Ayurvedic wellness, restorative self-care workshop, mindful walking, and peaceful dinner).
+- **Practical Insider Tip:** (Hydration, yoga/temple recommendations, and meal advice).
 
-## Day 3: Stepping Off the Paved Roads
-(Write ~250 words. Nature trails, hidden spots, waterfall/temple walks, and local cultural interaction).
+## Day 3: Nature Trails, Waterfalls & Sacred Spaces
+- **Morning:** (Write ~150 words. Scenic nature walk, hill trail or waterfall trek, forest bathing, and panoramic views).
+- **Afternoon & Evening:** (Write ~150 words. Local herbal tea tasting, cultural interaction, sunset meditation by the riverbank, and fire ceremony).
+- **Practical Insider Tip:** (Trek difficulty, footwear tips, and local guide advice).
 
-## Day 4: Detox, Healing & Deep Practices
-(Write ~250 words. Focus on Ayurvedic therapies, herbal care, dosha balance, and sattvic rejuvenation).
+## Day 4: Deep Detox, Healing Therapies & Rejuvenation
+- **Morning:** (Write ~150 words. Traditional Ayurvedic consultation, herbal oil therapy/Abhyanga, and dosha balancing).
+- **Afternoon & Evening:** (Write ~150 words. Sattvic cooking workshop, restorative yoga nidra relaxation, and calming herbal infusions).
+- **Practical Insider Tip:** (Therapy cost ranges in INR and booking verified centers).
 
-## Day 5: Ancient Temples & Living Culture
-(Write ~250 words. Sacred shrines, evening Ganga Aarti at the ghats, cultural immersion, and seva/selfless service).
+## Day 5: Ancient Temples, Sacred Shrines & Living Culture
+- **Morning:** (Write ~150 words. Early temple darshan, understanding sacred rituals, and participating in seva/selfless service).
+- **Afternoon & Evening:** (Write ~150 words. Cultural walk through historic ashrams/bazaars, attending grand evening Aarti, and group reflection).
+- **Practical Insider Tip:** (Temple etiquette, photography guidelines, and aarti timings).
 
-## Day 6: Finding Silence & Inner Stillness
-(Write ~250 words. Deep meditation, sound healing, mindful walking, and peaceful evening campfire reflection).
+## Day 6: Sound Healing, Silence & Deep Stillness
+- **Morning:** (Write ~150 words. Silent walking meditation along the riverbank, guided breath awareness, and wholesome breakfast).
+- **Afternoon & Evening:** (Write ~150 words. Singing bowl sound healing session, quiet journaling, and evening campfire reflection).
+- **Practical Insider Tip:** (Sound bath preparation and mental stillness practices).
 
-## Day 7: Packing Up & Taking the Peace Home
-(Write ~250 words. Closing gratitude rituals, buying local herbs/souvenirs, building a home routine, and checkout).
+## Day 7: Integration, Departure & Carrying the Peace Home
+- **Morning:** (Write ~150 words. Closing gratitude ritual, building a sustainable home wellness routine, and picking up authentic local herbs/souvenirs).
+- **Afternoon & Evening:** (Write ~150 words. Mindful checkout, luggage assistance via Yatradham stay, departure transit, and final reflections).
+- **Practical Insider Tip:** (Late checkout advice and maintaining daily habits at home).
 
-## 3 Key Takeaways for a Seamless Journey
-(Provide 3 actionable, high-impact bulleted rules for travelers covering pacing, local etiquette, and verified booking).
+## 3 Key Takeaways for a Smooth Journey
+- **Pace yourself, don’t rush** – (Actionable advice on balancing activity with deep rest)
+- **Respect local customs & etiquette** – (Actionable advice on temple norms and cultural sensitivity)
+- **Book verified stays through Yatradham.Org** – (Actionable advice on ensuring clean, reliable accommodation)
 
 ## The Real Logistics: Costs, Stays & Commutes
-(Write ~350 words detailing flight/train connections, realistic daily budget ranges in INR, local commute tips, and the advantages of booking verified dharamshalas and wellness stays through Yatradham.Org).
+(Write ~400 words detailing flight/train connections with fares in INR, daily budget breakdowns from budget to luxury, local commute rates, and why booking verified dharamshalas and wellness stays through Yatradham.Org guarantees transparent pricing and safety).
 
 ## Frequently Asked Questions
 (Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo travel safety, packing, meals, and best booking seasons).
