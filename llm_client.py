@@ -31,7 +31,6 @@ GEMINI_DEFAULT_MODEL = "gemini-2.0-flash"
 GEMINI_FALLBACK_MODELS = [
     "gemini-2.0-flash",
     "gemini-1.5-flash",
-    "gemini-2.5-flash",
     "gemini-1.5-pro",
 ]
 
@@ -59,23 +58,21 @@ class LLMClient:
         # Gemini config (Google AI Studio free tier: 15 RPM)
         self.gemini_api_key = (os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "") or "").strip().strip("'\"")
         self.gemini_model = os.getenv("GEMINI_MODEL", GEMINI_DEFAULT_MODEL)
-        
-        # Active provider preference
-        self.provider = os.getenv("LLM_PROVIDER", "").lower()
+
+        self.last_call_time = 0.0
+        self.min_interval = 2.0  # Safe rate limit throttle (2.0s between calls)
+        self.last_provider_used = None
+        self.last_model_used = None
+        self.last_error = None
+        self.errors: Dict[str, str] = {}
         self.dry_run = os.getenv("DRY_RUN", "false").lower() == "true"
         
+        # Initialize clients if keys exist
         self.openrouter_client: Optional[OpenAI] = None
         self.groq_client: Optional[OpenAI] = None
         self.gemini_client: Optional[OpenAI] = None
         
-        self.last_provider_used: Optional[str] = None
-        self.last_model_used: Optional[str] = None
-        self.last_error: Optional[str] = None
-        self.errors: Dict[str, str] = {}
-        
         self._init_clients()
-        self.last_call_time = 0.0
-        self.min_interval = 0.5  # seconds between calls
 
     def _init_clients(self):
         if self.dry_run:
@@ -122,7 +119,12 @@ class LLMClient:
         """Dynamically query the provider's live models list to avoid model_not_found errors."""
         try:
             res = client_inst.models.list()
-            model_ids = [m.id for m in res.data if not any(x in m.id for x in ["whisper", "embedding", "guard", "vision", "audio", "tts", "moderation"])]
+            model_ids = []
+            for m in res.data:
+                mid = m.id.replace("models/", "")
+                if any(x in mid.lower() for x in ["whisper", "embedding", "guard", "vision", "audio", "tts", "moderation", "2.5-flash", "deprecated"]):
+                    continue
+                model_ids.append(mid)
             if model_ids:
                 return model_ids
         except Exception:
@@ -146,29 +148,50 @@ class LLMClient:
         try:
             if provider == "groq":
                 test_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=12.0)
+                fallback_list = GROQ_FALLBACK_MODELS
             elif provider == "gemini":
                 test_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=12.0)
+                fallback_list = GEMINI_FALLBACK_MODELS
             elif provider == "openrouter":
                 test_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=12.0)
+                fallback_list = OPENROUTER_FALLBACK_MODELS
             else:
                 return {"success": False, "error": f"Unknown provider: {provider}"}
             
             # Discover live supported models from API
             available_models = self._discover_active_models(test_client, provider)
-            test_model = model or (available_models[0] if available_models else (self.groq_model if provider == "groq" else self.gemini_model))
+            candidates = []
+            if model:
+                candidates.append(model.replace("models/", ""))
+            for am in available_models + fallback_list:
+                am_clean = am.replace("models/", "")
+                if am_clean not in candidates:
+                    candidates.append(am_clean)
             
-            resp = test_client.chat.completions.create(
-                model=test_model,
-                messages=[{"role": "user", "content": "ping"}],
-                max_tokens=5,
-            )
-            elapsed_ms = int((time.time() - t0) * 1000)
+            last_err = None
+            for test_model in candidates:
+                try:
+                    resp = test_client.chat.completions.create(
+                        model=test_model,
+                        messages=[{"role": "user", "content": "ping"}],
+                        max_tokens=5,
+                    )
+                    elapsed_ms = int((time.time() - t0) * 1000)
+                    return {
+                        "success": True,
+                        "provider": provider,
+                        "model": test_model,
+                        "latency_ms": elapsed_ms,
+                        "message": f"Connected successfully via {test_model} ({elapsed_ms}ms)"
+                    }
+                except Exception as model_err:
+                    last_err = str(model_err)
+                    continue
+            
             return {
-                "success": True,
+                "success": False,
                 "provider": provider,
-                "model": test_model,
-                "latency_ms": elapsed_ms,
-                "message": f"Connected successfully ({elapsed_ms}ms)"
+                "error": last_err or "No active model succeeded"
             }
         except Exception as e:
             return {
