@@ -482,84 +482,61 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
 
     full_content = _sanitize_repetition(part_content)
 
-    # If the model stopped after Day 7 without generating Key Takeaways / Logistics / FAQs, append them seamlessly
-    if "## Frequently Asked Questions" not in full_content and "## The Real Logistics" not in full_content:
-        logger.info("Day 7 completed. Appending finale sections (Key Takeaways, Logistics, FAQs, Conclusion)...")
-        finale_prompt = f"""You have successfully written the complete Day 1 through Day 7 itinerary above for: "{topic}".
-DO NOT rewrite or repeat Day 1 through Day 7.
+    # Ensure ALL closing sections are 100% completed and not cut off mid-way
+    has_faqs = "## Frequently Asked Questions" in full_content or "## FAQs" in full_content
+    has_final_thoughts = "## Final Thoughts" in full_content or "## Conclusion" in full_content
+    has_related_articles = "## Related Articles" in full_content
+    is_cut_off = full_content.strip().endswith(("-", "•", "–", ":", "and", "or", "the", "with", "to", "in", "of", "a", "..."))
 
-Now generate ONLY the closing sections to complete the 3,000-word guide adhering to our SEO ranking guardrails:
+    if not (has_faqs and has_final_thoughts and has_related_articles) or is_cut_off:
+        logger.info("Detecting incomplete or truncated sections in long-form blog. Running intelligent completion pass...")
+        
+        # If cut off inside an incomplete section, trim back to the last complete H2 header
+        last_h2_idx = full_content.rfind("\n## ")
+        if is_cut_off and last_h2_idx != -1:
+            last_sec_text = full_content[last_h2_idx:]
+            if not has_faqs and ("## The Real Logistics" in last_sec_text or "## 3 Actionable Tips" in last_sec_text or "## 4 Ways Yatradham" in last_sec_text or "## 3 Key Takeaways" in last_sec_text):
+                full_content = full_content[:last_h2_idx].strip()
 
-## 3 Key Takeaways From This 7-Day Journey
-### 1. Pacing Drives True Rejuvenation
-(Write 2-3 paragraphs explaining why unhurried pacing creates long-lasting wellness benefits).
+        missing_requirements = []
+        if "## 3 Key Takeaways" not in full_content and "## Key Takeaways" not in full_content:
+            missing_requirements.append("## 3 Key Takeaways From This 7-Day Journey\n(Write 3 detailed takeaway subsections: 1. Pacing Drives True Rejuvenation, 2. High-Value Experiences Win Over Crowded Sightseeing, 3. Local Etiquette & Trust Build the Connection)")
+        if "## 4 Ways Yatradham" not in full_content and "## Ways Yatradham" not in full_content:
+            missing_requirements.append("## 4 Ways Yatradham.Org Makes Your Journey Seamless & Safe\n(Write 4 subsections with bullet points: 1. Verified Accommodations & Transparent Pricing, 2. Dedicated Yatra & Transport Coordination, 3. Tailored Spiritual & Wellness Itineraries, 4. 24/7 Pilgrim Support & Flexible Booking)")
+        if "## 3 Actionable Tips" not in full_content and "## Actionable Tips" not in full_content:
+            missing_requirements.append("## 3 Actionable Tips to Plan Your Journey Today\n(Write 3 subsections: 1. Plan Around Search & Seasonal Intent, 2. Book Your Verified Stay in Advance, 3. Maintain Consistency With Daily Routines)")
+        if "## The Real Logistics" not in full_content and "## Real Logistics" not in full_content:
+            missing_requirements.append("## The Real Logistics: Costs, Stays & Commutes\n(Write ~400 words detailing flight/train connections with exact fares in INR, realistic daily budget breakdowns from budget to luxury, local commute rates, and Yatradham stay benefits)")
+        if not has_faqs:
+            missing_requirements.append("## Frequently Asked Questions\n(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo female safety, packing, meals, and best booking seasons)")
+        if not has_final_thoughts:
+            missing_requirements.append("## Final Thoughts & Planning Your Trip\n(Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org)")
+        if not has_related_articles:
+            missing_requirements.append("## Related Articles & Recommended Reading\n(Provide 3 formatted internal article suggestions with Title, Author, Date, and 1-line topic summary)")
 
-### 2. High-Value Experiences Win Over Crowded Sightseeing
-(Write 2-3 paragraphs on why authentic Ayurveda and meditation deliver 10x more value than tourist traps).
+        if missing_requirements:
+            reqs_str = "\n\n".join(missing_requirements)
+            finale_prompt = f"""You have written the preceding part of the guide for: "{topic}".
 
-### 3. Local Etiquette & Trust Build the Connection
-(Write 2-3 paragraphs detailing sacred river protocols, temple dress codes, and respectful travel).
+Now generate ONLY the remaining missing closing sections below to complete the full 3,000-word authoritative blog post:
 
-## 4 Ways Yatradham.Org Makes Your Journey Seamless & Safe
-### 1. Verified Accommodations & Transparent Pricing
-- Zero surprise checkout charges
-- Verified photos and guest reviews
-- Prime locations near sacred ghats
+{reqs_str}
 
-### 2. Dedicated Yatra & Transport Coordination
-- Pre-negotiated fares from Dehradun and Haridwar
-- Trusted, background-verified drivers
-- Direct helpline for route updates
+CRITICAL: Output ONLY markdown text starting with the first missing section heading. Follow all editorial standards and do not repeat anything already written above."""
 
-### 3. Tailored Spiritual & Wellness Itineraries
-- Curated daily routines for beginners and seasoned seekers
-- Direct access to authentic temple aarti timings
-- Guidance on sattvic dining options
-
-### 4. 24/7 Pilgrim Support & Flexible Booking
-- Round-the-clock helpline
-- Flexible cancellation on select partner properties
-- Real-time WhatsApp assistance
-
-## 3 Actionable Tips to Plan Your Journey Today
-### 1. Plan Around Search & Seasonal Intent
-(Explain how choosing shoulder months like October-November or February-March maximizes weather comfort).
-
-### 2. Book Your Verified Stay in Advance
-(Explain why booking verified ashrams and dharamshalas early prevents last-minute scams).
-
-### 3. Maintain Consistency With Daily Routines
-(Explain how keeping simple morning and evening habits built during the trip anchors your wellness routine back home).
-
-## The Real Logistics: Costs, Stays & Commutes
-(Write ~400 words detailing flight/train connections with fares in INR, realistic daily budget breakdowns from budget to luxury, local commute rates, and why booking verified dharamshalas through Yatradham.Org guarantees safety).
-
-## Frequently Asked Questions
-(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo female safety, packing, meals, and best booking seasons).
-
-## Final Thoughts & Planning Your Trip
-(Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org).
-
-## Related Articles & Recommended Reading
-- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
-- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
-- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)
-
-CRITICAL: Start immediately with `## 3 Key Takeaways From This 7-Day Journey`. Output ONLY markdown text."""
-
-        finale_raw = client.chat_completion(
-            messages=[
-                {"role": "system", "content": brand_context},
-                {"role": "user", "content": master_prompt},
-                {"role": "assistant", "content": cleaned},
-                {"role": "user", "content": finale_prompt}
-            ],
-            max_tokens=2500,
-            temperature=0.6,
-        )
-        cleaned_finale = _clean_markdown(finale_raw)
-        if cleaned_finale:
-            full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_finale)}"
+            finale_raw = client.chat_completion(
+                messages=[
+                    {"role": "system", "content": brand_context},
+                    {"role": "user", "content": master_prompt},
+                    {"role": "assistant", "content": full_content},
+                    {"role": "user", "content": finale_prompt}
+                ],
+                max_tokens=3000,
+                temperature=0.6,
+            )
+            cleaned_finale = _clean_markdown(finale_raw)
+            if cleaned_finale:
+                full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_finale)}"
 
     return {
         "title": title,

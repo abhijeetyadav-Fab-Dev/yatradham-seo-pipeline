@@ -1,7 +1,7 @@
 # Graph Report - yatradham-seo-pipeline  (2026-08-20)
 
 ## Corpus Check
-- 16 files · ~34,142 words
+- 16 files · ~34,299 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `15053f59`
+- Built from commit: `f975c748`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -116,7 +116,7 @@ Nodes (5): BatchURLRequest, BaseModel, Scrape a Yatradham URL and auto-process t
 
 ### Community 16 - "humanize_endpoint"
 Cohesion: 0.40
-Nodes (5): humanize_endpoint(), humanize_markdown_content(), humanize_single_chunk(), HumanizeRequest, Humanize multi-section markdown text concurrently while preserving headings and…
+Nodes (5): humanize_endpoint(), humanize_markdown_content(), humanize_single_chunk(), HumanizeRequest, Humanize multi-section markdown text concurrently while preserving headings,…
 
 ### Community 17 - "meta_agent.py"
 Cohesion: 0.50
