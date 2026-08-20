@@ -1462,6 +1462,37 @@
             }
         }
 
+        function getFormattedExportText(item) {
+            if (!item) return '';
+            let parts = [];
+            if (item.title) parts.push(`# ${item.title}`);
+            if (item.meta_description) parts.push(`**Meta Description:** ${item.meta_description}`);
+            if (item.suggested_tags && item.suggested_tags.length) {
+                parts.push(`**Tags:** ${item.suggested_tags.join(', ')}`);
+            }
+            if (item.content || item.full_content || item.hero_text) {
+                parts.push(item.content || item.full_content || item.hero_text);
+            }
+            if (item.why_choose && Array.isArray(item.why_choose)) {
+                parts.push(`## Why Choose This\n` + item.why_choose.map(w => `- ${w}`).join('\n'));
+            }
+            if (item.faq && Array.isArray(item.faq)) {
+                parts.push(`## Frequently Asked Questions\n` + item.faq.map(f => `### ${f.q||f.question}\n${f.a||f.answer}`).join('\n\n'));
+            }
+            return parts.length ? parts.join('\n\n') : (item.content || item.full_content || '');
+        }
+
+        function loadSampleToHumanizer() {
+            const raw = getFormattedExportText(lastGeneratedContent);
+            if (!raw) {
+                alert('No blog has been generated in this session yet. Generate a blog in Content Studio first or paste your text directly.');
+                return;
+            }
+            const inputEl = document.getElementById('standaloneInput');
+            inputEl.value = raw;
+            inputEl.dispatchEvent(new Event('input'));
+        }
+
         function copyStandaloneOutput() {
             if (!lastStandaloneHumanizedText) {
                 alert('No humanized output to copy yet.');
@@ -1475,29 +1506,29 @@
                 alert('No humanized output to download yet.');
                 return;
             }
-            const blob = new Blob([lastStandaloneHumanizedText], { type: 'text/plain' });
+            const blob = new Blob([lastStandaloneHumanizedText], { type: 'text/markdown;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `humanized_text_${Date.now()}.txt`;
+            a.download = `humanized_text_${Date.now()}.md`;
             a.click();
             URL.revokeObjectURL(url);
         }
 
         function copyContent() {
             if (!lastGeneratedContent) return;
-            const text = JSON.stringify(lastGeneratedContent, null, 2);
-            navigator.clipboard.writeText(text).then(() => alert('Content copied to clipboard!'));
+            const text = getFormattedExportText(lastGeneratedContent);
+            navigator.clipboard.writeText(text).then(() => alert('Clean formatted article copied to clipboard!'));
         }
 
         function downloadContent() {
             if (!lastGeneratedContent) return;
-            const content = lastGeneratedContent.content || lastGeneratedContent.full_content || JSON.stringify(lastGeneratedContent, null, 2);
-            const blob = new Blob([content], { type: 'text/plain' });
+            const content = getFormattedExportText(lastGeneratedContent);
+            const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `yatradham_${lastGeneratedContent.content_type || 'content'}_${Date.now()}.txt`;
+            a.download = `yatradham_${lastGeneratedContent.content_type || 'content'}_${Date.now()}.md`;
             a.click();
             URL.revokeObjectURL(url);
         }

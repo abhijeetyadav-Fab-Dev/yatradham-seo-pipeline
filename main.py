@@ -528,58 +528,68 @@ def humanize_single_chunk(text_chunk: str, session_id: str) -> str:
 
 
 def humanize_markdown_content(markdown_text: str) -> str:
-    """Humanize multi-section markdown text concurrently while preserving headings and structure."""
-    if not markdown_text or len(markdown_text.strip()) < 50:
+    """Humanize multi-section markdown text concurrently while preserving headings, structure, and 100% coverage."""
+    if not markdown_text or len(markdown_text.strip()) < 30:
         return markdown_text
 
     import re
     import time
-    sections = re.split(r'(?=\n##\s+)', markdown_text)
     
-    tasks = []
-    session_id = f"yatradham_{int(time.time()*1000)}"
+    clean_text = markdown_text.strip()
+    # If text is wrapped in JSON, extract the readable content
+    if clean_text.startswith("{") and clean_text.endswith("}"):
+        try:
+            d = json.loads(clean_text)
+            if isinstance(d, dict):
+                parts = []
+                if d.get("title"):
+                    parts.append(f"# {d['title']}")
+                if d.get("meta_description"):
+                    parts.append(f"**Meta Description:** {d['meta_description']}")
+                if d.get("content") or d.get("full_content") or d.get("hero_text"):
+                    parts.append(d.get("content") or d.get("full_content") or d.get("hero_text"))
+                if parts:
+                    clean_text = "\n\n".join(parts)
+        except Exception:
+            pass
+
+    # Split by markdown H2 headings
+    sections = re.split(r'(?=\n##\s+)', clean_text)
     
+    # Group sections into optimal chunks of 250-450 words to guarantee no section is skipped
+    chunks = []
+    curr = ""
     for sec in sections:
         sec_clean = sec.strip()
         if not sec_clean:
             continue
-        
-        header_match = re.match(r'^(#{1,3}\s+[^\n]+)\n*(.*)$', sec_clean, re.DOTALL)
-        if header_match:
-            header_line = header_match.group(1)
-            body_text = header_match.group(2).strip()
-            if body_text and len(body_text.split()) >= 30:
-                tasks.append({"header": header_line, "body": body_text, "needs_rewrite": True})
-            else:
-                tasks.append({"raw": sec_clean, "needs_rewrite": False})
+        if len((curr + "\n\n" + sec_clean).split()) <= 420:
+            curr = (curr + "\n\n" + sec_clean).strip() if curr else sec_clean
         else:
-            if len(sec_clean.split()) >= 30:
-                tasks.append({"header": "", "body": sec_clean, "needs_rewrite": True})
-            else:
-                tasks.append({"raw": sec_clean, "needs_rewrite": False})
+            if curr:
+                chunks.append(curr)
+            curr = sec_clean
+    if curr:
+        chunks.append(curr)
 
-    results = [None] * len(tasks)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-        future_to_task = {}
-        for idx, task in enumerate(tasks):
-            if task.get("needs_rewrite"):
-                f = executor.submit(humanize_single_chunk, task["body"], f"{session_id}_{idx}")
-                future_to_task[f] = idx
-            else:
-                results[idx] = task["raw"]
-                
-        for f in concurrent.futures.as_completed(future_to_task):
-            idx = future_to_task[f]
+    if not chunks:
+        chunks = [clean_text]
+
+    session_base = f"yatradham_{int(time.time()*1000)}"
+    results = [None] * len(chunks)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=min(6, len(chunks))) as executor:
+        future_to_idx = {
+            executor.submit(humanize_single_chunk, chunk, f"{session_base}_{idx}"): idx
+            for idx, chunk in enumerate(chunks)
+        }
+        for f in concurrent.futures.as_completed(future_to_idx):
+            idx = future_to_idx[f]
             try:
-                rewritten_body = f.result()
-                task = tasks[idx]
-                if task.get("header"):
-                    results[idx] = f"{task['header']}\n\n{rewritten_body}"
-                else:
-                    results[idx] = rewritten_body
+                results[idx] = f.result()
             except Exception as e:
-                task = tasks[idx]
-                results[idx] = f"{task.get('header', '')}\n\n{task.get('body', '')}".strip()
+                logger.error(f"Failed chunk {idx} rewrite: {e}")
+                results[idx] = chunks[idx]
 
     return "\n\n".join([r for r in results if r])
 
