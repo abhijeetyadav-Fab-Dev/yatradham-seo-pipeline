@@ -34,10 +34,14 @@ client = LLMClient()
 
 class URLRequest(BaseModel):
     url: str
+    keys: Optional[Dict[str, str]] = None
+    provider: Optional[str] = None
+    api_key: Optional[str] = None
 
 
 class BatchURLRequest(BaseModel):
     urls: List[str]
+    keys: Optional[Dict[str, str]] = None
 
 
 @asynccontextmanager
@@ -79,13 +83,33 @@ logger = logging.getLogger("main")
 
 @app.post("/scrape")
 def scrape_and_process(request: URLRequest):
-    """Scrape a Yatradham URL and auto-process through all 5 agents."""
+    """Scrape a Yatradham URL and auto-process through all 5 agents with custom runtime keys."""
     try:
         logger.info(f"Scraping single URL: {request.url}")
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 YatradhamBot/1.0"}
-        resp = requests.get(request.url, headers=headers, timeout=20)
-        resp.raise_for_status()
-        html = resp.text
+        
+        # Configure scoped LLM client with keys
+        req_client = LLMClient()
+        if request.keys:
+            for prov, key in request.keys.items():
+                if key:
+                    req_client.set_custom_keys(prov, key)
+        if request.provider and request.api_key:
+            req_client.set_custom_keys(request.provider, request.api_key)
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 YatradhamBot/1.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+        }
+        
+        try:
+            resp = requests.get(request.url, headers=headers, timeout=20)
+            resp.raise_for_status()
+            html = resp.text
+        except Exception as net_err:
+            import urllib.request
+            req = urllib.request.Request(request.url, headers=headers)
+            with urllib.request.urlopen(req, timeout=20) as uresp:
+                html = uresp.read().decode('utf-8', errors='ignore')
 
         scraped = extract_package_data(html, request.url)
 
@@ -103,7 +127,7 @@ def scrape_and_process(request: URLRequest):
             raw_text=scraped.get("raw_text", ""),
         )
 
-        result = process_package(pkg, client)
+        result = process_package(pkg, req_client)
         row_id = save_output(result)
 
         logger.info(f"Successfully processed {request.url} -> ID {row_id}")
@@ -113,27 +137,42 @@ def scrape_and_process(request: URLRequest):
             "package": pkg.model_dump(),
             "output": result.model_dump()
         }
-    except requests.RequestException as e:
-        logger.error(f"Network error scraping {request.url}: {e}")
-        raise HTTPException(status_code=400, detail=f"Failed to fetch URL: {e}")
     except Exception as e:
-        logger.exception(f"Internal error processing {request.url}: {e}")
-        raise HTTPException(status_code=500, detail="Internal server error")
+        logger.exception(f"Error processing {request.url}: {e}")
+        return {
+            "success": False,
+            "detail": f"Failed to process package URL: {str(e)}"
+        }
 
 
-def process_batch_background(urls: List[str]):
+def process_batch_background(urls: List[str], keys: Optional[Dict[str, str]] = None):
     logger.info(f"Starting background batch processing of {len(urls)} URLs")
     
+    batch_client = LLMClient()
+    if keys:
+        for prov, key in keys.items():
+            if key:
+                batch_client.set_custom_keys(prov, key)
+
     def fetch_and_process(url):
         url = url.strip()
         if not url:
             return
         try:
             logger.info(f"Batch processing URL: {url}")
-            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 YatradhamBot/1.0"}
-            resp = requests.get(url, headers=headers, timeout=25)
-            resp.raise_for_status()
-            html = resp.text
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 YatradhamBot/1.0",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            }
+            try:
+                resp = requests.get(url, headers=headers, timeout=25)
+                resp.raise_for_status()
+                html = resp.text
+            except Exception:
+                import urllib.request
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=25) as uresp:
+                    html = uresp.read().decode('utf-8', errors='ignore')
 
             scraped = extract_package_data(html, url)
             pkg = PackageInput(
@@ -149,7 +188,7 @@ def process_batch_background(urls: List[str]):
                 raw_html=scraped.get("raw_html", ""),
                 raw_text=scraped.get("raw_text", ""),
             )
-            result = process_package(pkg, client)
+            result = process_package(pkg, batch_client)
             save_output(result)
             logger.info(f"Successfully processed batch URL: {url}")
         except Exception as e:
@@ -170,7 +209,7 @@ def batch_urls(request: BatchURLRequest, background_tasks: BackgroundTasks):
     # Deduplicate URLs
     unique_urls = list(dict.fromkeys(request.urls))
     
-    background_tasks.add_task(process_batch_background, unique_urls)
+    background_tasks.add_task(process_batch_background, unique_urls, request.keys)
     return {
         "success": True,
         "message": f"Started processing {len(unique_urls)} URLs in the background. Please check the 'SEO Outputs' tab shortly.",
