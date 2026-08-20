@@ -841,6 +841,9 @@
             setGenerateLoading('btnQuickGenerate', true);
             showPreviewLoading();
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 90000);
+
             try {
                 const payload = {
                     content_type: contentType,
@@ -856,8 +859,10 @@
                 const res = await fetch(API + '/generate-content', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
                 const data = await res.json();
                 if (data.success) {
                     lastGeneratedContent = data.result;
@@ -866,7 +871,12 @@
                     showPreviewError(data.detail || 'Generation failed');
                 }
             } catch(e) {
-                showPreviewError(e.message);
+                clearTimeout(timeoutId);
+                if (e.name === 'AbortError') {
+                    showPreviewError('Generation timed out (took >90s). Please check your API keys or try again.');
+                } else {
+                    showPreviewError(e.message);
+                }
             } finally {
                 setGenerateLoading('btnQuickGenerate', false);
             }
@@ -883,6 +893,9 @@
 
             setGenerateLoading('btnStructGenerate', true);
             showPreviewLoading();
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 90000);
 
             try {
                 const payload = {
@@ -903,8 +916,10 @@
                 const res = await fetch(API + '/generate-content', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
                 const data = await res.json();
                 if (data.success) {
                     lastGeneratedContent = data.result;
@@ -913,7 +928,12 @@
                     showPreviewError(data.detail || 'Generation failed');
                 }
             } catch(e) {
-                showPreviewError(e.message);
+                clearTimeout(timeoutId);
+                if (e.name === 'AbortError') {
+                    showPreviewError('Generation timed out (took >90s). Please check your API keys or try again.');
+                } else {
+                    showPreviewError(e.message);
+                }
             } finally {
                 setGenerateLoading('btnStructGenerate', false);
             }
@@ -1140,12 +1160,17 @@
             btn.disabled = true;
             btn.innerHTML = `<svg class="animate-spin w-3.5 h-3.5 mr-1 text-indigo-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Analyzing...`;
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 20000);
+
             try {
                 const res = await fetch(API + '/api/check-ai', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text: raw})
+                    body: JSON.stringify({text: raw}),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
                 const data = await res.json();
                 if (data.success) {
                     badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-amber-100', 'text-amber-800', 'bg-rose-100', 'text-rose-800');
@@ -1163,7 +1188,12 @@
                     alert('Could not retrieve AI score');
                 }
             } catch(e) {
-                alert('Error checking AI score: ' + e.message);
+                clearTimeout(timeoutId);
+                if (e.name === 'AbortError') {
+                    alert('AI check timed out. Please try again.');
+                } else {
+                    alert('Error checking AI score: ' + e.message);
+                }
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = origHtml;
@@ -1182,12 +1212,17 @@
             btn.disabled = true;
             btn.innerHTML = `<svg class="animate-spin w-3.5 h-3.5 mr-1 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Humanizing & Bypassing AI...`;
 
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 45000);
+
             try {
                 const res = await fetch(API + '/api/humanize', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text: raw})
+                    body: JSON.stringify({text: raw}),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
                 const data = await res.json();
                 if (data.success && data.humanized_text) {
                     if (lastGeneratedContent.content) lastGeneratedContent.content = data.humanized_text;
@@ -1212,7 +1247,12 @@
                     alert('Humanization failed: ' + (data.detail || 'Unknown error'));
                 }
             } catch(e) {
-                alert('Error during humanization: ' + e.message);
+                clearTimeout(timeoutId);
+                if (e.name === 'AbortError') {
+                    alert('Humanization timed out. Please try again.');
+                } else {
+                    alert('Error during humanization: ' + e.message);
+                }
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = origHtml;

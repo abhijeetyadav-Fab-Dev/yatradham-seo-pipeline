@@ -4,17 +4,17 @@
   "graph": {},
   "nodes": [
     {
-      "label": "BatchURLRequest",
+      "label": "ProviderSettingsRequest",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L39",
+      "source_location": "L267",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "main_batchurlrequest",
+      "id": "main_providersettingsrequest",
       "community": 0,
-      "community_name": "generate_content",
-      "norm_label": "batchurlrequest"
+      "community_name": "post",
+      "norm_label": "providersettingsrequest"
     },
     {
       "label": "ContentGenerateRequest",
@@ -25,22 +25,22 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "main_contentgeneraterequest",
-      "community": 0,
-      "community_name": "generate_content",
+      "community": 1,
+      "community_name": "main.py",
       "norm_label": "contentgeneraterequest"
     },
     {
-      "label": "ProviderSettingsRequest",
+      "label": "BatchURLRequest",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L267",
+      "source_location": "L39",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
-      "id": "main_providersettingsrequest",
-      "community": 0,
-      "community_name": "generate_content",
-      "norm_label": "providersettingsrequest"
+      "id": "main_batchurlrequest",
+      "community": 15,
+      "community_name": "scrape_and_process",
+      "norm_label": "batchurlrequest"
     },
     {
       "label": "URLRequest",
@@ -51,9 +51,35 @@
       "_callable_class": true,
       "_origin": "ast",
       "id": "main_urlrequest",
-      "community": 0,
-      "community_name": "generate_content",
+      "community": 15,
+      "community_name": "scrape_and_process",
       "norm_label": "urlrequest"
+    },
+    {
+      "label": "HumanizeRequest",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L464",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "main_humanizerequest",
+      "community": 16,
+      "community_name": "humanize_endpoint",
+      "norm_label": "humanizerequest"
+    },
+    {
+      "label": "CheckAIRequest",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L460",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "main_checkairequest",
+      "community": 19,
+      "community_name": "check_ai_endpoint",
+      "norm_label": "checkairequest"
     },
     {
       "label": "SectionedContent",
@@ -160,6 +186,19 @@
       "norm_label": "nearbylocation"
     },
     {
+      "label": "PackageInput",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L7",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "models_packageinput",
+      "community": 4,
+      "community_name": "models.py",
+      "norm_label": "packageinput"
+    },
+    {
       "label": "PricingRow",
       "file_type": "code",
       "source_file": "models.py",
@@ -212,29 +251,40 @@
       "norm_label": "quickfacts"
     },
     {
-      "label": "PackageInput",
-      "file_type": "code",
-      "source_file": "models.py",
-      "source_location": "L7",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "models_packageinput",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "packageinput"
-    },
-    {
-      "label": "generate_content()",
+      "label": "bulk_action()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L307",
+      "source_location": "L242",
       "_callable": true,
       "_origin": "ast",
-      "id": "main_generate_content",
+      "id": "main_bulk_action",
       "community": 0,
-      "community_name": "generate_content",
-      "norm_label": "generate_content()"
+      "community_name": "post",
+      "norm_label": "bulk_action()"
+    },
+    {
+      "label": "clear_cache()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L260",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_clear_cache",
+      "community": 0,
+      "community_name": "post",
+      "norm_label": "clear_cache()"
+    },
+    {
+      "label": "process_single()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L178",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_process_single",
+      "community": 0,
+      "community_name": "post",
+      "norm_label": "process_single()"
     },
     {
       "label": "test_provider_endpoint()",
@@ -245,7 +295,7 @@
       "_origin": "ast",
       "id": "main_test_provider_endpoint",
       "community": 0,
-      "community_name": "generate_content",
+      "community_name": "post",
       "norm_label": "test_provider_endpoint()"
     },
     {
@@ -257,44 +307,20 @@
       "_origin": "ast",
       "id": "main_update_provider_settings",
       "community": 0,
-      "community_name": "generate_content",
+      "community_name": "post",
       "norm_label": "update_provider_settings()"
     },
     {
-      "label": "clear_all_outputs()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L164",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_clear_all_outputs",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "clear_all_outputs()"
-    },
-    {
-      "label": "get_stats()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L174",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_get_stats",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "get_stats()"
-    },
-    {
-      "label": "clear_cache()",
+      "label": "generate_content()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L260",
+      "source_location": "L307",
       "_callable": true,
       "_origin": "ast",
-      "id": "main_clear_cache",
+      "id": "main_generate_content",
       "community": 1,
       "community_name": "main.py",
-      "norm_label": "clear_cache()"
+      "norm_label": "generate_content()"
     },
     {
       "label": "lifespan()",
@@ -307,18 +333,6 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "lifespan()"
-    },
-    {
-      "label": "stats()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L368",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_stats",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "stats()"
     },
     {
       "label": "_check_banned()",
@@ -381,18 +395,6 @@
       "norm_label": "run()"
     },
     {
-      "label": "list_outputs()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L127",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_list_outputs",
-      "community": 12,
-      "community_name": "list_outputs",
-      "norm_label": "list_outputs()"
-    },
-    {
       "label": "export_csv()",
       "file_type": "code",
       "source_file": "main.py",
@@ -401,7 +403,7 @@
       "_origin": "ast",
       "id": "main_export_csv",
       "community": 12,
-      "community_name": "list_outputs",
+      "community_name": "get",
       "norm_label": "export_csv()"
     },
     {
@@ -413,7 +415,7 @@
       "_origin": "ast",
       "id": "main_get_outputs",
       "community": 12,
-      "community_name": "list_outputs",
+      "community_name": "get",
       "norm_label": "get_outputs()"
     },
     {
@@ -425,7 +427,7 @@
       "_origin": "ast",
       "id": "main_get_single_output",
       "community": 12,
-      "community_name": "list_outputs",
+      "community_name": "get",
       "norm_label": "get_single_output()"
     },
     {
@@ -437,8 +439,20 @@
       "_origin": "ast",
       "id": "main_root",
       "community": 12,
-      "community_name": "list_outputs",
+      "community_name": "get",
       "norm_label": "root()"
+    },
+    {
+      "label": "stats()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L368",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_stats",
+      "community": 12,
+      "community_name": "get",
+      "norm_label": "stats()"
     },
     {
       "label": "._discover_active_models()",
@@ -485,7 +499,7 @@
       "_origin": "ast",
       "id": "agents_content_agent_extract_json_from_response",
       "community": 14,
-      "community_name": "content_agent.py",
+      "community_name": "process_package",
       "norm_label": "_extract_json_from_response()"
     },
     {
@@ -497,68 +511,8 @@
       "_origin": "ast",
       "id": "agents_content_agent_run",
       "community": 14,
-      "community_name": "content_agent.py",
+      "community_name": "process_package",
       "norm_label": "run()"
-    },
-    {
-      "label": "bulk_update_status()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L143",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_bulk_update_status",
-      "community": 15,
-      "community_name": "get_conn",
-      "norm_label": "bulk_update_status()"
-    },
-    {
-      "label": "delete_output()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L155",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_delete_output",
-      "community": 15,
-      "community_name": "get_conn",
-      "norm_label": "delete_output()"
-    },
-    {
-      "label": "get_conn()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L11",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_get_conn",
-      "community": 15,
-      "community_name": "get_conn",
-      "norm_label": "get_conn()"
-    },
-    {
-      "label": "init_db()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L17",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_init_db",
-      "community": 15,
-      "community_name": "get_conn",
-      "norm_label": "init_db()"
-    },
-    {
-      "label": "delete_single_output()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L252",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_delete_single_output",
-      "community": 15,
-      "community_name": "get_conn",
-      "norm_label": "delete_single_output()"
     },
     {
       "label": "run()",
@@ -568,9 +522,69 @@
       "_callable": true,
       "_origin": "ast",
       "id": "agents_keyword_agent_run",
-      "community": 16,
-      "community_name": "run",
+      "community": 14,
+      "community_name": "process_package",
       "norm_label": "run()"
+    },
+    {
+      "label": "process_package()",
+      "file_type": "code",
+      "source_file": "pipeline.py",
+      "source_location": "L10",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "pipeline_process_package",
+      "community": 14,
+      "community_name": "process_package",
+      "norm_label": "process_package()"
+    },
+    {
+      "label": "scrape_and_process()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L74",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_scrape_and_process",
+      "community": 15,
+      "community_name": "scrape_and_process",
+      "norm_label": "scrape_and_process()"
+    },
+    {
+      "label": "humanize_endpoint()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L577",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_humanize_endpoint",
+      "community": 16,
+      "community_name": "humanize_endpoint",
+      "norm_label": "humanize_endpoint()"
+    },
+    {
+      "label": "humanize_markdown_content()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L524",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_humanize_markdown_content",
+      "community": 16,
+      "community_name": "humanize_endpoint",
+      "norm_label": "humanize_markdown_content()"
+    },
+    {
+      "label": "humanize_single_chunk()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L493",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_humanize_single_chunk",
+      "community": 16,
+      "community_name": "humanize_endpoint",
+      "norm_label": "humanize_single_chunk()"
     },
     {
       "label": "run()",
@@ -581,7 +595,7 @@
       "_origin": "ast",
       "id": "agents_meta_agent_run",
       "community": 17,
-      "community_name": "run",
+      "community_name": "meta_agent.py",
       "norm_label": "run()"
     },
     {
@@ -593,8 +607,68 @@
       "_origin": "ast",
       "id": "agents_title_agent_run",
       "community": 18,
-      "community_name": "run",
+      "community_name": "title_agent.py",
       "norm_label": "run()"
+    },
+    {
+      "label": "check_ai_endpoint()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L562",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_check_ai_endpoint",
+      "community": 19,
+      "community_name": "check_ai_endpoint",
+      "norm_label": "check_ai_endpoint()"
+    },
+    {
+      "label": "query_undetectable_detector()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L468",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_query_undetectable_detector",
+      "community": 19,
+      "community_name": "check_ai_endpoint",
+      "norm_label": "query_undetectable_detector()"
+    },
+    {
+      "label": "bulk_update_status()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L143",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_bulk_update_status",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "bulk_update_status()"
+    },
+    {
+      "label": "clear_all_outputs()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L164",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_clear_all_outputs",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "clear_all_outputs()"
+    },
+    {
+      "label": "delete_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L155",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_delete_output",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "delete_output()"
     },
     {
       "label": "_dict_to_sections()",
@@ -609,6 +683,18 @@
       "norm_label": "_dict_to_sections()"
     },
     {
+      "label": "get_conn()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_get_conn",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "get_conn()"
+    },
+    {
       "label": "get_output()",
       "file_type": "code",
       "source_file": "database.py",
@@ -621,6 +707,42 @@
       "norm_label": "get_output()"
     },
     {
+      "label": "get_stats()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L174",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_get_stats",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "get_stats()"
+    },
+    {
+      "label": "init_db()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L17",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_init_db",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "init_db()"
+    },
+    {
+      "label": "list_outputs()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L127",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_list_outputs",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "list_outputs()"
+    },
+    {
       "label": "_row_to_output()",
       "file_type": "code",
       "source_file": "database.py",
@@ -631,6 +753,18 @@
       "community": 2,
       "community_name": "database.py",
       "norm_label": "_row_to_output()"
+    },
+    {
+      "label": "save_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L54",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_save_output",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "save_output()"
     },
     {
       "label": "_sections_to_dict()",
@@ -655,6 +789,18 @@
       "community": 2,
       "community_name": "database.py",
       "norm_label": "update_output()"
+    },
+    {
+      "label": "delete_single_output()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L252",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_delete_single_output",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "delete_single_output()"
     },
     {
       "label": "update_single_output()",
@@ -741,16 +887,16 @@
       "norm_label": "._wait_for_rate_limit()"
     },
     {
-      "label": "bulk_action()",
+      "label": "batch_process()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L242",
+      "source_location": "L189",
       "_callable": true,
       "_origin": "ast",
-      "id": "main_bulk_action",
+      "id": "main_batch_process",
       "community": 4,
       "community_name": "models.py",
-      "norm_label": "bulk_action()"
+      "norm_label": "batch_process()"
     },
     {
       "label": "_clean_markdown()",
@@ -825,30 +971,6 @@
       "norm_label": "_strip_thinking_tags()"
     },
     {
-      "label": "save_output()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L54",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_save_output",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "save_output()"
-    },
-    {
-      "label": "batch_process()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L189",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_batch_process",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "batch_process()"
-    },
-    {
       "label": "batch_urls()",
       "file_type": "code",
       "source_file": "main.py",
@@ -857,7 +979,7 @@
       "_origin": "ast",
       "id": "main_batch_urls",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "batch_urls()"
     },
     {
@@ -869,44 +991,8 @@
       "_origin": "ast",
       "id": "main_process_batch_background",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "process_batch_background()"
-    },
-    {
-      "label": "process_single()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L178",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_process_single",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "process_single()"
-    },
-    {
-      "label": "scrape_and_process()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L74",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_scrape_and_process",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "scrape_and_process()"
-    },
-    {
-      "label": "process_package()",
-      "file_type": "code",
-      "source_file": "pipeline.py",
-      "source_location": "L10",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "pipeline_process_package",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "process_package()"
     },
     {
       "label": "extract_package_data()",
@@ -917,7 +1003,7 @@
       "_origin": "ast",
       "id": "scraper_extract_package_data",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "extract_package_data()"
     },
     {
@@ -945,15 +1031,48 @@
       "norm_label": "run_live_qa()"
     },
     {
-      "label": "BaseModel",
+      "label": "post",
       "file_type": "code",
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "main_py_basemodel",
+      "id": "post",
       "community": 0,
-      "community_name": "generate_content",
-      "norm_label": "basemodel"
+      "community_name": "post",
+      "norm_label": "post"
+    },
+    {
+      "label": "Process a single package through all 5 agents (manual JSON input).",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L179",
+      "_origin": "ast",
+      "id": "main_rationale_179",
+      "community": 0,
+      "community_name": "post",
+      "norm_label": "process a single package through all 5 agents (manual json input)."
+    },
+    {
+      "label": "Bulk approve or reject outputs.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L243",
+      "_origin": "ast",
+      "id": "main_rationale_243",
+      "community": 0,
+      "community_name": "post",
+      "norm_label": "bulk approve or reject outputs."
+    },
+    {
+      "label": "Wipe all outputs from the database to start fresh.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L261",
+      "_origin": "ast",
+      "id": "main_rationale_261",
+      "community": 0,
+      "community_name": "post",
+      "norm_label": "wipe all outputs from the database to start fresh."
     },
     {
       "label": "Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime.",
@@ -963,7 +1082,7 @@
       "_origin": "ast",
       "id": "main_rationale_275",
       "community": 0,
-      "community_name": "generate_content",
+      "community_name": "post",
       "norm_label": "dynamically configure llm providers (groq, gemini, openrouter) at runtime."
     },
     {
@@ -974,30 +1093,8 @@
       "_origin": "ast",
       "id": "main_rationale_287",
       "community": 0,
-      "community_name": "generate_content",
+      "community_name": "post",
       "norm_label": "test a provider api key live and return latency & status."
-    },
-    {
-      "label": "Generate net-new SEO content from scratch using AI.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L308",
-      "_origin": "ast",
-      "id": "main_rationale_308",
-      "community": 0,
-      "community_name": "generate_content",
-      "norm_label": "generate net-new seo content from scratch using ai."
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "database_py_any",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "any"
     },
     {
       "label": "e2e_test.py",
@@ -1044,15 +1141,15 @@
       "norm_label": "fastapi server with .env auto-loading, url auto-scraping, batch processing,..."
     },
     {
-      "label": "Wipe all outputs from the database to start fresh.",
+      "label": "Generate net-new SEO content from scratch using AI.",
       "file_type": "rationale",
       "source_file": "main.py",
-      "source_location": "L261",
+      "source_location": "L308",
       "_origin": "ast",
-      "id": "main_rationale_261",
+      "id": "main_rationale_308",
       "community": 1,
       "community_name": "main.py",
-      "norm_label": "wipe all outputs from the database to start fresh."
+      "norm_label": "generate net-new seo content from scratch using ai."
     },
     {
       "label": "__init__.py",
@@ -1106,7 +1203,7 @@
       "_origin": "ast",
       "id": "get",
       "community": 12,
-      "community_name": "list_outputs",
+      "community_name": "get",
       "norm_label": "get"
     },
     {
@@ -1117,7 +1214,7 @@
       "_origin": "ast",
       "id": "main_rationale_205",
       "community": 12,
-      "community_name": "list_outputs",
+      "community_name": "get",
       "norm_label": "list all seo outputs with optional filter."
     },
     {
@@ -1128,7 +1225,7 @@
       "_origin": "ast",
       "id": "main_rationale_374",
       "community": 12,
-      "community_name": "list_outputs",
+      "community_name": "get",
       "norm_label": "export outputs to csv."
     },
     {
@@ -1187,17 +1284,6 @@
       "norm_label": "test a provider api key with a fast 1-word prompt to verify connection."
     },
     {
-      "label": "content_agent.py",
-      "file_type": "code",
-      "source_file": "agents/content_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_content_agent",
-      "community": 14,
-      "community_name": "content_agent.py",
-      "norm_label": "content_agent.py"
-    },
-    {
       "label": "Any",
       "file_type": "code",
       "source_file": "",
@@ -1205,19 +1291,19 @@
       "_origin": "ast",
       "id": "agents_content_agent_py_any",
       "community": 14,
-      "community_name": "content_agent.py",
+      "community_name": "process_package",
       "norm_label": "any"
     },
     {
-      "label": "Content agent: generates all 19 structured sections from scraped page data.",
-      "file_type": "rationale",
-      "source_file": "agents/content_agent.py",
-      "source_location": "L1",
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
       "_origin": "ast",
-      "id": "agents_content_agent_rationale_1",
+      "id": "agents_keyword_agent_py_any",
       "community": 14,
-      "community_name": "content_agent.py",
-      "norm_label": "content agent: generates all 19 structured sections from scraped page data."
+      "community_name": "process_package",
+      "norm_label": "any"
     },
     {
       "label": "Robustly extract JSON from LLM response, handling markdown blocks and\u2026",
@@ -1227,30 +1313,63 @@
       "_origin": "ast",
       "id": "agents_content_agent_rationale_83",
       "community": 14,
-      "community_name": "content_agent.py",
+      "community_name": "process_package",
       "norm_label": "robustly extract json from llm response, handling markdown blocks and..."
     },
     {
-      "label": "delete",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
+      "label": "Run the full pipeline on a single package.",
+      "file_type": "rationale",
+      "source_file": "pipeline.py",
+      "source_location": "L11",
       "_origin": "ast",
-      "id": "delete",
-      "community": 15,
-      "community_name": "get_conn",
-      "norm_label": "delete"
+      "id": "pipeline_rationale_11",
+      "community": 14,
+      "community_name": "process_package",
+      "norm_label": "run the full pipeline on a single package."
     },
     {
-      "label": "Any",
+      "label": "BaseModel",
       "file_type": "code",
       "source_file": "",
       "source_location": "",
       "_origin": "ast",
-      "id": "agents_keyword_agent_py_any",
+      "id": "main_py_basemodel",
+      "community": 15,
+      "community_name": "scrape_and_process",
+      "norm_label": "basemodel"
+    },
+    {
+      "label": "Scrape a Yatradham URL and auto-process through all 5 agents.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L75",
+      "_origin": "ast",
+      "id": "main_rationale_75",
+      "community": 15,
+      "community_name": "scrape_and_process",
+      "norm_label": "scrape a yatradham url and auto-process through all 5 agents."
+    },
+    {
+      "label": "Humanize multi-section markdown text while preserving headings and structure.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L525",
+      "_origin": "ast",
+      "id": "main_rationale_525",
       "community": 16,
-      "community_name": "run",
-      "norm_label": "any"
+      "community_name": "humanize_endpoint",
+      "norm_label": "humanize multi-section markdown text while preserving headings and structure."
+    },
+    {
+      "label": "meta_agent.py",
+      "file_type": "code",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_meta_agent",
+      "community": 17,
+      "community_name": "meta_agent.py",
+      "norm_label": "meta_agent.py"
     },
     {
       "label": "Any",
@@ -1260,8 +1379,30 @@
       "_origin": "ast",
       "id": "agents_meta_agent_py_any",
       "community": 17,
-      "community_name": "run",
+      "community_name": "meta_agent.py",
       "norm_label": "any"
+    },
+    {
+      "label": "Meta description agent: 145-155 chars, natural language, no repetition.",
+      "file_type": "rationale",
+      "source_file": "agents/meta_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_meta_agent_rationale_1",
+      "community": 17,
+      "community_name": "meta_agent.py",
+      "norm_label": "meta description agent: 145-155 chars, natural language, no repetition."
+    },
+    {
+      "label": "title_agent.py",
+      "file_type": "code",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_title_agent",
+      "community": 18,
+      "community_name": "title_agent.py",
+      "norm_label": "title_agent.py"
     },
     {
       "label": "Any",
@@ -1271,8 +1412,19 @@
       "_origin": "ast",
       "id": "agents_title_agent_py_any",
       "community": 18,
-      "community_name": "run",
+      "community_name": "title_agent.py",
       "norm_label": "any"
+    },
+    {
+      "label": "Title tag agent: 50-60 chars, optimized for click-through rate.",
+      "file_type": "rationale",
+      "source_file": "agents/title_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_title_agent_rationale_1",
+      "community": 18,
+      "community_name": "title_agent.py",
+      "norm_label": "title tag agent: 50-60 chars, optimized for click-through rate."
     },
     {
       "label": "database.py",
@@ -1284,6 +1436,28 @@
       "community": 2,
       "community_name": "database.py",
       "norm_label": "database.py"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "database_py_any",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "any"
+    },
+    {
+      "label": "delete",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "delete",
+      "community": 2,
+      "community_name": "database.py",
+      "norm_label": "delete"
     },
     {
       "label": "Any",
@@ -1374,15 +1548,15 @@
       "norm_label": "basemodel"
     },
     {
-      "label": "Bulk approve or reject outputs.",
+      "label": "Process multiple packages from JSON (manual input).",
       "file_type": "rationale",
       "source_file": "main.py",
-      "source_location": "L243",
+      "source_location": "L190",
       "_origin": "ast",
-      "id": "main_rationale_243",
+      "id": "main_rationale_190",
       "community": 4,
       "community_name": "models.py",
-      "norm_label": "bulk approve or reject outputs."
+      "norm_label": "process multiple packages from json (manual input)."
     },
     {
       "label": "Pydantic models for the SEO pipeline.",
@@ -1396,6 +1570,17 @@
       "norm_label": "pydantic models for the seo pipeline."
     },
     {
+      "label": "content_agent.py",
+      "file_type": "code",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_content_agent",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "content_agent.py"
+    },
+    {
       "label": "keyword_agent.py",
       "file_type": "code",
       "source_file": "agents/keyword_agent.py",
@@ -1405,28 +1590,6 @@
       "community": 5,
       "community_name": "pipeline.py",
       "norm_label": "keyword_agent.py"
-    },
-    {
-      "label": "meta_agent.py",
-      "file_type": "code",
-      "source_file": "agents/meta_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_meta_agent",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "meta_agent.py"
-    },
-    {
-      "label": "title_agent.py",
-      "file_type": "code",
-      "source_file": "agents/title_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_title_agent",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "title_agent.py"
     },
     {
       "label": "llm_client.py",
@@ -1451,6 +1614,17 @@
       "norm_label": "pipeline.py"
     },
     {
+      "label": "Content agent: generates all 19 structured sections from scraped page data.",
+      "file_type": "rationale",
+      "source_file": "agents/content_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_content_agent_rationale_1",
+      "community": 5,
+      "community_name": "pipeline.py",
+      "norm_label": "content agent: generates all 19 structured sections from scraped page data."
+    },
+    {
       "label": "Keyword agent: enforces 2-4 word primary keyword.",
       "file_type": "rationale",
       "source_file": "agents/keyword_agent.py",
@@ -1460,28 +1634,6 @@
       "community": 5,
       "community_name": "pipeline.py",
       "norm_label": "keyword agent: enforces 2-4 word primary keyword."
-    },
-    {
-      "label": "Meta description agent: 145-155 chars, natural language, no repetition.",
-      "file_type": "rationale",
-      "source_file": "agents/meta_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_meta_agent_rationale_1",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "meta description agent: 145-155 chars, natural language, no repetition."
-    },
-    {
-      "label": "Title tag agent: 50-60 chars, optimized for click-through rate.",
-      "file_type": "rationale",
-      "source_file": "agents/title_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_title_agent_rationale_1",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "title tag agent: 50-60 chars, optimized for click-through rate."
     },
     {
       "label": "Orchestrator: runs all 5 agents in sequence.",
@@ -1590,19 +1742,8 @@
       "_origin": "ast",
       "id": "backgroundtasks",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "backgroundtasks"
-    },
-    {
-      "label": "post",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "post",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "post"
     },
     {
       "label": "scraper.py",
@@ -1612,7 +1753,7 @@
       "_origin": "ast",
       "id": "scraper",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "scraper.py"
     },
     {
@@ -1623,7 +1764,7 @@
       "_origin": "ast",
       "id": "scraper_py_any",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "any"
     },
     {
@@ -1634,52 +1775,8 @@
       "_origin": "ast",
       "id": "main_rationale_159",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "scrape and process multiple urls automatically in the background."
-    },
-    {
-      "label": "Process a single package through all 5 agents (manual JSON input).",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L179",
-      "_origin": "ast",
-      "id": "main_rationale_179",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "process a single package through all 5 agents (manual json input)."
-    },
-    {
-      "label": "Process multiple packages from JSON (manual input).",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L190",
-      "_origin": "ast",
-      "id": "main_rationale_190",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "process multiple packages from json (manual input)."
-    },
-    {
-      "label": "Scrape a Yatradham URL and auto-process through all 5 agents.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L75",
-      "_origin": "ast",
-      "id": "main_rationale_75",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "scrape a yatradham url and auto-process through all 5 agents."
-    },
-    {
-      "label": "Run the full pipeline on a single package.",
-      "file_type": "rationale",
-      "source_file": "pipeline.py",
-      "source_location": "L11",
-      "_origin": "ast",
-      "id": "pipeline_rationale_11",
-      "community": 7,
-      "community_name": "process_package",
-      "norm_label": "run the full pipeline on a single package."
     },
     {
       "label": "Extract structured data from Yatradham HTML pages.",
@@ -1689,7 +1786,7 @@
       "_origin": "ast",
       "id": "scraper_rationale_1",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "extract structured data from yatradham html pages."
     },
     {
@@ -1700,7 +1797,7 @@
       "_origin": "ast",
       "id": "scraper_rationale_8",
       "community": 7,
-      "community_name": "process_package",
+      "community_name": "batch_urls",
       "norm_label": "extract basic package metadata and raw text for llm processing."
     },
     {
@@ -2199,6 +2296,18 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L563",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_check_ai_endpoint",
+      "target": "main_query_undetectable_detector",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "main.py",
       "source_location": "L262",
@@ -2266,6 +2375,42 @@
       "_origin": "ast",
       "source": "main_get_single_output",
       "target": "database_get_output"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L581",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_humanize_endpoint",
+      "target": "main_humanize_markdown_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L582",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_humanize_endpoint",
+      "target": "main_query_undetectable_detector",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L545",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_humanize_markdown_content",
+      "target": "main_humanize_single_chunk",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2499,6 +2644,18 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
+      "source_location": "L561",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast",
+      "source": "main_check_ai_endpoint",
+      "target": "post",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
       "source_location": "L259",
       "weight": 1.0,
       "context": "decorator",
@@ -2565,6 +2722,18 @@
       "_origin": "ast",
       "source": "main_get_single_output",
       "target": "get",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L576",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast",
+      "source": "main_humanize_endpoint",
+      "target": "post",
       "confidence_score": 1.0
     },
     {
@@ -3412,11 +3581,35 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
+      "source_location": "L562",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_check_ai_endpoint",
+      "target": "main_checkairequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
       "source_location": "L307",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_generate_content",
       "target": "main_contentgeneraterequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L577",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_humanize_endpoint",
+      "target": "main_humanizerequest",
       "confidence_score": 1.0
     },
     {
@@ -4115,6 +4308,83 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
+      "source_location": "L460",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_checkairequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L464",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_humanizerequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L468",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_query_undetectable_detector",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L493",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_humanize_single_chunk",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L524",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_humanize_markdown_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L562",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_check_ai_endpoint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L577",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_humanize_endpoint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
       "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
@@ -4302,10 +4572,32 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
+      "source_location": "L460",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_checkairequest",
+      "target": "main_py_basemodel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
       "source_location": "L292",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_contentgeneraterequest",
+      "target": "main_py_basemodel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L464",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_humanizerequest",
       "target": "main_py_basemodel",
       "confidence_score": 1.0
     },
@@ -4885,6 +5177,17 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
+      "source_location": "L525",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main_rationale_525",
+      "target": "main_humanize_markdown_content",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "rationale_for",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
       "source_location": "L75",
       "weight": 1.0,
       "_origin": "ast",
@@ -5260,5 +5563,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "cbebb6bb70aaac22e51739b795554fbe97918363"
+  "built_at_commit": "be1acc0c215f91075753244445e2300365774666"
 }

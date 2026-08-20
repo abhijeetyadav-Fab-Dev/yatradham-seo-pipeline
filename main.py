@@ -471,49 +471,48 @@ def query_undetectable_detector(text: str) -> dict:
     if not sample:
         return {"score": 0}
     try:
-        resp = requests.post(
+        payload = json.dumps({"text": sample}).encode("utf-8")
+        req = urllib.request.Request(
             url,
-            json={"text": sample},
+            data=payload,
             headers={
                 "Content-Type": "application/json",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                 "Origin": "https://www.undetectableai.pro",
                 "Referer": "https://www.undetectableai.pro/detector"
-            },
-            timeout=15
+            }
         )
-        if resp.status_code == 200:
-            return resp.json()
-        logger.warning(f"Detector returned status {resp.status_code}: {resp.text}")
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data
     except Exception as e:
         logger.error(f"Error querying detector: {e}")
     return {"score": 50, "error": "Detector unavailable"}
 
 
-def humanize_single_chunk(text_chunk: str) -> str:
+def humanize_single_chunk(text_chunk: str, session_id: str) -> str:
     url = "https://www.undetectableai.pro/api/process-free"
     words = text_chunk.strip().split()
     if len(words) < 30:
         return text_chunk
     
     try:
-        import time
-        resp = requests.post(
+        payload = json.dumps({
+            "text": text_chunk.strip(),
+            "sessionId": session_id
+        }).encode("utf-8")
+        req = urllib.request.Request(
             url,
-            json={
-                "text": text_chunk.strip(),
-                "sessionId": f"yatradham_{int(time.time()*1000)}"
-            },
+            data=payload,
             headers={
                 "Content-Type": "application/json",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
                 "Origin": "https://www.undetectableai.pro",
                 "Referer": "https://www.undetectableai.pro/"
-            },
-            timeout=35
+            }
         )
-        if resp.status_code == 200:
-            data = resp.json()
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
             if data.get("code") == "success":
                 return data.get("text", text_chunk)
     except Exception as e:
@@ -522,15 +521,17 @@ def humanize_single_chunk(text_chunk: str) -> str:
 
 
 def humanize_markdown_content(markdown_text: str) -> str:
-    """Humanize multi-section markdown text while preserving headings and structure."""
+    """Humanize multi-section markdown text concurrently while preserving headings and structure."""
     if not markdown_text or len(markdown_text.strip()) < 50:
         return markdown_text
 
     import re
     import time
     sections = re.split(r'(?=\n##\s+)', markdown_text)
-    humanized_sections = []
-
+    
+    tasks = []
+    session_id = f"yatradham_{int(time.time()*1000)}"
+    
     for sec in sections:
         sec_clean = sec.strip()
         if not sec_clean:
@@ -540,22 +541,40 @@ def humanize_markdown_content(markdown_text: str) -> str:
         if header_match:
             header_line = header_match.group(1)
             body_text = header_match.group(2).strip()
-            
             if body_text and len(body_text.split()) >= 30:
-                rewritten_body = humanize_single_chunk(body_text)
-                humanized_sections.append(f"{header_line}\n\n{rewritten_body}")
-                time.sleep(0.3)
+                tasks.append({"header": header_line, "body": body_text, "needs_rewrite": True})
             else:
-                humanized_sections.append(sec_clean)
+                tasks.append({"raw": sec_clean, "needs_rewrite": False})
         else:
             if len(sec_clean.split()) >= 30:
-                rewritten = humanize_single_chunk(sec_clean)
-                humanized_sections.append(rewritten)
-                time.sleep(0.3)
+                tasks.append({"header": "", "body": sec_clean, "needs_rewrite": True})
             else:
-                humanized_sections.append(sec_clean)
+                tasks.append({"raw": sec_clean, "needs_rewrite": False})
 
-    return "\n\n".join(humanized_sections)
+    results = [None] * len(tasks)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        future_to_task = {}
+        for idx, task in enumerate(tasks):
+            if task.get("needs_rewrite"):
+                f = executor.submit(humanize_single_chunk, task["body"], f"{session_id}_{idx}")
+                future_to_task[f] = idx
+            else:
+                results[idx] = task["raw"]
+                
+        for f in concurrent.futures.as_completed(future_to_task):
+            idx = future_to_task[f]
+            try:
+                rewritten_body = f.result()
+                task = tasks[idx]
+                if task.get("header"):
+                    results[idx] = f"{task['header']}\n\n{rewritten_body}"
+                else:
+                    results[idx] = rewritten_body
+            except Exception as e:
+                task = tasks[idx]
+                results[idx] = f"{task.get('header', '')}\n\n{task.get('body', '')}".strip()
+
+    return "\n\n".join([r for r in results if r])
 
 
 @app.post("/api/check-ai")
