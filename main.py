@@ -249,9 +249,14 @@ def batch_process(request: BatchRequest):
 
 
 @app.get("/outputs")
-def get_outputs(status: Optional[str] = None, search: Optional[str] = None):
-    """List all SEO outputs with optional filter."""
-    outputs = list_outputs(status=status, search=search)
+def get_outputs(
+    status: Optional[str] = None, 
+    search: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None
+):
+    """List all SEO outputs with optional filter and pagination."""
+    outputs = list_outputs(status=status, search=search, limit=limit, offset=offset)
     return {"count": len(outputs), "outputs": [o.model_dump() for o in outputs]}
 
 

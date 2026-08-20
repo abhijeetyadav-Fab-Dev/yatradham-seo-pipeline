@@ -5,42 +5,64 @@ import os
 from typing import List, Optional, Dict, Any
 from models import SEOOutput, SectionedContent, PackageInput
 
+import time
+import random
+
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seo_pipeline.db")
 
 
 def get_conn():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=30.0)
     conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA busy_timeout = 30000")
+    conn.execute("PRAGMA journal_mode = WAL")
+    conn.execute("PRAGMA synchronous = NORMAL")
     return conn
 
 
+def _execute_with_retry(func, max_attempts=5):
+    """Execute a database operation with exponential backoff on lock contention."""
+    last_err = None
+    for attempt in range(max_attempts):
+        try:
+            return func()
+        except sqlite3.OperationalError as e:
+            if "locked" in str(e).lower() or "busy" in str(e).lower():
+                last_err = e
+                time.sleep(0.05 * (2 ** attempt) + random.uniform(0.01, 0.05))
+            else:
+                raise e
+    raise last_err or sqlite3.OperationalError("Database busy timeout after retries")
+
+
 def init_db():
-    conn = get_conn()
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS seo_outputs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            package_name TEXT NOT NULL,
-            package_data TEXT NOT NULL,
-            primary_keyword TEXT,
-            title_tag TEXT,
-            meta_description TEXT,
-            sections TEXT NOT NULL,
-            qa_score INTEGER DEFAULT 0,
-            qa_flags TEXT,
-            status TEXT DEFAULT 'pending',
-            created_at TEXT,
-            updated_at TEXT
-        )
-    """)
-    conn.execute("""
-        CREATE INDEX IF NOT EXISTS idx_status ON seo_outputs(status)
-    """)
-    conn.execute("""
-        CREATE INDEX IF NOT EXISTS idx_package_name ON seo_outputs(package_name)
-    """)
-    conn.commit()
-    conn.close()
+    def _op():
+        conn = get_conn()
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS seo_outputs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                package_name TEXT NOT NULL,
+                package_data TEXT NOT NULL,
+                primary_keyword TEXT,
+                title_tag TEXT,
+                meta_description TEXT,
+                sections TEXT NOT NULL,
+                qa_score INTEGER DEFAULT 0,
+                qa_flags TEXT,
+                status TEXT DEFAULT 'pending',
+                created_at TEXT,
+                updated_at TEXT
+            )
+        """)
+        conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_status ON seo_outputs(status)
+        """)
+        conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_package_name ON seo_outputs(package_name)
+        """)
+        conn.commit()
+        conn.close()
+    _execute_with_retry(_op)
 
 
 def _sections_to_dict(sections: SectionedContent) -> dict:
@@ -52,67 +74,71 @@ def _dict_to_sections(data: dict) -> SectionedContent:
 
 
 def save_output(output: SEOOutput) -> int:
-    conn = get_conn()
-    now = output.created_at or output.updated_at or __import__("datetime").datetime.now().isoformat()
-    cursor = conn.execute(
-        """INSERT INTO seo_outputs 
-           (package_name, package_data, primary_keyword, title_tag, meta_description, 
-            sections, qa_score, qa_flags, status, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-        (
-            output.package_input.name,
-            json.dumps(output.package_input.model_dump()),
-            output.primary_keyword,
-            output.title_tag,
-            output.meta_description,
-            json.dumps(_sections_to_dict(output.sections)),
-            output.qa_score,
-            json.dumps(output.qa_flags),
-            output.status,
-            now,
-            now,
-        ),
-    )
-    conn.commit()
-    row_id = cursor.lastrowid
-    conn.close()
-    return row_id
+    def _op():
+        conn = get_conn()
+        now = output.created_at or output.updated_at or __import__("datetime").datetime.now().isoformat()
+        cursor = conn.execute(
+            """INSERT INTO seo_outputs 
+               (package_name, package_data, primary_keyword, title_tag, meta_description, 
+                sections, qa_score, qa_flags, status, created_at, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                output.package_input.name,
+                json.dumps(output.package_input.model_dump()),
+                output.primary_keyword,
+                output.title_tag,
+                output.meta_description,
+                json.dumps(_sections_to_dict(output.sections)),
+                output.qa_score,
+                json.dumps(output.qa_flags),
+                output.status,
+                now,
+                now,
+            ),
+        )
+        conn.commit()
+        row_id = cursor.lastrowid
+        conn.close()
+        return row_id
+    return _execute_with_retry(_op)
 
 
 def update_output(output_id: int, output: SEOOutput) -> bool:
-    conn = get_conn()
-    now = __import__("datetime").datetime.now().isoformat()
-    conn.execute(
-        """UPDATE seo_outputs SET
-            package_name = ?,
-            package_data = ?,
-            primary_keyword = ?,
-            title_tag = ?,
-            meta_description = ?,
-            sections = ?,
-            qa_score = ?,
-            qa_flags = ?,
-            status = ?,
-            updated_at = ?
-           WHERE id = ?""",
-        (
-            output.package_input.name,
-            json.dumps(output.package_input.model_dump()),
-            output.primary_keyword,
-            output.title_tag,
-            output.meta_description,
-            json.dumps(_sections_to_dict(output.sections)),
-            output.qa_score,
-            json.dumps(output.qa_flags),
-            output.status,
-            now,
-            output_id,
-        ),
-    )
-    conn.commit()
-    updated = conn.total_changes > 0
-    conn.close()
-    return updated
+    def _op():
+        conn = get_conn()
+        now = __import__("datetime").datetime.now().isoformat()
+        conn.execute(
+            """UPDATE seo_outputs SET
+                package_name = ?,
+                package_data = ?,
+                primary_keyword = ?,
+                title_tag = ?,
+                meta_description = ?,
+                sections = ?,
+                qa_score = ?,
+                qa_flags = ?,
+                status = ?,
+                updated_at = ?
+               WHERE id = ?""",
+            (
+                output.package_input.name,
+                json.dumps(output.package_input.model_dump()),
+                output.primary_keyword,
+                output.title_tag,
+                output.meta_description,
+                json.dumps(_sections_to_dict(output.sections)),
+                output.qa_score,
+                json.dumps(output.qa_flags),
+                output.status,
+                now,
+                output_id,
+            ),
+        )
+        conn.commit()
+        updated = conn.total_changes > 0
+        conn.close()
+        return updated
+    return _execute_with_retry(_op)
 
 
 def get_output(output_id: int) -> Optional[SEOOutput]:
@@ -124,7 +150,12 @@ def get_output(output_id: int) -> Optional[SEOOutput]:
     return _row_to_output(row)
 
 
-def list_outputs(status: Optional[str] = None, search: Optional[str] = None) -> List[SEOOutput]:
+def list_outputs(
+    status: Optional[str] = None, 
+    search: Optional[str] = None, 
+    limit: Optional[int] = None, 
+    offset: Optional[int] = None
+) -> List[SEOOutput]:
     conn = get_conn()
     query = "SELECT * FROM seo_outputs WHERE 1=1"
     params = []
@@ -135,6 +166,12 @@ def list_outputs(status: Optional[str] = None, search: Optional[str] = None) -> 
         query += " AND (package_name LIKE ? OR primary_keyword LIKE ? OR title_tag LIKE ?)"
         params.extend([f"%{search}%", f"%{search}%", f"%{search}%"])
     query += " ORDER BY created_at DESC"
+    if limit is not None:
+        query += " LIMIT ?"
+        params.append(limit)
+        if offset is not None:
+            query += " OFFSET ?"
+            params.append(offset)
     rows = conn.execute(query, params).fetchall()
     conn.close()
     return [_row_to_output(row) for row in rows]
@@ -143,32 +180,38 @@ def list_outputs(status: Optional[str] = None, search: Optional[str] = None) -> 
 def bulk_update_status(ids: List[int], status: str) -> int:
     if not ids:
         return 0
-    conn = get_conn()
-    placeholders = ",".join("?" * len(ids))
-    conn.execute(f"UPDATE seo_outputs SET status = ? WHERE id IN ({placeholders})", (status, *ids))
-    conn.commit()
-    count = conn.total_changes
-    conn.close()
-    return count
+    def _op():
+        conn = get_conn()
+        placeholders = ",".join("?" * len(ids))
+        conn.execute(f"UPDATE seo_outputs SET status = ? WHERE id IN ({placeholders})", (status, *ids))
+        conn.commit()
+        count = conn.total_changes
+        conn.close()
+        return count
+    return _execute_with_retry(_op)
 
 
 def delete_output(output_id: int) -> bool:
-    conn = get_conn()
-    conn.execute("DELETE FROM seo_outputs WHERE id = ?", (output_id,))
-    conn.commit()
-    deleted = conn.total_changes > 0
-    conn.close()
-    return deleted
+    def _op():
+        conn = get_conn()
+        conn.execute("DELETE FROM seo_outputs WHERE id = ?", (output_id,))
+        conn.commit()
+        deleted = conn.total_changes > 0
+        conn.close()
+        return deleted
+    return _execute_with_retry(_op)
 
 
 def clear_all_outputs() -> int:
-    conn = get_conn()
-    conn.execute("DELETE FROM seo_outputs")
-    conn.execute("DELETE FROM sqlite_sequence WHERE name='seo_outputs'")
-    conn.commit()
-    count = conn.total_changes
-    conn.close()
-    return count
+    def _op():
+        conn = get_conn()
+        conn.execute("DELETE FROM seo_outputs")
+        conn.execute("DELETE FROM sqlite_sequence WHERE name='seo_outputs'")
+        conn.commit()
+        count = conn.total_changes
+        conn.close()
+        return count
+    return _execute_with_retry(_op)
 
 
 def get_stats() -> Dict[str, Any]:
