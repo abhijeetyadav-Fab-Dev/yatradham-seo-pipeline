@@ -940,46 +940,63 @@
         }
 
         let loadingStepInterval = null;
+        let loadingTimerInterval = null;
+        let loadingStartTime = null;
 
         function showPreviewLoading() {
             document.getElementById('studioActions').style.display = 'none';
             const preview = document.getElementById('studioPreview');
             
             const steps = [
-                "⚡ Step 1/4: Connecting to AI Engine (Groq Llama 3.3 / Gemini)...",
+                "⚡ Step 1/4: Connecting to AI Engine (Groq / Gemini)...",
                 "🧠 Step 2/4: Structuring search intent & comprehensive outline...",
                 "✍️ Step 3/4: Generating in-depth day schedules, guides & FAQs...",
                 "✨ Step 4/4: Polishing SEO meta & E-E-A-T formatting..."
             ];
             let currentStep = 0;
+            loadingStartTime = Date.now();
             
             preview.innerHTML = `
                 <div class="flex flex-col items-center justify-center text-center py-16">
-                    <div class="relative w-12 h-12 mb-4">
-                        <svg class="animate-spin w-12 h-12 text-violet-600" fill="none" viewBox="0 0 24 24">
+                    <div class="relative w-14 h-14 mb-4">
+                        <svg class="animate-spin w-14 h-14 text-violet-600" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                         </svg>
                     </div>
+                    <div class="inline-flex items-center px-3 py-1 bg-violet-50 border border-violet-200 text-violet-700 rounded-full text-xs font-mono font-bold mb-3 shadow-sm">
+                        ⏱️ Elapsed: <span id="liveElapsedTimer" class="ml-1.5 text-violet-900">0.0s</span>
+                    </div>
                     <p id="liveLoadingStep" class="text-sm font-semibold text-slate-800 transition-all duration-300">${steps[0]}</p>
-                    <p class="text-xs text-slate-400 mt-1.5">Processing in real-time backend • High-speed generation</p>
+                    <p class="text-xs text-slate-400 mt-1.5">Processing in real-time • Expected TAT: ~8-15s</p>
                     <div class="w-64 bg-slate-100 rounded-full h-1.5 mt-4 overflow-hidden">
-                        <div id="liveLoadingBar" class="bg-violet-600 h-1.5 rounded-full transition-all duration-500" style="width: 25%"></div>
+                        <div id="liveLoadingBar" class="bg-violet-600 h-1.5 rounded-full transition-all duration-300" style="width: 15%"></div>
                     </div>
                 </div>`;
 
             if (loadingStepInterval) clearInterval(loadingStepInterval);
+            if (loadingTimerInterval) clearInterval(loadingTimerInterval);
+
+            loadingTimerInterval = setInterval(() => {
+                const el = document.getElementById('liveElapsedTimer');
+                if (el && loadingStartTime) {
+                    const elapsed = ((Date.now() - loadingStartTime) / 1000).toFixed(1);
+                    el.innerText = `${elapsed}s`;
+                }
+            }, 100);
+
             loadingStepInterval = setInterval(() => {
                 currentStep = (currentStep + 1) % steps.length;
                 const stepEl = document.getElementById('liveLoadingStep');
                 const barEl = document.getElementById('liveLoadingBar');
                 if (stepEl) stepEl.innerText = steps[currentStep];
-                if (barEl) barEl.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
-            }, 3000);
+                if (barEl) barEl.style.width = `${Math.min(95, 20 + currentStep * 25)}%`;
+            }, 3500);
         }
 
         function showPreviewError(msg) {
             if (loadingStepInterval) clearInterval(loadingStepInterval);
+            if (loadingTimerInterval) clearInterval(loadingTimerInterval);
             document.getElementById('studioPreview').innerHTML = `
                 <div class="p-5 rounded-lg bg-rose-50 border border-rose-200 text-sm text-rose-800">
                     <div class="font-bold flex items-center mb-1">
@@ -1001,6 +1018,8 @@
 
         function renderPreview(result, provider, warning, model) {
             if (loadingStepInterval) clearInterval(loadingStepInterval);
+            if (loadingTimerInterval) clearInterval(loadingTimerInterval);
+            const totalTat = loadingStartTime ? ((Date.now() - loadingStartTime) / 1000).toFixed(1) : null;
             document.getElementById('studioActions').style.display = 'flex';
             const preview = document.getElementById('studioPreview');
             let html = '';
@@ -1062,6 +1081,12 @@
             if (wordCount > 10) {
                 html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-medium bg-slate-100 text-slate-600 rounded-full border border-slate-200">
                     📊 ~${wordCount.toLocaleString()} words
+                </div>`;
+            }
+
+            if (totalTat) {
+                html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-indigo-50 text-indigo-700 rounded-full border border-indigo-200">
+                    ⚡ TAT: ${totalTat}s
                 </div>`;
             }
 
