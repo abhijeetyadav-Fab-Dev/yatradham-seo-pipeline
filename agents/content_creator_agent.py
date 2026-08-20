@@ -401,6 +401,42 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
 
     full_content = _sanitize_repetition(part_content)
 
+    # If the model stopped after Day 7 without generating Key Takeaways / Logistics / FAQs, append them seamlessly
+    if "## Frequently Asked Questions" not in full_content and "## The Real Logistics" not in full_content:
+        logger.info("Day 7 completed. Appending finale sections (Key Takeaways, Logistics, FAQs, Conclusion)...")
+        finale_prompt = f"""You have successfully written the complete Day 1 through Day 7 itinerary above for: "{topic}".
+DO NOT rewrite or repeat Day 1 through Day 7.
+
+Now generate ONLY the closing sections to complete the 3,000-word guide:
+
+## 3 Key Takeaways for a Seamless Journey
+(Provide 3 actionable, high-impact bulleted rules for travelers covering pacing, local etiquette, and verified booking).
+
+## The Real Logistics: Costs, Stays & Commutes
+(Write ~350 words detailing flight/train connections, realistic daily budget ranges in INR, local commute tips, and the advantages of booking verified dharamshalas and wellness stays through Yatradham.Org).
+
+## Frequently Asked Questions
+(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo travel safety, packing, meals, and best booking seasons).
+
+## Final Thoughts & Planning Your Trip
+(Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org).
+
+CRITICAL: Start immediately with `## 3 Key Takeaways for a Seamless Journey`. Output ONLY markdown text."""
+
+        finale_raw = client.chat_completion(
+            messages=[
+                {"role": "system", "content": brand_context},
+                {"role": "user", "content": master_prompt},
+                {"role": "assistant", "content": cleaned},
+                {"role": "user", "content": finale_prompt}
+            ],
+            max_tokens=2500,
+            temperature=0.6,
+        )
+        cleaned_finale = _clean_markdown(finale_raw)
+        if cleaned_finale:
+            full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_finale)}"
+
     return {
         "title": title,
         "meta_description": meta_desc,
