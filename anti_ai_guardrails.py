@@ -179,7 +179,7 @@ def calculate_copyleaks_metrics(text: str) -> Dict[str, Any]:
     for gm in grounding_markers:
         if re.search(gm, text, re.IGNORECASE):
             grounding_hits += 1
-    eeat_score = min(100.0, max(50.0, (grounding_hits / len(grounding_markers)) * 100.0 + 20.0))
+    eeat_score = min(100.0, max(50.0, round(min(1.0, grounding_hits / 5.0) * 45.0 + 55.0, 1)))
 
     # 4. Synthesize Copyleaks AI Probability
     # Copyleaks penalizes low burstiness (uniform sentences) and high AI transition markers

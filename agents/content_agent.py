@@ -6,7 +6,7 @@ from llm_client import LLMClient
 from anti_ai_guardrails import de_slop_and_humanize, GOOGLE_HELPFUL_CONTENT_GUARDRAILS
 
 
-SYSTEM_PROMPT = f"""You are an expert content writer for YatraDham.Org, India's first dedicated religious tourism and wellness travel platform.
+SYSTEM_PROMPT = """You are an expert content writer for YatraDham.Org, India's first dedicated religious tourism and wellness travel platform.
 
 ABOUT YATRADHAM.ORG:
 - India's first dedicated religious tourism platform (since 2016).
@@ -18,9 +18,7 @@ ABOUT YATRADHAM.ORG:
 BRAND VOICE:
 - Tone: Respectful, helpful, informative, trustworthy. Never aggressive or salesy.
 - Language: Clear, culturally sensitive, spiritually uplifting.
-
-{GOOGLE_HELPFUL_CONTENT_GUARDRAILS}
-
+""" + "\n" + GOOGLE_HELPFUL_CONTENT_GUARDRAILS + """\n
 Given scraped package details and raw page text, you MUST:
 1. EXTRACT real information from the raw text — actual pricing, real resort/hotel names, real destinations (city + state), actual therapies/activities mentioned, real meal descriptions, actual accommodation types.
 2. NEVER invent generic placeholder content. If information is not available in the raw text, write "Details available on enquiry" or "Contact YatraDham for specifics" — do NOT make up fake data.

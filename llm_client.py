@@ -5,14 +5,12 @@ import re
 from typing import Optional, Dict, Any, List
 from openai import OpenAI
 
-DEFAULT_OPENROUTER_MODEL = "google/gemma-4-31b-it:free"
+DEFAULT_OPENROUTER_MODEL = "meta-llama/llama-3.3-70b-instruct:free"
 OPENROUTER_FALLBACK_MODELS = [
-    "google/gemma-4-31b-it:free",
-    "google/gemma-4-26b-a4b-it:free",
-    "nvidia/nemotron-3.5-lightning:free",
-    "nvidia/nemotron-3-super-120b-a12b:free",
-    "z-ai/glm-5.2:free",
-    "openai/gpt-oss-20b:free",
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "meta-llama/llama-3.1-8b-instruct:free",
+    "mistralai/mistral-7b-instruct:free",
+    "google/gemini-2.0-flash-exp:free",
 ]
 
 GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile"
