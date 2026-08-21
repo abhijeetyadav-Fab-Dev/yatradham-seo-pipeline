@@ -1326,7 +1326,7 @@
       "norm_label": "scrape a yatradham url and auto-process through all 5 agents with custom..."
     },
     {
-      "label": "Run the full pipeline on a single package with parallel agent execution.",
+      "label": "Run the full pipeline on a single package with parallel agent execution and\u2026",
       "file_type": "rationale",
       "source_file": "pipeline.py",
       "source_location": "L12",
@@ -1334,7 +1334,7 @@
       "id": "pipeline_rationale_12",
       "community": 1,
       "community_name": "main.py",
-      "norm_label": "run the full pipeline on a single package with parallel agent execution."
+      "norm_label": "run the full pipeline on a single package with parallel agent execution and..."
     },
     {
       "label": "__init__.py",
@@ -1788,7 +1788,7 @@
       "norm_label": "return a useful mock response when no llm provider is available. for content..."
     },
     {
-      "label": "Orchestrator: runs all 5 agents with parallel acceleration.",
+      "label": "Orchestrator: runs all 5 agents with fault-tolerant parallel acceleration.",
       "file_type": "rationale",
       "source_file": "pipeline.py",
       "source_location": "L1",
@@ -1796,7 +1796,7 @@
       "id": "pipeline_rationale_1",
       "community": 3,
       "community_name": "LLMClient",
-      "norm_label": "orchestrator: runs all 5 agents with parallel acceleration."
+      "norm_label": "orchestrator: runs all 5 agents with fault-tolerant parallel acceleration."
     },
     {
       "label": "Any",
@@ -2721,7 +2721,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "pipeline.py",
-      "source_location": "L16",
+      "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pipeline_process_package",
@@ -2733,7 +2733,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "pipeline.py",
-      "source_location": "L34",
+      "source_location": "L56",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pipeline_process_package",
@@ -6562,7 +6562,7 @@
       "context": "call",
       "confidence": "INFERRED",
       "source_file": "pipeline.py",
-      "source_location": "L37",
+      "source_location": "L40",
       "weight": 0.8,
       "_origin": "ast",
       "source": "pipeline_process_package",
@@ -6917,5 +6917,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "19622f936e6688246aeb8a22f9d4169e127e3064"
+  "built_at_commit": "a6a497d7762779a2de2bd2096e9c6d0a6d1f21d7"
 }

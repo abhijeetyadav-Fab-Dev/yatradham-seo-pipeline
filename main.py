@@ -103,15 +103,19 @@ def scrape_and_process(request: URLRequest):
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
         }
         
+        html = ""
         try:
-            resp = requests.get(request.url, headers=headers, timeout=20)
-            resp.raise_for_status()
-            html = resp.text
-        except Exception as net_err:
-            import urllib.request
-            req = urllib.request.Request(request.url, headers=headers)
-            with urllib.request.urlopen(req, timeout=20) as uresp:
-                html = uresp.read().decode('utf-8', errors='ignore')
+            resp = requests.get(request.url, headers=headers, timeout=4.0)
+            if resp.status_code == 200 and resp.text:
+                html = resp.text
+        except Exception:
+            try:
+                import urllib.request
+                req = urllib.request.Request(request.url, headers=headers)
+                with urllib.request.urlopen(req, timeout=4.0) as uresp:
+                    html = uresp.read().decode('utf-8', errors='ignore')
+            except Exception as net_err:
+                logger.info(f"Live HTML fetch skipped for {request.url} ({net_err}). Extracting from URL metadata.")
 
         scraped = extract_package_data(html, request.url)
 
