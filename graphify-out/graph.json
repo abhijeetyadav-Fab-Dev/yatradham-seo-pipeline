@@ -3430,7 +3430,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "scraper.py",
-      "source_location": "L169",
+      "source_location": "L195",
       "weight": 1.0,
       "_origin": "ast",
       "source": "scraper_extract_package_data",
@@ -8376,5 +8376,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "ff33f4172af9d8785902379397cea3669566b23b"
+  "built_at_commit": "c9bbe7cdc2ed67d8bac492cc93d17150d7a55b6f"
 }

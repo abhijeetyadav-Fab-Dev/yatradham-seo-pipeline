@@ -163,8 +163,44 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
             center_name = f"YatraDham Partner Center ({data['destination']})"
     data["center_name"] = center_name
 
+    # Extract Structured Tables (Schedule & Pricing) if present
+    parsed_schedule = []
+    parsed_pricing = []
+    if html:
+        try:
+            soup = BeautifulSoup(html, "html.parser")
+            for table in soup.find_all("table"):
+                rows = table.find_all("tr")
+                headers_row = [th.get_text(strip=True).lower() for th in table.find_all(["th", "td"])]
+                
+                # Schedule Table
+                if any("time" in h for h in headers_row) and any("activity" in h for h in headers_row):
+                    for row in rows:
+                        cols = [td.get_text(strip=True) for td in row.find_all("td")]
+                        if len(cols) >= 2 and any(t in cols[0].lower() for t in ["am", "pm", "morning", "evening", "5:00"]):
+                            clean_act = cols[1].replace("circle time", " | circle time").replace("Parisamwad", " | Parisamwad")
+                            parsed_schedule.append({"time": cols[0], "activity": clean_act})
+                
+                # Pricing Table
+                if any("room type" in h or "price" in h or "occupancy" in h for h in headers_row):
+                    for row in rows:
+                        cols = [td.get_text(strip=True) for td in row.find_all("td")]
+                        if len(cols) >= 3 and any("rs" in c.lower() or "₹" in c for c in cols):
+                            room_name = cols[0]
+                            if len(cols) > 1 and "(" in cols[1]:
+                                room_name += f" {cols[1]}"
+                            price_col = [c for c in cols if "rs" in c.lower() or "₹" in c]
+                            price_str = price_col[0] if price_col else ""
+                            if room_name.lower() not in ["room type", "header"]:
+                                parsed_pricing.append({"guests": room_name, "cost_per_person": clean_price_string(price_str)})
+        except Exception:
+            pass
+
+    data["parsed_schedule"] = parsed_schedule
+    data["parsed_pricing"] = parsed_pricing
+
     # Cost
-    cost_match = re.search(r'(?:Starting\s+From\s+)?(?:Rs\.?|INR|₹)\s*[\d,]+(?:\.\d{2})?(?:\s*(?:Per\s*Person\/?(?:Per\s*night)?|per\s*night|per\s*person|\/-))?', text, re.IGNORECASE)
+    cost_match = re.search(r'(?:Starting\s+From\s+[-:]?\s*)?(?:Rs\.?|INR|₹)\s*[\d,]+(?:\.\d{2})?(?:\s*(?:Per\s*(?:Room\/)?Person\/?(?:Per\s*night)?|per\s*night|per\s*person|\/-))?', text, re.IGNORECASE)
     raw_cost = cost_match.group(0).strip() if cost_match else ""
     data["cost"] = clean_price_string(raw_cost)
 
@@ -173,5 +209,6 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
     data["raw_html"] = html[:50000] if html else ""
     data["raw_text"] = (text or f"{data['name']} in {data['destination']} with verified accommodation and healthy meals.")[:20000]
     return data
+
 
 

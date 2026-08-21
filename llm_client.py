@@ -493,7 +493,7 @@ class LLMClient:
             if pkg_category == "wellness":
                 clean_cost_val = clean_price_string(cost)
                 sections_dict = {
-                    "package_overview": f"Embark on a refreshing {duration} at {pkg_name}, created to bring peace to your mind, strength to your body, and calm to your soul. Set in the quiet environment of {destination}, this retreat offers a peaceful and spiritual sanctuary. Whether you are new to yoga or have been practicing for years, this program is suitable for everyone. You will learn traditional wellness practices, enjoy healthy Sattvic meals, and take part in activities that help reduce stress and improve overall well-being. This yoga and wellness vacation is perfect for anyone looking to relax, reconnect with themselves, and return home feeling calm, clear, and refreshed.",
+                    "package_overview": f"Embark on a refreshing {duration} at {pkg_name}, created to bring peace to your mind, strength to your body, and calm to your soul. Set in the quiet Himalayan foothills near the holy River Ganges in {destination}, this retreat offers a peaceful and spiritual environment. Whether you are new to yoga or have been practicing for years, this program is suitable for everyone. You will learn traditional yoga practices, enjoy healthy vegetarian Sattvic meals, and take part in activities that help reduce stress and improve overall well-being. This yoga vacation is perfect for anyone looking to relax, reconnect with themselves, and return home feeling calm, clear, and refreshed.",
                     "quick_facts": {
                         "package_name": pkg_name,
                         "cost": clean_cost_val,
@@ -502,122 +502,130 @@ class LLMClient:
                         "level": "Beginner / Intermediate",
                         "accommodation": "Standard / Deluxe Clean Ashram Room",
                         "food": "Sattvik Vegetarian Food",
-                        "activities": "Yoga Practice, Pranayama, Meditation & Satsang",
-                        "center_name": f"Verified Wellness Center ({destination})",
+                        "activities": "Yoga Practice Sessions, Walk to Ganga & Bhakti Yoga",
+                        "center_name": "Maa Yoga Ashram (Arogyadham) - Rishikesh" if "rishikesh" in destination.lower() else f"Verified Wellness Center ({destination})",
                         "yoga_sessions": "Daily Morning & Evening Practice Sessions"
                     },
                     "why_choose_heading": f"Why Choose This {duration} in {destination}?",
-                    "why_choose_intro": f"Experience authentic traditional wellness and deep relaxation in peaceful {destination} under experienced teachers.",
+                    "why_choose_intro": f"Experience authentic traditional teachings and deep rejuvenation in peaceful {destination} under experienced yoga masters.",
                     "why_choose_bullets": [
-                        f"Spiritual Capital Atmosphere: Set in the serene environment of {destination}, offering a calm sanctuary to meditate and feel close to nature.",
-                        "Complete Wellness Experience: A well-planned daily routine including yoga classes, meditation, breathing exercises (pranayama), and Bhakti yoga sessions.",
-                        "Traditional and Easy for Everyone: Teachings are authentic yet gentle, suitable for complete beginners as well as seasoned yoga practitioners.",
-                        "Holistic Bodily Detox: Gentle practices and herbal nutrition that cleanse the system, improve flexibility, and balance emotions.",
-                        "Verified Peaceful Stay: Clean and quiet ashram accommodations with Sattvic food booked securely through YatraDham.Org.",
+                        f"Yoga Capital of The World: Set in the quiet Himalayan foothills near the holy River Ganges in {destination}, offering a peaceful environment to meditate and reconnect with nature.",
+                        "Complete Wellness Experience: A well-planned daily routine with asanas, relaxation techniques, breathing exercises (pranayama), and Bhakti yoga sessions.",
+                        "Traditional and Easy for Everyone: Teachings are authentic yet gentle, suitable for complete beginners as well as experienced practitioners.",
+                        "Holistic Bodily Detox: Gentle practices and herbal infusions that cleanse your body, boost energy, and support emotional balance.",
+                        "Verified Peaceful Stay: Clean ashram rooms with fresh Sattvic meals and dedicated YatraDham traveler support.",
                     ],
-                    "who_can_benefit_heading": f"Who Can Join This {destination} Yoga & Wellness Retreat?",
-                    "who_can_benefit_intro": "This retreat is perfect for anyone looking for wellness, peace, and spiritual growth:",
+                    "who_can_benefit_heading": f"Who Can Join This {destination} Yoga Retreat?",
+                    "who_can_benefit_intro": "This program is for you if:",
                     "who_can_benefit_bullets": [
-                        "Beginners with no prior yoga experience looking to learn authentic fundamentals.",
-                        "Intermediate and advanced yoga practitioners looking to deepen their daily sadhana.",
-                        "People feeling stressed, overworked, or mentally tired needing a restorative break.",
-                        "Anyone looking for holistic bodily wellness, mental peace, and mindfulness.",
-                        "Travelers seeking a peaceful digital detox in a tranquil natural environment.",
+                        "You feel constantly stressed, anxious, or overwhelmed by modern routines.",
+                        "You need a peaceful break from daily life to reset, recharge, and clear your mind.",
+                        "You experience tension headaches, poor posture, or physical body stiffness.",
+                        "Beginners with no prior yoga experience looking to learn authentic fundamentals in a guided setting.",
+                        "Anyone looking for wellness, peace, and spiritual growth, returning home calm, clear, and refreshed.",
                     ],
                     "program_highlights": {
-                        "heading": f"Daily Wellness Routine & Class Schedule in {destination}",
+                        "heading": f"Daily Yoga Retreat Routine & Schedule in {destination}",
                         "morning": [
-                            {"time": "06:00 AM - 07:30 AM", "activity": f"Morning Asana Practice, Pranayama & Sunrise Meditation in {destination}"},
-                            {"time": "08:00 AM - 09:00 AM", "activity": "Fresh Sattvic Breakfast & Herbal Infusion Tea"}
+                            {"time": "5:00 AM", "activity": "Wake Up & Morning Awakening"},
+                            {"time": "5:30 AM - 7:30 AM", "activity": "Practice Yoga in Yoga Hall No. 1"},
+                            {"time": "7:30 AM - 8:30 AM", "activity": "Guided Walk to Holy Ganga Ghat (Optional)"},
+                            {"time": "8:30 AM - 11:30 AM", "activity": "Nutritious Vegetarian Sattvic Breakfast & Rest"}
                         ],
                         "daytime": [
-                            {"time": "10:30 AM - 12:00 PM", "activity": "Yogic Philosophy Workshop, Wellness Consultation & Discussion"},
-                            {"time": "01:00 PM - 02:00 PM", "activity": "Nutritious Sattvic Lunch & Silent Rest Period"}
+                            {"time": "11:30 AM - 12:30 PM", "activity": "Relaxation Techniques in Yoga Hall No.1 / No.2"},
+                            {"time": "12:30 PM - 2:00 PM", "activity": "Fresh Vegetarian Sattvic Lunch"},
+                            {"time": "2:00 PM - 4:00 PM", "activity": "Rest & Personal Self-Time"}
                         ],
                         "evening": [
-                            {"time": "04:30 PM - 06:00 PM", "activity": "Evening Asana Practice, Guided Relaxation & Sound Meditation"},
-                            {"time": "07:00 PM - 08:30 PM", "activity": "Wholesome Sattvic Dinner followed by Satsang & Kirtan"}
+                            {"time": "4:00 PM - 5:00 PM", "activity": "Yogic Concepts, Games, Circle Time & Parisamwad"},
+                            {"time": "5:00 PM - 6:30 PM", "activity": "Fresh Fruit & Ayurvedic Herbal Infusion"},
+                            {"time": "6:30 PM - 7:30 PM", "activity": "Wholesome Vegetarian Sattvic Dinner"},
+                            {"time": "7:30 PM - 9:00 PM", "activity": "Bhakti Yoga, Kirtan & Chanting"},
+                            {"time": "9:00 PM", "activity": "Lights Off & Deep Restful Sleep"}
                         ],
                     },
                     "meal_section_heading": "Healthy & Sattvic Meals Offered",
                     "meal_section_bullets": [
-                        "All meals are fresh, 100% vegetarian, and prepared according to Sattvic Ayurvedic principles.",
-                        "The food is light, nutritious, and easy to digest, helping to cleanse your body and support your daily yoga practice.",
+                        "All meals are fresh, 100% pure vegetarian, and prepared according to Sattvic Ayurvedic principles.",
+                        "The food is light, nutritious, and easy to digest, helping to cleanse your body, boost energy, and support your daily yoga practice.",
                     ],
                     "accommodation_heading": f"Comfortable Accommodations in {destination}",
                     "accommodation_bullets": [
-                        f"Choose single, double, or triple sharing rooms in {destination} designed to help you rest well after daily sessions.",
-                        "Rooms are clean, peaceful, and equipped with attached private bathrooms and 24/7 hot water.",
+                        f"Choose clean single, double, or dormitory triple sharing rooms in {destination} designed to help you rest well after daily sessions.",
+                        "Quiet ashram surroundings with attached clean bathrooms and peaceful Himalayan greenery.",
                     ],
                     "benefits_heading": f"Benefits of The Yoga & Wellness Retreat",
                     "benefits_items": [
                         "Reduce Stress & Bring Mental Calm: Daily yoga and meditation help relax your mind, reduce anxiety, and sharpen focus.",
                         "Improve Physical Health: Yoga postures and breathing exercises increase flexibility, muscular strength, and overall vitality.",
                         "Inner Peace & Mindfulness: Quiet reflection, guided meditation, and nature walks help you feel grounded and emotionally balanced.",
-                        f"Digital Detox & Nature Time: Take a break from mobile screens and daily rush in the tranquil environment of {destination}.",
-                        "Digestive Revitalization: Fiber-rich Sattvic nutrition helps cleanse your system and boost metabolic energy.",
+                        f"Digital Detox & Nature Time: Take a break from mobile screens and daily rush in the tranquil Himalayan foothills of {destination}.",
+                        "Digestive Cleansing: Nutrient-rich Sattvic nutrition helps cleanse your system and boost metabolic energy.",
                         "Circadian Rhythm Alignment: Consistent early morning and evening routines restore restful, deep sleep cycles.",
                         "Practical Yogic Wisdom: Gain timeless breathing techniques and lifestyle practices to continue maintaining health at home.",
                         "Supportive Community: Practice with like-minded seekers in a welcoming, peaceful ashram atmosphere.",
                     ],
                     "how_to_book_heading": "How to Book on YatraDham.Org",
                     "how_to_book_steps": [
-                        f"Visit the {pkg_name} page on YatraDham.Org and choose your preferred dates.",
-                        "Select your room category (Standard Room / Deluxe Room / Single Occupancy).",
-                        "Enter guest details and any specific dietary or wellness requirements.",
+                        f"Visit the {pkg_name} page on YatraDham.Org and select your preferred dates.",
+                        "Choose your preferred room type (Single Room, Double Room, or Dormitory Sharing).",
+                        "Enter guest details and any specific dietary or health requirements.",
                         "Complete the secure advance payment using UPI, NetBanking, or Cards.",
                         "Receive your confirmed booking voucher and retreat schedule immediately.",
-                        f"Arrive at the wellness center in {destination} and begin your transformational journey.",
+                        f"Arrive at the retreat center in {destination} and begin your transformational journey.",
                     ],
                     "prices_photos_reviews": f"Retreat packages start from {clean_cost_val}. Check live availability, room photos, and real traveler reviews on YatraDham.Org.",
                     "itinerary": [
                         {
                             "day_number": 1,
                             "sessions": [
-                                {"time": "12:00 PM", "activity": f"Check-in to verified wellness retreat in {destination} and welcome herbal drink."},
-                                {"time": "03:30 PM", "activity": "Retreat orientation, teacher introduction, and health briefing."},
-                                {"time": "05:00 PM", "activity": "Gentle introductory stretching, breathing exercises, and sunset meditation."},
-                                {"time": "07:00 PM", "activity": "Fresh Sattvic dinner and peaceful overnight rest."}
+                                {"time": "12:00 PM", "activity": f"Arrival in {destination}, room check-in, and welcome herbal infusion."},
+                                {"time": "04:00 PM", "activity": "Retreat orientation, yogic concepts, and introduction to teachers."},
+                                {"time": "06:30 PM", "activity": "Wholesome Sattvic vegetarian dinner."},
+                                {"time": "07:30 PM", "activity": "Evening Bhakti Yoga, kirtan, and peaceful rest."}
                             ]
                         },
                         {
                             "day_number": 2,
                             "sessions": [
-                                {"time": "06:00 AM", "activity": "Morning energizing asana, pranayama, and mantra chanting."},
-                                {"time": "08:00 AM", "activity": "Nutritious Sattvic breakfast and organic herbal tea."},
-                                {"time": "11:00 AM", "activity": "Yogic philosophy and stress management workshop."},
-                                {"time": "01:00 PM", "activity": "Ayurvedic Sattvic lunch and restorative rest."},
-                                {"time": "05:00 PM", "activity": "Evening restorative yoga and sound healing session."},
-                                {"time": "07:30 PM", "activity": "Sattvic dinner and Satsang reflection."}
+                                {"time": "05:00 AM", "activity": "Morning wake up and cleansing ritual."},
+                                {"time": "05:30 AM", "activity": "Asana practice and pranayama in Yoga Hall No. 1."},
+                                {"time": "07:30 AM", "activity": "Morning meditative walk to River Ganga."},
+                                {"time": "08:30 AM", "activity": "Sattvic vegetarian breakfast and rest."},
+                                {"time": "11:30 AM", "activity": "Guided relaxation techniques and mindfulness."},
+                                {"time": "12:30 PM", "activity": "Nutritious Sattvic lunch."},
+                                {"time": "04:00 PM", "activity": "Parisamwad circle and yogic discussion."},
+                                {"time": "06:30 PM", "activity": "Dinner followed by Bhakti yoga."}
                             ]
                         }
                     ],
                     "pricing_table": [
-                        {"guests": "Standard Room (Single Occupancy)", "cost_per_person": clean_cost_val},
-                        {"guests": "Standard Room (Double Sharing)", "cost_per_person": "Starting From Rs. 1,750.00 Per Person/Per night"},
-                        {"guests": "Deluxe Room (Private Balcony)", "cost_per_person": "Starting From Rs. 2,850.00 Per Person/Per night"}
+                        {"guests": "Single Room (1 Person)", "cost_per_person": "Rs. 2,950/- per night (Total: Rs. 17,700/-)"},
+                        {"guests": "Double Room (Double Sharing)", "cost_per_person": "Rs. 2,360/- per night (Total: Rs. 14,160/-)"},
+                        {"guests": "Dormitory (Triple Sharing)", "cost_per_person": "Starting From - ₹ 2,124.00 Per Room/Person/Per night (Total: Rs. 12,744/-)"}
                     ],
                     "inclusions": [
-                        f"Clean accommodation in verified ashram/resort in {destination}",
-                        "Three fresh Sattvic vegetarian meals daily plus herbal teas",
-                        "Daily morning and evening yoga, pranayama, and meditation sessions",
-                        "Yogic philosophy workshops and lifestyle consultations",
-                        "Yoga mats, meditation props, and retreat study materials",
+                        f"Clean accommodation in verified ashram/center in {destination}",
+                        "Fresh Sattvic vegetarian meals (breakfast, lunch, dinner) and herbal infusions",
+                        "Daily morning asana, pranayama, and guided Ganga walks",
+                        "Relaxation techniques, Parisamwad yogic discussions, and Bhakti yoga",
+                        "Yoga mats, props, and retreat learning materials",
                         "24/7 YatraDham reservation assistance and on-ground support"
                     ],
                     "exclusions": [
                         "Airfare or train travel to and from the arrival hub",
                         "Personal laundry, phone calls, and shopping expenses",
                         "Specialized medical diagnostic tests",
-                        "Extra private therapies outside the standard retreat curriculum"
+                        "Extra private treatments outside the standard schedule"
                     ],
                     "nearby_locations_heading": f"How to Reach & Nearby Landmarks in {destination}",
                     "nearby_locations": [
-                        {"name": "Nearest Airport", "distance": "21 - 45 km (Smooth cab transfers available)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "6 - 15 km (Express train connectivity)", "type": "railway"},
-                        {"name": "Holy River Ghats / Nature Trails", "distance": "Walking distance from retreat premises", "type": "sightseeing"}
+                        {"name": "Nearest Airport", "distance": "Jolly Grant Airport Dehradun (~21 km)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "Yog Nagari Rishikesh (~6 km) / Haridwar (~25 km)", "type": "railway"},
+                        {"name": "Holy Ganga River & Ghats", "distance": "Walking distance from center premises", "type": "sightseeing"}
                     ],
-                    "cancellation_policy": f"Free cancellation up to 48 hours before scheduled check-in for select partner centers. Check-in is at 12:00 PM and Check-out is at 12:00 PM.",
+                    "cancellation_policy": "Free cancellation up to 48 hours before scheduled check-in for select partner centers. Check-in is at 12:00 PM and Check-out is at 12:00 PM.",
                     "payment_policy_bullets": [
                         "Secure advance payment required to confirm room and instructor allocation.",
                         "Balance amount can be cleared upon arrival at the wellness center.",
@@ -629,7 +637,7 @@ class LLMClient:
                         "Ashram premises are strictly non-smoking, alcohol-free, and 100% pure vegetarian.",
                         "Participants are requested to maintain silence in meditation halls and attend sessions punctually.",
                         "Guests are advised to inform the instructor of any pre-existing medical or physical conditions.",
-                        "YatraDham.Org acts as a verified booking platform ensuring trusted wellness standards."
+                        "Note: Schedule may change according to the respective center."
                     ],
                     "faq": [
                         {
@@ -637,8 +645,8 @@ class LLMClient:
                             "answer": "Yes, absolutely. The yoga and meditation sessions are designed for all experience levels. Certified instructors adjust practices according to each participant's comfort and flexibility."
                         },
                         {
-                            "question": "What should I pack for the retreat?",
-                            "answer": "Bring comfortable loose cotton clothing for yoga, a water bottle, personal toiletries, any ongoing prescribed medications, and a light shawl or sweater for early morning sessions."
+                            "question": "What is the daily schedule during the retreat?",
+                            "answer": "The daily routine starts at 5:00 AM with morning yoga practice, optional walk to Ganga, Sattvic breakfast, relaxation techniques, healthy lunch, Parisamwad yogic concepts, fruit/infusions, dinner at 6:30 PM, and evening Bhakti yoga."
                         },
                         {
                             "question": "What kind of food is provided during the stay?",
@@ -651,6 +659,7 @@ class LLMClient:
                     ]
                 }
             elif pkg_category == "stay":
+
 
                 sections_dict = {
                     "package_overview": f"{pkg_name} provides clean, safe, and comfortable accommodation in {destination}. Situated with convenient access to major temples and transit points, this verified stay features hygienic rooms, 24/7 hot water, and a peaceful devotional atmosphere for pilgrims and families.",

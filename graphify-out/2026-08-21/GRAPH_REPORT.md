@@ -1,16 +1,16 @@
 # Graph Report - yatradham-seo-pipeline  (2026-08-21)
 
 ## Corpus Check
-- 20 files · ~46,006 words
+- 20 files · ~50,138 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 212 nodes · 484 edges · 13 communities (12 shown, 1 thin omitted)
+- 221 nodes · 501 edges · 12 communities (11 shown, 1 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1ef29677`
+- Built from commit: `ff33f417`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,6 @@
 - models.py
 - extract_package_data
 - content_creator_agent.py
-- get
 - qa_agent.py
 - .sanitize_meta_description
 
@@ -47,45 +46,41 @@
   agents/qa_agent.py → llm_client.py
 - `_sections_to_dict()` --uses--> `SectionedContent`  [INFERRED]
   database.py → models.py
-- `_row_to_output()` --uses--> `PackageInput`  [INFERRED]
-  database.py → models.py
+- `process_batch_background()` --uses--> `LLMClient`  [INFERRED]
+  main.py → llm_client.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (13 total, 1 thin omitted)
+## Communities (12 total, 1 thin omitted)
 
 ### Community 0 - "📅 Day-by-Day Comprehensive Itinerary"
 Cohesion: 0.10
 Nodes (20): 7-Day Haridwar Spiritual & Wellness Retreat | YatraDham, Day 1, Day 2, Day 3, Day 4, Day 5, Day 6, Day 7 (+12 more)
 
 ### Community 1 - "main.py"
-Cohesion: 0.08
-Nodes (38): BackgroundTasks, delete, FastAPI, batch_process(), batch_urls(), BatchURLRequest, bulk_action(), check_ai_endpoint() (+30 more)
+Cohesion: 0.07
+Nodes (51): BackgroundTasks, clear_all_outputs(), delete, FastAPI, get, batch_process(), batch_urls(), BatchURLRequest (+43 more)
 
 ### Community 2 - "test_e2e_suite.py"
-Cohesion: 0.12
-Nodes (40): bulk_update_status(), clear_all_outputs(), delete_output(), _dict_to_sections(), _execute_with_retry(), get_conn(), get_output(), get_stats() (+32 more)
+Cohesion: 0.13
+Nodes (39): bulk_update_status(), delete_output(), _dict_to_sections(), _execute_with_retry(), get_conn(), get_output(), get_stats(), init_db() (+31 more)
 
 ### Community 3 - "LLMClient"
 Cohesion: 0.08
-Nodes (27): _extract_json_from_response(), Any, Content agent: generates all 19 structured sections from scraped page data., Robustly extract JSON from LLM response, handling markdown blocks and…, run(), Any, Keyword agent: enforces 2-4 word primary keyword., run() (+19 more)
+Nodes (25): _extract_json_from_response(), Any, Content agent: generates all 19 structured sections from scraped page data., Robustly extract JSON from LLM response, handling markdown blocks and…, run(), Any, Keyword agent: enforces 2-4 word primary keyword., run() (+17 more)
 
 ### Community 4 - "models.py"
 Cohesion: 0.29
 Nodes (11): BatchRequest, BulkActionRequest, FAQItem, ItineraryDay, NearbyLocation, PricingRow, ProgramHighlights, ProgramSession (+3 more)
 
 ### Community 5 - "extract_package_data"
-Cohesion: 0.40
-Nodes (4): extract_package_data(), Any, Extract structured data from Yatradham HTML pages., Extract basic package metadata and raw text for LLM processing with robust…
+Cohesion: 0.28
+Nodes (8): clean_price_string(), detect_url_category(), extract_package_data(), Any, Extract structured data from Yatradham HTML pages., Classify the URL or page text into 'wellness', 'tour', 'stay', or 'puja'., Sanitize and format price strings to eliminate broken artifacts like 'rs,'., Extract package metadata, category, and raw text for LLM processing with robust…
 
 ### Community 6 - "content_creator_agent.py"
 Cohesion: 0.22
 Nodes (15): _clean_markdown(), _generate_long_form_blog(), _parse_markdown_sections(), Any, Content Creator Agent: Generates net-new SEO content from scratch., Parse a markdown string into a dictionary based on H1 headings and H2…, Strip LLM loops AND apply Anti-AI-Detection replacements to bypass Copyleaks., Remove LLM chain-of-thought / reasoning blocks that leak into output. Models… (+7 more)
-
-### Community 7 - "get"
-Cohesion: 0.40
-Nodes (5): get, get_outputs(), get_single_output(), List all SEO outputs with optional filter and pagination., root()
 
 ### Community 11 - "qa_agent.py"
 Cohesion: 0.19
@@ -100,11 +95,11 @@ Nodes (17): _check_banned(), _check_sections(), _check_sentences(), _flesch_esti
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `LLMClient` connect `LLMClient` to `main.py`, `test_e2e_suite.py`, `qa_agent.py`, `content_creator_agent.py`?**
-  _High betweenness centrality (0.206) - this node is a cross-community bridge._
+  _High betweenness centrality (0.199) - this node is a cross-community bridge._
 - **Why does `SEOOutput` connect `test_e2e_suite.py` to `main.py`, `LLMClient`, `models.py`, `.sanitize_meta_description`?**
-  _High betweenness centrality (0.042) - this node is a cross-community bridge._
-- **Why does `process_package()` connect `LLMClient` to `main.py`, `test_e2e_suite.py`, `qa_agent.py`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
+- **Why does `extract_package_data()` connect `extract_package_data` to `main.py`, `test_e2e_suite.py`?**
+  _High betweenness centrality (0.026) - this node is a cross-community bridge._
 - **Are the 11 inferred relationships involving `LLMClient` (e.g. with `run()` and `_generate_long_form_blog()`) actually correct?**
   _`LLMClient` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 4 inferred relationships involving `run_suite()` (e.g. with `LLMClient` and `PackageInput`) actually correct?**
