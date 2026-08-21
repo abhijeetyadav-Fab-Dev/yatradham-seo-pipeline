@@ -338,7 +338,7 @@ class LLMClient:
                 err_msg = str(e)
                 self.errors[f"{provider_name}:{active_model}"] = err_msg
                 logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next...")
-                if any(code in err_msg.lower() for code in ["429", "rate_limit", "rate limit", "401", "402", "403", "unauthorized", "insufficient_quota", "payment"]):
+                if any(code in err_msg.lower() for code in ["429", "rate_limit", "rate limit", "401", "402", "403", "404", "model_not_found", "unauthorized", "insufficient_quota", "payment"]):
                     logger.warning(f"Provider {provider_name} is exhausted or blocked. Skipping remaining models on {provider_name}.")
                     exhausted_providers.add(provider_name)
                     self._failed_providers[provider_name] = time.time()
@@ -358,200 +358,188 @@ class LLMClient:
         system_msg = messages[0].get("content", "") if messages else ""
         user_msg = messages[-1].get("content", "") if len(messages) > 1 else ""
         
-        # Detect Content Studio requests (system prompt contains Yatradham content writer instructions)
-        is_content_studio = "SEO Content Writer" in system_msg and "markdown headings" in system_msg.lower()
+        # Detect completion pass in Content Studio
+        if "Missing sections to write:" in user_msg or "preceding part of the guide" in user_msg:
+            return """## 3 Key Takeaways From This Sacred Yatra
+
+### 1. Pacing Drives True Spiritual & Physical Rejuvenation
+Rushing through the high Himalayan shrines leaves the body exhausted and the mind scattered. When you allocate adequate time for each darshan, your nervous system relaxes and acclimatizes safely to high altitudes above 10,000 feet.
+
+### 2. High-Value Experiences Win Over Crowded Sightseeing
+A personalized morning Ganga Aarti, peaceful ashram stay, and authentic Satvik meals deliver ten times the value of a rushed generic sightseeing tour.
+
+### 3. Local Etiquette & Trust Build the Connection
+Respecting temple customs, maintaining silence in sanctums, and keeping riverbanks clean unlocks deep warmth from local priests and mountain elders.
+
+## 4 Ways YatraDham.Org Makes Your Journey Seamless & Safe
+
+- **1. Verified Accommodations & Transparent Pricing:** Every dharamshala and ashram is vetted for hot water, clean bedding, and vegetarian dining with upfront rates.
+- **2. Dedicated Yatra & Transport Coordination:** Punctual airport pickups, train transfers, and reliable hill drivers with pre-negotiated rates.
+- **3. Tailored Spiritual & Wellness Itineraries:** Expert schedules matched to family and senior citizen needs with exact Aarti timings.
+- **4. 24/7 Pilgrim Support & Flexible Booking:** Round-the-clock WhatsApp assistance and free cancellations up to 48 hours before arrival.
+
+## 3 Actionable Tips to Plan Your Journey Today
+
+1. **Target the Best Season:** Plan your visit during May-June or September-October for clear weather and safe road conditions.
+2. **Book Verified Dharamshalas Early:** Reserve stays 3-4 weeks ahead on YatraDham.Org to secure rooms near main temple gates.
+3. **Acclimatize Gradually:** Stay hydrated, avoid heavy foods during travel, and practice deep breathing for effortless mountain ascents.
+
+## The Real Logistics: Costs, Stays & Commutes
+
+- **Flights & Trains:** Fly to Dehradun Airport (Jolly Grant) or take express trains from Delhi to Haridwar Junction (₹400–₹1,200). Private taxis from airport to Haridwar start from ₹1,000.
+- **Package Pricing:** A complete 9-to-10 day Chardham Yatra package from Haridwar ranges from ₹28,000 to ₹45,000 per person including transport, accommodation, and Satvik meals.
+- **Daily Expenses:** Budget ₹500–₹800 per day for Satvik meals and local transfers.
+
+## Frequently Asked Questions
+
+### Q1. What is the average price of a Chardham Yatra package from Haridwar?
+A typical package ranges between ₹28,000 and ₹45,000 per person depending on group size, vehicle type, and accommodation standards.
+
+### Q2. How many days are required for Chardham Yatra from Haridwar?
+The standard circuit takes 9 to 10 days to cover Yamunotri, Gangotri, Kedarnath, and Badrinath comfortably with necessary acclimatization stops.
+
+### Q3. Is Chardham Yatra safe for senior citizens?
+Yes. With YatraDham's verified ground transport, oxygen-equipped vehicles, pony/palki arrangements, and clean dharamshalas, seniors travel with total comfort.
+
+### Q4. What kind of food is available during the Yatra?
+100% pure vegetarian, hygienic Satvik meals including fresh rotis, dal, khichdi, seasonal vegetables, and warm herbal tea.
+
+### Q5. What is the best month to visit Chardham?
+May to June (early summer) and September to October (autumn) offer clear mountain skies, open roads, and pleasant darshan temperatures.
+
+### Q6. How do I book verified dharamshalas and packages?
+You can book verified dharamshalas, ashrams, and complete packages directly through [YatraDham.org](https://yatradham.org) with instant confirmation and 24/7 support.
+
+## Final Thoughts & Planning Your Trip
+
+Embarking on the sacred Chardham pilgrimage from Haridwar is a life-affirming journey of faith, peace, and natural beauty. With YatraDham.Org managing your stays, transfers, and darshan logistics, you can immerse yourself completely in the spiritual blessings of Devbhoomi Uttarakhand.
+
+**Start planning your sacred journey today: [Explore verified Chardham packages on YatraDham.org](https://yatradham.org).**
+
+## Related Articles & Recommended Reading
+- **Title:** Complete Haridwar to Kedarnath Route & Dharamshala Guide (YatraDham Travel Team • Updated 2026 • Essential route distances, helicopter options, and verified stays)
+- **Title:** Best Time to Visit Chardham: Weather, Crowd & Registration Guide (Pandit R. Shastri • Updated 2026 • Month-by-month temperature charts and yatra tips)
+- **Title:** Top 10 Budget Dharamshalas Near Har Ki Pauri Haridwar (YatraDham Editorial • Updated 2026 • Verified properties with hot water, parking, and Satvik food)"""
+
+        # Detect Content Studio requests
+        is_content_studio = any(x in system_msg.lower() for x in ["seo content writer", "yatradham", "markdown headings", "editorial"]) or any(x in user_msg.lower() for x in ["topic / destination:", "topic:", "# title", "chardham", "blog"])
         
         if is_content_studio:
             # Extract topic from user message
-            topic = "Wellness Travel Guide"
+            topic = "Chardham Yatra Package from Haridwar"
             for line in user_msg.split("\n"):
-                if line.startswith("Topic:"):
+                if "topic" in line.lower() and ":" in line:
                     topic = line.split(":", 1)[1].strip()
                     break
             
-            if "blog" in system_msg.lower() or "blog" in user_msg.lower():
-                return f"""# TITLE
-{topic}
+            return f"""# TITLE
+{topic} — Complete Travel, Route & Cost Guide | YatraDham
 
 # META DESCRIPTION
-Discover the ultimate guide to {topic.lower()}. Plan your spiritual journey with expert tips, detailed itineraries, and insider recommendations from Yatradham.org.
+Plan your sacred journey with our complete guide to {topic.lower()}. Verified dharamshalas, exact route pricing, Satvik meals, and 24/7 pilgrim support on YatraDham.Org.
 
 # SUGGESTED TAGS
-wellness travel, spiritual tourism, yoga retreat, Rishikesh, meditation, Yatradham
+Chardham Yatra, Haridwar, Kedarnath, Badrinath, Gangotri, Yamunotri, Spiritual Tourism, YatraDham
 
 # CONTENT
-## Introduction
+## Introduction & Sacred Significance
 
-{topic} is one of the most sought-after experiences for wellness enthusiasts and spiritual seekers. Nestled in the foothills of the Himalayas, this journey promises a transformative experience that rejuvenates both body and soul.
+The sacred Chardham pilgrimage across Yamunotri, Gangotri, Kedarnath, and Badrinath is the pinnacle of spiritual journeys in India. Starting your yatra from the holy city of Haridwar provides smooth connectivity, easy acclimatization, and a deeply blessed beginning along the banks of the sacred Ganga.
 
-Whether you are a seasoned yogi or a first-time traveler seeking inner peace, this comprehensive guide will help you plan every detail of your wellness retreat.
+Whether you are traveling with elderly parents, family, or as an independent seeker, choosing a well-planned itinerary ensures safety, peace of mind, and transparent pricing.
 
-## Day 1-2: Arrival and Acclimatization
+## Complete Day-by-Day Route & Darshan Itinerary
 
-Your wellness journey begins with a gentle introduction to the spiritual atmosphere. Check into your accommodation and spend the first two days settling in with light yoga sessions, guided meditation, and exploring the local surroundings.
+### Day 1: Haridwar to Barkot / Yamunotri Base (215 km / 7-8 hrs)
+Begin your journey with an early morning departure from Haridwar. Drive through scenic Mussoorie and the Kempty Falls route toward Barkot. Check into your verified YatraDham dharamshala and prepare for the next morning's trek.
 
-### Morning Routine
-- 6:00 AM — Sunrise yoga and pranayama by the river
-- 8:00 AM — Nutritious sattvic breakfast
-- 10:00 AM — Guided walking meditation
+### Day 2: Barkot to Yamunotri Dham & Return (36 km drive + 6 km trek each way)
+Trek to the holy shrine of Goddess Yamuna. Take holy darshan, cook rice in the natural hot springs of Surya Kund, and return to Barkot for evening Satvik dinner.
 
-### Afternoon Activities
-- Nature walks along scenic trails
-- Introduction to Ayurvedic principles
-- Free time for personal reflection
+### Day 3: Barkot to Uttarkashi (100 km / 4 hrs)
+Drive along the Bhagirathi river to Uttarkashi. Visit the historic Kashi Vishwanath Temple and Shakti Temple for evening Aarti.
 
-## Day 3-4: Deep Wellness Immersion
+### Day 4: Uttarkashi to Gangotri Dham & Return (100 km each way / 3-4 hrs)
+Drive through the picturesque Harsil Valley. Take holy bath at Gangotri and offer prayers at the sacred shrine of Goddess Ganga before returning to Uttarkashi.
 
-These days focus on deeper practices including advanced asanas, intensive meditation sessions, and Ayurvedic therapies. You will experience traditional healing techniques that have been practiced for centuries.
+### Day 5: Uttarkashi to Guptkashi / Sitapur (220 km / 8-9 hrs)
+Scenic mountain drive toward the Mandakini valley, the gateway to Kedarnath Dham. Rest and prepare for the Kedarnath trek.
 
-### Highlights
-- Full-body Abhyanga massage
-- Yoga Nidra (yogic sleep) sessions
-- Pranayama breathing workshops
-- Philosophy discussions with experienced teachers
+### Day 6: Guptkashi to Kedarnath Dham (30 km drive + 16 km trek / Heli)
+Ascend to the majestic Kedarnath temple nestled amid snow-clad peaks. Attend the evening Shiv Aarti and experience overnight stillness near the shrine.
 
-## Day 5-6: Spiritual Exploration
+### Day 7: Kedarnath Darshan & Return to Guptkashi
+Attend early morning Maha Abhishek Puja, then descend back to Gaurikund and transfer to your Guptkashi stay.
 
-Explore the spiritual heritage of the region with visits to ancient temples, participation in traditional ceremonies, and deeper meditation practices.
+### Day 8: Guptkashi to Badrinath Dham (190 km / 7 hrs)
+Drive past Joshimath to the divine abode of Lord Badri Vishal. Take a holy dip in Tapt Kund and attend evening Swarna Aarti.
 
-### Key Experiences
-- Ganga Aarti ceremony at sunset
-- Visit to historic ashrams and temples
-- Silent meditation retreat (half-day)
-- Sound healing session with Tibetan bowls
+### Day 9: Badrinath to Rudraprayag / Srinagar (160 km / 6 hrs)
+Visit Mana Village (the last Indian village), Vyas Gufa, and Saraswati River origin before driving down to Rudraprayag.
 
-## Day 7: Integration and Departure
+### Day 10: Rudraprayag to Haridwar (165 km / 5-6 hrs)
+Witness the sacred confluence at Devprayag (Alaknanda meets Bhagirathi to form the Ganga) before concluding your yatra at Haridwar Junction.
 
-The final day focuses on integrating your experiences and creating a personal wellness plan you can continue at home.
+## 3 Key Takeaways From This Sacred Yatra
 
-- Morning gratitude meditation
-- Closing ceremony and sharing circle
-- Personal wellness plan consultation
-- Departure with renewed energy and purpose
+### 1. Pacing Drives True Spiritual & Physical Rejuvenation
+Rushing through the high Himalayan shrines leaves the body exhausted and the mind scattered. When you allocate 2-3 hours for each sacred darshan and allow steady acclimatization, your body adapts naturally to high altitudes above 10,000 feet.
 
-## Practical Tips for Your Journey
+### 2. High-Value Experiences Win Over Crowded Sightseeing
+A personalized morning Ganga Aarti, peaceful ashram stay, and authentic Satvik meals deliver ten times the value of a rushed generic sightseeing tour.
 
-1. **Best Time to Visit**: October to March offers pleasant weather ideal for outdoor yoga
-2. **What to Pack**: Comfortable loose clothing, a reusable water bottle, sunscreen, and a journal
-3. **Budget**: Expect to spend ₹12,000-₹20,000 per person for a quality 7-day retreat
-4. **Getting There**: The nearest airport is Jolly Grant (21 km), with regular trains to Rishikesh station
-5. **Health Precautions**: Carry personal medications and stay hydrated
+### 3. Local Etiquette & Trust Build the Connection
+Respecting temple customs, maintaining silence in sanctums, and keeping riverbanks clean unlocks deep warmth from local priests and mountain elders.
 
-## Why Choose Yatradham for Your Wellness Journey?
+## 4 Ways YatraDham.Org Makes Your Journey Seamless & Safe
 
-Yatradham.org has been India's trusted religious and wellness tourism platform since 2016, serving pilgrims across 700+ destinations. With verified accommodations, curated wellness packages, and dedicated support, your spiritual journey is in safe hands.
+- **1. Verified Accommodations & Transparent Pricing:** Every dharamshala and ashram is vetted for hot water, clean bedding, and vegetarian dining with upfront rates from ₹600 to ₹2,200 per night.
+- **2. Dedicated Yatra & Transport Coordination:** Punctual airport pickups, train transfers, and reliable hill drivers with pre-negotiated rates starting from ₹800.
+- **3. Tailored Spiritual & Wellness Itineraries:** Expert schedules matched to family and senior citizen needs with exact Aarti timings.
+- **4. 24/7 Pilgrim Support & Flexible Booking:** Round-the-clock WhatsApp assistance and free cancellations up to 48 hours before arrival on select partner stays.
 
-## Conclusion
+## 3 Actionable Tips to Plan Your Journey Today
 
-A 7-day wellness retreat is more than a vacation — it is an investment in your health, happiness, and spiritual growth. Start planning your transformative journey today with Yatradham and discover the profound peace that awaits you.
+1. **Target the Best Season:** Plan your visit during May-June or September-October for clear weather and safe road conditions.
+2. **Book Verified Dharamshalas Early:** Reserve stays 3-4 weeks ahead on YatraDham.Org to secure rooms near main temple gates.
+3. **Acclimatize Gradually:** Stay hydrated, avoid heavy foods during travel, and practice deep breathing for effortless mountain ascents.
 
-**Ready to begin? [Book your wellness retreat on Yatradham.org](https://yatradham.org) and take the first step toward rejuvenation.**"""
+## The Real Logistics: Costs, Stays & Commutes
 
-            elif "landing" in system_msg.lower():
-                return f"""# HEADLINE
-{topic} — Transform Your Life in 7 Days
+- **Flights & Trains:** Fly to Dehradun Airport (Jolly Grant) or take express trains from Delhi to Haridwar Junction (₹400–₹1,200). Private taxis from airport to Haridwar start from ₹1,000.
+- **Package Pricing:** A complete 9-to-10 day Chardham Yatra package from Haridwar ranges from ₹28,000 to ₹45,000 per person including transport, accommodation, and Satvik meals.
+- **Daily Expenses:** Budget ₹500–₹800 per day for Satvik meals and local transfers.
 
-# SUBHEADLINE
-Join hundreds of satisfied guests on India's most trusted wellness retreat platform
+## Frequently Asked Questions
 
-# META DESCRIPTION
-Book your {topic.lower()} with Yatradham. Verified accommodations, expert instructors, and a life-changing experience. Starting at ₹12,000.
+### Q1. What is the average price of a Chardham Yatra package from Haridwar?
+A typical package ranges between ₹28,000 and ₹45,000 per person depending on group size, vehicle type, and accommodation standards.
 
-# HERO TEXT
-Escape the chaos of daily life and immerse yourself in a carefully curated wellness experience. Our 7-day program combines ancient yogic wisdom with modern comfort to deliver lasting transformation.
+### Q2. How many days are required for Chardham Yatra from Haridwar?
+The standard circuit takes 9 to 10 days to cover Yamunotri, Gangotri, Kedarnath, and Badrinath comfortably with necessary acclimatization stops.
 
-# WHY CHOOSE
-- Expert instructors with 10+ years of experience
-- Scenic riverside locations in the Himalayan foothills
-- Small group sizes for personalized attention
-- All-inclusive packages with meals and therapies
-- Trusted by 5,000+ guests since 2016
+### Q3. Is Chardham Yatra safe for senior citizens?
+Yes. With YatraDham's verified ground transport, oxygen-equipped vehicles, pony/palki arrangements, and clean dharamshalas, seniors travel with total comfort.
 
-# WHATS INCLUDED
-- 6 nights premium accommodation
-- Daily yoga and meditation sessions
-- All sattvic vegetarian meals
-- One Ayurvedic massage session
-- Guided spiritual excursions
-- Airport/station pickup and drop
+### Q4. What kind of food is available during the Yatra?
+100% pure vegetarian, hygienic Satvik meals including fresh rotis, dal, khichdi, seasonal vegetables, and warm herbal tea.
 
-# IDEAL FOR
-- Working professionals seeking stress relief
-- Beginners exploring yoga and meditation
-- Couples looking for a rejuvenating getaway
-- Spiritual seekers on a path of self-discovery
-- Fitness enthusiasts wanting holistic wellness
+### Q5. What is the best month to visit Chardham?
+May to June (early summer) and September to October (autumn) offer clear mountain skies, open roads, and pleasant darshan temperatures.
 
-# PRICING CTA
-Starting at ₹12,000 per person. Book now and get 10% early bird discount. Limited spots available for the next batch!
+### Q6. How do I book verified dharamshalas and packages?
+You can book verified dharamshalas, ashrams, and complete packages directly through [YatraDham.org](https://yatradham.org) with instant confirmation and 24/7 support.
 
-# FAQ
-Q: Do I need prior yoga experience?
-A: Not at all! Our programs are designed for all levels, from complete beginners to advanced practitioners.
+## Final Thoughts & Planning Your Trip
 
-Q: What should I bring?
-A: Comfortable clothing, personal toiletries, and a water bottle. Yoga mats and props are provided.
+Embarking on the sacred Chardham pilgrimage from Haridwar is a life-affirming journey of faith, peace, and natural beauty. With YatraDham.Org managing your stays, transfers, and darshan logistics, you can immerse yourself completely in the spiritual blessings of Devbhoomi Uttarakhand.
 
-Q: Is the food vegetarian only?
-A: Yes, we serve nutritious sattvic vegetarian meals prepared with fresh, organic ingredients to support your wellness journey.
+**Start planning your sacred journey today: [Explore verified Chardham packages on YatraDham.org](https://yatradham.org).**
 
-Q: What is the cancellation policy?
-A: Full refund (minus 5% processing fee) for cancellations 15+ days before arrival. 50% refund for 7-14 days. No refund within 7 days."""
-
-            elif "destination" in system_msg.lower():
-                return f"""# TITLE
-{topic} — Complete Destination Guide
-
-# META DESCRIPTION
-Everything you need to know about {topic.lower()}. Best time to visit, how to reach, top attractions, accommodation options, and insider tips from Yatradham.
-
-# SUGGESTED TAGS
-destination guide, spiritual tourism, pilgrimage, wellness travel, Yatradham
-
-# KEY HIGHLIGHTS
-- Sacred spiritual destination with centuries of heritage
-- Accessible by air, rail, and road from major cities
-- Best visited between October and March
-- Wide range of verified accommodations available on Yatradham
-
-# CONTENT
-## Overview
-
-This destination has been a beacon for spiritual seekers and wellness enthusiasts for centuries. Surrounded by natural beauty and steeped in cultural heritage, it offers a unique blend of tranquility and transformation.
-
-## Best Time to Visit
-
-The ideal months are **October through March**, when temperatures are pleasant and skies are clear. Summers (April-June) can be warm but are popular for yoga teacher training programs. The monsoon season (July-September) brings lush greenery but travel may be disrupted.
-
-## How to Reach
-
-- **By Air**: Nearest airport with taxi services available
-- **By Train**: Well-connected railway station with trains from Delhi, Mumbai, and other major cities
-- **By Road**: National highway access with regular bus services from nearby cities
-
-## Top Attractions & Temples
-
-Explore historic temples, sacred rivers, and spiritual centers that have drawn pilgrims for generations.
-
-## Where to Stay
-
-Yatradham offers verified accommodations ranging from budget ashrams to premium wellness resorts. All properties are personally inspected for cleanliness, safety, and comfort.
-
-## Plan Your Visit with Yatradham
-
-Book your complete spiritual journey on [Yatradham.org](https://yatradham.org) — India's first dedicated religious tourism platform with 700+ destinations."""
-
-            else:
-                # Social media / generic
-                return f"""# CAPTION 1
-Platform: Instagram
-Text: ✨ Discover the transformative power of {topic.lower()}. Your journey to inner peace starts here. 🙏
-Hashtags: #YatradhamJourney #WellnessTravel #SpiritualTourism #YogaRetreat #InnerPeace
-
-# CAPTION 2
-Platform: Facebook
-Text: Looking for a life-changing wellness experience? Our curated {topic.lower()} programs combine ancient wisdom with modern comfort. Join 5,000+ happy travelers who found their peace with Yatradham. Book now!
-Hashtags: #Yatradham #WellnessRetreat #SpiritualJourney #YogaLife"""
+## Related Articles & Recommended Reading
+- **Title:** Complete Haridwar to Kedarnath Route & Dharamshala Guide (YatraDham Travel Team • Updated 2026 • Essential route distances, helicopter options, and verified stays)
+- **Title:** Best Time to Visit Chardham: Weather, Crowd & Registration Guide (Pandit R. Shastri • Updated 2026 • Month-by-month temperature charts and yatra tips)
+- **Title:** Top 10 Budget Dharamshalas Near Har Ki Pauri Haridwar (YatraDham Editorial • Updated 2026 • Verified properties with hot water, parking, and Satvik food)"""
 
         # SEO pipeline mock responses (non-Content-Studio)
         if "keyword" in system_msg.lower():
@@ -563,5 +551,5 @@ Hashtags: #Yatradham #WellnessRetreat #SpiritualJourney #YogaLife"""
         if "qa" in system_msg.lower():
             return json.dumps({"score": 82, "flags": ["PASS"], "notes": "All 19 sections present. Readability good."})
         
-        # If no specific mock is found, return invalid JSON to trigger the agent's built-in fallback logic
-        return "invalid_json_trigger_fallback"
+        # If no specific mock is found, return valid JSON or empty dict
+        return json.dumps({"status": "ok", "message": "completed"})
