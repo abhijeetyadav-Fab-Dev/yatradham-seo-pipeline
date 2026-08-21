@@ -1,7 +1,7 @@
 # Graph Report - yatradham-seo-pipeline  (2026-08-21)
 
 ## Corpus Check
-- 18 files · ~36,566 words
+- 18 files · ~36,612 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
