@@ -38,6 +38,7 @@ client = LLMClient()
 
 class URLRequest(BaseModel):
     url: str
+    category: Optional[str] = "auto"  # wellness, tour, stay, puja, auto
     keys: Optional[Dict[str, str]] = None
     provider: Optional[str] = None
     api_key: Optional[str] = None
@@ -45,7 +46,13 @@ class URLRequest(BaseModel):
 
 class BatchURLRequest(BaseModel):
     urls: List[str]
+    category: Optional[str] = "auto"
     keys: Optional[Dict[str, str]] = None
+
+
+class ValidateCategoryRequest(BaseModel):
+    url: str
+    category: str = "auto"
 
 
 @asynccontextmanager
@@ -85,11 +92,43 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("main")
 
+
+@app.post("/validate-category")
+def validate_category(request: ValidateCategoryRequest):
+    """Validate if the selected category matches the target URL."""
+    from scraper import detect_url_category
+    detected = detect_url_category(request.url)
+    selected = request.category or "auto"
+    
+    labels = {
+        "wellness": "Wellness & Yoga Retreat (wellness.yatradham.org)",
+        "tour": "Travel & Tour Package (travel.yatradham.org)",
+        "stay": "Dharamshala & Accommodation (yatradham.org)",
+        "puja": "Puja & Pandit Services (temple.yatradham.org)",
+        "auto": "Auto-Detect"
+    }
+
+    is_mismatch = False
+    warning = None
+
+    if selected != "auto" and selected != detected:
+        is_mismatch = True
+        warning = f"Category Mismatch: You selected '{labels.get(selected, selected)}', but this URL appears to be a '{labels.get(detected, detected)}'."
+
+    return {
+        "is_mismatch": is_mismatch,
+        "detected_category": detected,
+        "detected_label": labels.get(detected, detected),
+        "selected_category": selected,
+        "warning": warning
+    }
+
+
 @app.post("/scrape")
 def scrape_and_process(request: URLRequest):
     """Scrape a Yatradham URL and auto-process through all 5 agents with custom runtime keys."""
     try:
-        logger.info(f"Scraping single URL: {request.url}")
+        logger.info(f"Scraping single URL: {request.url} | Category: {request.category}")
         
         # Configure scoped LLM client with keys
         req_client = LLMClient()
@@ -119,7 +158,7 @@ def scrape_and_process(request: URLRequest):
             except Exception as net_err:
                 logger.info(f"Live HTML fetch skipped for {request.url} ({net_err}). Extracting from URL metadata.")
 
-        scraped = extract_package_data(html, request.url)
+        scraped = extract_package_data(html, request.url, request.category)
 
         pkg = PackageInput(
             url=scraped.get("url", request.url),
@@ -127,10 +166,8 @@ def scrape_and_process(request: URLRequest):
             cost=scraped.get("cost", ""),
             duration=scraped.get("duration", ""),
             destination=scraped.get("destination", ""),
-            level=scraped.get("level", ""),
-            accommodation=scraped.get("accommodation", ""),
-            food=scraped.get("food", ""),
-            activities=scraped.get("activities", ""),
+            category=scraped.get("category", "tour"),
+            center_name=scraped.get("center_name", ""),
             raw_html=scraped.get("raw_html", ""),
             raw_text=scraped.get("raw_text", ""),
         )
@@ -142,6 +179,8 @@ def scrape_and_process(request: URLRequest):
         return {
             "success": True,
             "id": row_id,
+            "category": scraped.get("category"),
+            "detected_category": scraped.get("detected_category"),
             "package": pkg.model_dump(),
             "output": result.model_dump()
         }
@@ -151,6 +190,7 @@ def scrape_and_process(request: URLRequest):
             "success": False,
             "detail": f"Failed to process package URL: {str(e)}"
         }
+
 
 
 def process_batch_background(urls: List[str], keys: Optional[Dict[str, str]] = None):

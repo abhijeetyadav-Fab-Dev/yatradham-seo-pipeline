@@ -1070,7 +1070,7 @@
       "label": "extract_package_data()",
       "file_type": "code",
       "source_file": "scraper.py",
-      "source_location": "L7",
+      "source_location": "L12",
       "_callable": true,
       "_origin": "ast",
       "id": "scraper_extract_package_data",
@@ -2304,9 +2304,9 @@
       "label": "Extract basic package metadata and raw text for LLM processing with robust\u2026",
       "file_type": "rationale",
       "source_file": "scraper.py",
-      "source_location": "L8",
+      "source_location": "L13",
       "_origin": "ast",
-      "id": "scraper_rationale_8",
+      "id": "scraper_rationale_13",
       "community": 5,
       "community_name": "extract_package_data",
       "norm_label": "extract basic package metadata and raw text for llm processing with robust..."
@@ -4045,7 +4045,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "scraper.py",
-      "source_location": "L7",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "scraper_extract_package_data",
@@ -6644,7 +6644,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "scraper.py",
-      "source_location": "L7",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "scraper",
@@ -7524,10 +7524,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "scraper.py",
-      "source_location": "L8",
+      "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "scraper_rationale_8",
+      "source": "scraper_rationale_13",
       "target": "scraper_extract_package_data",
       "confidence_score": 1.0
     },
@@ -8077,5 +8077,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4781cb7e9184427c9bbf100dbef89eb98a51d9ca"
+  "built_at_commit": "1ef296770dec1e73ec9c15a96591d0c2322fa9af"
 }

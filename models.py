@@ -11,6 +11,9 @@ class PackageInput(BaseModel):
     name: str = Field(..., min_length=2, description="The name of the package")
     duration: Optional[str] = Field(None, description="The duration of the trip (e.g. 5 Days)")
     destination: Optional[str] = Field(None, description="Primary location")
+    category: Optional[str] = Field("auto", description="Category: wellness, tour, stay, puja, or auto")
+    center_name: Optional[str] = Field(None, description="Ashram / Center / Hotel name")
+    cost: Optional[str] = Field(None, description="Cost per person or per night")
     raw_html: Optional[str] = Field(None, description="Raw HTML for storage")
     raw_text: Optional[str] = Field(None, description="Cleaned raw text for the LLM context")
 
@@ -24,6 +27,9 @@ class QuickFacts(BaseModel):
     accommodation: str = ""
     food: str = ""
     activities: str = ""
+    center_name: str = ""
+    yoga_sessions: str = ""
+
 
 
 class ProgramSession(BaseModel):

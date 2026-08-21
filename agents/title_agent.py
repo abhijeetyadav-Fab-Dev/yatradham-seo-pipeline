@@ -28,13 +28,15 @@ def run(package_data: Dict[str, Any], primary_keyword: str, client: LLMClient) -
     name = package_data.get('name', '')
     destination = package_data.get('destination', '')
     duration = package_data.get('duration', '')
+    category = package_data.get('category', 'auto')
 
     user_msg = f"""Primary Keyword: {primary_keyword}
 Package Name: {name}
+Category: {category}
 Destination: {destination}
 Duration: {duration}
 
-Generate ONE perfect SEO title tag between 50 and 60 characters.
+Generate ONE perfect SEO title tag between 50 and 60 characters for this {category.upper()} package.
 CRITICAL: Do NOT repeat words. End with " | YatraDham"."""
 
     content = client.chat_completion(
@@ -71,18 +73,20 @@ CRITICAL: Do NOT repeat words. End with " | YatraDham"."""
     if not title:
         dest = destination if destination else "India"
         name_lower = f"{name} {primary_keyword}".lower()
-        if "ayurved" in name_lower:
-            title = f"Ayurvedic Retreat in {dest} | YatraDham"
-        elif "yoga" in name_lower:
-            title = f"Yoga Retreat in {dest} | YatraDham"
-        elif any(k in name_lower for k in ["wellness", "retreat", "massage", "rejuvenation", "panchakarma", "detox", "healing"]):
-            title = f"Wellness Retreat in {dest} | YatraDham"
-        elif any(k in name_lower for k in ["dharamshala", "ashram stay", "bhavan", "hotel", "room", "trh", "gmvn"]):
-            title = f"Dharamshala Stay in {dest} | YatraDham"
+        if category == "wellness" or "yoga" in name_lower or "ayurved" in name_lower:
+            base = name if len(name) < 45 and not name.lower().startswith("spiritual") else f"Yoga & Wellness Retreat in {dest}"
+            title = f"{base} | YatraDham"
+        elif category == "stay" or any(k in name_lower for k in ["dharamshala", "ashram stay", "bhavan", "hotel", "room", "trh", "gmvn"]):
+            base = name if len(name) < 45 and not name.lower().startswith("spiritual") else f"Dharamshala Stay in {dest}"
+            title = f"{base} | YatraDham"
+        elif category == "puja" or "puja" in name_lower:
+            base = name if len(name) < 45 else f"Online Puja & Pandit Booking in {dest}"
+            title = f"{base} | YatraDham"
         else:
-            title = f"{duration} {dest} Tour Package | YatraDham"
+            base = name if len(name) < 45 and not name.lower().startswith("spiritual") else f"{duration} {dest} Tour Package"
+            title = f"{base} | YatraDham"
 
-    # Enforce length (rough approximation without cutting words)
+    # Enforce length
     if len(title) > 60:
         parts = title.split(" | ")
         if len(parts) == 2:
@@ -93,5 +97,4 @@ CRITICAL: Do NOT repeat words. End with " | YatraDham"."""
         else:
             title = title[:57] + "..."
 
-    result["title_tag"] = title
-    return result
+    return {"title_tag": title}

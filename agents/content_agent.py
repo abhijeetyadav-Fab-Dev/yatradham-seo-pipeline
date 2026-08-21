@@ -102,10 +102,14 @@ def run(package_data: Dict[str, Any], primary_keyword: str, client: LLMClient) -
     name = package_data.get('name', '')
     destination = package_data.get('destination', '')
     duration = package_data.get('duration', '')
+    url = package_data.get('url', '')
+    category = package_data.get('category', 'auto')
 
     user_msg = f"""Generate all 19 sections for this package. EXTRACT real details from the raw text below.
 
 Package Name: {name}
+Category: {category}
+URL: {url}
 Destination: {destination}
 Duration: {duration}
 Primary Keyword: {primary_keyword}
@@ -115,14 +119,13 @@ Primary Keyword: {primary_keyword}
 -----------
 
 IMPORTANT REMINDERS:
-- Extract ACTUAL pricing from the text (look for Rs., INR, per person, per night).
+- Follow the domain rules for {category.upper()}: No Darshan/Aarti/cabs for Wellness Retreats, and no fake therapies for Pilgrimage Tours.
+- Extract ACTUAL pricing from the text (e.g. Rs., ₹, per person, per night).
 - Extract ACTUAL destination city and state (not the package name).
-- Extract ACTUAL accommodation type (villa, ashram, dharamshala, resort, hotel).
-- Extract ACTUAL meal type (Satvik, vegetarian, Ayurvedic, organic).
-- Extract ACTUAL activities mentioned (temple darshan, aarti, parikrama, or therapies if applicable).
-- Write meaningful FAQ answers (2-3 sentences each) addressing real traveler concerns.
-- Every bullet must be a complete, specific sentence — NOT generic 1-2 word labels.
+- Extract ACTUAL accommodation type (ashram, resort, dharamshala, hotel).
+- Extract ACTUAL meal type (Sattvik, vegetarian, Ayurvedic, organic).
 - Output ONLY valid JSON."""
+
 
     content = client.chat_completion(
         messages=[

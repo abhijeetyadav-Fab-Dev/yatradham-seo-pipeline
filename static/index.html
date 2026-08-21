@@ -134,15 +134,54 @@
                 </div>
                 
                 <div class="p-6">
+                    <!-- Global Category Selector & Validation Bar -->
+                    <div class="mb-5 bg-gradient-to-r from-slate-50 to-indigo-50/40 p-4 rounded-xl border border-slate-200 shadow-xs">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                            <div>
+                                <label for="packageCategory" class="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5 flex items-center gap-1.5">
+                                    <span>🎯 Target Content Category</span>
+                                    <span class="text-[10px] font-normal text-slate-500 lowercase">(select or auto-classify)</span>
+                                </label>
+                                <p class="text-xs text-slate-500">Activates tailored SEO prompts & schemas for Wellness Retreats, Pilgrimage Tours, Stays, or Pujas.</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <select id="packageCategory" class="w-full md:w-80 bg-white border border-slate-300 rounded-lg px-3.5 py-2 text-sm text-slate-800 font-semibold focus:ring-2 focus:ring-primary focus:outline-none shadow-xs transition" onchange="checkCategoryMismatch()">
+                                    <option value="auto">🤖 Auto-Detect (Smart Classification)</option>
+                                    <option value="wellness">🌿 Wellness & Yoga Retreat (wellness.yatradham.org)</option>
+                                    <option value="tour">🛕 Travel & Tour Package (travel.yatradham.org)</option>
+                                    <option value="stay">🏨 Dharamshala & Accommodation (yatradham.org)</option>
+                                    <option value="puja">🕉️ Puja & Pandit Services (temple.yatradham.org)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Real-time Category Mismatch Alert Banner -->
+                        <div id="categoryMismatchBanner" class="hidden mt-3 p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs animate-fadeIn">
+                            <div class="flex items-start gap-2.5">
+                                <span class="text-lg leading-none">⚠️</span>
+                                <div>
+                                    <strong class="font-bold text-amber-950">Category Mismatch Detected:</strong>
+                                    <p id="categoryMismatchText" class="mt-0.5 text-amber-900">You selected 'Wellness & Yoga Retreat', but the entered URL belongs to 'Travel & Tour Package'.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+                                <button id="switchCategoryBtn" class="flex-1 md:flex-none px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg shadow-xs transition text-xs flex items-center justify-center gap-1" onclick="switchCategoryToDetected()">
+                                    <span>Switch to</span> <span id="switchTargetLabel" class="font-extrabold">Tour</span>
+                                </button>
+                                <button class="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 font-medium rounded-lg border border-slate-300 transition text-xs" onclick="dismissMismatchWarning()">Keep Selection</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Single URL -->
                     <div id="singleSubPanel">
                         <div class="mb-4 p-4 rounded-lg bg-blue-50 border border-blue-100 flex items-start">
-                            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <p class="text-sm text-blue-800">Paste any Yatradham package URL below. The app will automatically scrape the page and generate all 19 SEO sections.</p>
+                            <svg class="w-5 h-5 text-blue-500 mt-0.5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <p class="text-sm text-blue-800">Paste any Yatradham package URL below. The app will automatically classify the category and generate all 19 SEO sections according to the selected domain structure.</p>
                         </div>
                         <div class="flex gap-3 mb-4">
-                            <input type="text" id="singleUrl" class="flex-1 block w-full rounded-md border-slate-300 border px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm" placeholder="https://wellness.yatradham.org/3-days-best-yoga-retreat-in-rishikesh">
-                            <button id="btnSingle" class="inline-flex justify-center items-center rounded-md border border-transparent bg-primary px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-primaryHover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition" onclick="scrapeSingle()">
+                            <input type="text" id="singleUrl" class="flex-1 block w-full rounded-md border-slate-300 border px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm font-mono" placeholder="https://wellness.yatradham.org/7-day-yoga-vacation-yoga-institute-rishikesh" oninput="checkCategoryMismatch()">
+                            <button id="btnSingle" class="inline-flex justify-center items-center rounded-md border border-transparent bg-primary px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-primaryHover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition shrink-0" onclick="scrapeSingle()">
                                 Scrape & Process
                             </button>
                         </div>
@@ -152,10 +191,10 @@
                     <!-- Batch URLs -->
                     <div id="batchSubPanel" style="display:none;">
                         <div class="mb-4 p-4 rounded-lg bg-indigo-50 border border-indigo-100 flex items-start">
-                            <svg class="w-5 h-5 text-indigo-500 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            <p class="text-sm text-indigo-800">Paste multiple Yatradham URLs below (one per line). Processing runs in the background concurrently, preventing timeouts.</p>
+                            <svg class="w-5 h-5 text-indigo-500 mt-0.5 mr-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            <p class="text-sm text-indigo-800">Paste multiple Yatradham URLs below (one per line). Processing runs in the background concurrently, automatically routing each package to its correct domain prompt.</p>
                         </div>
-                        <textarea id="batchUrls" rows="8" class="block w-full rounded-md border-slate-300 border px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm font-mono mb-4" placeholder="https://wellness.yatradham.org/package-1&#10;https://wellness.yatradham.org/package-2"></textarea>
+                        <textarea id="batchUrls" rows="8" class="block w-full rounded-md border-slate-300 border px-4 py-3 text-sm focus:border-primary focus:ring-primary shadow-sm font-mono mb-4" placeholder="https://wellness.yatradham.org/package-1&#10;https://travel.yatradham.org/package-2"></textarea>
                         <button id="btnBatch" class="inline-flex justify-center items-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 transition w-full md:w-auto" onclick="scrapeBatch()">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                             Start Background Batch Process
@@ -673,6 +712,75 @@
                 </div>`;
         }
 
+        // Category Detection & Mismatch Handlers
+        let detectedCategoryGlobal = 'auto';
+
+        function detectUrlCategoryClient(url) {
+            if (!url) return 'auto';
+            const u = url.toLowerCase();
+            if (u.includes('wellness.yatradham.org')) return 'wellness';
+            if (u.includes('temple.yatradham.org/pujas') || u.includes('temple.yatradham.org/pandit-ji') || u.includes('/puja') || u.includes('/pandit')) return 'puja';
+            if (u.includes('travel.yatradham.org') || u.includes('chardham-package') || u.includes('kumbh-mela') || u.includes('-tour-package') || u.includes('-package')) return 'tour';
+            if (u.includes('gmvn-') || u.includes('-dharamshala') || u.includes('-ashram') || u.includes('-bhavan') || u.includes('-hotel') || u.includes('-trh')) return 'stay';
+            
+            const wellnessWords = ['ayurved', 'panchakarma', 'massage', 'rejuvenation', 'retreat', 'yoga', 'detox', 'naturopathy', 'meditation'];
+            if (wellnessWords.some(w => u.includes(w))) return 'wellness';
+            
+            const stayWords = ['dharamshala', 'ashram', 'bhavan', 'sanatorium', 'room', 'trh', 'gmvn'];
+            if (stayWords.some(w => u.includes(w))) return 'stay';
+
+            return 'tour';
+        }
+
+        function checkCategoryMismatch() {
+            const url = document.getElementById('singleUrl').value.trim();
+            const selectedCat = document.getElementById('packageCategory').value;
+            const banner = document.getElementById('categoryMismatchBanner');
+            const mismatchText = document.getElementById('categoryMismatchText');
+            const targetLabel = document.getElementById('switchTargetLabel');
+
+            if (!url || selectedCat === 'auto') {
+                if (banner) banner.classList.add('hidden');
+                return;
+            }
+
+            const detected = detectUrlCategoryClient(url);
+            detectedCategoryGlobal = detected;
+
+            const categoryLabels = {
+                'wellness': 'Wellness & Yoga Retreat',
+                'tour': 'Travel & Tour Package',
+                'stay': 'Dharamshala & Stay',
+                'puja': 'Puja & Pandit Services'
+            };
+
+            if (detected !== 'auto' && detected !== selectedCat) {
+                if (mismatchText) {
+                    mismatchText.textContent = `You selected '${categoryLabels[selectedCat] || selectedCat}', but the entered URL appears to be a '${categoryLabels[detected] || detected}'.`;
+                }
+                if (targetLabel) {
+                    targetLabel.textContent = categoryLabels[detected] || detected;
+                }
+                if (banner) banner.classList.remove('hidden');
+            } else {
+                if (banner) banner.classList.add('hidden');
+            }
+        }
+
+        function switchCategoryToDetected() {
+            if (detectedCategoryGlobal && detectedCategoryGlobal !== 'auto') {
+                document.getElementById('packageCategory').value = detectedCategoryGlobal;
+                const banner = document.getElementById('categoryMismatchBanner');
+                if (banner) banner.classList.add('hidden');
+                showToast(`✅ Category switched to ${detectedCategoryGlobal.toUpperCase()}`);
+            }
+        }
+
+        function dismissMismatchWarning() {
+            const banner = document.getElementById('categoryMismatchBanner');
+            if (banner) banner.classList.add('hidden');
+        }
+
         // API Calls
         async function loadStats() {
             try {
@@ -696,6 +804,8 @@
             const url = document.getElementById('singleUrl').value.trim();
             if (!url) { alert('Please enter a URL'); return; }
 
+            const category = document.getElementById('packageCategory').value;
+
             const btn = document.getElementById('btnSingle');
             btn.disabled = true;
             document.getElementById('singleResult').innerHTML = '';
@@ -714,7 +824,7 @@
                 const r = await fetch(API + '/scrape', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ url, keys }),
+                    body: JSON.stringify({ url, category, keys }),
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
@@ -729,7 +839,8 @@
                     throw new Error(`Server returned unexpected response (${r.status}): ${text.slice(0, 150)}`);
                 }
                 if (d.success) {
-                    showAlert('singleResult', 'success', `<strong>Success!</strong> Package "${d.package.name}" processed in <strong>${tat}s</strong>.<br>ID: #${d.id} | Keyword: ${d.output.primary_keyword} | Score: ${d.output.qa_score}/100`);
+                    const catBadge = d.category ? `<span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-xs font-semibold ml-2 uppercase">${d.category}</span>` : '';
+                    showAlert('singleResult', 'success', `<strong>Success!</strong> Package "${d.package.name}" processed in <strong>${tat}s</strong> ${catBadge}.<br>ID: #${d.id} | Keyword: ${d.output.primary_keyword} | Score: ${d.output.qa_score}/100`);
                     loadStats();
                 } else {
                     showAlert('singleResult', 'error', `Error (${tat}s): ${d.detail || 'Unknown server error'}`);
@@ -755,6 +866,7 @@
             const urls = raw.split('\n').map(u => u.trim()).filter(u => u);
             if (!urls.length) { alert('Please enter at least one URL'); return; }
 
+            const category = document.getElementById('packageCategory').value;
             const keys = getStoredKeys();
             const btn = document.getElementById('btnBatch');
             btn.disabled = true;
@@ -765,7 +877,7 @@
                 const r = await fetch(API + '/batch-urls', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ urls, keys })
+                    body: JSON.stringify({ urls, category, keys })
                 });
                 const text = await r.text();
                 let d;
@@ -786,6 +898,7 @@
                 btn.innerHTML = `<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Start Background Batch Process`;
             }
         }
+
 
         function debounceLoad() {
             clearTimeout(debounceTimer);
@@ -823,6 +936,8 @@
             const s = o.sections || {};
             const pkg = o.package_input || {};
             const qf = s.quick_facts || {};
+            const url = pkg.url || o.url || '';
+            const isWellness = (pkg.category === 'wellness' || o.category === 'wellness' || url.includes('wellness.yatradham.org') || (qf.activities && qf.activities.toLowerCase().includes('yoga')));
 
             // Check if there is markdown or article content first
             const rawContent = o.content || o.full_content || o.raw_content || o.markdown || (o.package_input && o.package_input.raw_content) || '';
@@ -841,8 +956,22 @@
                 return html;
             }
 
-            let html = `<!-- Yatradham SEO Structured Content: ${escapeHtml(o.title_tag || pkg.name || 'Tour Package')} -->\n`;
+            let html = `<!-- Yatradham SEO Structured Content: ${escapeHtml(o.title_tag || pkg.name || 'Package')} -->\n`;
             html += `<article class="yatradham-content-wrapper max-w-4xl mx-auto p-6 bg-white font-sans text-slate-800 leading-relaxed">\n`;
+
+            // Center Details & Inquiry Card (for Wellness Retreats)
+            if (isWellness) {
+                html += `  <div class="mb-8 p-6 bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50/40 rounded-2xl border border-emerald-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">\n`;
+                html += `    <div>\n`;
+                html += `      <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-200">🌿 Verified Wellness Centre</span>\n`;
+                html += `      <h2 class="text-xl font-extrabold text-slate-900 mt-2">${escapeHtml(qf.center_name || pkg.center_name || pkg.name || 'Maa Yoga Ashram (Arogyadham) - Rishikesh')}</h2>\n`;
+                html += `      <p class="text-xs text-slate-600 mt-1 flex items-center gap-1.5 font-medium">📍 ${escapeHtml(qf.destination || pkg.destination || 'Rishikesh, Uttarakhand')} • 📞 +91 9484950060 • ✉️ info@wellness.yatradham.org</p>\n`;
+                html += `    </div>\n`;
+                html += `    <a href="${escapeHtml(url || 'https://wellness.yatradham.org')}" target="_blank" rel="noopener" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 shrink-0">\n`;
+                html += `      <span>Inquiry Now</span> <span>➔</span>\n`;
+                html += `    </a>\n`;
+                html += `  </div>\n\n`;
+            }
 
             // Title & Meta Header
             html += `  <header class="mb-8 pb-6 border-b border-slate-200">\n`;
@@ -851,15 +980,21 @@
                 html += `    <p class="text-sm text-slate-600 italic mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200"><strong>SEO Meta Description:</strong> ${escapeHtml(o.meta_description)}</p>\n`;
             }
             
-            // Badges (Only non-empty)
+            // Badges (Inclusions & Duration)
             const badges = [];
             const dest = qf.destination || pkg.destination;
             const cost = qf.cost || pkg.cost;
             const dur = qf.duration || pkg.duration;
+            if (dur && dur.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-semibold text-xs">⏱️ ${escapeHtml(dur)}</span>`);
             if (dest && dest.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold text-xs">📍 ${escapeHtml(dest)}</span>`);
             if (cost && cost.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold text-xs">💰 ${escapeHtml(cost)}</span>`);
-            if (dur && dur.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-semibold text-xs">⏱️ ${escapeHtml(dur)}</span>`);
-            if (o.primary_keyword && o.primary_keyword.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-semibold text-xs">🔑 ${escapeHtml(o.primary_keyword)}</span>`);
+            if (isWellness) {
+                badges.push(`<span class="px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 font-semibold text-xs">🧘 Yoga & Meditation</span>`);
+                badges.push(`<span class="px-3 py-1 rounded-full bg-orange-50 text-orange-700 border border-orange-200 font-semibold text-xs">🥗 Sattvic Meals</span>`);
+                badges.push(`<span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-semibold text-xs">🏡 Comfortable Stay</span>`);
+            } else {
+                if (o.primary_keyword && o.primary_keyword.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-semibold text-xs">🔑 ${escapeHtml(o.primary_keyword)}</span>`);
+            }
             
             if (badges.length > 0) {
                 html += `    <div class="flex flex-wrap gap-2 text-xs mb-2">\n      ${badges.join('\n      ')}\n    </div>\n`;
@@ -874,19 +1009,20 @@
                 html += `  </section>\n\n`;
             }
 
-            // 2. Quick Facts (Only if real facts exist)
+            // 2. Quick Facts Table
             const factItems = [];
-            if (qf.package_name && qf.package_name.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Package:</span> <span class="text-slate-900">${escapeHtml(qf.package_name)}</span></div>`);
-            if (qf.cost && qf.cost.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Cost:</span> <span class="text-slate-900 font-bold text-emerald-700">${escapeHtml(qf.cost)}</span></div>`);
+            if (qf.package_name && qf.package_name.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Package Name:</span> <span class="text-slate-900">${escapeHtml(qf.package_name)}</span></div>`);
+            if (qf.cost && qf.cost.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Cost Per Person:</span> <span class="text-slate-900 font-bold text-emerald-700">${escapeHtml(qf.cost)}</span></div>`);
             if (qf.duration && qf.duration.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Duration:</span> <span class="text-slate-900">${escapeHtml(qf.duration)}</span></div>`);
             if (qf.destination && qf.destination.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Destination:</span> <span class="text-slate-900">${escapeHtml(qf.destination)}</span></div>`);
-            if (qf.accommodation && qf.accommodation.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Stay:</span> <span class="text-slate-900">${escapeHtml(qf.accommodation)}</span></div>`);
-            if (qf.food && qf.food.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Meals:</span> <span class="text-slate-900">${escapeHtml(qf.food)}</span></div>`);
-            if (qf.activities && qf.activities.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200 md:col-span-2"><span class="font-semibold text-slate-600">Activities:</span> <span class="text-slate-900">${escapeHtml(qf.activities)}</span></div>`);
+            if (qf.level && qf.level.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Level:</span> <span class="text-slate-900">${escapeHtml(qf.level)}</span></div>`);
+            if (qf.accommodation && qf.accommodation.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Accommodation:</span> <span class="text-slate-900">${escapeHtml(qf.accommodation)}</span></div>`);
+            if (qf.food && qf.food.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Food:</span> <span class="text-slate-900">${escapeHtml(qf.food)}</span></div>`);
+            if (qf.activities && qf.activities.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200 md:col-span-2"><span class="font-semibold text-slate-600">Program / Activities:</span> <span class="text-slate-900">${escapeHtml(qf.activities)}</span></div>`);
 
             if (factItems.length > 0) {
                 html += `  <section class="mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">\n`;
-                html += `    <h2 class="text-xl font-bold text-slate-900 mb-4">Quick Facts</h2>\n`;
+                html += `    <h2 class="text-xl font-bold text-slate-900 mb-4">${isWellness ? 'Overview & Tour Highlights' : 'Quick Facts'}</h2>\n`;
                 html += `    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">\n      ${factItems.join('\n      ')}\n    </div>\n`;
                 html += `  </section>\n\n`;
             }
@@ -906,10 +1042,10 @@
                 html += `  </section>\n\n`;
             }
 
-            // 4. Who Can Benefit
+            // 4. Who Can Benefit / Eligibility
             if (s.who_can_benefit_heading || (s.who_can_benefit_bullets && s.who_can_benefit_bullets.length)) {
                 html += `  <section class="mb-8">\n`;
-                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">${escapeHtml(s.who_can_benefit_heading || 'Who Can Benefit?')}</h2>\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">${escapeHtml(s.who_can_benefit_heading || (isWellness ? 'Who Can Join This Retreat?' : 'Who Can Benefit?'))}</h2>\n`;
                 if (s.who_can_benefit_intro && s.who_can_benefit_intro.trim()) html += `    <p class="text-slate-700 mb-4">${escapeHtml(s.who_can_benefit_intro)}</p>\n`;
                 if (s.who_can_benefit_bullets && s.who_can_benefit_bullets.length) {
                     html += `    <ul class="space-y-2.5">\n`;
@@ -921,25 +1057,25 @@
                 html += `  </section>\n\n`;
             }
 
-            // 5. Daily Program Highlights (Only if sessions exist)
+            // 5. Daily Program Highlights / Schedule
             const ph = s.program_highlights || {};
             const hasPh = (ph.morning && ph.morning.length > 0) || (ph.daytime && ph.daytime.length > 0) || (ph.evening && ph.evening.length > 0);
             if (hasPh) {
                 html += `  <section class="mb-8">\n`;
-                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${escapeHtml(ph.heading || 'Daily Program Highlights')}</h2>\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${escapeHtml(ph.heading || (isWellness ? 'Daily Wellness Routine & Schedule' : 'Daily Program Highlights'))}</h2>\n`;
                 html += `    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">\n`;
                 if (ph.morning && ph.morning.length) {
-                    html += `      <div class="p-4 bg-amber-50/60 rounded-xl border border-amber-200">\n        <h3 class="font-bold text-amber-900 mb-2">🌅 Morning</h3>\n        <ul class="text-xs space-y-1.5 text-amber-950">\n`;
+                    html += `      <div class="p-4 bg-amber-50/60 rounded-xl border border-amber-200">\n        <h3 class="font-bold text-amber-900 mb-2">🌅 Morning Routine</h3>\n        <ul class="text-xs space-y-1.5 text-amber-950">\n`;
                     ph.morning.forEach(item => { if (item.activity) html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
                     html += `        </ul>\n      </div>\n`;
                 }
                 if (ph.daytime && ph.daytime.length) {
-                    html += `      <div class="p-4 bg-blue-50/60 rounded-xl border border-blue-200">\n        <h3 class="font-bold text-blue-900 mb-2">☀️ Daytime</h3>\n        <ul class="text-xs space-y-1.5 text-blue-950">\n`;
+                    html += `      <div class="p-4 bg-blue-50/60 rounded-xl border border-blue-200">\n        <h3 class="font-bold text-blue-900 mb-2">☀️ Daytime Routine</h3>\n        <ul class="text-xs space-y-1.5 text-blue-950">\n`;
                     ph.daytime.forEach(item => { if (item.activity) html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
                     html += `        </ul>\n      </div>\n`;
                 }
                 if (ph.evening && ph.evening.length) {
-                    html += `      <div class="p-4 bg-purple-50/60 rounded-xl border border-purple-200">\n        <h3 class="font-bold text-purple-900 mb-2">🌙 Evening</h3>\n        <ul class="text-xs space-y-1.5 text-purple-950">\n`;
+                    html += `      <div class="p-4 bg-purple-50/60 rounded-xl border border-purple-200">\n        <h3 class="font-bold text-purple-900 mb-2">🌙 Evening Routine</h3>\n        <ul class="text-xs space-y-1.5 text-purple-950">\n`;
                     ph.evening.forEach(item => { if (item.activity) html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
                     html += `        </ul>\n      </div>\n`;
                 }
@@ -950,7 +1086,7 @@
             // 6. Day-by-Day Itinerary (if available)
             if (s.itinerary && s.itinerary.length > 0) {
                 html += `  <section class="mb-8">\n`;
-                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">Detailed Day-by-Day Itinerary</h2>\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${isWellness ? 'Retreat Course & Itinerary Outline' : 'Detailed Day-by-Day Itinerary'}</h2>\n`;
                 html += `    <div class="space-y-4">\n`;
                 s.itinerary.forEach(day => {
                     html += `      <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">\n`;
@@ -968,16 +1104,16 @@
                 html += `  </section>\n\n`;
             }
 
-            // 7. Pricing Table (if available)
+            // 7. Transparent Pricing Table
             if (s.pricing_table && s.pricing_table.length > 0) {
                 html += `  <section class="mb-8">\n`;
                 html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">Transparent Package Pricing</h2>\n`;
                 html += `    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">\n`;
                 html += `      <table class="w-full text-left text-sm text-slate-700">\n`;
-                html += `        <thead class="bg-slate-100 text-xs font-bold text-slate-800 uppercase tracking-wider"><tr><th class="p-3">Occupancy / Group Size</th><th class="p-3 text-right">Cost Per Person</th></tr></thead>\n`;
+                html += `        <thead class="bg-slate-100 text-xs font-bold text-slate-800 uppercase tracking-wider"><tr><th class="p-3">Room Type / Occupancy</th><th class="p-3 text-right">Cost Per Person</th></tr></thead>\n`;
                 html += `        <tbody class="divide-y divide-slate-200 bg-white">\n`;
                 s.pricing_table.forEach(r => {
-                    html += `          <tr><td class="p-3 font-medium">${escapeHtml(r.guests || '1 Person')}</td><td class="p-3 text-right font-bold text-emerald-700">${escapeHtml(r.cost_per_person || '₹--')}</td></tr>\n`;
+                    html += `          <tr><td class="p-3 font-medium">${escapeHtml(r.guests || 'Standard Room')}</td><td class="p-3 text-right font-bold text-emerald-700">${escapeHtml(r.cost_per_person || 'Starting From Rs. 2,124.00')}</td></tr>\n`;
                 });
                 html += `        </tbody>\n      </table>\n    </div>\n  </section>\n\n`;
             }
@@ -989,14 +1125,14 @@
                 html += `  <section class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">\n`;
                 if (hasAcc) {
                     html += `    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">\n`;
-                    html += `      <h3 class="font-bold text-slate-900 mb-3">🏡 ${escapeHtml(s.accommodation_heading || 'Accommodation')}</h3>\n`;
+                    html += `      <h3 class="font-bold text-slate-900 mb-3">🏡 ${escapeHtml(s.accommodation_heading || (isWellness ? 'Comfortable Stay' : 'Accommodation'))}</h3>\n`;
                     html += `      <ul class="text-sm space-y-2 text-slate-700">\n`;
                     s.accommodation_bullets.forEach(b => { if (b && b.trim()) html += `        <li class="flex items-start gap-2"><span class="text-slate-400">•</span><span>${escapeHtml(b)}</span></li>\n`; });
                     html += `      </ul>\n    </div>\n`;
                 }
                 if (hasMeal) {
                     html += `    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">\n`;
-                    html += `      <h3 class="font-bold text-slate-900 mb-3">🍲 ${escapeHtml(s.meal_section_heading || 'Meals & Nutrition')}</h3>\n`;
+                    html += `      <h3 class="font-bold text-slate-900 mb-3">🍲 ${escapeHtml(s.meal_section_heading || (isWellness ? 'Healthy & Sattvic Meal' : 'Meals & Dining'))}</h3>\n`;
                     html += `      <ul class="text-sm space-y-2 text-slate-700">\n`;
                     s.meal_section_bullets.forEach(b => { if (b && b.trim()) html += `        <li class="flex items-start gap-2"><span class="text-slate-400">•</span><span>${escapeHtml(b)}</span></li>\n`; });
                     html += `      </ul>\n    </div>\n`;
@@ -1007,13 +1143,12 @@
             // 9. Key Benefits
             if (s.benefits_items && s.benefits_items.length) {
                 html += `  <section class="mb-8">\n`;
-                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${escapeHtml(s.benefits_heading || 'Key Benefits')}</h2>\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${escapeHtml(s.benefits_heading || (isWellness ? 'Benefits of The Yoga Retreat' : 'Key Health & Spiritual Benefits'))}</h2>\n`;
                 html += `    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">\n`;
                 s.benefits_items.forEach(item => {
                     if (item && item.trim()) html += `      <div class="p-3 bg-emerald-50/50 rounded-lg border border-emerald-200 text-sm text-emerald-950 flex items-start gap-2"><span class="text-emerald-600 font-bold">✨</span><span>${escapeHtml(item)}</span></div>\n`;
                 });
-                html += `    </div>\n`;
-                html += `  </section>\n\n`;
+                html += `    </div>\n  </section>\n\n`;
             }
 
             // 10. Inclusions & Exclusions
