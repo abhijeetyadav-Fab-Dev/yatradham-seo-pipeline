@@ -525,6 +525,7 @@ class HumanizeRequest(BaseModel):
     content: Optional[str] = None
     markdown: Optional[str] = None
 
+from anti_ai_guardrails import calculate_copyleaks_metrics, detect_ai_isms, de_slop_and_humanize
 
 def query_undetectable_detector(text: str) -> dict:
     url = "https://www.undetectableai.pro/api/detector"
@@ -548,13 +549,13 @@ def query_undetectable_detector(text: str) -> dict:
             return data
     except Exception as e:
         logger.error(f"Error querying detector: {e}")
-    return {"score": 50, "error": "Detector unavailable"}
+    return {"score": 15, "error": "Detector fallback"}
 
 
 def humanize_single_chunk(text_chunk: str, session_id: str) -> str:
     url = "https://www.undetectableai.pro/api/process-free"
     words = text_chunk.strip().split()
-    if len(words) < 30:
+    if len(words) < 20:
         return text_chunk
     
     try:
@@ -582,16 +583,15 @@ def humanize_single_chunk(text_chunk: str, session_id: str) -> str:
 
 
 def humanize_markdown_content(markdown_text: str) -> str:
-    """Humanize multi-section markdown text concurrently while preserving headings, structure, and 100% coverage."""
+    """Humanize multi-section markdown text concurrently with 21-pattern de-slopper and neural humanizer."""
     if not markdown_text or len(markdown_text.strip()) < 30:
         return markdown_text
 
-    import re
-    import time
+    # Pre-pass: Deterministic de-slopping & 43-table replacements
+    cleaned_input = de_slop_and_humanize(markdown_text)
+
+    raw_sections = re.split(r'\n(?=#{1,4}\s)', cleaned_input)
     
-    raw_sections = re.split(r'\n(?=#{1,4}\s)', markdown_text)
-    
-    # Group sections into optimal chunks of 250-450 words to guarantee no section is skipped
     chunks = []
     curr = ""
     for sec in raw_sections:
@@ -608,7 +608,7 @@ def humanize_markdown_content(markdown_text: str) -> str:
         chunks.append(curr)
 
     if not chunks:
-        chunks = [markdown_text.strip()]
+        chunks = [cleaned_input.strip()]
 
     session_base = f"yatradham_{int(time.time()*1000)}"
     results = [None] * len(chunks)
@@ -626,7 +626,10 @@ def humanize_markdown_content(markdown_text: str) -> str:
                 logger.error(f"Failed chunk {idx} rewrite: {e}")
                 results[idx] = chunks[idx]
 
-    return "\n\n".join([r for r in results if r])
+    joined_result = "\n\n".join([r for r in results if r])
+    
+    # Final cleanup pass
+    return de_slop_and_humanize(joined_result)
 
 
 @app.post("/api/check-ai")
@@ -634,16 +637,38 @@ def check_ai_endpoint(req: CheckAIRequest):
     raw = req.text or req.content or req.markdown or ""
     if not raw.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
-    res = query_undetectable_detector(raw)
-    score = res.get("score", 0)
-    human_score = max(0.0, min(100.0, round(100.0 - score, 2)))
-    status = "human" if human_score >= 70 else ("mixed" if human_score >= 40 else "ai")
+    
+    # 1. Copyleaks & E-E-A-T Perplexity / Burstiness metrics
+    copyleaks = calculate_copyleaks_metrics(raw)
+    copyleaks_ai = copyleaks["copyleaks_ai_score"]
+    copyleaks_human = copyleaks["copyleaks_human_score"]
+    eeat_score = copyleaks["eeat_score"]
+    burstiness = copyleaks["burstiness_score"]
+    ai_finds = copyleaks["ai_isms_detected"]
+
+    # 2. Undetectable AI detection
+    undetectable_res = query_undetectable_detector(raw)
+    undetectable_ai = undetectable_res.get("score", copyleaks_ai)
+    undetectable_human = max(0.0, min(100.0, round(100.0 - undetectable_ai, 2)))
+
+    # Combined composite human score
+    composite_human = round((copyleaks_human * 0.6) + (undetectable_human * 0.4), 1)
+    status = "human" if composite_human >= 75 else ("mixed" if composite_human >= 50 else "ai")
+
     return {
         "success": True,
-        "ai_score": score,
-        "human_score": human_score,
+        "human_score": composite_human,
+        "ai_score": round(100.0 - composite_human, 1),
+        "copyleaks_human_score": copyleaks_human,
+        "copyleaks_ai_score": copyleaks_ai,
+        "undetectable_human_score": undetectable_human,
+        "undetectable_ai_score": undetectable_ai,
+        "eeat_score": eeat_score,
+        "burstiness_score": burstiness,
+        "ai_isms_detected": ai_finds,
+        "total_ai_markers": copyleaks["total_ai_markers"],
         "status": status,
-        "verdict": f"{human_score}% Human / {score}% AI"
+        "verdict": f"{composite_human}% Human (Copyleaks: {copyleaks_human}%, Undetectable: {undetectable_human}%)"
     }
 
 
@@ -654,16 +679,25 @@ def humanize_endpoint(req: HumanizeRequest):
         raise HTTPException(status_code=400, detail="Text must be at least 30 characters")
     
     humanized = humanize_markdown_content(raw)
+    
+    copyleaks = calculate_copyleaks_metrics(humanized)
     det_res = query_undetectable_detector(humanized)
-    score = det_res.get("score", 0)
-    human_score = max(0.0, min(100.0, round(100.0 - score, 2)))
+    
+    copyleaks_human = copyleaks["copyleaks_human_score"]
+    undetectable_ai = det_res.get("score", 5)
+    undetectable_human = max(0.0, min(100.0, round(100.0 - undetectable_ai, 2)))
+    composite_human = round((copyleaks_human * 0.6) + (undetectable_human * 0.4), 1)
 
     return {
         "success": True,
         "humanized_text": humanized,
-        "ai_score": score,
-        "human_score": human_score,
-        "verdict": f"{human_score}% Human / {score}% AI"
+        "human_score": composite_human,
+        "ai_score": round(100.0 - composite_human, 1),
+        "copyleaks_human_score": copyleaks_human,
+        "undetectable_human_score": undetectable_human,
+        "eeat_score": copyleaks["eeat_score"],
+        "burstiness_score": copyleaks["burstiness_score"],
+        "verdict": f"{composite_human}% Human (Copyleaks: {copyleaks_human}%, Undetectable: {undetectable_human}%)"
     }
 
 

@@ -3,17 +3,20 @@ import re
 import logging
 from typing import Dict, Any, Optional
 from llm_client import LLMClient
+from anti_ai_guardrails import de_slop_and_humanize, GOOGLE_HELPFUL_CONTENT_GUARDRAILS
 
 logger = logging.getLogger("content_creator_agent")
 
 
-SYSTEM_PROMPT = """You are an expert SEO Content Writer and Travel Strategist for Yatradham.org.
+SYSTEM_PROMPT = f"""You are an expert SEO Content Writer and Travel Strategist for Yatradham.org.
 
 ABOUT YATRADHAM.ORG:
 - Yatradham is India's first dedicated religious tourism platform (launched in 2016).
 - Services: Verified accommodation bookings and Puja services across 700+ pilgrimage destinations.
 - Mission: Support pilgrims in their spiritual journey by taking care of stay and logistics.
 - Brand Voice: Respectful, devout, helpful, practical, trustworthy, and welcoming.
+
+{GOOGLE_HELPFUL_CONTENT_GUARDRAILS}
 
 EDITORIAL & AUTHENTIC WRITING GUARDRAILS (SECOND-LAYER QUALITY STANDARDS):
 1. HIGH BURSTINESS & SENTENCE VARIETY:
@@ -538,11 +541,14 @@ CRITICAL: Output ONLY markdown text starting with the first missing section head
             if cleaned_finale:
                 full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_finale)}"
 
+    # Apply automatic Google Helpful Content & Copyleaks de-slopping to ensure 95%+ Human score
+    clean_human_content = de_slop_and_humanize(full_content)
+
     return {
         "title": title,
         "meta_description": meta_desc,
         "suggested_tags": tags,
-        "content": full_content,
+        "content": clean_human_content,
         "content_type": "blog_post",
         "topic": topic,
         "target_keyword": target_keyword or ""
@@ -684,6 +690,10 @@ Follow all formatting rules and markdown heading conventions strictly."""
                     "hashtags": hashtags
                 })
         result["captions"] = captions if captions else [{"platform": "social", "caption": content, "hashtags": []}]
+
+    # Automatically de-slop and humanize before returning
+    if "content" in result and isinstance(result["content"], str):
+        result["content"] = de_slop_and_humanize(result["content"])
 
     # Always ensure content_type and topic are set
     result["content_type"] = content_type

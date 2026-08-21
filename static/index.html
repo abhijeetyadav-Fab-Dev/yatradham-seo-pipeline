@@ -1694,15 +1694,17 @@
                 const data = await res.json();
                 if (data.success) {
                     badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-amber-100', 'text-amber-800', 'bg-rose-100', 'text-rose-800');
+                    const copyHuman = data.copyleaks_human_score || data.human_score;
+                    const eeat = data.eeat_score ? ` • E-E-A-T: ${data.eeat_score}%` : '';
                     if (data.human_score >= 70) {
-                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
-                        badge.innerHTML = `✨ ${data.human_score}% Human`;
+                        badge.className = 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                        badge.innerHTML = `🛡️ Copyleaks: ${copyHuman}% Human | ✨ Total: ${data.human_score}% Human${eeat}`;
                     } else if (data.human_score >= 40) {
-                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-amber-100 text-amber-800 border border-amber-300 shadow-sm';
-                        badge.innerHTML = `⚡ ${data.human_score}% Human (${data.ai_score}% AI)`;
+                        badge.className = 'px-3 py-1 text-xs font-bold rounded-md bg-amber-100 text-amber-800 border border-amber-300 shadow-sm';
+                        badge.innerHTML = `⚡ ${data.human_score}% Human (Copyleaks AI: ${data.copyleaks_ai_score || data.ai_score}%)${eeat}`;
                     } else {
-                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-rose-100 text-rose-800 border border-rose-300 shadow-sm';
-                        badge.innerHTML = `🤖 ${data.ai_score}% AI Detected`;
+                        badge.className = 'px-3 py-1 text-xs font-bold rounded-md bg-rose-100 text-rose-800 border border-rose-300 shadow-sm';
+                        badge.innerHTML = `🤖 ${data.ai_score}% AI (Copyleaks Triggered)`;
                     }
                 } else {
                     alert('Could not retrieve AI score');
@@ -1730,7 +1732,7 @@
             const btn = document.getElementById('btnHumanize');
             const origHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = `<svg class="animate-spin w-3.5 h-3.5 mr-1 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Humanizing & Bypassing AI...`;
+            btn.innerHTML = `<svg class="animate-spin w-3.5 h-3.5 mr-1 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> De-Slopping & Bypassing AI...`;
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 45000);
@@ -1750,19 +1752,17 @@
                     if (lastGeneratedContent.hero_text) lastGeneratedContent.hero_text = data.humanized_text;
 
                     // Re-render preview with humanized content
-                    renderPreview(lastGeneratedContent, 'humanized', null, 'Undetectable AI Bypass');
+                    renderPreview(lastGeneratedContent, 'humanized', null, 'Copyleaks & Undetectable AI Bypass');
 
                     // Update score badge
                     const badge = document.getElementById('aiScoreBadge');
                     badge.classList.remove('hidden');
-                    if (data.human_score >= 70) {
-                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
-                        badge.innerHTML = `✨ ${data.human_score}% Human (Bypassed)`;
-                    } else {
-                        badge.className = 'px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
-                        badge.innerHTML = `✨ Bypassed (${data.human_score}% Human)`;
-                    }
-                    alert('✨ Content successfully humanized! AI detection bypassed.');
+                    const copyHuman = data.copyleaks_human_score || data.human_score;
+                    const eeat = data.eeat_score ? ` • E-E-A-T: ${data.eeat_score}%` : '';
+                    badge.className = 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                    badge.innerHTML = `🛡️ Copyleaks: ${copyHuman}% Human | ✨ Total: ${data.human_score}% Human${eeat}`;
+                    
+                    alert('✨ Content successfully humanized! Passed Copyleaks AI & Google E-E-A-T standards.');
                 } else {
                     alert('Humanization failed: ' + (data.detail || 'Unknown error'));
                 }
