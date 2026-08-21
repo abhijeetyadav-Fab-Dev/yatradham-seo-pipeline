@@ -511,11 +511,15 @@ def export_csv(status: Optional[str] = "approved"):
 
 
 class CheckAIRequest(BaseModel):
-    text: str
+    text: Optional[str] = None
+    content: Optional[str] = None
+    markdown: Optional[str] = None
 
 
 class HumanizeRequest(BaseModel):
-    text: str
+    text: Optional[str] = None
+    content: Optional[str] = None
+    markdown: Optional[str] = None
 
 
 def query_undetectable_detector(text: str) -> dict:
@@ -581,31 +585,12 @@ def humanize_markdown_content(markdown_text: str) -> str:
     import re
     import time
     
-    clean_text = markdown_text.strip()
-    # If text is wrapped in JSON, extract the readable content
-    if clean_text.startswith("{") and clean_text.endswith("}"):
-        try:
-            d = json.loads(clean_text)
-            if isinstance(d, dict):
-                parts = []
-                if d.get("title"):
-                    parts.append(f"# {d['title']}")
-                if d.get("meta_description"):
-                    parts.append(f"**Meta Description:** {d['meta_description']}")
-                if d.get("content") or d.get("full_content") or d.get("hero_text"):
-                    parts.append(d.get("content") or d.get("full_content") or d.get("hero_text"))
-                if parts:
-                    clean_text = "\n\n".join(parts)
-        except Exception:
-            pass
-
-    # Split by markdown H2 headings
-    sections = re.split(r'(?=\n##\s+)', clean_text)
+    raw_sections = re.split(r'\n(?=#{1,4}\s)', markdown_text)
     
     # Group sections into optimal chunks of 250-450 words to guarantee no section is skipped
     chunks = []
     curr = ""
-    for sec in sections:
+    for sec in raw_sections:
         sec_clean = sec.strip()
         if not sec_clean:
             continue
@@ -619,7 +604,7 @@ def humanize_markdown_content(markdown_text: str) -> str:
         chunks.append(curr)
 
     if not chunks:
-        chunks = [clean_text]
+        chunks = [markdown_text.strip()]
 
     session_base = f"yatradham_{int(time.time()*1000)}"
     results = [None] * len(chunks)
@@ -642,7 +627,10 @@ def humanize_markdown_content(markdown_text: str) -> str:
 
 @app.post("/api/check-ai")
 def check_ai_endpoint(req: CheckAIRequest):
-    res = query_undetectable_detector(req.text)
+    raw = req.text or req.content or req.markdown or ""
+    if not raw.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    res = query_undetectable_detector(raw)
     score = res.get("score", 0)
     human_score = max(0.0, min(100.0, round(100.0 - score, 2)))
     status = "human" if human_score >= 70 else ("mixed" if human_score >= 40 else "ai")
@@ -657,10 +645,11 @@ def check_ai_endpoint(req: CheckAIRequest):
 
 @app.post("/api/humanize")
 def humanize_endpoint(req: HumanizeRequest):
-    if not req.text or len(req.text.strip()) < 30:
-        raise HTTPException(status_code=400, detail="Text must be at least 30 words")
+    raw = req.text or req.content or req.markdown or ""
+    if not raw or len(raw.strip()) < 30:
+        raise HTTPException(status_code=400, detail="Text must be at least 30 characters")
     
-    humanized = humanize_markdown_content(req.text)
+    humanized = humanize_markdown_content(raw)
     det_res = query_undetectable_detector(humanized)
     score = det_res.get("score", 0)
     human_score = max(0.0, min(100.0, round(100.0 - score, 2)))
