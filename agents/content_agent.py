@@ -119,7 +119,7 @@ IMPORTANT REMINDERS:
 - Extract ACTUAL destination city and state (not the package name).
 - Extract ACTUAL accommodation type (villa, ashram, dharamshala, resort, hotel).
 - Extract ACTUAL meal type (Satvik, vegetarian, Ayurvedic, organic).
-- Extract ACTUAL therapies/activities mentioned (Panchakarma, Abhyangam, Shirodhara, Yoga, Pranayama).
+- Extract ACTUAL activities mentioned (temple darshan, aarti, parikrama, or therapies if applicable).
 - Write meaningful FAQ answers (2-3 sentences each) addressing real traveler concerns.
 - Every bullet must be a complete, specific sentence — NOT generic 1-2 word labels.
 - Output ONLY valid JSON."""

@@ -70,12 +70,17 @@ CRITICAL: Do NOT repeat words. End with " | YatraDham"."""
 
     if not title:
         dest = destination if destination else "India"
-        if "ayurved" in name.lower() or "ayurved" in primary_keyword.lower():
+        name_lower = f"{name} {primary_keyword}".lower()
+        if "ayurved" in name_lower:
             title = f"Ayurvedic Retreat in {dest} | YatraDham"
-        elif "yoga" in name.lower() or "yoga" in primary_keyword.lower():
+        elif "yoga" in name_lower:
             title = f"Yoga Retreat in {dest} | YatraDham"
-        else:
+        elif any(k in name_lower for k in ["wellness", "retreat", "massage", "rejuvenation", "panchakarma", "detox", "healing"]):
             title = f"Wellness Retreat in {dest} | YatraDham"
+        elif any(k in name_lower for k in ["dharamshala", "ashram stay", "bhavan", "hotel", "room", "trh", "gmvn"]):
+            title = f"Dharamshala Stay in {dest} | YatraDham"
+        else:
+            title = f"{duration} {dest} Tour Package | YatraDham"
 
     # Enforce length (rough approximation without cutting words)
     if len(title) > 60:

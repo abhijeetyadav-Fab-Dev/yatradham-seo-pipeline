@@ -351,8 +351,8 @@ class LLMClient:
         """Return a rich, dynamic response when no LLM provider key is available.
         
         Dynamically extracts Package Name, Destination, Duration, Cost, Keywords, and Instructions
-        and builds authoritative SEO-optimized outputs for both the SEO Pipeline (19 JSON sections)
-        and AI Content Studio (Markdown articles).
+        and builds authoritative SEO-optimized outputs strictly separated by package category
+        (Wellness / Retreats vs. Pilgrimage / Yatra Tours vs. Dharamshala Stays).
         """
         system_msg = messages[0].get("content", "") if messages else ""
         user_msg = messages[-1].get("content", "") if len(messages) > 1 else ""
@@ -364,7 +364,7 @@ class LLMClient:
         duration = "2 Days"
         cost = "Contact for pricing"
         keyword = ""
-        audience = "Devotees, families, and pilgrims"
+        audience = "Devotees, families, and travelers"
         custom_url = "https://yatradham.org"
 
         for line in combined_text.split("\n"):
@@ -404,6 +404,8 @@ class LLMClient:
             dest_match = re.search(r'Destination:\s*([^\n]+)', combined_text, re.IGNORECASE)
             if dest_match:
                 destination = dest_match.group(1).strip()
+            elif "kerala" in combined_text.lower():
+                destination = "Kerala"
             elif "vrindavan" in combined_text.lower():
                 destination = "Vrindavan Barsana"
             elif "chardham" in combined_text.lower():
@@ -413,10 +415,35 @@ class LLMClient:
             elif "rishikesh" in combined_text.lower():
                 destination = "Rishikesh"
             else:
-                destination = "Pilgrimage Destination"
+                destination = "India"
+
+        # 2. DETECT CATEGORY STRICTLY (Wellness vs Pilgrimage vs Stay)
+        # Extract only the actual scraped text (not prompt instructions or boilerplate)
+        raw_text_match = re.search(r'---\s*RAW PAGE TEXT[^\n]*\n([\s\S]*?)(?:-----------|\Z)', combined_text, re.IGNORECASE)
+        page_raw_text = raw_text_match.group(1) if raw_text_match else ""
+        
+        check_text = f"{pkg_name} {destination} {page_raw_text} {custom_url}".lower()
+        wellness_keywords = [
+            "ayurved", "panchakarma", "massage", "rejuvenation", "retreat",
+            "detox", "naturopathy", "healing", "stress relief", "abhyangam",
+            "shirodhara", "yoga retreat", "wellness retreat"
+        ]
+        stay_keywords = ["dharamshala", "ashram stay", "bhavan", "sanatorium", "room booking", "trh", "gmvn", "hotel stay"]
+
+        if any(w in check_text for w in wellness_keywords):
+            pkg_category = "wellness"
+        elif any(w in check_text for w in stay_keywords) and not any(w in check_text for w in ["tour package", "yatra package", "days tour"]):
+            pkg_category = "stay"
+        else:
+            pkg_category = "pilgrimage"
 
         if not keyword:
-            keyword = f"{duration} {destination}".strip() if destination else pkg_name
+            if pkg_category == "wellness":
+                keyword = f"{duration} Ayurvedic Retreat in {destination}" if "ayurved" in check_text else f"{duration} Wellness Retreat in {destination}"
+            elif pkg_category == "stay":
+                keyword = f"Dharamshala in {destination}"
+            else:
+                keyword = f"{duration} {destination} Tour Package"
 
         # Extract cost from raw text if missing
         if cost == "Contact for pricing":
@@ -431,189 +458,483 @@ class LLMClient:
                 custom_url = u
                 break
 
-        # 2. DISPATCH BY AGENT TYPE
+        # 3. DISPATCH BY AGENT TYPE & CATEGORY
         
         # AGENT: Content Agent (19 Structured Sections JSON)
         if any(x in system_msg.lower() for x in ["19 structured sections", "expert content writer for yatradham", "package_overview", "sectionedcontent"]):
-            sections_dict = {
-                "package_overview": f"The {pkg_name} offers a sacred, well-organized spiritual journey to {destination}. Designed for pilgrims seeking a comfortable and devout experience, this {duration} itinerary covers prominent temples, sacred sanctums, and peaceful ashram visits with verified YatraDham accommodation and pure Satvik dining.",
-                "quick_facts": {
-                    "package_name": pkg_name,
-                    "cost": cost,
-                    "duration": duration,
-                    "destination": destination,
-                    "level": "All Devotees & Age Groups Welcome",
-                    "accommodation": f"Verified Dharamshala / Hotel in {destination} via YatraDham",
-                    "food": "100% Pure Vegetarian Satvik Meals",
-                    "activities": f"Temple Darshan, Guided Aarti, Sacred Parikrama in {destination}",
-                },
-                "why_choose_heading": f"Why Choose the {pkg_name}?",
-                "why_choose_intro": f"Experience a seamless and spiritually fulfilling visit to {destination} with trusted local logistics.",
-                "why_choose_bullets": [
-                    f"Carefully planned {duration} schedule allowing unhurried darshan at all major temples in {destination}.",
-                    f"Verified clean accommodations with hot water, clean linens, and peaceful surroundings booked via YatraDham.",
-                    "Dedicated private cab transport with experienced local drivers for comfortable temple transfers.",
-                    "Nutritious Satvik vegetarian meals included throughout the journey.",
-                    "24/7 on-ground assistance and transparent pricing with no hidden roadside agent markups.",
-                ],
-                "who_can_benefit_heading": f"Who Is This {destination} Tour Ideal For?",
-                "who_can_benefit_intro": "This package is crafted to meet the needs of families, seniors, and independent spiritual seekers.",
-                "who_can_benefit_bullets": [
-                    "Families seeking a peaceful, well-coordinated pilgrimage without the stress of finding last-minute stays.",
-                    "Senior citizens who require comfortable transport, easily accessible temple entries, and pure Satvik food.",
-                    "Working professionals and couples looking for a meaningful weekend spiritual reset.",
-                    "Devotees traveling in groups who want assured dharamshala rooms and verified cab coordination.",
-                    "First-time visitors to {destination} who benefit from local route expertise and fixed darshan schedules.",
-                ],
-                "program_highlights": {
-                    "heading": f"Daily Program & Darshan Highlights in {destination}",
-                    "morning": [
-                        {"time": "06:00 AM", "activity": f"Morning Mangala Aarti & Sacred Temple Darshan in {destination}"},
-                        {"time": "08:30 AM", "activity": "Traditional Satvik Breakfast & Preparation for Sightseeing"}
+            
+            if pkg_category == "wellness":
+                sections_dict = {
+                    "package_overview": f"The {pkg_name} offers an authentic holistic healing and rejuvenation experience in the tranquil environment of {destination}. Designed for complete physical and mental restoration, this {duration} retreat includes personalized Ayurvedic doctor consultations, traditional herbal therapies, daily guided yoga sessions, and wholesome Satvik dining with verified YatraDham accommodations.",
+                    "quick_facts": {
+                        "package_name": pkg_name,
+                        "cost": cost,
+                        "duration": duration,
+                        "destination": destination,
+                        "level": "All Experience & Wellness Levels Welcome",
+                        "accommodation": f"Verified Eco-Wellness Resort / Ashram Stay in {destination} via YatraDham",
+                        "food": "Personalized Ayurvedic & Satvik Organic Nutrition",
+                        "activities": f"Daily Yoga, Pranayama, Meditation & Prescribed Therapies in {destination}",
+                    },
+                    "why_choose_heading": f"Why Choose {pkg_name}?",
+                    "why_choose_intro": f"Experience authentic holistic rejuvenation in peaceful {destination} under experienced wellness practitioners.",
+                    "why_choose_bullets": [
+                        f"Structured {duration} wellness curriculum combining authentic therapies and mindfulness in {destination}.",
+                        "Comprehensive initial doctor consultation and tailored Ayurvedic care plan.",
+                        "Certified traditional therapists administering herbal oil applications and rejuvenation treatments.",
+                        "Nutritious organic Satvik meals designed to enhance digestion and vitality.",
+                        "Verified peaceful accommodation booked with dedicated YatraDham pilgrim and traveler support.",
                     ],
-                    "daytime": [
-                        {"time": "11:00 AM", "activity": f"Main Sanctum Visit, Special Puja & Temple Parikrama"},
-                        {"time": "01:30 PM", "activity": "Hygienic Satvik Lunch and Relaxation at Stay"}
+                    "who_can_benefit_heading": f"Who Is This {destination} Wellness Retreat Ideal For?",
+                    "who_can_benefit_intro": "This program is designed for anyone seeking natural relief from modern stress and lifestyle fatigue.",
+                    "who_can_benefit_bullets": [
+                        "Working professionals dealing with daily stress, mental fatigue, or irregular sleep patterns.",
+                        "Health-conscious individuals seeking authentic herbal body rejuvenation and natural detox.",
+                        "Beginners wanting a peaceful, structured environment to learn yoga and mindfulness.",
+                        "Travelers looking for a quiet, device-free retreat to restore mind-body balance.",
+                        "Anyone recovering from lifestyle-related ailments looking for holistic dietary guidance.",
                     ],
-                    "evening": [
-                        {"time": "05:30 PM", "activity": f"Evening Sandhya Aarti, Bhajan Kirtan & Light Darshan"},
-                        {"time": "08:00 PM", "activity": "Warm Satvik Dinner and Overnight Stay"}
+                    "program_highlights": {
+                        "heading": f"Daily Wellness & Therapy Schedule in {destination}",
+                        "morning": [
+                            {"time": "06:30 AM", "activity": f"Gentle Yoga, Pranayama & Sunrise Meditation in {destination}"},
+                            {"time": "08:30 AM", "activity": "Wholesome Satvik Breakfast & Herbal Infusion"}
+                        ],
+                        "daytime": [
+                            {"time": "10:30 AM", "activity": "Doctor Consultation & Prescribed Ayurvedic Therapy Session"},
+                            {"time": "01:00 PM", "activity": "Nutritious Satvik Lunch & Guided Rest Period"}
+                        ],
+                        "evening": [
+                            {"time": "05:00 PM", "activity": "Evening Mindfulness Meditation & Relaxation Session"},
+                            {"time": "07:30 PM", "activity": "Light Satvik Dinner & Silent Contemplation"}
+                        ],
+                    },
+                    "meal_section_heading": "Ayurvedic & Satvik Dining",
+                    "meal_section_bullets": [
+                        "Freshly prepared organic vegetarian meals aligned with traditional Ayurvedic principles.",
+                        "Tailored nutritional plans to balance Doshas and support internal detoxification.",
                     ],
-                },
-                "meal_section_heading": "Satvik Meals & Dining Standards",
-                "meal_section_bullets": [
-                    "Hygienic 100% pure vegetarian Satvik breakfast, lunch, and dinner prepared fresh daily.",
-                    "Carefully balanced meals prepared without onion or garlic upon request to maintain complete pilgrimage sanctity.",
-                ],
-                "accommodation_heading": f"Verified Accommodations in {destination}",
-                "accommodation_bullets": [
-                    f"Handpicked dharamshalas, ashrams, and hotels in {destination} personally vetted by the YatraDham team.",
-                    "Equipped with 24/7 hot water, sanitized bedding, attached bathrooms, and secure family-friendly premises.",
-                ],
-                "benefits_heading": f"Key Benefits of Booking Through YatraDham.Org",
-                "benefits_items": [
-                    "Guaranteed room reservation near major temple gates to avoid long walking distances.",
-                    "Transparent pricing with clear inclusions and no last-minute roadside agent haggling.",
-                    "Punctual AC / Non-AC private vehicle with polite, route-trained drivers.",
-                    "Flexible check-in options and direct booking confirmation voucher on your phone.",
-                    "Authentic Satvik meals included to keep your family healthy and energized.",
-                    "Dedicated customer support team available 24/7 on WhatsApp and phone.",
-                    "Verified safety protocols for women and senior travelers.",
-                    "Opportunity to pre-book verified Vedic Pandit Ji for special pujas and rituals.",
-                ],
-                "how_to_book_heading": "How to Book Your Package on YatraDham.Org",
-                "how_to_book_steps": [
-                    f"Select your preferred dates and travel group size on the {pkg_name} page.",
-                    "Choose your room category (AC Room / Non-AC Room / Family Suite).",
-                    "Enter guest details and any special puja or pickup requests.",
-                    "Make a secure partial advance payment using UPI, NetBanking, or Cards.",
-                    "Receive instant booking confirmation and driver / hotel contact details.",
-                    f"Arrive in {destination} and experience a blessed and hassle-free yatra.",
-                ],
-                "prices_photos_reviews": f"Package rates for {pkg_name} start from {cost}. Check live availability, verified photos, and authentic devotee reviews directly on YatraDham.Org.",
-                "itinerary": [
-                    {
-                        "day_number": 1,
-                        "sessions": [
-                            {"time": "09:00 AM", "activity": f"Arrival in {destination}, pickup and check-in to verified YatraDham stay."},
-                            {"time": "11:30 AM", "activity": f"First sanctum darshan and temple orientation."},
-                            {"time": "01:30 PM", "activity": "Satvik lunch and rest period."},
-                            {"time": "05:00 PM", "activity": f"Evening temple visit, attending the world-famous evening Aarti and cultural parikrama."},
-                            {"time": "08:30 PM", "activity": "Satvik dinner and peaceful overnight rest."}
-                        ]
+                    "accommodation_heading": f"Verified Wellness Stays in {destination}",
+                    "accommodation_bullets": [
+                        f"Serene eco-friendly rooms and cottages in {destination} surrounded by peaceful natural greenery.",
+                        "Equipped with hot water, sanitized bedding, attached baths, and quiet spaces for deep rest.",
+                    ],
+                    "benefits_heading": f"Key Health & Rejuvenation Benefits",
+                    "benefits_items": [
+                        "Deep stress relief and reduction of accumulated nervous tension.",
+                        "Improved joint flexibility and muscular relaxation through traditional therapies.",
+                        "Enhanced sleep quality through regular meditation and circadian rhythm alignment.",
+                        "Natural bodily detoxification through herbal treatments and warm oils.",
+                        "Digestive revitalization with pure, fiber-rich Satvik nutrition.",
+                        "Heightened mental focus, emotional balance, and inner calm.",
+                        "Restful time away from digital screens in a calm natural setting.",
+                        "Practical lifestyle habits and dietary wisdom to maintain health after your retreat.",
+                    ],
+                    "how_to_book_heading": "How to Book Your Retreat on YatraDham.Org",
+                    "how_to_book_steps": [
+                        f"Select your preferred dates and room type on the {pkg_name} page.",
+                        "Specify any specific wellness concerns or dietary preferences during booking.",
+                        "Enter guest details and number of participants.",
+                        "Complete the secure advance payment using UPI, NetBanking, or Cards.",
+                        "Receive instant booking confirmation and doctor appointment voucher.",
+                        f"Arrive in {destination} and begin your rejuvenating wellness journey.",
+                    ],
+                    "prices_photos_reviews": f"Retreat rates for {pkg_name} start from {cost}. Check live availability, verified retreat photos, and genuine guest reviews on YatraDham.Org.",
+                    "itinerary": [
+                        {
+                            "day_number": 1,
+                            "sessions": [
+                                {"time": "01:00 PM", "activity": f"Arrival in {destination}, check-in to verified wellness stay and welcome herbal drink."},
+                                {"time": "03:30 PM", "activity": "Initial health consultation with Ayurvedic physician and personal treatment plan."},
+                                {"time": "05:30 PM", "activity": "Introductory gentle stretching, breathing exercises and sunset meditation."},
+                                {"time": "07:30 PM", "activity": "Light Satvik dinner and peaceful overnight rest."}
+                            ]
+                        },
+                        {
+                            "day_number": 2,
+                            "sessions": [
+                                {"time": "06:30 AM", "activity": "Morning energizing yoga and pranayama practice."},
+                                {"time": "08:30 AM", "activity": "Nutritious breakfast and therapeutic herbal tea."},
+                                {"time": "10:30 AM", "activity": "Main rejuvenation massage and traditional herbal therapy session."},
+                                {"time": "01:00 PM", "activity": "Ayurvedic lunch, relaxation, and departure transfer."}
+                            ]
+                        }
+                    ],
+                    "pricing_table": [
+                        {"guests": "1 Person (Solo Wellness)", "cost_per_person": cost},
+                        {"guests": "2 Persons (Twin Sharing)", "cost_per_person": "₹4,500 – ₹8,500 per person"},
+                        {"guests": "Extended Retreat (7+ Days)", "cost_per_person": "Special weekly package rates"}
+                    ],
+                    "inclusions": [
+                        f"Accommodation in verified wellness retreat / resort in {destination}",
+                        "Daily Ayurvedic doctor consultation and personalized treatment plan",
+                        "All prescribed traditional therapies, herbal massages, and oils",
+                        "Three wholesome organic Satvik meals daily plus herbal infusions",
+                        "Daily guided yoga, pranayama, and meditation sessions",
+                        "24/7 YatraDham retreat support and reservation assistance"
+                    ],
+                    "exclusions": [
+                        "Travel and flights to and from retreat destination",
+                        "Specialized medical laboratory tests or external hospital prescriptions",
+                        "Personal expenses such as laundry, telephone calls, and shopping",
+                        "Extra specialized wellness therapies outside the standard package"
+                    ],
+                    "nearby_locations_heading": f"How to Reach the Retreat Centre in {destination}",
+                    "nearby_locations": [
+                        {"name": "Nearest Airport", "distance": "Convenient expressway connection (cab transfer available)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "Short drive to wellness centre", "type": "railway"},
+                        {"name": "Local Town Centre", "distance": "Located in peaceful natural sanctuary away from traffic", "type": "sightseeing"}
+                    ],
+                    "cancellation_policy": f"Free cancellation up to 48 hours prior to scheduled check-in for select partner wellness centres. For urgent date modifications for {pkg_name}, contact YatraDham support.",
+                    "payment_policy_bullets": [
+                        "Secure advance deposit required to confirm retreat room and therapist schedule.",
+                        "Balance payment settled upon arrival at the wellness centre.",
+                        "100% encrypted payment options supporting all major UPI, Cards, and NetBanking."
+                    ],
+                    "terms_conditions": [
+                        "Valid government-issued photo ID is required at check-in.",
+                        "Guests are advised to disclose any pre-existing medical conditions during doctor consultation.",
+                        "Silence and serenity are maintained in therapy and meditation zones.",
+                        "Outside non-vegetarian food, alcohol, and smoking are strictly prohibited.",
+                        "Check-in and check-out timings as per wellness retreat schedule.",
+                        "YatraDham.Org acts as a verified booking platform ensuring trusted wellness standards."
+                    ],
+                    "faq": [
+                        {
+                            "question": f"What is included in the {pkg_name}?",
+                            "answer": f"The package includes verified wellness accommodation in {destination}, daily doctor consultations, prescribed Ayurvedic therapies, organic Satvik meals, and daily yoga and meditation sessions throughout your {duration} stay."
+                        },
+                        {
+                            "question": "Is this retreat suitable for complete beginners?",
+                            "answer": "Yes, absolutely. The yoga and meditation sessions are designed for all experience levels, and certified instructors adjust practices according to your personal comfort and capability."
+                        },
+                        {
+                            "question": "Can I continue my regular prescribed medications during the retreat?",
+                            "answer": "Yes. Please bring your ongoing prescriptions and inform the Ayurvedic doctor during your initial health consultation so your therapies can be coordinated safely."
+                        },
+                        {
+                            "question": "How do I confirm my booking on YatraDham.Org?",
+                            "answer": f"You can book directly on YatraDham.Org by choosing your dates, entering guest information, and completing the secure advance payment. Your booking confirmation voucher is issued immediately."
+                        }
+                    ]
+                }
+            elif pkg_category == "stay":
+                sections_dict = {
+                    "package_overview": f"{pkg_name} provides clean, safe, and comfortable accommodation in {destination}. Situated with convenient access to major temples and transit points, this verified stay features hygienic rooms, 24/7 hot water, and a peaceful devotional atmosphere for pilgrims and families.",
+                    "quick_facts": {
+                        "package_name": pkg_name,
+                        "cost": cost,
+                        "duration": duration,
+                        "destination": destination,
+                        "level": "Families, Pilgrims & Groups Welcome",
+                        "accommodation": f"Clean Rooms with Attached Bath in {destination}",
+                        "food": "Satvik Dining / Bhojanalaya Nearby",
+                        "activities": f"Temple Visits & Holy Darshan in {destination}",
                     },
-                    {
-                        "day_number": 2,
-                        "sessions": [
-                            {"time": "06:00 AM", "activity": f"Morning temple parikrama, Mangala Aarti darshan and peaceful meditation."},
-                            {"time": "08:30 AM", "activity": "Traditional breakfast and checkout preparation."},
-                            {"time": "10:30 AM", "activity": f"Visiting adjacent holy shrines and sacred kunds in {destination}."},
-                            {"time": "02:00 PM", "activity": "Satvik lunch, local prasad shopping, and departure transfer."}
-                        ]
-                    }
-                ],
-                "pricing_table": [
-                    {"guests": "1 Person (Solo Traveler)", "cost_per_person": cost},
-                    {"guests": "2 Persons (Twin Sharing)", "cost_per_person": "₹2,500 – ₹4,500 per person"},
-                    {"guests": "Family / Group (4+ Persons)", "cost_per_person": "₹1,800 – ₹3,200 per person"}
-                ],
-                "inclusions": [
-                    f"Accommodation in verified YatraDham dharamshala/hotel in {destination}",
-                    "Dedicated private cab for all sightseeing and temple transfers as per itinerary",
-                    "Pure vegetarian Satvik breakfast, lunch, and dinner",
-                    "All toll taxes, parking fees, state road tax, and driver allowance",
-                    "Temple darshan guidance and 24/7 YatraDham helpline support",
-                    "Sanitized rooms with 24/7 hot water and clean linens"
-                ],
-                "exclusions": [
-                    "Train tickets or flight fares to and from arrival station",
-                    "Personal expenses such as shopping, laundry, and camera fees",
-                    "Special VIP darshan tickets or private priest dakshina",
-                    "Any items or services not explicitly mentioned in the package inclusions"
-                ],
-                "nearby_locations_heading": f"How to Reach & Nearby Connectivity for {destination}",
-                "nearby_locations": [
-                    {"name": "Nearest Railway Station", "distance": "5 – 15 km (Direct cab transfer available)", "type": "railway"},
-                    {"name": "Nearest Airport", "distance": "45 – 120 km (Smooth expressway connection)", "type": "airport"},
-                    {"name": "Main Temple Complex", "distance": "Walking distance from verified YatraDham stay", "type": "sightseeing"}
-                ],
-                "cancellation_policy": f"Free cancellation up to 48 hours before scheduled check-in for select partner properties. For urgent cancellations or date modifications for {pkg_name}, reach out directly to YatraDham support.",
-                "payment_policy_bullets": [
-                    "Secure partial advance payment required to guarantee booking voucher.",
-                    "Balance payment can be cleared upon arrival at the accommodation.",
-                    "100% encrypted payment portal supporting UPI, Google Pay, NetBanking, and Cards."
-                ],
-                "terms_conditions": [
-                    "Valid government-issued photo ID (Aadhaar/Passport/Voter ID) is mandatory at check-in.",
-                    "Temple darshan timings and entry guidelines are subject to temple trust management.",
-                    "Devotees are requested to follow traditional temple attire and maintain sanctum discipline.",
-                    "Vehicles provided will strictly follow the pre-decided itinerary route.",
-                    "Check-in and check-out timings are standard (12:00 PM Check-in / 10:00 AM Check-out) unless requested in advance.",
-                    "YatraDham.Org acts as a verified booking platform to ensure authentic quality and pilgrim convenience."
-                ],
-                "faq": [
-                    {
-                        "question": f"What is included in the {pkg_name}?",
-                        "answer": f"The package includes verified accommodation in {destination}, dedicated private cab transport for temple darshans, hygienic Satvik meals, and 24/7 support throughout your {duration} trip."
+                    "why_choose_heading": f"Why Choose {pkg_name}?",
+                    "why_choose_intro": f"Enjoy a peaceful and verified stay in {destination} with essential pilgrim amenities.",
+                    "why_choose_bullets": [
+                        f"Prime location in {destination} ensuring quick and easy access to temples.",
+                        "Verified by YatraDham for clean linens, hygienic bathrooms, and 24/7 hot water.",
+                        "Peaceful, family-friendly environment adhering to sacred guidelines.",
+                        "Transparent advance room booking with instant confirmation voucher.",
+                        "24/7 YatraDham customer support helpline for check-in assistance.",
+                    ],
+                    "who_can_benefit_heading": f"Who Is This {destination} Stay Ideal For?",
+                    "who_can_benefit_intro": "Ideal for devotees and families seeking a clean and budget-friendly stay.",
+                    "who_can_benefit_bullets": [
+                        "Families traveling with elders looking for safe ground-floor or lift-accessible rooms.",
+                        "Pilgrim groups seeking multiple adjoining rooms or budget family halls.",
+                        "Solo devotees looking for a peaceful and secure ashram atmosphere.",
+                        "Visitors arriving by train/bus who need convenient check-in near transit hubs.",
+                        "Travelers who prefer authentic Satvik dining and calm surroundings.",
+                    ],
+                    "program_highlights": {
+                        "heading": f"Stay Information & Timings in {destination}",
+                        "morning": [
+                            {"time": "06:00 AM", "activity": "Morning Temple Darshan & Aarti Access"},
+                            {"time": "08:00 AM", "activity": "Satvik Breakfast in Bhojanalaya"}
+                        ],
+                        "daytime": [
+                            {"time": "12:00 PM", "activity": "Standard Check-in / Rest Period"},
+                            {"time": "01:30 PM", "activity": "Satvik Lunch Nearby"}
+                        ],
+                        "evening": [
+                            {"time": "06:30 PM", "activity": "Evening Temple Aarti & Parikrama"},
+                            {"time": "08:30 PM", "activity": "Dinner and Overnight Stay"}
+                        ],
                     },
-                    {
-                        "question": f"Is this {destination} package safe and comfortable for senior citizens?",
-                        "answer": f"Yes, absolutely. YatraDham arranges comfortable stays with ground floor room options, lift access, clean western toilets, and vehicles that drop devotees close to temple entrance gates."
+                    "meal_section_heading": "Dining & Bhojanalaya Facilities",
+                    "meal_section_bullets": [
+                        "Pure vegetarian Satvik meals available on-site or at adjacent bhojanalayas.",
+                        "Freshly prepared meals without onion and garlic.",
+                    ],
+                    "accommodation_heading": f"Room Amenities & Features in {destination}",
+                    "accommodation_bullets": [
+                        f"Clean, well-maintained rooms in {destination} with attached private bathrooms.",
+                        "Equipped with 24/7 hot water, fans/AC, clean beds, and secure locks.",
+                    ],
+                    "benefits_heading": f"Key Benefits of Booking Through YatraDham.Org",
+                    "benefits_items": [
+                        "Guaranteed room reservation before arrival to avoid peak-season rushes.",
+                        "Verified cleanliness standards with actual traveler reviews.",
+                        "No hidden roadside broker charges or sudden price inflations.",
+                        "Convenient proximity to main temple gates and bathing ghats.",
+                        "Family-friendly atmosphere with security cameras and caretaker support.",
+                        "Direct SMS and WhatsApp confirmation voucher.",
+                        "Easy cancellation options as per property guidelines.",
+                        "Access to pre-book verified Vedic Pandit Ji for rituals.",
+                    ],
+                    "how_to_book_heading": "How to Book on YatraDham.Org",
+                    "how_to_book_steps": [
+                        f"Choose your check-in and check-out dates on the {pkg_name} page.",
+                        "Select your preferred room type (Non-AC / AC / Family Room).",
+                        "Enter the total number of guests.",
+                        "Make a secure advance payment.",
+                        "Get instant booking voucher with full address and manager contact.",
+                        f"Show your voucher at check-in in {destination} and enjoy your stay.",
+                    ],
+                    "prices_photos_reviews": f"Room rates for {pkg_name} start from {cost}. Check live room availability and real guest reviews on YatraDham.Org.",
+                    "itinerary": [
+                        {"day_number": 1, "sessions": [{"time": "12:00 PM", "activity": "Check-in and room allocation."}, {"time": "06:00 PM", "activity": "Evening temple visit and aarti."}]},
+                        {"day_number": 2, "sessions": [{"time": "06:00 AM", "activity": "Morning darshan."}, {"time": "10:00 AM", "activity": "Standard check-out."}]}
+                    ],
+                    "pricing_table": [
+                        {"guests": "1 - 2 Guests (Standard Room)", "cost_per_person": cost},
+                        {"guests": "3 - 4 Guests (Family Room)", "cost_per_person": "Budget friendly rates"},
+                        {"guests": "Group Booking (5+ Persons)", "cost_per_person": "Contact for group hall"}
+                    ],
+                    "inclusions": [
+                        "Clean room accommodation with attached bathroom",
+                        "24/7 hot water and clean bed linen",
+                        "Drinking water facility",
+                        "24/7 caretaker assistance on premises",
+                        "Instant booking confirmation voucher"
+                    ],
+                    "exclusions": [
+                        "Meals (unless specifically included in room plan)",
+                        "Personal laundry and room service tips",
+                        "Transit cab fares to and from station",
+                        "VIP darshan passes"
+                    ],
+                    "nearby_locations_heading": f"Landmarks & Temple Proximity in {destination}",
+                    "nearby_locations": [
+                        {"name": "Main Temple Sanctum", "distance": "Walking distance (500m - 1.5km)", "type": "sightseeing"},
+                        {"name": "Nearest Bus Stand / Auto Stand", "distance": "5 - 10 minutes", "type": "bus"},
+                        {"name": "Nearest Railway Station", "distance": "Short cab drive", "type": "railway"}
+                    ],
+                    "cancellation_policy": f"Cancellations allowed as per standard property guidelines. Contact YatraDham support for assistance.",
+                    "payment_policy_bullets": ["Secure partial advance payment.", "Balance payable at property check-in.", "All online payment modes accepted."],
+                    "terms_conditions": [
+                        "Government photo ID is mandatory for all adult guests.",
+                        "Standard check-in and check-out timings apply.",
+                        "Premises maintain sacred discipline — alcohol and non-veg strictly prohibited.",
+                        "Guests are responsible for their personal belongings."
+                    ],
+                    "faq": [
+                        {"question": "What are the check-in and check-out timings?", "answer": "Standard check-in is at 12:00 PM and check-out is at 10:00 AM unless early check-in is confirmed."},
+                        {"question": "Is hot water available in the rooms?", "answer": "Yes, 24/7 geyser or solar hot water is provided in all attached bathrooms."},
+                        {"question": "How far is the property from the main temple?", "answer": f"The property is conveniently located within easy walking or e-rickshaw distance from the main temples in {destination}."}
+                    ]
+                }
+            else:
+                # PILGRIMAGE TOUR
+                sections_dict = {
+                    "package_overview": f"The {pkg_name} offers a sacred, well-organized spiritual journey to {destination}. Designed for pilgrims seeking a comfortable and devout experience, this {duration} itinerary covers prominent temples, sacred sanctums, and peaceful ashram visits with verified YatraDham accommodation and pure Satvik dining.",
+                    "quick_facts": {
+                        "package_name": pkg_name,
+                        "cost": cost,
+                        "duration": duration,
+                        "destination": destination,
+                        "level": "All Devotees & Age Groups Welcome",
+                        "accommodation": f"Verified Dharamshala / Hotel in {destination} via YatraDham",
+                        "food": "100% Pure Vegetarian Satvik Meals",
+                        "activities": f"Temple Darshan, Guided Aarti, Sacred Parikrama in {destination}",
                     },
-                    {
-                        "question": "What kind of food is served during the tour?",
-                        "answer": "100% pure vegetarian, freshly cooked Satvik meals (dal, roti, sabzi, rice, salad) are served. Jain meals without onion and garlic can also be arranged on request."
+                    "why_choose_heading": f"Why Choose {pkg_name}?",
+                    "why_choose_intro": f"Experience a seamless and spiritually fulfilling visit to {destination} with trusted local logistics.",
+                    "why_choose_bullets": [
+                        f"Carefully planned {duration} schedule allowing unhurried darshan at all major temples in {destination}.",
+                        f"Verified clean accommodations with hot water, clean linens, and peaceful surroundings booked via YatraDham.",
+                        "Dedicated private cab transport with experienced local drivers for comfortable temple transfers.",
+                        "Nutritious Satvik vegetarian meals included throughout the journey.",
+                        "24/7 on-ground assistance and transparent pricing with no hidden roadside agent markups.",
+                    ],
+                    "who_can_benefit_heading": f"Who Is This {destination} Pilgrimage Ideal For?",
+                    "who_can_benefit_intro": "This package is crafted to meet the needs of families, seniors, and independent spiritual seekers.",
+                    "who_can_benefit_bullets": [
+                        "Families seeking a peaceful, well-coordinated pilgrimage without the stress of finding last-minute stays.",
+                        "Senior citizens who require comfortable transport, easily accessible temple entries, and pure Satvik food.",
+                        "Working professionals and couples looking for a meaningful weekend spiritual reset.",
+                        "Devotees traveling in groups who want assured dharamshala rooms and verified cab coordination.",
+                        "First-time visitors to {destination} who benefit from local route expertise and fixed darshan schedules.",
+                    ],
+                    "program_highlights": {
+                        "heading": f"Daily Program & Darshan Highlights in {destination}",
+                        "morning": [
+                            {"time": "06:00 AM", "activity": f"Morning Mangala Aarti & Sacred Temple Darshan in {destination}"},
+                            {"time": "08:30 AM", "activity": "Traditional Satvik Breakfast & Preparation for Sightseeing"}
+                        ],
+                        "daytime": [
+                            {"time": "11:00 AM", "activity": f"Main Sanctum Visit, Special Puja & Temple Parikrama"},
+                            {"time": "01:30 PM", "activity": "Hygienic Satvik Lunch and Relaxation at Stay"}
+                        ],
+                        "evening": [
+                            {"time": "05:30 PM", "activity": f"Evening Sandhya Aarti, Bhajan Kirtan & Light Darshan"},
+                            {"time": "08:00 PM", "activity": "Warm Satvik Dinner and Overnight Stay"}
+                        ],
                     },
-                    {
-                        "question": "How do I confirm my booking on YatraDham.Org?",
-                        "answer": f"You can book directly on YatraDham.Org by selecting your travel dates, choosing your room type, and making a secure online advance payment. A confirmed booking voucher is generated instantly."
-                    }
-                ]
-            }
+                    "meal_section_heading": "Satvik Meals & Dining Standards",
+                    "meal_section_bullets": [
+                        "Hygienic 100% pure vegetarian Satvik breakfast, lunch, and dinner prepared fresh daily.",
+                        "Carefully balanced meals prepared without onion or garlic upon request to maintain complete pilgrimage sanctity.",
+                    ],
+                    "accommodation_heading": f"Verified Accommodations in {destination}",
+                    "accommodation_bullets": [
+                        f"Handpicked dharamshalas, ashrams, and hotels in {destination} personally vetted by the YatraDham team.",
+                        "Equipped with 24/7 hot water, sanitized bedding, attached bathrooms, and secure family-friendly premises.",
+                    ],
+                    "benefits_heading": f"Key Benefits of Booking Through YatraDham.Org",
+                    "benefits_items": [
+                        "Guaranteed room reservation near major temple gates to avoid long walking distances.",
+                        "Transparent pricing with clear inclusions and no last-minute roadside agent haggling.",
+                        "Punctual AC / Non-AC private vehicle with polite, route-trained drivers.",
+                        "Flexible check-in options and direct booking confirmation voucher on your phone.",
+                        "Authentic Satvik meals included to keep your family healthy and energized.",
+                        "Dedicated customer support team available 24/7 on WhatsApp and phone.",
+                        "Verified safety protocols for women and senior travelers.",
+                        "Opportunity to pre-book verified Vedic Pandit Ji for special pujas and rituals.",
+                    ],
+                    "how_to_book_heading": "How to Book Your Package on YatraDham.Org",
+                    "how_to_book_steps": [
+                        f"Select your preferred dates and travel group size on the {pkg_name} page.",
+                        "Choose your room category (AC Room / Non-AC Room / Family Suite).",
+                        "Enter guest details and any special puja or pickup requests.",
+                        "Make a secure partial advance payment using UPI, NetBanking, or Cards.",
+                        "Receive instant booking confirmation and driver / hotel contact details.",
+                        f"Arrive in {destination} and experience a blessed and hassle-free yatra.",
+                    ],
+                    "prices_photos_reviews": f"Package rates for {pkg_name} start from {cost}. Check live availability, verified photos, and authentic devotee reviews directly on YatraDham.Org.",
+                    "itinerary": [
+                        {
+                            "day_number": 1,
+                            "sessions": [
+                                {"time": "09:00 AM", "activity": f"Arrival in {destination}, pickup and check-in to verified YatraDham stay."},
+                                {"time": "11:30 AM", "activity": f"First sanctum darshan and temple orientation."},
+                                {"time": "01:30 PM", "activity": "Satvik lunch and rest period."},
+                                {"time": "05:00 PM", "activity": f"Evening temple visit, attending the world-famous evening Aarti and cultural parikrama."},
+                                {"time": "08:30 PM", "activity": "Satvik dinner and peaceful overnight rest."}
+                            ]
+                        },
+                        {
+                            "day_number": 2,
+                            "sessions": [
+                                {"time": "06:00 AM", "activity": f"Morning temple parikrama, Mangala Aarti darshan and peaceful meditation."},
+                                {"time": "08:30 AM", "activity": "Traditional breakfast and checkout preparation."},
+                                {"time": "10:30 AM", "activity": f"Visiting adjacent holy shrines and sacred kunds in {destination}."},
+                                {"time": "02:00 PM", "activity": "Satvik lunch, local prasad shopping, and departure transfer."}
+                            ]
+                        }
+                    ],
+                    "pricing_table": [
+                        {"guests": "1 Person (Solo Traveler)", "cost_per_person": cost},
+                        {"guests": "2 Persons (Twin Sharing)", "cost_per_person": "₹2,500 – ₹4,500 per person"},
+                        {"guests": "Family / Group (4+ Persons)", "cost_per_person": "₹1,800 – ₹3,200 per person"}
+                    ],
+                    "inclusions": [
+                        f"Accommodation in verified YatraDham dharamshala/hotel in {destination}",
+                        "Dedicated private cab for all sightseeing and temple transfers as per itinerary",
+                        "Pure vegetarian Satvik breakfast, lunch, and dinner",
+                        "All toll taxes, parking fees, state road tax, and driver allowance",
+                        "Temple darshan guidance and 24/7 YatraDham helpline support",
+                        "Sanitized rooms with 24/7 hot water and clean linens"
+                    ],
+                    "exclusions": [
+                        "Train tickets or flight fares to and from arrival station",
+                        "Personal expenses such as shopping, laundry, and camera fees",
+                        "Special VIP darshan tickets or private priest dakshina",
+                        "Any items or services not explicitly mentioned in the package inclusions"
+                    ],
+                    "nearby_locations_heading": f"How to Reach & Nearby Connectivity for {destination}",
+                    "nearby_locations": [
+                        {"name": "Nearest Railway Station", "distance": "5 – 15 km (Direct cab transfer available)", "type": "railway"},
+                        {"name": "Nearest Airport", "distance": "45 – 120 km (Smooth expressway connection)", "type": "airport"},
+                        {"name": "Main Temple Complex", "distance": "Walking distance from verified YatraDham stay", "type": "sightseeing"}
+                    ],
+                    "cancellation_policy": f"Free cancellation up to 48 hours before scheduled check-in for select partner properties. For urgent cancellations or date modifications for {pkg_name}, reach out directly to YatraDham support.",
+                    "payment_policy_bullets": [
+                        "Secure partial advance payment required to guarantee booking voucher.",
+                        "Balance payment can be cleared upon arrival at the accommodation.",
+                        "100% encrypted payment portal supporting UPI, Google Pay, NetBanking, and Cards."
+                    ],
+                    "terms_conditions": [
+                        "Valid government-issued photo ID (Aadhaar/Passport/Voter ID) is mandatory at check-in.",
+                        "Temple darshan timings and entry guidelines are subject to temple trust management.",
+                        "Devotees are requested to follow traditional temple attire and maintain sanctum discipline.",
+                        "Vehicles provided will strictly follow the pre-decided itinerary route.",
+                        "Check-in and check-out timings are standard (12:00 PM Check-in / 10:00 AM Check-out) unless requested in advance.",
+                        "YatraDham.Org acts as a verified booking platform to ensure authentic quality and pilgrim convenience."
+                    ],
+                    "faq": [
+                        {
+                            "question": f"What is included in the {pkg_name}?",
+                            "answer": f"The package includes verified accommodation in {destination}, dedicated private cab transport for temple darshans, hygienic Satvik meals, and 24/7 support throughout your {duration} trip."
+                        },
+                        {
+                            "question": f"Is this {destination} package safe and comfortable for senior citizens?",
+                            "answer": f"Yes, absolutely. YatraDham arranges comfortable stays with ground floor room options, lift access, clean western toilets, and vehicles that drop devotees close to temple entrance gates."
+                        },
+                        {
+                            "question": "What kind of food is served during the tour?",
+                            "answer": "100% pure vegetarian, freshly cooked Satvik meals (dal, roti, sabzi, rice, salad) are served. Jain meals without onion and garlic can also be arranged on request."
+                        },
+                        {
+                            "question": "How do I confirm my booking on YatraDham.Org?",
+                            "answer": f"You can book directly on YatraDham.Org by selecting your travel dates, choosing your room type, and making a secure online advance payment. A confirmed booking voucher is generated instantly."
+                        }
+                    ]
+                }
             return json.dumps(sections_dict)
 
         # AGENT: Title Tag Agent
         if "title tag" in system_msg.lower() or "title specialist" in system_msg.lower():
-            title_clean = f"{duration} {destination} Tour Package | YatraDham.Org"
+            if pkg_category == "wellness":
+                title_clean = f"{pkg_name[:45]} | YatraDham.Org"
+            elif pkg_category == "stay":
+                title_clean = f"{pkg_name[:45]} | YatraDham.Org"
+            else:
+                title_clean = f"{duration} {destination} Tour Package | YatraDham.Org"
             if len(title_clean) > 60:
                 title_clean = f"{pkg_name[:45]} | YatraDham.Org"
             return json.dumps({"title_tag": title_clean[:60]})
 
         # AGENT: Keyword Agent
         if "keyword" in system_msg.lower() and "meta" not in system_msg.lower() and "overview" not in system_msg.lower():
+            if pkg_category == "wellness":
+                secondary = [f"{destination} wellness retreat", f"Ayurvedic retreat in {destination}", f"{pkg_name} cost", "YatraDham wellness"]
+            elif pkg_category == "stay":
+                secondary = [f"{destination} dharamshala booking", f"best stay in {destination}", f"{pkg_name} price", "YatraDham stays"]
+            else:
+                secondary = [f"{destination} tour package", f"{pkg_name} price", f"best {destination} dharamshala", "YatraDham booking"]
             return json.dumps({
-                "primary_keyword": keyword or f"{duration} {destination}",
-                "secondary_keywords": [f"{destination} tour package", f"{pkg_name} price", f"best {destination} dharamshala", "YatraDham booking"]
+                "primary_keyword": keyword,
+                "secondary_keywords": secondary
             })
 
         # AGENT: Meta Description Agent
         if "meta description" in system_msg.lower():
-            meta_desc = f"Book verified {pkg_name} in {destination} with YatraDham.Org. Clean rooms, satvik meals & seamless booking. Reserve your spot now!"
+            if pkg_category == "wellness":
+                meta_desc = f"Experience authentic healing with {pkg_name} in {destination}. Verified wellness stays, doctor consultations & Satvik meals. Book now!"
+            elif pkg_category == "stay":
+                meta_desc = f"Book verified stay at {pkg_name} in {destination}. Clean rooms, hot water & secure booking on YatraDham.Org. Reserve your spot now!"
+            else:
+                meta_desc = f"Book verified {pkg_name} in {destination} with YatraDham.Org. Clean rooms, satvik meals & seamless booking. Reserve your spot now!"
             return json.dumps({"meta_description": meta_desc[:155]})
 
         # AGENT: QA Agent
         if "qa" in system_msg.lower() or "quality assurance" in system_msg.lower():
-            return json.dumps({"score": 95, "flags": ["PASS"], "notes": "All 19 sections verified with real destination, pricing, and E-E-A-T grounding."})
+            return json.dumps({"score": 95, "flags": ["PASS"], "notes": f"All 19 sections verified for {pkg_category} category."})
+
 
         # Content Studio & Long-form Blog Generation
         return f"""# TITLE
