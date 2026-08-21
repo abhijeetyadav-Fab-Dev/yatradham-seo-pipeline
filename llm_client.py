@@ -60,7 +60,7 @@ class LLMClient:
         self.gemini_model = os.getenv("GEMINI_MODEL", GEMINI_DEFAULT_MODEL)
 
         self.last_call_time = 0.0
-        self.min_interval = 2.0  # Safe rate limit throttle (2.0s between calls)
+        self.min_interval = 0.05  # Ultra-fast non-blocking throttle
         self.last_provider_used = None
         self.last_model_used = None
         self.last_error = None
@@ -275,8 +275,22 @@ class LLMClient:
             self.last_error = "No API keys configured. Set GROQ_API_KEY or GEMINI_API_KEY."
             return self._mock_response(messages)
 
+        now = time.time()
+        if not hasattr(self, "_failed_providers"):
+            self._failed_providers = {}
+        self._failed_providers = {k: v for k, v in self._failed_providers.items() if now - v < 60}
+
+        active_providers = [p for p in providers if p[0] not in self._failed_providers]
+        if not active_providers:
+            active_providers = providers
+
         self.errors = {}
-        for provider_name, client_inst, active_model in providers:
+        exhausted_providers = set()
+
+        for provider_name, client_inst, active_model in active_providers:
+            if provider_name in exhausted_providers:
+                continue
+
             self._wait_for_rate_limit()
             try:
                 safe_temp = max(0.2, min(temperature, 0.65))
@@ -286,7 +300,7 @@ class LLMClient:
                     "messages": messages,
                     "max_tokens": safe_max_tokens,
                     "temperature": safe_temp,
-                    "timeout": 45.0,
+                    "timeout": 12.0,
                 }
                 if provider_name in ["groq", "openrouter"]:
                     kwargs["top_p"] = 0.95
@@ -332,6 +346,10 @@ class LLMClient:
                 err_msg = str(e)
                 self.errors[f"{provider_name}:{active_model}"] = err_msg
                 logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next...")
+                if any(code in err_msg.lower() for code in ["429", "rate_limit", "rate limit", "401", "402", "403", "unauthorized", "insufficient_quota", "payment"]):
+                    logger.warning(f"Provider {provider_name} is exhausted or blocked. Skipping remaining models on {provider_name}.")
+                    exhausted_providers.add(provider_name)
+                    self._failed_providers[provider_name] = time.time()
                 continue
 
         # If all providers fail, record error and return mock

@@ -1,16 +1,16 @@
 # Graph Report - yatradham-seo-pipeline  (2026-08-21)
 
 ## Corpus Check
-- 18 files · ~36,412 words
+- 18 files · ~36,612 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 174 nodes · 423 edges · 10 communities
-- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.5)
+- 174 nodes · 420 edges · 10 communities
+- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 40 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7fd7a1c2`
+- Built from commit: `19622f93`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,9 +26,9 @@
 ## God Nodes (most connected - your core abstractions)
 1. `LLMClient` - 31 edges
 2. `run_suite()` - 19 edges
-3. `process_package()` - 17 edges
-4. `SEOOutput` - 15 edges
-5. `PackageInput` - 14 edges
+3. `SEOOutput` - 15 edges
+4. `PackageInput` - 14 edges
+5. `process_package()` - 14 edges
 6. `SectionedContent` - 13 edges
 7. `save_output()` - 12 edges
 8. `worker_db_stress()` - 12 edges
@@ -84,16 +84,16 @@ Nodes (8): get, export_csv(), get_outputs(), get_single_output(), List all SEO o
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `LLMClient` connect `LLMClient` to `main.py`, `stress_test.py`, `qa_agent.py`, `test_e2e_suite.py`?**
-  _High betweenness centrality (0.266) - this node is a cross-community bridge._
+  _High betweenness centrality (0.289) - this node is a cross-community bridge._
 - **Why does `process_package()` connect `main.py` to `stress_test.py`, `LLMClient`, `models.py`, `test_e2e_suite.py`, `qa_agent.py`?**
-  _High betweenness centrality (0.063) - this node is a cross-community bridge._
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **Why does `run_suite()` connect `test_e2e_suite.py` to `main.py`, `stress_test.py`, `LLMClient`, `models.py`, `export_csv`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+  _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Are the 11 inferred relationships involving `LLMClient` (e.g. with `run()` and `_generate_long_form_blog()`) actually correct?**
   _`LLMClient` has 11 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 4 inferred relationships involving `run_suite()` (e.g. with `LLMClient` and `PackageInput`) actually correct?**
   _`run_suite()` has 4 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 4 inferred relationships involving `process_package()` (e.g. with `LLMClient` and `PackageInput`) actually correct?**
-  _`process_package()` has 4 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 8 inferred relationships involving `SEOOutput` (e.g. with `get_output()` and `list_outputs()`) actually correct?**
   _`SEOOutput` has 8 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 7 inferred relationships involving `PackageInput` (e.g. with `_row_to_output()` and `process_batch_background()`) actually correct?**
+  _`PackageInput` has 7 INFERRED edges - model-reasoned connections that need verification._

@@ -1,5 +1,6 @@
-"""Orchestrator: runs all 5 agents in sequence."""
+"""Orchestrator: runs all 5 agents with parallel acceleration."""
 import json
+import concurrent.futures
 from typing import Dict, Any
 from datetime import datetime
 from models import SEOOutput, PackageInput, SectionedContent
@@ -8,25 +9,28 @@ from agents import keyword_agent, title_agent, meta_agent, content_agent, qa_age
 
 
 def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput:
-    """Run the full pipeline on a single package."""
+    """Run the full pipeline on a single package with parallel agent execution."""
     pkg_data = package_input.model_dump()
 
-    # Agent 1: Keywords
+    # Agent 1: Keywords (needed by downstream agents)
     kw_result = keyword_agent.run(pkg_data, client)
     primary_keyword = kw_result.get("primary_keyword", pkg_data.get("name", ""))
 
-    # Agent 2: Title
-    title_result = title_agent.run(pkg_data, primary_keyword, client)
-    title_tag = title_result.get("title_tag", primary_keyword)
+    # Run Agent 2 (Title), Agent 3 (Meta), and Agent 4 (Content) in parallel
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
+        f_title = pool.submit(title_agent.run, pkg_data, primary_keyword, client)
+        f_content = pool.submit(content_agent.run, pkg_data, primary_keyword, client)
+        title_result = f_title.result()
+        title_tag = title_result.get("title_tag", primary_keyword)
+        
+        # Meta agent can run with the resolved title
+        f_meta = pool.submit(meta_agent.run, pkg_data, title_tag, primary_keyword, client)
+        meta_result = f_meta.result()
+        content_result = f_content.result()
 
-    # Agent 3: Meta
-    meta_result = meta_agent.run(pkg_data, title_tag, primary_keyword, client)
     meta_description = meta_result.get("meta_description", "")
 
-    # Agent 4: Content (all 19 sections)
-    content_result = content_agent.run(pkg_data, primary_keyword, client)
-
-    # Agent 5: QA
+    # Agent 5: QA Review
     qa_result = qa_agent.run(content_result, title_tag, meta_description, client)
 
     # Build output
