@@ -1,8 +1,10 @@
 """FastAPI server with .env auto-loading, URL auto-scraping, batch processing, export, and stats."""
 import os
+import re
 import json
 import csv
 import io
+import time
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 from contextlib import asynccontextmanager

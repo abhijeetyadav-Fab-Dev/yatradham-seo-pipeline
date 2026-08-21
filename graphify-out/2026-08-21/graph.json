@@ -121,10 +121,23 @@
       "norm_label": "llmclient"
     },
     {
+      "label": "PackageInput",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L7",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "models_packageinput",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "packageinput"
+    },
+    {
       "label": "BatchRequest",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L107",
+      "source_location": "L123",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -137,7 +150,7 @@
       "label": "BulkActionRequest",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L111",
+      "source_location": "L127",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -238,29 +251,16 @@
       "norm_label": "quickfacts"
     },
     {
-      "label": "PackageInput",
+      "label": "batch_process()",
       "file_type": "code",
-      "source_file": "models.py",
-      "source_location": "L7",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "models_packageinput",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "packageinput"
-    },
-    {
-      "label": "clear_all_outputs()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L205",
+      "source_file": "main.py",
+      "source_location": "L241",
       "_callable": true,
       "_origin": "ast",
-      "id": "database_clear_all_outputs",
+      "id": "main_batch_process",
       "community": 1,
       "community_name": "main.py",
-      "norm_label": "clear_all_outputs()"
+      "norm_label": "batch_process()"
     },
     {
       "label": "batch_urls()",
@@ -273,6 +273,18 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "batch_urls()"
+    },
+    {
+      "label": "bulk_action()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L299",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_bulk_action",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "bulk_action()"
     },
     {
       "label": "check_ai_endpoint()",
@@ -311,18 +323,6 @@
       "norm_label": "delete_single_output()"
     },
     {
-      "label": "export_csv()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L430",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_export_csv",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "export_csv()"
-    },
-    {
       "label": "generate_content()",
       "file_type": "code",
       "source_file": "main.py",
@@ -333,30 +333,6 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "generate_content()"
-    },
-    {
-      "label": "get_outputs()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L256",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_get_outputs",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "get_outputs()"
-    },
-    {
-      "label": "get_single_output()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L268",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_get_single_output",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "get_single_output()"
     },
     {
       "label": "humanize_endpoint()",
@@ -407,6 +383,18 @@
       "norm_label": "lifespan()"
     },
     {
+      "label": "process_single()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L230",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_process_single",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "process_single()"
+    },
+    {
       "label": "query_undetectable_detector()",
       "file_type": "code",
       "source_file": "main.py",
@@ -419,28 +407,16 @@
       "norm_label": "query_undetectable_detector()"
     },
     {
-      "label": "root()",
+      "label": "scrape_and_process()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L70",
+      "source_location": "L87",
       "_callable": true,
       "_origin": "ast",
-      "id": "main_root",
+      "id": "main_scrape_and_process",
       "community": 1,
       "community_name": "main.py",
-      "norm_label": "root()"
-    },
-    {
-      "label": "stats()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L425",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_stats",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "stats()"
+      "norm_label": "scrape_and_process()"
     },
     {
       "label": "test_provider_endpoint()",
@@ -575,6 +551,30 @@
       "norm_label": "generate_copyleaks_recommendations()"
     },
     {
+      "label": ".sanitize_meta_description()",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L116",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "models_seooutput_sanitize_meta_description",
+      "community": 12,
+      "community_name": ".sanitize_meta_description",
+      "norm_label": ".sanitize_meta_description()"
+    },
+    {
+      "label": ".sanitize_title_tag()",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L108",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "models_seooutput_sanitize_title_tag",
+      "community": 12,
+      "community_name": ".sanitize_meta_description",
+      "norm_label": ".sanitize_title_tag()"
+    },
+    {
       "label": "bulk_update_status()",
       "file_type": "code",
       "source_file": "database.py",
@@ -585,6 +585,18 @@
       "community": 2,
       "community_name": "test_e2e_suite.py",
       "norm_label": "bulk_update_status()"
+    },
+    {
+      "label": "clear_all_outputs()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L205",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_clear_all_outputs",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "clear_all_outputs()"
     },
     {
       "label": "delete_output()",
@@ -695,6 +707,18 @@
       "norm_label": "_row_to_output()"
     },
     {
+      "label": "save_output()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L76",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_save_output",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "save_output()"
+    },
+    {
       "label": "_sections_to_dict()",
       "file_type": "code",
       "source_file": "database.py",
@@ -717,6 +741,30 @@
       "community": 2,
       "community_name": "test_e2e_suite.py",
       "norm_label": "update_output()"
+    },
+    {
+      "label": "export_csv()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L430",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_export_csv",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "export_csv()"
+    },
+    {
+      "label": "stats()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L425",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_stats",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "stats()"
     },
     {
       "label": "update_single_output()",
@@ -995,42 +1043,6 @@
       "norm_label": "._wait_for_rate_limit()"
     },
     {
-      "label": "bulk_action()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L299",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_bulk_action",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "bulk_action()"
-    },
-    {
-      "label": "save_output()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L76",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_save_output",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "save_output()"
-    },
-    {
-      "label": "batch_process()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L241",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_batch_process",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "batch_process()"
-    },
-    {
       "label": "process_batch_background()",
       "file_type": "code",
       "source_file": "main.py",
@@ -1038,33 +1050,9 @@
       "_callable": true,
       "_origin": "ast",
       "id": "main_process_batch_background",
-      "community": 5,
-      "community_name": "pipeline.py",
+      "community": 3,
+      "community_name": "LLMClient",
       "norm_label": "process_batch_background()"
-    },
-    {
-      "label": "process_single()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L230",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_process_single",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "process_single()"
-    },
-    {
-      "label": "scrape_and_process()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L87",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_scrape_and_process",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "scrape_and_process()"
     },
     {
       "label": "process_package()",
@@ -1074,8 +1062,8 @@
       "_callable": true,
       "_origin": "ast",
       "id": "pipeline_process_package",
-      "community": 5,
-      "community_name": "pipeline.py",
+      "community": 3,
+      "community_name": "LLMClient",
       "norm_label": "process_package()"
     },
     {
@@ -1087,7 +1075,7 @@
       "_origin": "ast",
       "id": "scraper_extract_package_data",
       "community": 5,
-      "community_name": "pipeline.py",
+      "community_name": "extract_package_data",
       "norm_label": "extract_package_data()"
     },
     {
@@ -1173,6 +1161,42 @@
       "community": 6,
       "community_name": "content_creator_agent.py",
       "norm_label": "de_slop_and_humanize()"
+    },
+    {
+      "label": "get_outputs()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L256",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_get_outputs",
+      "community": 7,
+      "community_name": "get",
+      "norm_label": "get_outputs()"
+    },
+    {
+      "label": "get_single_output()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L268",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_get_single_output",
+      "community": 7,
+      "community_name": "get",
+      "norm_label": "get_single_output()"
+    },
+    {
+      "label": "root()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L70",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_root",
+      "community": 7,
+      "community_name": "get",
+      "norm_label": "root()"
     },
     {
       "label": "run()",
@@ -1474,17 +1498,6 @@
       "norm_label": "fastapi"
     },
     {
-      "label": "get",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "get",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "get"
-    },
-    {
       "label": "main.py",
       "file_type": "code",
       "source_file": "main.py",
@@ -1505,6 +1518,17 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "basemodel"
+    },
+    {
+      "label": "post",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "post",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "post"
     },
     {
       "label": "FastAPI server with .env auto-loading, URL auto-scraping, batch processing,\u2026",
@@ -1529,15 +1553,37 @@
       "norm_label": "scrape and process multiple urls automatically in the background."
     },
     {
-      "label": "List all SEO outputs with optional filter and pagination.",
+      "label": "Process a single package through all 5 agents (manual JSON input).",
       "file_type": "rationale",
       "source_file": "main.py",
-      "source_location": "L262",
+      "source_location": "L231",
       "_origin": "ast",
-      "id": "main_rationale_262",
+      "id": "main_rationale_231",
       "community": 1,
       "community_name": "main.py",
-      "norm_label": "list all seo outputs with optional filter and pagination."
+      "norm_label": "process a single package through all 5 agents (manual json input)."
+    },
+    {
+      "label": "Process multiple packages from JSON (manual input).",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L242",
+      "_origin": "ast",
+      "id": "main_rationale_242",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "process multiple packages from json (manual input)."
+    },
+    {
+      "label": "Bulk approve or reject outputs.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L300",
+      "_origin": "ast",
+      "id": "main_rationale_300",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "bulk approve or reject outputs."
     },
     {
       "label": "Wipe all outputs from the database to start fresh.",
@@ -1584,17 +1630,6 @@
       "norm_label": "generate net-new seo content from scratch using ai."
     },
     {
-      "label": "Export outputs to CSV.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L431",
-      "_origin": "ast",
-      "id": "main_rationale_431",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "export outputs to csv."
-    },
-    {
       "label": "Humanize multi-section markdown text concurrently with 21-pattern de-slopper\u2026",
       "file_type": "rationale",
       "source_file": "main.py",
@@ -1604,6 +1639,17 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "humanize multi-section markdown text concurrently with 21-pattern de-slopper..."
+    },
+    {
+      "label": "Scrape a Yatradham URL and auto-process through all 5 agents with custom\u2026",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L88",
+      "_origin": "ast",
+      "id": "main_rationale_88",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "scrape a yatradham url and auto-process through all 5 agents with custom..."
     },
     {
       "label": "__init__.py",
@@ -1727,6 +1773,28 @@
       "norm_label": "query official copyleaks cloud api if credentials are provided, otherwise..."
     },
     {
+      "label": "field_validator",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "field_validator",
+      "community": 12,
+      "community_name": ".sanitize_meta_description",
+      "norm_label": "field_validator"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "models_py_any",
+      "community": 12,
+      "community_name": ".sanitize_meta_description",
+      "norm_label": "any"
+    },
+    {
       "label": "database.py",
       "file_type": "code",
       "source_file": "database.py",
@@ -1824,6 +1892,17 @@
       "community": 2,
       "community_name": "test_e2e_suite.py",
       "norm_label": "execute a database operation with exponential backoff on lock contention."
+    },
+    {
+      "label": "Export outputs to CSV.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L431",
+      "_origin": "ast",
+      "id": "main_rationale_431",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "export outputs to csv."
     },
     {
       "label": "High-Concurrency Multi-Threaded Stress Test Suite for Yatradham SEO Pipeline.",
@@ -2013,6 +2092,17 @@
       "norm_label": "openai"
     },
     {
+      "label": "pipeline.py",
+      "file_type": "code",
+      "source_file": "pipeline.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pipeline",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "pipeline.py"
+    },
+    {
       "label": "Content agent: generates all 19 structured sections from scraped page data.",
       "file_type": "rationale",
       "source_file": "agents/content_agent.py",
@@ -2123,6 +2213,28 @@
       "norm_label": "allow setting runtime keys dynamically for a request without server restart."
     },
     {
+      "label": "Orchestrator: runs all 5 agents with fault-tolerant parallel acceleration.",
+      "file_type": "rationale",
+      "source_file": "pipeline.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pipeline_rationale_1",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "orchestrator: runs all 5 agents with fault-tolerant parallel acceleration."
+    },
+    {
+      "label": "Run the full pipeline on a single package with parallel agent execution and\u2026",
+      "file_type": "rationale",
+      "source_file": "pipeline.py",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "pipeline_rationale_12",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "run the full pipeline on a single package with parallel agent execution and..."
+    },
+    {
       "label": "models.py",
       "file_type": "code",
       "source_file": "models.py",
@@ -2145,17 +2257,6 @@
       "norm_label": "basemodel"
     },
     {
-      "label": "Bulk approve or reject outputs.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L300",
-      "_origin": "ast",
-      "id": "main_rationale_300",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "bulk approve or reject outputs."
-    },
-    {
       "label": "Pydantic models for the SEO pipeline.",
       "file_type": "rationale",
       "source_file": "models.py",
@@ -2167,28 +2268,6 @@
       "norm_label": "pydantic models for the seo pipeline."
     },
     {
-      "label": "pipeline.py",
-      "file_type": "code",
-      "source_file": "pipeline.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "pipeline",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "pipeline.py"
-    },
-    {
-      "label": "post",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "post",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "post"
-    },
-    {
       "label": "scraper.py",
       "file_type": "code",
       "source_file": "scraper.py",
@@ -2196,7 +2275,7 @@
       "_origin": "ast",
       "id": "scraper",
       "community": 5,
-      "community_name": "pipeline.py",
+      "community_name": "extract_package_data",
       "norm_label": "scraper.py"
     },
     {
@@ -2207,63 +2286,8 @@
       "_origin": "ast",
       "id": "scraper_py_any",
       "community": 5,
-      "community_name": "pipeline.py",
+      "community_name": "extract_package_data",
       "norm_label": "any"
-    },
-    {
-      "label": "Process a single package through all 5 agents (manual JSON input).",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L231",
-      "_origin": "ast",
-      "id": "main_rationale_231",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "process a single package through all 5 agents (manual json input)."
-    },
-    {
-      "label": "Process multiple packages from JSON (manual input).",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L242",
-      "_origin": "ast",
-      "id": "main_rationale_242",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "process multiple packages from json (manual input)."
-    },
-    {
-      "label": "Scrape a Yatradham URL and auto-process through all 5 agents with custom\u2026",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L88",
-      "_origin": "ast",
-      "id": "main_rationale_88",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "scrape a yatradham url and auto-process through all 5 agents with custom..."
-    },
-    {
-      "label": "Orchestrator: runs all 5 agents with fault-tolerant parallel acceleration.",
-      "file_type": "rationale",
-      "source_file": "pipeline.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "pipeline_rationale_1",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "orchestrator: runs all 5 agents with fault-tolerant parallel acceleration."
-    },
-    {
-      "label": "Run the full pipeline on a single package with parallel agent execution and\u2026",
-      "file_type": "rationale",
-      "source_file": "pipeline.py",
-      "source_location": "L12",
-      "_origin": "ast",
-      "id": "pipeline_rationale_12",
-      "community": 5,
-      "community_name": "pipeline.py",
-      "norm_label": "run the full pipeline on a single package with parallel agent execution and..."
     },
     {
       "label": "Extract structured data from Yatradham HTML pages.",
@@ -2273,7 +2297,7 @@
       "_origin": "ast",
       "id": "scraper_rationale_1",
       "community": 5,
-      "community_name": "pipeline.py",
+      "community_name": "extract_package_data",
       "norm_label": "extract structured data from yatradham html pages."
     },
     {
@@ -2284,7 +2308,7 @@
       "_origin": "ast",
       "id": "scraper_rationale_8",
       "community": 5,
-      "community_name": "pipeline.py",
+      "community_name": "extract_package_data",
       "norm_label": "extract basic package metadata and raw text for llm processing with robust..."
     },
     {
@@ -2385,6 +2409,28 @@
       "community": 6,
       "community_name": "content_creator_agent.py",
       "norm_label": "deterministic anti-ai rewriting & de-slopping pipeline: 1. replaces all 43..."
+    },
+    {
+      "label": "get",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "get",
+      "community": 7,
+      "community_name": "get",
+      "norm_label": "get"
+    },
+    {
+      "label": "List all SEO outputs with optional filter and pagination.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L262",
+      "_origin": "ast",
+      "id": "main_rationale_262",
+      "community": 7,
+      "community_name": "get",
+      "norm_label": "list all seo outputs with optional filter and pagination."
     },
     {
       "label": "e2e_browser_test.py",
@@ -3232,7 +3278,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "pipeline.py",
-      "source_location": "L56",
+      "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pipeline_process_package",
@@ -3788,6 +3834,30 @@
       "_origin": "ast",
       "source": "main_update_single_output",
       "target": "put",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L114",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast",
+      "source": "models_seooutput_sanitize_meta_description",
+      "target": "field_validator",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L106",
+      "weight": 1.0,
+      "context": "decorator",
+      "_origin": "ast",
+      "source": "models_seooutput_sanitize_title_tag",
+      "target": "field_validator",
       "confidence_score": 1.0
     },
     {
@@ -5303,6 +5373,30 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L116",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "models_seooutput_sanitize_meta_description",
+      "target": "models_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "parameter_type",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L108",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "models_seooutput_sanitize_title_tag",
+      "target": "models_py_any",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "imports_from",
       "context": "submodule_import",
       "confidence": "EXTRACTED",
@@ -6407,7 +6501,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L107",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models",
@@ -6418,7 +6512,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L111",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models",
@@ -6715,7 +6809,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L107",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_batchrequest",
@@ -6726,7 +6820,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L111",
+      "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_bulkactionrequest",
@@ -6940,6 +7034,28 @@
       "_origin": "ast",
       "source": "llm_client_llmclient",
       "target": "llm_client_llmclient_set_custom_keys",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L108",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "models_seooutput",
+      "target": "models_seooutput_sanitize_title_tag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L116",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "models_seooutput",
+      "target": "models_seooutput_sanitize_meta_description",
       "confidence_score": 1.0
     },
     {
@@ -7961,5 +8077,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7a51af021831ca411e09ef8d4171fc06a14fdeee"
+  "built_at_commit": "64c3f88a0b3d78b85bde086e896f62d811d9600f"
 }

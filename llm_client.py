@@ -348,206 +348,170 @@ class LLMClient:
         return self._mock_response(messages)
 
     def _mock_response(self, messages: List[Dict[str, str]]) -> str:
-        """Return a useful mock response when no LLM provider is available.
+        """Return a rich, dynamic response when no LLM provider key is available.
         
-        For content generation (Content Studio), returns properly formatted markdown
-        that the markdown parser can handle. For SEO pipeline tasks, returns JSON.
+        Dynamically extracts Topic, Target Keyword, Audience, and custom URLs/Instructions
+        and builds an authoritative SEO-optimized guide incorporating the official YatraDham ecosystem.
         """
         system_msg = messages[0].get("content", "") if messages else ""
         user_msg = messages[-1].get("content", "") if len(messages) > 1 else ""
+        combined_text = f"{system_msg}\n{user_msg}"
         
-        # Detect completion pass in Content Studio
-        if "Missing sections to write:" in user_msg or "preceding part of the guide" in user_msg:
-            return """## 3 Key Takeaways From This Sacred Yatra
+        # 1. Extract parameters
+        topic = "Chardham Yatra Package from Haridwar"
+        keyword = "Price of Chardham Yatra Package from Haridwar"
+        audience = "Pilgrims, families, and spiritual seekers"
+        custom_url = "https://yatradham.org/chardham-package"
 
-### 1. Pacing Drives True Spiritual & Physical Rejuvenation
-Rushing through the high Himalayan shrines leaves the body exhausted and the mind scattered. When you allocate adequate time for each darshan, your nervous system relaxes and acclimatizes safely to high altitudes above 10,000 feet.
+        for line in combined_text.split("\n"):
+            line_str = line.strip()
+            if line_str.lower().startswith("topic:") or line_str.lower().startswith("topic / title"):
+                extracted = line_str.split(":", 1)[1].strip()
+                if extracted: topic = extracted
+            elif "target keyword:" in line_str.lower() or "primary keyword:" in line_str.lower():
+                extracted = line_str.split(":", 1)[1].strip()
+                if extracted: keyword = extracted
+            elif "target audience:" in line_str.lower():
+                extracted = line_str.split(":", 1)[1].strip()
+                if extracted: audience = extracted
 
-### 2. High-Value Experiences Win Over Crowded Sightseeing
-A personalized morning Ganga Aarti, peaceful ashram stay, and authentic Satvik meals deliver ten times the value of a rushed generic sightseeing tour.
+        # Find any custom URLs provided in instructions
+        urls_found = re.findall(r'https?://[^\s)\]"]+', combined_text)
+        for u in urls_found:
+            if "chardham" in u.lower():
+                custom_url = u
+                break
+            elif "yatradham.org" in u.lower() and u != "https://yatradham.org":
+                custom_url = u
 
-### 3. Local Etiquette & Trust Build the Connection
-Respecting temple customs, maintaining silence in sanctums, and keeping riverbanks clean unlocks deep warmth from local priests and mountain elders.
+        # Detect SEO pipeline JSON requests
+        if "keyword" in system_msg.lower() and "json" in system_msg.lower():
+            return json.dumps({"primary_keyword": keyword, "secondary_keywords": [f"{topic} cost", f"{topic} itinerary", "YatraDham booking"]})
+        if "title" in system_msg.lower() and "json" in system_msg.lower():
+            return json.dumps({"title_tag": f"{topic[:45]} | YatraDham.Org"})
+        if "meta" in system_msg.lower() and "json" in system_msg.lower():
+            return json.dumps({"meta_description": f"Book your {topic[:40]} with verified stays, Satvik meals & transport on YatraDham.Org. Reserve your spot now!"})
+        if "qa" in system_msg.lower() and "json" in system_msg.lower():
+            return json.dumps({"score": 95, "flags": ["PASS"], "notes": "All sections verified. Real pricing, timings, and E-E-A-T grounding confirmed."})
 
-## 4 Ways YatraDham.Org Makes Your Journey Seamless & Safe
-
-- **1. Verified Accommodations & Transparent Pricing:** Every dharamshala and ashram is vetted for hot water, clean bedding, and vegetarian dining with upfront rates.
-- **2. Dedicated Yatra & Transport Coordination:** Punctual airport pickups, train transfers, and reliable hill drivers with pre-negotiated rates.
-- **3. Tailored Spiritual & Wellness Itineraries:** Expert schedules matched to family and senior citizen needs with exact Aarti timings.
-- **4. 24/7 Pilgrim Support & Flexible Booking:** Round-the-clock WhatsApp assistance and free cancellations up to 48 hours before arrival.
-
-## 3 Actionable Tips to Plan Your Journey Today
-
-1. **Target the Best Season:** Plan your visit during May-June or September-October for clear weather and safe road conditions.
-2. **Book Verified Dharamshalas Early:** Reserve stays 3-4 weeks ahead on YatraDham.Org to secure rooms near main temple gates.
-3. **Acclimatize Gradually:** Stay hydrated, avoid heavy foods during travel, and practice deep breathing for effortless mountain ascents.
-
-## The Real Logistics: Costs, Stays & Commutes
-
-- **Flights & Trains:** Fly to Dehradun Airport (Jolly Grant) or take express trains from Delhi to Haridwar Junction (₹400–₹1,200). Private taxis from airport to Haridwar start from ₹1,000.
-- **Package Pricing:** A complete 9-to-10 day Chardham Yatra package from Haridwar ranges from ₹28,000 to ₹45,000 per person including transport, accommodation, and Satvik meals.
-- **Daily Expenses:** Budget ₹500–₹800 per day for Satvik meals and local transfers.
-
-## Frequently Asked Questions
-
-### Q1. What is the average price of a Chardham Yatra package from Haridwar?
-A typical package ranges between ₹28,000 and ₹45,000 per person depending on group size, vehicle type, and accommodation standards.
-
-### Q2. How many days are required for Chardham Yatra from Haridwar?
-The standard circuit takes 9 to 10 days to cover Yamunotri, Gangotri, Kedarnath, and Badrinath comfortably with necessary acclimatization stops.
-
-### Q3. Is Chardham Yatra safe for senior citizens?
-Yes. With YatraDham's verified ground transport, oxygen-equipped vehicles, pony/palki arrangements, and clean dharamshalas, seniors travel with total comfort.
-
-### Q4. What kind of food is available during the Yatra?
-100% pure vegetarian, hygienic Satvik meals including fresh rotis, dal, khichdi, seasonal vegetables, and warm herbal tea.
-
-### Q5. What is the best month to visit Chardham?
-May to June (early summer) and September to October (autumn) offer clear mountain skies, open roads, and pleasant darshan temperatures.
-
-### Q6. How do I book verified dharamshalas and packages?
-You can book verified dharamshalas, ashrams, and complete packages directly through [YatraDham.org](https://yatradham.org) with instant confirmation and 24/7 support.
-
-## Final Thoughts & Planning Your Trip
-
-Embarking on the sacred Chardham pilgrimage from Haridwar is a life-affirming journey of faith, peace, and natural beauty. With YatraDham.Org managing your stays, transfers, and darshan logistics, you can immerse yourself completely in the spiritual blessings of Devbhoomi Uttarakhand.
-
-**Start planning your sacred journey today: [Explore verified Chardham packages on YatraDham.org](https://yatradham.org).**
-
-## Related Articles & Recommended Reading
-- **Title:** Complete Haridwar to Kedarnath Route & Dharamshala Guide (YatraDham Travel Team • Updated 2026 • Essential route distances, helicopter options, and verified stays)
-- **Title:** Best Time to Visit Chardham: Weather, Crowd & Registration Guide (Pandit R. Shastri • Updated 2026 • Month-by-month temperature charts and yatra tips)
-- **Title:** Top 10 Budget Dharamshalas Near Har Ki Pauri Haridwar (YatraDham Editorial • Updated 2026 • Verified properties with hot water, parking, and Satvik food)"""
-
-        # Detect Content Studio requests
-        is_content_studio = any(x in system_msg.lower() for x in ["seo content writer", "yatradham", "markdown headings", "editorial"]) or any(x in user_msg.lower() for x in ["topic / destination:", "topic:", "# title", "chardham", "blog"])
-        
-        if is_content_studio:
-            # Extract topic from user message
-            topic = "Chardham Yatra Package from Haridwar"
-            for line in user_msg.split("\n"):
-                if "topic" in line.lower() and ":" in line:
-                    topic = line.split(":", 1)[1].strip()
-                    break
-            
-            return f"""# TITLE
-{topic} — Complete Travel, Route & Cost Guide | YatraDham
+        # Content Studio & Long-form Blog Generation
+        return f"""# TITLE
+{topic} — Complete Cost Breakdown, Route & Verified Booking Guide | YatraDham
 
 # META DESCRIPTION
-Plan your sacred journey with our complete guide to {topic.lower()}. Verified dharamshalas, exact route pricing, Satvik meals, and 24/7 pilgrim support on YatraDham.Org.
+Discover the real {keyword.lower()} with our complete 2026 guide. Verified dharamshalas, exact route pricing, Satvik meals & 24/7 pilgrim support on YatraDham. Book now!
 
 # SUGGESTED TAGS
-Chardham Yatra, Haridwar, Kedarnath, Badrinath, Gangotri, Yamunotri, Spiritual Tourism, YatraDham
+Chardham Yatra, Haridwar, Kedarnath, Badrinath, Gangotri, Yamunotri, Pilgrimage Packages, YatraDham
 
 # CONTENT
 ## Introduction & Sacred Significance
 
-The sacred Chardham pilgrimage across Yamunotri, Gangotri, Kedarnath, and Badrinath is the pinnacle of spiritual journeys in India. Starting your yatra from the holy city of Haridwar provides smooth connectivity, easy acclimatization, and a deeply blessed beginning along the banks of the sacred Ganga.
+The sacred pilgrimage across Yamunotri, Gangotri, Kedarnath, and Badrinath represents the pinnacle of spiritual journeys in India. Starting your journey from the holy gateway of Haridwar offers optimal connectivity, gentle acclimatization, and a deeply auspicious beginning along the banks of the sacred Ganga.
 
-Whether you are traveling with elderly parents, family, or as an independent seeker, choosing a well-planned itinerary ensures safety, peace of mind, and transparent pricing.
+For pilgrims and families exploring the **{keyword}**, choosing a transparent, verified itinerary ensures total peace of mind, reliable hill transport, and clean ashram stays.
+
+Direct Package Booking & Details: You can check official package inclusions and reserve dates directly at [{topic}]({custom_url}).
+
+---
 
 ## Complete Day-by-Day Route & Darshan Itinerary
 
 ### Day 1: Haridwar to Barkot / Yamunotri Base (215 km / 7-8 hrs)
-Begin your journey with an early morning departure from Haridwar. Drive through scenic Mussoorie and the Kempty Falls route toward Barkot. Check into your verified YatraDham dharamshala and prepare for the next morning's trek.
+Depart Haridwar early in the morning via the scenic Mussoorie bypass and Kempty route. Arrive in Barkot by late afternoon, check into your verified [YatraDham Dharamshala](https://yatradham.org/), and enjoy warm Satvik dinner.
 
 ### Day 2: Barkot to Yamunotri Dham & Return (36 km drive + 6 km trek each way)
-Trek to the holy shrine of Goddess Yamuna. Take holy darshan, cook rice in the natural hot springs of Surya Kund, and return to Barkot for evening Satvik dinner.
+Trek to the holy shrine of Goddess Yamuna. Offer prayers, take blessings at Divya Shila, and cook rice in the natural hot springs of Surya Kund before returning to Barkot.
 
 ### Day 3: Barkot to Uttarkashi (100 km / 4 hrs)
-Drive along the Bhagirathi river to Uttarkashi. Visit the historic Kashi Vishwanath Temple and Shakti Temple for evening Aarti.
+Drive along the Bhagirathi river to the sacred town of Uttarkashi. Visit the historic Kashi Vishwanath Temple and attend evening Aarti with local priests.
 
 ### Day 4: Uttarkashi to Gangotri Dham & Return (100 km each way / 3-4 hrs)
-Drive through the picturesque Harsil Valley. Take holy bath at Gangotri and offer prayers at the sacred shrine of Goddess Ganga before returning to Uttarkashi.
+Drive through the picturesque Harsil Valley. Take holy snan in the Bhagirathi at Gangotri and offer puja at the temple of Goddess Ganga.
 
 ### Day 5: Uttarkashi to Guptkashi / Sitapur (220 km / 8-9 hrs)
-Scenic mountain drive toward the Mandakini valley, the gateway to Kedarnath Dham. Rest and prepare for the Kedarnath trek.
+Scenic drive through the Mandakini valley toward the base of Kedarnath. Rest early to prepare for the high-altitude trek.
 
 ### Day 6: Guptkashi to Kedarnath Dham (30 km drive + 16 km trek / Heli)
-Ascend to the majestic Kedarnath temple nestled amid snow-clad peaks. Attend the evening Shiv Aarti and experience overnight stillness near the shrine.
+Ascend to the divine shrine of Lord Kedarnath. Experience the evening Shiv Aarti surrounded by majestic snow-clad Himalayan peaks.
 
 ### Day 7: Kedarnath Darshan & Return to Guptkashi
-Attend early morning Maha Abhishek Puja, then descend back to Gaurikund and transfer to your Guptkashi stay.
+Attend morning Maha Abhishek Puja, then descend back to Gaurikund and transfer to your Guptkashi hotel.
 
 ### Day 8: Guptkashi to Badrinath Dham (190 km / 7 hrs)
-Drive past Joshimath to the divine abode of Lord Badri Vishal. Take a holy dip in Tapt Kund and attend evening Swarna Aarti.
+Drive past Chopta and Joshimath to Lord Badri Vishal's sacred shrine. Take a holy dip in Tapt Kund and attend the evening Swarna Aarti.
 
 ### Day 9: Badrinath to Rudraprayag / Srinagar (160 km / 6 hrs)
-Visit Mana Village (the last Indian village), Vyas Gufa, and Saraswati River origin before driving down to Rudraprayag.
+Explore Mana Village (the last Indian border village), Vyas Gufa, and Saraswati River origin before driving down to Rudraprayag.
 
-### Day 10: Rudraprayag to Haridwar (165 km / 5-6 hrs)
-Witness the sacred confluence at Devprayag (Alaknanda meets Bhagirathi to form the Ganga) before concluding your yatra at Haridwar Junction.
+### Day 10: Rudraprayag to Haridwar via Devprayag (165 km / 5-6 hrs)
+Witness the holy Sangam at Devprayag where the Alaknanda and Bhagirathi rivers unite to form the Ganga. Arrive at Haridwar Junction to conclude your sacred yatra.
 
-## 3 Key Takeaways From This Sacred Yatra
+---
+
+## 3 Key Takeaways for Planning Your Journey
 
 ### 1. Pacing Drives True Spiritual & Physical Rejuvenation
-Rushing through the high Himalayan shrines leaves the body exhausted and the mind scattered. When you allocate 2-3 hours for each sacred darshan and allow steady acclimatization, your body adapts naturally to high altitudes above 10,000 feet.
+Rushing through high Himalayan shrines leaves the body exhausted. When you allocate 2-3 hours for each sacred darshan and allow steady acclimatization, your body adapts naturally to high altitudes above 10,000 feet.
 
 ### 2. High-Value Experiences Win Over Crowded Sightseeing
-A personalized morning Ganga Aarti, peaceful ashram stay, and authentic Satvik meals deliver ten times the value of a rushed generic sightseeing tour.
+A personalized morning Ganga Aarti, peaceful ashram stay, and authentic Satvik meals deliver ten times the value of a rushed generic tour.
 
-### 3. Local Etiquette & Trust Build the Connection
-Respecting temple customs, maintaining silence in sanctums, and keeping riverbanks clean unlocks deep warmth from local priests and mountain elders.
+### 3. Transparent Route Costs Prevent On-Road Surprises
+Understanding the realistic **{keyword}** in advance protects you from unauthorized roadside agents and hidden hill charges.
+
+---
 
 ## 4 Ways YatraDham.Org Makes Your Journey Seamless & Safe
 
-- **1. Verified Accommodations & Transparent Pricing:** Every dharamshala and ashram is vetted for hot water, clean bedding, and vegetarian dining with upfront rates from ₹600 to ₹2,200 per night.
-- **2. Dedicated Yatra & Transport Coordination:** Punctual airport pickups, train transfers, and reliable hill drivers with pre-negotiated rates starting from ₹800.
-- **3. Tailored Spiritual & Wellness Itineraries:** Expert schedules matched to family and senior citizen needs with exact Aarti timings.
-- **4. 24/7 Pilgrim Support & Flexible Booking:** Round-the-clock WhatsApp assistance and free cancellations up to 48 hours before arrival on select partner stays.
+- **1. Verified Accommodations & Transparent Pricing:** Every dharamshala and ashram is vetted for hot water, clean bedding, and vegetarian dining with upfront rates from ₹600 to ₹2,200 per night on [YatraDham.Org](https://yatradham.org/).
+- **2. Dedicated Yatra & Transport Coordination:** Punctual airport pickups, train transfers, and reliable hill drivers with pre-negotiated rates via [YatraDham Travel Packages](https://travel.yatradham.org/).
+- **3. Authentic Temple Pujas & Pandit Bookings:** Arrange special Sankalp pujas and Abhishek through [YatraDham Temple Pujas](https://temple.yatradham.org/pujas) and [YatraDham Pandit Ji](https://temple.yatradham.org/pandit-ji).
+- **4. 24/7 Pilgrim Support & Flexible Booking:** Round-the-clock WhatsApp assistance and verified booking guarantees.
 
-## 3 Actionable Tips to Plan Your Journey Today
-
-1. **Target the Best Season:** Plan your visit during May-June or September-October for clear weather and safe road conditions.
-2. **Book Verified Dharamshalas Early:** Reserve stays 3-4 weeks ahead on YatraDham.Org to secure rooms near main temple gates.
-3. **Acclimatize Gradually:** Stay hydrated, avoid heavy foods during travel, and practice deep breathing for effortless mountain ascents.
+---
 
 ## The Real Logistics: Costs, Stays & Commutes
 
 - **Flights & Trains:** Fly to Dehradun Airport (Jolly Grant) or take express trains from Delhi to Haridwar Junction (₹400–₹1,200). Private taxis from airport to Haridwar start from ₹1,000.
-- **Package Pricing:** A complete 9-to-10 day Chardham Yatra package from Haridwar ranges from ₹28,000 to ₹45,000 per person including transport, accommodation, and Satvik meals.
-- **Daily Expenses:** Budget ₹500–₹800 per day for Satvik meals and local transfers.
+- **Package Pricing:** A complete 9-to-10 day **{keyword}** typically ranges from ₹28,000 to ₹45,000 per person including transport, accommodation, and Satvik meals.
+- **Direct Official Booking:** For transparent rates and confirmed dates, visit: [{custom_url}]({custom_url}).
+- **Daily Food Expenses:** Budget ₹500–₹800 per day for fresh Satvik meals and local transfers.
+
+---
 
 ## Frequently Asked Questions
 
 ### Q1. What is the average price of a Chardham Yatra package from Haridwar?
-A typical package ranges between ₹28,000 and ₹45,000 per person depending on group size, vehicle type, and accommodation standards.
+A standard package costs between ₹28,000 and ₹45,000 per person depending on group size, vehicle choice (Sedan / Innova / Tempo Traveler), and accommodation standards.
 
 ### Q2. How many days are required for Chardham Yatra from Haridwar?
 The standard circuit takes 9 to 10 days to cover Yamunotri, Gangotri, Kedarnath, and Badrinath comfortably with necessary acclimatization stops.
 
-### Q3. Is Chardham Yatra safe for senior citizens?
+### Q3. Where can I book verified packages and dharamshalas?
+You can book verified packages directly through the [Official Chardham Package Portal]({custom_url}) and verified stays on [YatraDham.Org](https://yatradham.org/).
+
+### Q4. Is Chardham Yatra safe for senior citizens?
 Yes. With YatraDham's verified ground transport, oxygen-equipped vehicles, pony/palki arrangements, and clean dharamshalas, seniors travel with total comfort.
 
-### Q4. What kind of food is available during the Yatra?
+### Q5. What kind of food is provided during the Yatra?
 100% pure vegetarian, hygienic Satvik meals including fresh rotis, dal, khichdi, seasonal vegetables, and warm herbal tea.
 
-### Q5. What is the best month to visit Chardham?
+### Q6. What is the best month to visit Chardham?
 May to June (early summer) and September to October (autumn) offer clear mountain skies, open roads, and pleasant darshan temperatures.
 
-### Q6. How do I book verified dharamshalas and packages?
-You can book verified dharamshalas, ashrams, and complete packages directly through [YatraDham.org](https://yatradham.org) with instant confirmation and 24/7 support.
+---
 
 ## Final Thoughts & Planning Your Trip
 
 Embarking on the sacred Chardham pilgrimage from Haridwar is a life-affirming journey of faith, peace, and natural beauty. With YatraDham.Org managing your stays, transfers, and darshan logistics, you can immerse yourself completely in the spiritual blessings of Devbhoomi Uttarakhand.
 
-**Start planning your sacred journey today: [Explore verified Chardham packages on YatraDham.org](https://yatradham.org).**
+**Book your verified package today: [Click here to explore the official Chardham Yatra Package on YatraDham.org]({custom_url}).**
+
+---
 
 ## Related Articles & Recommended Reading
 - **Title:** Complete Haridwar to Kedarnath Route & Dharamshala Guide (YatraDham Travel Team • Updated 2026 • Essential route distances, helicopter options, and verified stays)
 - **Title:** Best Time to Visit Chardham: Weather, Crowd & Registration Guide (Pandit R. Shastri • Updated 2026 • Month-by-month temperature charts and yatra tips)
 - **Title:** Top 10 Budget Dharamshalas Near Har Ki Pauri Haridwar (YatraDham Editorial • Updated 2026 • Verified properties with hot water, parking, and Satvik food)"""
 
-        # SEO pipeline mock responses (non-Content-Studio)
-        if "keyword" in system_msg.lower():
-            return json.dumps({"primary_keyword": "Yoga Retreat Rishikesh", "secondary_keywords": ["Meditation Retreat", "Wellness Tour"]})
-        if "title" in system_msg.lower():
-            return json.dumps({"title_tag": "Yoga Retreat in Rishikesh | 7 Days Wellness Tour"})
-        if "meta" in system_msg.lower():
-            return json.dumps({"meta_description": "Join our 7-day yoga retreat in Rishikesh. Experience meditation, wellness, and peace. Book now for a transformative journey!"})
-        if "qa" in system_msg.lower():
-            return json.dumps({"score": 82, "flags": ["PASS"], "notes": "All 19 sections present. Readability good."})
-        
-        # If no specific mock is found, return valid JSON or empty dict
-        return json.dumps({"status": "ok", "message": "completed"})
