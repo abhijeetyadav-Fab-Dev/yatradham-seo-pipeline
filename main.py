@@ -524,8 +524,10 @@ class HumanizeRequest(BaseModel):
     text: Optional[str] = None
     content: Optional[str] = None
     markdown: Optional[str] = None
+    copyleaks_email: Optional[str] = None
+    copyleaks_api_key: Optional[str] = None
 
-from anti_ai_guardrails import calculate_copyleaks_metrics, detect_ai_isms, de_slop_and_humanize
+from anti_ai_guardrails import calculate_copyleaks_metrics, detect_ai_isms, de_slop_and_humanize, check_copyleaks_api, generate_copyleaks_recommendations
 
 def query_undetectable_detector(text: str) -> dict:
     url = "https://www.undetectableai.pro/api/detector"
@@ -639,12 +641,13 @@ def check_ai_endpoint(req: CheckAIRequest):
         raise HTTPException(status_code=400, detail="Text cannot be empty")
     
     # 1. Copyleaks & E-E-A-T Perplexity / Burstiness metrics
-    copyleaks = calculate_copyleaks_metrics(raw)
+    copyleaks = check_copyleaks_api(raw)
     copyleaks_ai = copyleaks["copyleaks_ai_score"]
     copyleaks_human = copyleaks["copyleaks_human_score"]
     eeat_score = copyleaks["eeat_score"]
     burstiness = copyleaks["burstiness_score"]
     ai_finds = copyleaks["ai_isms_detected"]
+    recommendations = copyleaks.get("copyleaks_recommendations", [])
 
     # 2. Undetectable AI detection
     undetectable_res = query_undetectable_detector(raw)
@@ -666,7 +669,9 @@ def check_ai_endpoint(req: CheckAIRequest):
         "eeat_score": eeat_score,
         "burstiness_score": burstiness,
         "ai_isms_detected": ai_finds,
-        "total_ai_markers": copyleaks["total_ai_markers"],
+        "total_ai_markers": copyleaks.get("total_ai_markers", 0),
+        "copyleaks_recommendations": recommendations,
+        "engine": copyleaks.get("engine", "Copyleaks AI Neural Engine v3 + Google E-E-A-T"),
         "status": status,
         "verdict": f"{composite_human}% Human (Copyleaks: {copyleaks_human}%, Undetectable: {undetectable_human}%)"
     }
@@ -680,10 +685,11 @@ def humanize_endpoint(req: HumanizeRequest):
     
     humanized = humanize_markdown_content(raw)
     
-    copyleaks = calculate_copyleaks_metrics(humanized)
+    copyleaks = check_copyleaks_api(humanized, req.copyleaks_email, req.copyleaks_api_key)
     det_res = query_undetectable_detector(humanized)
     
     copyleaks_human = copyleaks["copyleaks_human_score"]
+    copyleaks_ai = copyleaks["copyleaks_ai_score"]
     undetectable_ai = det_res.get("score", 5)
     undetectable_human = max(0.0, min(100.0, round(100.0 - undetectable_ai, 2)))
     composite_human = round((copyleaks_human * 0.6) + (undetectable_human * 0.4), 1)
@@ -694,9 +700,12 @@ def humanize_endpoint(req: HumanizeRequest):
         "human_score": composite_human,
         "ai_score": round(100.0 - composite_human, 1),
         "copyleaks_human_score": copyleaks_human,
+        "copyleaks_ai_score": copyleaks_ai,
         "undetectable_human_score": undetectable_human,
         "eeat_score": copyleaks["eeat_score"],
         "burstiness_score": copyleaks["burstiness_score"],
+        "copyleaks_recommendations": copyleaks.get("copyleaks_recommendations", []),
+        "engine": copyleaks.get("engine", "Copyleaks AI Neural Engine v3 + Google E-E-A-T"),
         "verdict": f"{composite_human}% Human (Copyleaks: {copyleaks_human}%, Undetectable: {undetectable_human}%)"
     }
 

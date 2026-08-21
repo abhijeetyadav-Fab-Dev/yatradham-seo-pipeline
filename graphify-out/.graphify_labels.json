@@ -1,9 +1,10 @@
 {
   "0": "📅 Day-by-Day Comprehensive Itinerary",
   "1": "main.py",
-  "2": "stress_test.py",
-  "3": "test_e2e_suite.py",
+  "2": "test_e2e_suite.py",
+  "3": "LLMClient",
   "4": "models.py",
+  "5": "pipeline.py",
   "6": "content_creator_agent.py",
   "8": "e2e_browser_test.py",
   "9": "live_qa.py",
