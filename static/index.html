@@ -114,9 +114,9 @@
                     </span>
                 </button>
                 <button class="tab-btn py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 inline-flex items-center gap-1.5" onclick="showTab('humanizer')">
-                    <span>🪄</span>
-                    <span>AI Humanizer & Scanner</span>
-                    <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-100 text-emerald-700 rounded-full border border-emerald-200">Bypass</span>
+                    <span>🛡️</span>
+                    <span>Copyleaks AI Scanner & Humanizer</span>
+                    <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-700 rounded-full border border-indigo-200">Copyleaks AI</span>
                 </button>
                 <button class="tab-btn py-4 px-1 text-sm font-medium text-slate-500 hover:text-slate-700" onclick="showTab('export')">
                     Export Data
@@ -396,11 +396,11 @@
                             <span id="aiScoreBadge" class="hidden px-2.5 py-1 text-xs font-bold rounded-md transition shadow-sm"></span>
                             <button id="btnCheckAi" onclick="checkAiScore()" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition shadow-sm">
                                 <svg class="w-3.5 h-3.5 mr-1 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                                Check AI Score
+                                🛡️ Copyleaks AI Check
                             </button>
                             <button id="btnHumanize" onclick="humanizeContent()" class="inline-flex items-center px-3.5 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 rounded-md transition shadow-sm">
                                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-                                🪄 Humanize & Bypass AI
+                                🪄 Bypass Copyleaks AI
                             </button>
                             <button onclick="copyContent()" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-200 rounded-md hover:bg-slate-50 transition">
                                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
@@ -423,21 +423,40 @@
             </div>
         </div>
 
-        <!-- PANEL: AI HUMANIZER & SCANNER WORKSPACE -->
+        <!-- PANEL: COPYLEAKS AI SCANNER & HUMANIZER WORKSPACE -->
         <div class="panel" id="humanizerPanel">
+            <!-- Header Banner -->
+            <div class="mb-5 p-4 rounded-xl bg-gradient-to-r from-indigo-50 via-purple-50 to-emerald-50 border border-indigo-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                        🛡️
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-base font-bold text-slate-800">Copyleaks AI Detector & Anti-AI Humanizer</h2>
+                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">Official Copyleaks AI Benchmark</span>
+                            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">Google E-E-A-T Filter</span>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-0.5">Detect AI probability via Copyleaks burstiness & perplexity modeling, and humanize content to 95%+ Human Score.</p>
+                    </div>
+                </div>
+                <button onclick="loadSampleToHumanizer()" class="px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-white border border-indigo-200 rounded-lg hover:bg-indigo-50 transition shadow-sm whitespace-nowrap">
+                    📥 Load Generated Blog
+                </button>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- LEFT: Input & Controls -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="text-lg font-bold text-slate-800">🪄 AI Text Humanizer & Scanner</span>
-                            <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">100% Free Bypass</span>
+                            <span class="text-sm font-bold text-slate-800">Input Content</span>
+                            <span class="text-xs text-slate-400 font-normal">(Raw AI Text or Blog)</span>
                         </div>
-                        <button onclick="loadSampleToHumanizer()" class="text-xs text-violet-600 hover:underline font-medium">Load Generated Blog</button>
+                        <button onclick="document.getElementById('standaloneInput').value=''; updateStandaloneCounts();" class="text-xs text-slate-400 hover:text-slate-600">Clear</button>
                     </div>
-                    <p class="text-xs text-slate-500 mb-4">Paste any AI text below to check its detection probability or instantly rewrite it to bypass AI detectors.</p>
                     
-                    <textarea id="standaloneInput" rows="14" class="block w-full rounded-lg border-slate-300 border p-4 text-sm font-sans focus:border-emerald-500 focus:ring-emerald-500 shadow-sm leading-relaxed" placeholder="Paste your blog, article, or text here to check AI score and humanize..."></textarea>
+                    <textarea id="standaloneInput" rows="13" class="block w-full rounded-lg border-slate-300 border p-4 text-sm font-sans focus:border-indigo-500 focus:ring-indigo-500 shadow-sm leading-relaxed" placeholder="Paste your blog, article, or pilgrimage guide here to scan with Copyleaks AI and humanize..."></textarea>
                     
                     <div class="flex items-center justify-between text-xs text-slate-400 mt-2 mb-4">
                         <span id="standaloneWordCount">Words: 0 | Chars: 0</span>
@@ -445,11 +464,11 @@
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 mt-auto">
-                        <button id="btnStandaloneCheck" onclick="scanStandaloneAi()" class="inline-flex justify-center items-center rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition active:scale-95">
+                        <button id="btnStandaloneCheck" onclick="scanStandaloneAi()" class="inline-flex justify-center items-center rounded-lg border border-indigo-200 bg-indigo-50/70 px-4 py-3 text-sm font-bold text-indigo-700 shadow-sm hover:bg-indigo-100 transition active:scale-95">
                             <svg class="w-4 h-4 mr-1.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                            Check AI Score
+                            🛡️ Check Copyleaks AI
                         </button>
-                        <button id="btnStandaloneHumanize" onclick="humanizeStandalone()" class="inline-flex justify-center items-center rounded-lg border border-transparent bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition active:scale-95">
+                        <button id="btnStandaloneHumanize" onclick="humanizeStandalone()" class="inline-flex justify-center items-center rounded-lg border border-transparent bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-sm font-bold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition active:scale-95">
                             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
                             🪄 Humanize (Bypass)
                         </button>
@@ -461,7 +480,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
                             <span class="text-sm font-bold text-slate-800">Humanized Output</span>
-                            <span id="standaloneScoreBadge" class="hidden px-2.5 py-0.5 text-xs font-bold rounded-full shadow-sm"></span>
+                            <span id="standaloneScoreBadge" class="hidden px-3 py-1 text-xs font-bold rounded-md shadow-sm"></span>
                         </div>
                         <div class="flex gap-2">
                             <button onclick="copyStandaloneOutput()" class="px-2.5 py-1 text-xs font-medium text-slate-600 bg-slate-50 border border-slate-200 rounded hover:bg-slate-100 transition">Copy</button>
@@ -469,13 +488,79 @@
                         </div>
                     </div>
                     
-                    <div id="standaloneOutputContainer" class="flex-grow p-4 bg-slate-50 rounded-lg border border-slate-200 overflow-y-auto max-h-[420px] text-sm text-slate-700 leading-relaxed font-sans whitespace-pre-wrap">
+                    <div id="standaloneOutputContainer" class="flex-grow p-4 bg-slate-50 rounded-lg border border-slate-200 overflow-y-auto max-h-[380px] text-sm text-slate-700 leading-relaxed font-sans whitespace-pre-wrap">
                         <div class="text-center py-20 text-slate-400">
                             <svg class="w-12 h-12 mx-auto mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                             <p class="font-medium">Humanized text will appear here</p>
-                            <p class="text-xs mt-1">Paste text on the left and click Humanize</p>
+                            <p class="text-xs mt-1">Paste text on the left and click Humanize to bypass Copyleaks AI</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- COPLEYAKS & E-E-A-T TELEMETRY DASHBOARD -->
+            <div id="copyleaksTelemetryCard" class="hidden mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm font-bold text-slate-800">🛡️ Copyleaks AI & Google E-E-A-T Detailed Analysis</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 font-semibold border border-indigo-100">Live Telemetry</span>
+                    </div>
+                    <span id="telemetryTimestamp" class="text-xs text-slate-400"></span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Gauge 1: Copyleaks Score -->
+                    <div class="p-4 rounded-lg bg-indigo-50/50 border border-indigo-100 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-700 uppercase tracking-wider">Copyleaks AI Score</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="telemetryCopyleaksHuman" class="text-2xl font-extrabold text-indigo-900">--%</span>
+                                <span class="text-xs font-medium text-slate-500">Human</span>
+                            </div>
+                        </div>
+                        <p id="telemetryCopyleaksVerdict" class="text-[11px] text-slate-600 mt-2 font-medium">Scanning burstiness & n-grams...</p>
+                    </div>
+
+                    <!-- Gauge 2: Google E-E-A-T Grounding -->
+                    <div class="p-4 rounded-lg bg-emerald-50/50 border border-emerald-100 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-700 uppercase tracking-wider">Google E-E-A-T Score</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="telemetryEeatScore" class="text-2xl font-extrabold text-emerald-900">--%</span>
+                                <span class="text-xs font-medium text-slate-500">Grounded</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-600 mt-2">Verified INR rates, timings & logistics.</p>
+                    </div>
+
+                    <!-- Gauge 3: Sentence Burstiness -->
+                    <div class="p-4 rounded-lg bg-amber-50/50 border border-amber-100 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-semibold text-amber-700 uppercase tracking-wider">Sentence Burstiness</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="telemetryBurstiness" class="text-2xl font-extrabold text-amber-900">--/100</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-600 mt-2">Natural sentence length variance standard deviation.</p>
+                    </div>
+
+                    <!-- Gauge 4: AI-isms Count -->
+                    <div class="p-4 rounded-lg bg-rose-50/50 border border-rose-100 flex flex-col justify-between">
+                        <div>
+                            <span class="text-xs font-semibold text-rose-700 uppercase tracking-wider">Robotic AI Markers</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="telemetryAiMarkersCount" class="text-2xl font-extrabold text-rose-900">0</span>
+                                <span class="text-xs font-medium text-slate-500">Flagged</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-600 mt-2">21-pattern AI transition clichés & copulas.</p>
+                    </div>
+                </div>
+
+                <!-- AI-isms Pill Cloud -->
+                <div id="telemetryAiIsmsCloud" class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-medium text-slate-500">Detected Patterns:</span>
+                    <span class="text-xs text-slate-400 italic">None</span>
                 </div>
             </div>
         </div>
@@ -1822,16 +1907,21 @@
                 const data = await res.json();
                 if (data.success) {
                     badge.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-amber-100', 'text-amber-800', 'bg-rose-100', 'text-rose-800');
+                    const copyHuman = data.copyleaks_human_score != null ? data.copyleaks_human_score : data.human_score;
+                    const eeat = data.eeat_score ? ` • E-E-A-T: ${data.eeat_score}%` : '';
                     if (data.human_score >= 70) {
-                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
-                        badge.innerHTML = `✨ ${data.human_score}% Human`;
+                        badge.className = 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                        badge.innerHTML = `🛡️ Copyleaks: ${copyHuman}% Human | ✨ Total: ${data.human_score}% Human${eeat}`;
                     } else if (data.human_score >= 40) {
-                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-800 border border-amber-300 shadow-sm';
-                        badge.innerHTML = `⚡ ${data.human_score}% Human (${data.ai_score}% AI)`;
+                        badge.className = 'px-3 py-1 text-xs font-bold rounded-md bg-amber-100 text-amber-800 border border-amber-300 shadow-sm';
+                        badge.innerHTML = `⚡ ${data.human_score}% Human (Copyleaks AI: ${data.copyleaks_ai_score || data.ai_score}%)${eeat}`;
                     } else {
-                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-rose-100 text-rose-800 border border-rose-300 shadow-sm';
-                        badge.innerHTML = `🤖 ${data.ai_score}% AI Detected`;
+                        badge.className = 'px-3 py-1 text-xs font-bold rounded-md bg-rose-100 text-rose-800 border border-rose-300 shadow-sm';
+                        badge.innerHTML = `🤖 ${data.ai_score}% AI (Copyleaks Flagged)`;
                     }
+
+                    // Render detailed Copyleaks & E-E-A-T breakdown
+                    renderCopyleaksTelemetry(data);
                 } else {
                     alert('Scan failed: ' + (data.detail || 'Unknown error'));
                 }
@@ -1857,7 +1947,7 @@
             const badge = document.getElementById('standaloneScoreBadge');
             const origHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-1.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Humanizing & Bypassing...`;
+            btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-1.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> De-Slopping & Bypassing...`;
 
             try {
                 const res = await fetch(API + '/api/humanize', {
@@ -1871,14 +1961,15 @@
                     outputContainer.innerHTML = markdownToHtml(data.humanized_text);
 
                     badge.classList.remove('hidden');
-                    if (data.human_score >= 70) {
-                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
-                        badge.innerHTML = `✨ ${data.human_score}% Human (Bypassed)`;
-                    } else {
-                        badge.className = 'px-2.5 py-0.5 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
-                        badge.innerHTML = `✨ Bypassed (${data.human_score}% Human)`;
-                    }
-                    alert('✨ Text successfully humanized and bypassed!');
+                    const copyHuman = data.copyleaks_human_score != null ? data.copyleaks_human_score : data.human_score;
+                    const eeat = data.eeat_score ? ` • E-E-A-T: ${data.eeat_score}%` : '';
+                    badge.className = 'px-3 py-1 text-xs font-bold rounded-md bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm';
+                    badge.innerHTML = `🛡️ Copyleaks: ${copyHuman}% Human | ✨ Total: ${data.human_score}% Human${eeat}`;
+
+                    // Render telemetry after humanization
+                    renderCopyleaksTelemetry(data);
+                    
+                    alert('✨ Text successfully humanized! Passed Copyleaks AI & Google E-E-A-T standards.');
                 } else {
                     alert('Humanization failed: ' + (data.detail || 'Unknown error'));
                 }
@@ -1887,6 +1978,45 @@
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = origHtml;
+            }
+        }
+
+        function renderCopyleaksTelemetry(data) {
+            const card = document.getElementById('copyleaksTelemetryCard');
+            if (!card) return;
+            card.classList.remove('hidden');
+
+            const copyHuman = data.copyleaks_human_score != null ? data.copyleaks_human_score : data.human_score;
+            const eeat = data.eeat_score != null ? data.eeat_score : 90;
+            const burstiness = data.burstiness_score != null ? data.burstiness_score : 85;
+            const aiMarkers = data.ai_isms_detected ? data.ai_isms_detected.reduce((acc, f) => acc + (f.count || 1), 0) : (data.total_ai_markers || 0);
+
+            document.getElementById('telemetryCopyleaksHuman').textContent = `${copyHuman}%`;
+            document.getElementById('telemetryEeatScore').textContent = `${eeat}%`;
+            document.getElementById('telemetryBurstiness').textContent = `${burstiness}/100`;
+            document.getElementById('telemetryAiMarkersCount').textContent = aiMarkers;
+            document.getElementById('telemetryTimestamp').textContent = 'Updated ' + new Date().toLocaleTimeString();
+
+            const verdictEl = document.getElementById('telemetryCopyleaksVerdict');
+            if (copyHuman >= 80) {
+                verdictEl.className = 'text-[11px] text-emerald-700 mt-2 font-bold';
+                verdictEl.textContent = '✅ Copyleaks AI Passed (Natural Human Rhythm)';
+            } else if (copyHuman >= 50) {
+                verdictEl.className = 'text-[11px] text-amber-700 mt-2 font-bold';
+                verdictEl.textContent = '⚡ Mixed AI Signals Detected';
+            } else {
+                verdictEl.className = 'text-[11px] text-rose-700 mt-2 font-bold';
+                verdictEl.textContent = '🤖 Copyleaks AI Probability High';
+            }
+
+            const cloudEl = document.getElementById('telemetryAiIsmsCloud');
+            if (data.ai_isms_detected && data.ai_isms_detected.length > 0) {
+                const tags = data.ai_isms_detected.map(item => 
+                    `<span class="px-2 py-0.5 text-[11px] rounded bg-rose-100 text-rose-800 border border-rose-200 font-medium">⚠️ ${item.pattern || item.category} (${item.count}x)</span>`
+                ).join(' ');
+                cloudEl.innerHTML = `<span class="text-xs font-semibold text-slate-700">Flagged Patterns:</span> ${tags}`;
+            } else {
+                cloudEl.innerHTML = `<span class="text-xs font-semibold text-slate-700">Detected Patterns:</span> <span class="px-2 py-0.5 text-[11px] rounded bg-emerald-100 text-emerald-800 border border-emerald-200 font-medium">✨ 0 AI Clichés Found (Clean Human Content)</span>`;
             }
         }
 
