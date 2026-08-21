@@ -819,49 +819,75 @@
         }
 
         function generatePackageHtml(o) {
-            if (!o) return '<p>No content available</p>';
+            if (!o) return '<p class="p-6 text-slate-500">No content available</p>';
             const s = o.sections || {};
             const pkg = o.package_input || {};
             const qf = s.quick_facts || {};
 
+            // Check if there is markdown or article content first
+            const rawContent = o.content || o.full_content || o.raw_content || o.markdown || (o.package_input && o.package_input.raw_content) || '';
+            if (rawContent && rawContent.length > 100 && (!s.package_overview && (!s.why_choose_bullets || s.why_choose_bullets.length === 0))) {
+                let html = `<article class="yatradham-content-wrapper max-w-4xl mx-auto p-6 bg-white font-sans text-slate-800 leading-relaxed">\n`;
+                html += `  <header class="mb-8 pb-6 border-b border-slate-200">\n`;
+                html += `    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-3">${escapeHtml(o.title_tag || pkg.name || 'Spiritual Journey Guide')}</h1>\n`;
+                if (o.meta_description) {
+                    html += `    <p class="text-sm text-slate-600 italic mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200"><strong>SEO Meta Description:</strong> ${escapeHtml(o.meta_description)}</p>\n`;
+                }
+                html += `  </header>\n`;
+                html += `  <div class="prose prose-slate max-w-none text-slate-800">\n`;
+                html += markdownToHtml(rawContent);
+                html += `  </div>\n`;
+                html += `</article>`;
+                return html;
+            }
+
             let html = `<!-- Yatradham SEO Structured Content: ${escapeHtml(o.title_tag || pkg.name || 'Tour Package')} -->\n`;
             html += `<article class="yatradham-content-wrapper max-w-4xl mx-auto p-6 bg-white font-sans text-slate-800 leading-relaxed">\n`;
 
-            // Title & Meta
+            // Title & Meta Header
             html += `  <header class="mb-8 pb-6 border-b border-slate-200">\n`;
-            html += `    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-3">${escapeHtml(o.title_tag || pkg.name)}</h1>\n`;
-            if (o.meta_description) {
+            html += `    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-3">${escapeHtml(o.title_tag || pkg.name || 'Tour Package')}</h1>\n`;
+            if (o.meta_description && o.meta_description.trim()) {
                 html += `    <p class="text-sm text-slate-600 italic mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200"><strong>SEO Meta Description:</strong> ${escapeHtml(o.meta_description)}</p>\n`;
             }
-            html += `    <div class="flex flex-wrap gap-2 text-xs font-semibold">\n`;
-            if (qf.destination || pkg.destination) html += `      <span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">📍 ${escapeHtml(qf.destination || pkg.destination)}</span>\n`;
-            if (qf.cost || pkg.cost) html += `      <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">💰 ${escapeHtml(qf.cost || pkg.cost)}</span>\n`;
-            if (qf.duration || pkg.duration) html += `      <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">⏱️ ${escapeHtml(qf.duration || pkg.duration)}</span>\n`;
-            if (o.primary_keyword) html += `      <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">🔑 ${escapeHtml(o.primary_keyword)}</span>\n`;
-            html += `    </div>\n`;
+            
+            // Badges (Only non-empty)
+            const badges = [];
+            const dest = qf.destination || pkg.destination;
+            const cost = qf.cost || pkg.cost;
+            const dur = qf.duration || pkg.duration;
+            if (dest && dest.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold text-xs">📍 ${escapeHtml(dest)}</span>`);
+            if (cost && cost.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold text-xs">💰 ${escapeHtml(cost)}</span>`);
+            if (dur && dur.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-semibold text-xs">⏱️ ${escapeHtml(dur)}</span>`);
+            if (o.primary_keyword && o.primary_keyword.trim()) badges.push(`<span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-semibold text-xs">🔑 ${escapeHtml(o.primary_keyword)}</span>`);
+            
+            if (badges.length > 0) {
+                html += `    <div class="flex flex-wrap gap-2 text-xs mb-2">\n      ${badges.join('\n      ')}\n    </div>\n`;
+            }
             html += `  </header>\n\n`;
 
-            // 1. Overview
-            if (s.package_overview) {
+            // 1. Package Overview
+            if (s.package_overview && s.package_overview.trim()) {
                 html += `  <section class="mb-8">\n`;
                 html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">Package Overview</h2>\n`;
                 html += `    <p class="text-base text-slate-700 leading-relaxed">${escapeHtml(s.package_overview)}</p>\n`;
                 html += `  </section>\n\n`;
             }
 
-            // 2. Quick Facts Grid
-            if (qf && Object.keys(qf).length > 0) {
+            // 2. Quick Facts (Only if real facts exist)
+            const factItems = [];
+            if (qf.package_name && qf.package_name.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Package:</span> <span class="text-slate-900">${escapeHtml(qf.package_name)}</span></div>`);
+            if (qf.cost && qf.cost.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Cost:</span> <span class="text-slate-900 font-bold text-emerald-700">${escapeHtml(qf.cost)}</span></div>`);
+            if (qf.duration && qf.duration.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Duration:</span> <span class="text-slate-900">${escapeHtml(qf.duration)}</span></div>`);
+            if (qf.destination && qf.destination.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Destination:</span> <span class="text-slate-900">${escapeHtml(qf.destination)}</span></div>`);
+            if (qf.accommodation && qf.accommodation.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Stay:</span> <span class="text-slate-900">${escapeHtml(qf.accommodation)}</span></div>`);
+            if (qf.food && qf.food.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Meals:</span> <span class="text-slate-900">${escapeHtml(qf.food)}</span></div>`);
+            if (qf.activities && qf.activities.trim()) factItems.push(`<div class="p-3 bg-white rounded-lg border border-slate-200 md:col-span-2"><span class="font-semibold text-slate-600">Activities:</span> <span class="text-slate-900">${escapeHtml(qf.activities)}</span></div>`);
+
+            if (factItems.length > 0) {
                 html += `  <section class="mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">\n`;
                 html += `    <h2 class="text-xl font-bold text-slate-900 mb-4">Quick Facts</h2>\n`;
-                html += `    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">\n`;
-                if (qf.package_name) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Package:</span> <span class="text-slate-900">${escapeHtml(qf.package_name)}</span></div>\n`;
-                if (qf.cost) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Cost:</span> <span class="text-slate-900 font-bold text-emerald-700">${escapeHtml(qf.cost)}</span></div>\n`;
-                if (qf.duration) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Duration:</span> <span class="text-slate-900">${escapeHtml(qf.duration)}</span></div>\n`;
-                if (qf.destination) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Destination:</span> <span class="text-slate-900">${escapeHtml(qf.destination)}</span></div>\n`;
-                if (qf.accommodation) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Stay:</span> <span class="text-slate-900">${escapeHtml(qf.accommodation)}</span></div>\n`;
-                if (qf.food) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Meals:</span> <span class="text-slate-900">${escapeHtml(qf.food)}</span></div>\n`;
-                if (qf.activities) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200 md:col-span-2"><span class="font-semibold text-slate-600">Activities:</span> <span class="text-slate-900">${escapeHtml(qf.activities)}</span></div>\n`;
-                html += `    </div>\n`;
+                html += `    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">\n      ${factItems.join('\n      ')}\n    </div>\n`;
                 html += `  </section>\n\n`;
             }
 
@@ -869,11 +895,11 @@
             if (s.why_choose_heading || (s.why_choose_bullets && s.why_choose_bullets.length)) {
                 html += `  <section class="mb-8">\n`;
                 html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">${escapeHtml(s.why_choose_heading || 'Why Choose This Package?')}</h2>\n`;
-                if (s.why_choose_intro) html += `    <p class="text-slate-700 mb-4">${escapeHtml(s.why_choose_intro)}</p>\n`;
+                if (s.why_choose_intro && s.why_choose_intro.trim()) html += `    <p class="text-slate-700 mb-4">${escapeHtml(s.why_choose_intro)}</p>\n`;
                 if (s.why_choose_bullets && s.why_choose_bullets.length) {
                     html += `    <ul class="space-y-2.5">\n`;
                     s.why_choose_bullets.forEach(b => {
-                        html += `      <li class="flex items-start gap-2.5"><span class="text-emerald-500 font-bold mt-0.5">✓</span><span>${escapeHtml(b)}</span></li>\n`;
+                        if (b && b.trim()) html += `      <li class="flex items-start gap-2.5"><span class="text-emerald-500 font-bold mt-0.5">✓</span><span>${escapeHtml(b)}</span></li>\n`;
                     });
                     html += `    </ul>\n`;
                 }
@@ -884,107 +910,160 @@
             if (s.who_can_benefit_heading || (s.who_can_benefit_bullets && s.who_can_benefit_bullets.length)) {
                 html += `  <section class="mb-8">\n`;
                 html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">${escapeHtml(s.who_can_benefit_heading || 'Who Can Benefit?')}</h2>\n`;
-                if (s.who_can_benefit_intro) html += `    <p class="text-slate-700 mb-4">${escapeHtml(s.who_can_benefit_intro)}</p>\n`;
+                if (s.who_can_benefit_intro && s.who_can_benefit_intro.trim()) html += `    <p class="text-slate-700 mb-4">${escapeHtml(s.who_can_benefit_intro)}</p>\n`;
                 if (s.who_can_benefit_bullets && s.who_can_benefit_bullets.length) {
                     html += `    <ul class="space-y-2.5">\n`;
                     s.who_can_benefit_bullets.forEach(b => {
-                        html += `      <li class="flex items-start gap-2.5"><span class="text-indigo-500 font-bold mt-0.5">★</span><span>${escapeHtml(b)}</span></li>\n`;
+                        if (b && b.trim()) html += `      <li class="flex items-start gap-2.5"><span class="text-indigo-500 font-bold mt-0.5">★</span><span>${escapeHtml(b)}</span></li>\n`;
                     });
                     html += `    </ul>\n`;
                 }
                 html += `  </section>\n\n`;
             }
 
-            // 5. Program Highlights
-            if (s.program_highlights && (s.program_highlights.morning || s.program_highlights.daytime || s.program_highlights.evening)) {
-                const ph = s.program_highlights;
+            // 5. Daily Program Highlights (Only if sessions exist)
+            const ph = s.program_highlights || {};
+            const hasPh = (ph.morning && ph.morning.length > 0) || (ph.daytime && ph.daytime.length > 0) || (ph.evening && ph.evening.length > 0);
+            if (hasPh) {
                 html += `  <section class="mb-8">\n`;
                 html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${escapeHtml(ph.heading || 'Daily Program Highlights')}</h2>\n`;
                 html += `    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">\n`;
                 if (ph.morning && ph.morning.length) {
                     html += `      <div class="p-4 bg-amber-50/60 rounded-xl border border-amber-200">\n        <h3 class="font-bold text-amber-900 mb-2">🌅 Morning</h3>\n        <ul class="text-xs space-y-1.5 text-amber-950">\n`;
-                    ph.morning.forEach(item => { html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
+                    ph.morning.forEach(item => { if (item.activity) html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
                     html += `        </ul>\n      </div>\n`;
                 }
                 if (ph.daytime && ph.daytime.length) {
                     html += `      <div class="p-4 bg-blue-50/60 rounded-xl border border-blue-200">\n        <h3 class="font-bold text-blue-900 mb-2">☀️ Daytime</h3>\n        <ul class="text-xs space-y-1.5 text-blue-950">\n`;
-                    ph.daytime.forEach(item => { html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
+                    ph.daytime.forEach(item => { if (item.activity) html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
                     html += `        </ul>\n      </div>\n`;
                 }
                 if (ph.evening && ph.evening.length) {
                     html += `      <div class="p-4 bg-purple-50/60 rounded-xl border border-purple-200">\n        <h3 class="font-bold text-purple-900 mb-2">🌙 Evening</h3>\n        <ul class="text-xs space-y-1.5 text-purple-950">\n`;
-                    ph.evening.forEach(item => { html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
+                    ph.evening.forEach(item => { if (item.activity) html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
                     html += `        </ul>\n      </div>\n`;
                 }
                 html += `    </div>\n`;
                 html += `  </section>\n\n`;
             }
 
-            // 6. Accommodation & Meals
-            if (s.accommodation_bullets || s.meal_section_bullets) {
+            // 6. Day-by-Day Itinerary (if available)
+            if (s.itinerary && s.itinerary.length > 0) {
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">Detailed Day-by-Day Itinerary</h2>\n`;
+                html += `    <div class="space-y-4">\n`;
+                s.itinerary.forEach(day => {
+                    html += `      <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">\n`;
+                    html += `        <h3 class="font-bold text-slate-900 mb-2">Day ${day.day_number || 1} Schedule</h3>\n`;
+                    if (day.sessions && day.sessions.length) {
+                        html += `        <ul class="space-y-1.5 text-sm text-slate-700">\n`;
+                        day.sessions.forEach(sess => {
+                            html += `          <li class="flex items-start gap-2"><span class="font-semibold text-indigo-700 min-w-[70px]">${escapeHtml(sess.time || '')}</span><span>${escapeHtml(sess.activity || '')}</span></li>\n`;
+                        });
+                        html += `        </ul>\n`;
+                    }
+                    html += `      </div>\n`;
+                });
+                html += `    </div>\n`;
+                html += `  </section>\n\n`;
+            }
+
+            // 7. Pricing Table (if available)
+            if (s.pricing_table && s.pricing_table.length > 0) {
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">Transparent Package Pricing</h2>\n`;
+                html += `    <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">\n`;
+                html += `      <table class="w-full text-left text-sm text-slate-700">\n`;
+                html += `        <thead class="bg-slate-100 text-xs font-bold text-slate-800 uppercase tracking-wider"><tr><th class="p-3">Occupancy / Group Size</th><th class="p-3 text-right">Cost Per Person</th></tr></thead>\n`;
+                html += `        <tbody class="divide-y divide-slate-200 bg-white">\n`;
+                s.pricing_table.forEach(r => {
+                    html += `          <tr><td class="p-3 font-medium">${escapeHtml(r.guests || '1 Person')}</td><td class="p-3 text-right font-bold text-emerald-700">${escapeHtml(r.cost_per_person || '₹--')}</td></tr>\n`;
+                });
+                html += `        </tbody>\n      </table>\n    </div>\n  </section>\n\n`;
+            }
+
+            // 8. Accommodation & Meals
+            const hasAcc = s.accommodation_bullets && s.accommodation_bullets.length;
+            const hasMeal = s.meal_section_bullets && s.meal_section_bullets.length;
+            if (hasAcc || hasMeal) {
                 html += `  <section class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">\n`;
-                if (s.accommodation_bullets && s.accommodation_bullets.length) {
+                if (hasAcc) {
                     html += `    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">\n`;
                     html += `      <h3 class="font-bold text-slate-900 mb-3">🏡 ${escapeHtml(s.accommodation_heading || 'Accommodation')}</h3>\n`;
                     html += `      <ul class="text-sm space-y-2 text-slate-700">\n`;
-                    s.accommodation_bullets.forEach(b => { html += `        <li class="flex items-start gap-2"><span class="text-slate-400">•</span><span>${escapeHtml(b)}</span></li>\n`; });
+                    s.accommodation_bullets.forEach(b => { if (b && b.trim()) html += `        <li class="flex items-start gap-2"><span class="text-slate-400">•</span><span>${escapeHtml(b)}</span></li>\n`; });
                     html += `      </ul>\n    </div>\n`;
                 }
-                if (s.meal_section_bullets && s.meal_section_bullets.length) {
+                if (hasMeal) {
                     html += `    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">\n`;
                     html += `      <h3 class="font-bold text-slate-900 mb-3">🍲 ${escapeHtml(s.meal_section_heading || 'Meals & Nutrition')}</h3>\n`;
                     html += `      <ul class="text-sm space-y-2 text-slate-700">\n`;
-                    s.meal_section_bullets.forEach(b => { html += `        <li class="flex items-start gap-2"><span class="text-slate-400">•</span><span>${escapeHtml(b)}</span></li>\n`; });
+                    s.meal_section_bullets.forEach(b => { if (b && b.trim()) html += `        <li class="flex items-start gap-2"><span class="text-slate-400">•</span><span>${escapeHtml(b)}</span></li>\n`; });
                     html += `      </ul>\n    </div>\n`;
                 }
                 html += `  </section>\n\n`;
             }
 
-            // 7. Key Benefits
+            // 9. Key Benefits
             if (s.benefits_items && s.benefits_items.length) {
                 html += `  <section class="mb-8">\n`;
                 html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${escapeHtml(s.benefits_heading || 'Key Benefits')}</h2>\n`;
                 html += `    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">\n`;
                 s.benefits_items.forEach(item => {
-                    html += `      <div class="p-3 bg-emerald-50/50 rounded-lg border border-emerald-200 text-sm text-emerald-950 flex items-start gap-2"><span class="text-emerald-600 font-bold">✨</span><span>${escapeHtml(item)}</span></div>\n`;
+                    if (item && item.trim()) html += `      <div class="p-3 bg-emerald-50/50 rounded-lg border border-emerald-200 text-sm text-emerald-950 flex items-start gap-2"><span class="text-emerald-600 font-bold">✨</span><span>${escapeHtml(item)}</span></div>\n`;
                 });
                 html += `    </div>\n`;
                 html += `  </section>\n\n`;
             }
 
-            // 8. How to Book
+            // 10. Inclusions & Exclusions
+            const hasInc = s.inclusions && s.inclusions.length;
+            const hasExc = s.exclusions && s.exclusions.length;
+            if (hasInc || hasExc) {
+                html += `  <section class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">\n`;
+                if (hasInc) {
+                    html += `    <div class="p-5 bg-emerald-50/40 rounded-xl border border-emerald-200">\n`;
+                    html += `      <h3 class="font-bold text-emerald-900 mb-3">✅ What is Included</h3>\n`;
+                    html += `      <ul class="text-sm space-y-2 text-emerald-950">\n`;
+                    s.inclusions.forEach(inc => { if (inc && inc.trim()) html += `        <li class="flex items-start gap-2"><span class="text-emerald-600 font-bold">+</span><span>${escapeHtml(inc)}</span></li>\n`; });
+                    html += `      </ul>\n    </div>\n`;
+                }
+                if (hasExc) {
+                    html += `    <div class="p-5 bg-rose-50/40 rounded-xl border border-rose-200">\n`;
+                    html += `      <h3 class="font-bold text-rose-900 mb-3">❌ What is Excluded</h3>\n`;
+                    html += `      <ul class="text-sm space-y-2 text-rose-950">\n`;
+                    s.exclusions.forEach(exc => { if (exc && exc.trim()) html += `        <li class="flex items-start gap-2"><span class="text-rose-600 font-bold">-</span><span>${escapeHtml(exc)}</span></li>\n`; });
+                    html += `      </ul>\n    </div>\n`;
+                }
+                html += `  </section>\n\n`;
+            }
+
+            // 11. How to Book
             if (s.how_to_book_steps && s.how_to_book_steps.length) {
                 html += `  <section class="mb-8 p-6 bg-indigo-50/40 rounded-xl border border-indigo-200">\n`;
                 html += `    <h2 class="text-xl font-bold text-indigo-950 mb-4">${escapeHtml(s.how_to_book_heading || 'How to Book Through YatraDham.Org')}</h2>\n`;
                 html += `    <ol class="space-y-3 text-sm text-indigo-950">\n`;
                 s.how_to_book_steps.forEach((step, idx) => {
-                    html += `      <li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">${idx+1}</span><span>${escapeHtml(step)}</span></li>\n`;
+                    if (step && step.trim()) html += `      <li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">${idx+1}</span><span>${escapeHtml(step)}</span></li>\n`;
                 });
                 html += `    </ol>\n`;
                 html += `  </section>\n\n`;
             }
 
-            // 9. Inclusions & Exclusions
-            if ((s.inclusions && s.inclusions.length) || (s.exclusions && s.exclusions.length)) {
-                html += `  <section class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">\n`;
-                if (s.inclusions && s.inclusions.length) {
-                    html += `    <div class="p-5 bg-emerald-50/40 rounded-xl border border-emerald-200">\n`;
-                    html += `      <h3 class="font-bold text-emerald-900 mb-3">✅ What is Included</h3>\n`;
-                    html += `      <ul class="text-sm space-y-2 text-emerald-950">\n`;
-                    s.inclusions.forEach(inc => { html += `        <li class="flex items-start gap-2"><span class="text-emerald-600 font-bold">+</span><span>${escapeHtml(inc)}</span></li>\n`; });
-                    html += `      </ul>\n    </div>\n`;
-                }
-                if (s.exclusions && s.exclusions.length) {
-                    html += `    <div class="p-5 bg-rose-50/40 rounded-xl border border-rose-200">\n`;
-                    html += `      <h3 class="font-bold text-rose-900 mb-3">❌ What is Excluded</h3>\n`;
-                    html += `      <ul class="text-sm space-y-2 text-rose-950">\n`;
-                    s.exclusions.forEach(exc => { html += `        <li class="flex items-start gap-2"><span class="text-rose-600 font-bold">-</span><span>${escapeHtml(exc)}</span></li>\n`; });
-                    html += `      </ul>\n    </div>\n`;
-                }
-                html += `  </section>\n\n`;
+            // 12. Nearby Locations & Landmarks
+            if (s.nearby_locations && s.nearby_locations.length > 0) {
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">${escapeHtml(s.nearby_locations_heading || 'How to Reach & Nearby Landmarks')}</h2>\n`;
+                html += `    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">\n`;
+                s.nearby_locations.forEach(loc => {
+                    if (loc.name && loc.name.trim()) {
+                        html += `      <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs"><strong class="text-slate-900">${escapeHtml(loc.name)}:</strong> <span class="text-slate-600">${escapeHtml(loc.distance || '')}</span></div>\n`;
+                    }
+                });
+                html += `    </div>\n  </section>\n\n`;
             }
 
-            // 10. FAQs
+            // 13. FAQs
             if (s.faq && s.faq.length) {
                 html += `  <section class="mb-8">\n`;
                 html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>\n`;
@@ -992,25 +1071,39 @@
                 s.faq.forEach(f => {
                     const q = f.question || f.q || '';
                     const a = f.answer || f.a || '';
-                    html += `      <details class="p-4 bg-slate-50 rounded-xl border border-slate-200 group">\n`;
-                    html += `        <summary class="font-semibold text-slate-900 cursor-pointer flex items-center justify-between list-none"><span class="flex items-center gap-2"><span class="text-primary font-bold">Q.</span>${escapeHtml(q)}</span><span class="text-slate-400 group-open:rotate-180 transition">&darr;</span></summary>\n`;
-                    html += `        <p class="mt-3 text-sm text-slate-700 leading-relaxed border-t border-slate-200 pt-3">${escapeHtml(a)}</p>\n`;
-                    html += `      </details>\n`;
+                    if (q.trim() && a.trim()) {
+                        html += `      <details class="p-4 bg-slate-50 rounded-xl border border-slate-200 group">\n`;
+                        html += `        <summary class="font-semibold text-slate-900 cursor-pointer flex items-center justify-between list-none"><span class="flex items-center gap-2"><span class="text-primary font-bold">Q.</span>${escapeHtml(q)}</span><span class="text-slate-400 group-open:rotate-180 transition">&darr;</span></summary>\n`;
+                        html += `        <p class="mt-3 text-sm text-slate-700 leading-relaxed border-t border-slate-200 pt-3">${escapeHtml(a)}</p>\n`;
+                        html += `      </details>\n`;
+                    }
                 });
                 html += `    </div>\n`;
                 html += `  </section>\n\n`;
             }
 
-            // 11. Policies & Terms
-            if (s.cancellation_policy || s.terms_conditions) {
+            // 14. Policies & Terms (Only if non-empty)
+            const hasCanc = s.cancellation_policy && s.cancellation_policy.trim();
+            const hasTerms = s.terms_conditions && s.terms_conditions.length > 0;
+            if (hasCanc || hasTerms) {
                 html += `  <section class="mb-8 p-5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">\n`;
                 html += `    <h3 class="font-bold text-slate-800 mb-2">Policies, Terms & Cancellation</h3>\n`;
-                if (s.cancellation_policy) html += `    <p class="mb-2"><strong>Cancellation:</strong> ${escapeHtml(s.cancellation_policy)}</p>\n`;
-                if (s.terms_conditions && s.terms_conditions.length) {
+                if (hasCanc) html += `    <p class="mb-2"><strong>Cancellation:</strong> ${escapeHtml(s.cancellation_policy)}</p>\n`;
+                if (hasTerms) {
                     html += `    <ul class="list-disc pl-4 space-y-1">\n`;
-                    s.terms_conditions.forEach(t => { html += `      <li>${escapeHtml(t)}</li>\n`; });
+                    s.terms_conditions.forEach(t => { if (t && t.trim()) html += `      <li>${escapeHtml(t)}</li>\n`; });
                     html += `    </ul>\n`;
                 }
+                html += `  </section>\n`;
+            }
+
+            // 15. Fallback if entire body is still empty: Render Scraped Page Summary
+            if (!s.package_overview && factItems.length === 0 && !hasPh && pkg.raw_text) {
+                html += `  <section class="mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">\n`;
+                html += `    <h2 class="text-xl font-bold text-slate-900 mb-3">Package Details & Information</h2>\n`;
+                const cleanSnippet = pkg.raw_text.replace(/\s+/g, ' ').substring(0, 800);
+                html += `    <p class="text-sm text-slate-700 leading-relaxed">${escapeHtml(cleanSnippet)}...</p>\n`;
+                html += `    <div class="mt-4 p-3 bg-emerald-50 rounded-lg border border-emerald-200 text-xs text-emerald-800 font-medium">Verified stays, hygienic satvik dining & transit coordination guaranteed on YatraDham.Org.</div>\n`;
                 html += `  </section>\n`;
             }
 
@@ -1744,17 +1837,26 @@
 
         function markdownToHtml(md) {
             if (!md) return '';
-            return md
-                .replace(/### (.*?)$/gm, '<h3 class="font-semibold text-slate-700 mt-4 mb-1">$1</h3>')
-                .replace(/## (.*?)$/gm, '<h2 class="font-bold text-slate-800 mt-5 mb-2 text-lg">$1</h2>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/^- (.*?)$/gm, '<li class="ml-4 text-sm text-slate-600">$1</li>')
-                .replace(/^\d+\. (.*?)$/gm, '<li class="ml-4 text-sm text-slate-600">$1</li>')
-                .replace(/\n\n/g, '</p><p class="text-sm text-slate-600 mb-2">')
+            let html = md
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/#### (.*?)$/gm, '<h4 class="font-bold text-slate-800 mt-4 mb-1 text-sm">$1</h4>')
+                .replace(/### (.*?)$/gm, '<h3 class="font-bold text-slate-800 mt-5 mb-2 text-base border-b border-slate-100 pb-1">$1</h3>')
+                .replace(/## (.*?)$/gm, '<h2 class="font-extrabold text-slate-900 mt-6 mb-3 text-xl">$1</h2>')
+                .replace(/# (.*?)$/gm, '<h1 class="font-black text-slate-950 mt-6 mb-4 text-2xl">$1</h1>')
+                .replace(/\[(.*?)\]\((https?:\/\/.*?)\)/g, '<a href="$2" target="_blank" rel="noopener" class="text-indigo-600 hover:text-indigo-800 font-semibold underline decoration-indigo-300 hover:decoration-indigo-600 transition">$1</a>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-slate-900">$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em class="italic text-slate-700">$1</em>')
+                .replace(/^&gt;\s?(.*?)$/gm, '<blockquote class="p-3 my-3 bg-indigo-50/60 border-l-4 border-indigo-500 text-indigo-950 rounded-r-lg text-sm italic">$1</blockquote>')
+                .replace(/^---$/gm, '<hr class="my-6 border-slate-200">')
+                .replace(/^- (.*?)$/gm, '<li class="ml-4 text-sm text-slate-700 list-disc">$1</li>')
+                .replace(/^\d+\. (.*?)$/gm, '<li class="ml-4 text-sm text-slate-700 list-decimal">$1</li>')
+                .replace(/\n\n/g, '</p><p class="text-sm text-slate-700 leading-relaxed mb-3">')
                 .replace(/\n/g, '<br>')
-                .replace(/^/, '<p class="text-sm text-slate-600 mb-2">')
+                .replace(/^/, '<p class="text-sm text-slate-700 leading-relaxed mb-3">')
                 .replace(/$/, '</p>');
+            return html;
         }
 
         function getActiveRawContent() {
