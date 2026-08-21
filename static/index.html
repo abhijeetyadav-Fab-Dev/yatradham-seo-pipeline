@@ -501,6 +501,39 @@
             </div>
         </div>
 
+        <!-- MODAL: Fullscreen HTML Content Preview -->
+        <div id="htmlPreviewModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" style="display: none;">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden mx-4">
+                <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="p-2 rounded-lg bg-indigo-100 text-indigo-700 font-bold text-xs uppercase tracking-wider flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            HTML Live Visual Preview
+                        </span>
+                        <span id="modalPreviewTitle" class="text-sm font-semibold text-slate-800 truncate max-w-md"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="btnModalCopyHtml" onclick="copyModalHtml()" class="px-4 py-2 text-xs font-semibold rounded-lg bg-primary text-white hover:bg-primaryHover transition flex items-center shadow-sm">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            Copy HTML Code
+                        </button>
+                        <button onclick="closeHtmlPreviewModal()" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition text-lg font-bold leading-none">
+                            &times;
+                        </button>
+                    </div>
+                </div>
+                <div id="modalHtmlContent" class="p-8 overflow-y-auto bg-white flex-1 font-sans text-slate-800">
+                    <!-- Injected HTML preview -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-xl shadow-xl flex items-center gap-3 text-sm font-medium border border-slate-700">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+            <span id="toastMessage">Action completed</span>
+        </div>
+
     </main>
 
     <script>
@@ -664,6 +697,232 @@
             debounceTimer = setTimeout(loadOutputs, 400);
         }
 
+        window.allOutputsMap = {};
+        let activeModalOutputId = null;
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            const msgEl = document.getElementById('toastMessage');
+            if (!toast || !msgEl) return;
+            msgEl.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        function generatePackageHtml(o) {
+            if (!o) return '<p>No content available</p>';
+            const s = o.sections || {};
+            const pkg = o.package_input || {};
+            const qf = s.quick_facts || {};
+
+            let html = `<!-- Yatradham SEO Structured Content: ${escapeHtml(o.title_tag || pkg.name || 'Tour Package')} -->\n`;
+            html += `<article class="yatradham-content-wrapper max-w-4xl mx-auto p-6 bg-white font-sans text-slate-800 leading-relaxed">\n`;
+
+            // Title & Meta
+            html += `  <header class="mb-8 pb-6 border-b border-slate-200">\n`;
+            html += `    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-3">${escapeHtml(o.title_tag || pkg.name)}</h1>\n`;
+            if (o.meta_description) {
+                html += `    <p class="text-sm text-slate-600 italic mb-4 bg-slate-50 p-3 rounded-lg border border-slate-200"><strong>SEO Meta Description:</strong> ${escapeHtml(o.meta_description)}</p>\n`;
+            }
+            html += `    <div class="flex flex-wrap gap-2 text-xs font-semibold">\n`;
+            if (qf.destination || pkg.destination) html += `      <span class="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">📍 ${escapeHtml(qf.destination || pkg.destination)}</span>\n`;
+            if (qf.cost || pkg.cost) html += `      <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">💰 ${escapeHtml(qf.cost || pkg.cost)}</span>\n`;
+            if (qf.duration || pkg.duration) html += `      <span class="px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">⏱️ ${escapeHtml(qf.duration || pkg.duration)}</span>\n`;
+            if (o.primary_keyword) html += `      <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">🔑 ${escapeHtml(o.primary_keyword)}</span>\n`;
+            html += `    </div>\n`;
+            html += `  </header>\n\n`;
+
+            // 1. Overview
+            if (s.package_overview) {
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">Package Overview</h2>\n`;
+                html += `    <p class="text-base text-slate-700 leading-relaxed">${escapeHtml(s.package_overview)}</p>\n`;
+                html += `  </section>\n\n`;
+            }
+
+            // 2. Quick Facts Grid
+            if (qf && Object.keys(qf).length > 0) {
+                html += `  <section class="mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">\n`;
+                html += `    <h2 class="text-xl font-bold text-slate-900 mb-4">Quick Facts</h2>\n`;
+                html += `    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">\n`;
+                if (qf.package_name) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Package:</span> <span class="text-slate-900">${escapeHtml(qf.package_name)}</span></div>\n`;
+                if (qf.cost) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Cost:</span> <span class="text-slate-900 font-bold text-emerald-700">${escapeHtml(qf.cost)}</span></div>\n`;
+                if (qf.duration) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Duration:</span> <span class="text-slate-900">${escapeHtml(qf.duration)}</span></div>\n`;
+                if (qf.destination) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Destination:</span> <span class="text-slate-900">${escapeHtml(qf.destination)}</span></div>\n`;
+                if (qf.accommodation) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Stay:</span> <span class="text-slate-900">${escapeHtml(qf.accommodation)}</span></div>\n`;
+                if (qf.food) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200"><span class="font-semibold text-slate-600">Meals:</span> <span class="text-slate-900">${escapeHtml(qf.food)}</span></div>\n`;
+                if (qf.activities) html += `      <div class="p-3 bg-white rounded-lg border border-slate-200 md:col-span-2"><span class="font-semibold text-slate-600">Activities:</span> <span class="text-slate-900">${escapeHtml(qf.activities)}</span></div>\n`;
+                html += `    </div>\n`;
+                html += `  </section>\n\n`;
+            }
+
+            // 3. Why Choose
+            if (s.why_choose_heading || (s.why_choose_bullets && s.why_choose_bullets.length)) {
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">${escapeHtml(s.why_choose_heading || 'Why Choose This Package?')}</h2>\n`;
+                if (s.why_choose_intro) html += `    <p class="text-slate-700 mb-4">${escapeHtml(s.why_choose_intro)}</p>\n`;
+                if (s.why_choose_bullets && s.why_choose_bullets.length) {
+                    html += `    <ul class="space-y-2.5">\n`;
+                    s.why_choose_bullets.forEach(b => {
+                        html += `      <li class="flex items-start gap-2.5"><span class="text-emerald-500 font-bold mt-0.5">✓</span><span>${escapeHtml(b)}</span></li>\n`;
+                    });
+                    html += `    </ul>\n`;
+                }
+                html += `  </section>\n\n`;
+            }
+
+            // 4. Who Can Benefit
+            if (s.who_can_benefit_heading || (s.who_can_benefit_bullets && s.who_can_benefit_bullets.length)) {
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-3">${escapeHtml(s.who_can_benefit_heading || 'Who Can Benefit?')}</h2>\n`;
+                if (s.who_can_benefit_intro) html += `    <p class="text-slate-700 mb-4">${escapeHtml(s.who_can_benefit_intro)}</p>\n`;
+                if (s.who_can_benefit_bullets && s.who_can_benefit_bullets.length) {
+                    html += `    <ul class="space-y-2.5">\n`;
+                    s.who_can_benefit_bullets.forEach(b => {
+                        html += `      <li class="flex items-start gap-2.5"><span class="text-indigo-500 font-bold mt-0.5">★</span><span>${escapeHtml(b)}</span></li>\n`;
+                    });
+                    html += `    </ul>\n`;
+                }
+                html += `  </section>\n\n`;
+            }
+
+            // 5. Program Highlights
+            if (s.program_highlights && (s.program_highlights.morning || s.program_highlights.daytime || s.program_highlights.evening)) {
+                const ph = s.program_highlights;
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${escapeHtml(ph.heading || 'Daily Program Highlights')}</h2>\n`;
+                html += `    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">\n`;
+                if (ph.morning && ph.morning.length) {
+                    html += `      <div class="p-4 bg-amber-50/60 rounded-xl border border-amber-200">\n        <h3 class="font-bold text-amber-900 mb-2">🌅 Morning</h3>\n        <ul class="text-xs space-y-1.5 text-amber-950">\n`;
+                    ph.morning.forEach(item => { html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
+                    html += `        </ul>\n      </div>\n`;
+                }
+                if (ph.daytime && ph.daytime.length) {
+                    html += `      <div class="p-4 bg-blue-50/60 rounded-xl border border-blue-200">\n        <h3 class="font-bold text-blue-900 mb-2">☀️ Daytime</h3>\n        <ul class="text-xs space-y-1.5 text-blue-950">\n`;
+                    ph.daytime.forEach(item => { html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
+                    html += `        </ul>\n      </div>\n`;
+                }
+                if (ph.evening && ph.evening.length) {
+                    html += `      <div class="p-4 bg-purple-50/60 rounded-xl border border-purple-200">\n        <h3 class="font-bold text-purple-900 mb-2">🌙 Evening</h3>\n        <ul class="text-xs space-y-1.5 text-purple-950">\n`;
+                    ph.evening.forEach(item => { html += `          <li><strong>${escapeHtml(item.time || '')}:</strong> ${escapeHtml(item.activity || '')}</li>\n`; });
+                    html += `        </ul>\n      </div>\n`;
+                }
+                html += `    </div>\n`;
+                html += `  </section>\n\n`;
+            }
+
+            // 6. Accommodation & Meals
+            if (s.accommodation_bullets || s.meal_section_bullets) {
+                html += `  <section class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">\n`;
+                if (s.accommodation_bullets && s.accommodation_bullets.length) {
+                    html += `    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">\n`;
+                    html += `      <h3 class="font-bold text-slate-900 mb-3">🏡 ${escapeHtml(s.accommodation_heading || 'Accommodation')}</h3>\n`;
+                    html += `      <ul class="text-sm space-y-2 text-slate-700">\n`;
+                    s.accommodation_bullets.forEach(b => { html += `        <li class="flex items-start gap-2"><span class="text-slate-400">•</span><span>${escapeHtml(b)}</span></li>\n`; });
+                    html += `      </ul>\n    </div>\n`;
+                }
+                if (s.meal_section_bullets && s.meal_section_bullets.length) {
+                    html += `    <div class="p-5 bg-slate-50 rounded-xl border border-slate-200">\n`;
+                    html += `      <h3 class="font-bold text-slate-900 mb-3">🍲 ${escapeHtml(s.meal_section_heading || 'Meals & Nutrition')}</h3>\n`;
+                    html += `      <ul class="text-sm space-y-2 text-slate-700">\n`;
+                    s.meal_section_bullets.forEach(b => { html += `        <li class="flex items-start gap-2"><span class="text-slate-400">•</span><span>${escapeHtml(b)}</span></li>\n`; });
+                    html += `      </ul>\n    </div>\n`;
+                }
+                html += `  </section>\n\n`;
+            }
+
+            // 7. Key Benefits
+            if (s.benefits_items && s.benefits_items.length) {
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">${escapeHtml(s.benefits_heading || 'Key Benefits')}</h2>\n`;
+                html += `    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">\n`;
+                s.benefits_items.forEach(item => {
+                    html += `      <div class="p-3 bg-emerald-50/50 rounded-lg border border-emerald-200 text-sm text-emerald-950 flex items-start gap-2"><span class="text-emerald-600 font-bold">✨</span><span>${escapeHtml(item)}</span></div>\n`;
+                });
+                html += `    </div>\n`;
+                html += `  </section>\n\n`;
+            }
+
+            // 8. How to Book
+            if (s.how_to_book_steps && s.how_to_book_steps.length) {
+                html += `  <section class="mb-8 p-6 bg-indigo-50/40 rounded-xl border border-indigo-200">\n`;
+                html += `    <h2 class="text-xl font-bold text-indigo-950 mb-4">${escapeHtml(s.how_to_book_heading || 'How to Book Through YatraDham.Org')}</h2>\n`;
+                html += `    <ol class="space-y-3 text-sm text-indigo-950">\n`;
+                s.how_to_book_steps.forEach((step, idx) => {
+                    html += `      <li class="flex items-start gap-3"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">${idx+1}</span><span>${escapeHtml(step)}</span></li>\n`;
+                });
+                html += `    </ol>\n`;
+                html += `  </section>\n\n`;
+            }
+
+            // 9. Inclusions & Exclusions
+            if ((s.inclusions && s.inclusions.length) || (s.exclusions && s.exclusions.length)) {
+                html += `  <section class="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6">\n`;
+                if (s.inclusions && s.inclusions.length) {
+                    html += `    <div class="p-5 bg-emerald-50/40 rounded-xl border border-emerald-200">\n`;
+                    html += `      <h3 class="font-bold text-emerald-900 mb-3">✅ What is Included</h3>\n`;
+                    html += `      <ul class="text-sm space-y-2 text-emerald-950">\n`;
+                    s.inclusions.forEach(inc => { html += `        <li class="flex items-start gap-2"><span class="text-emerald-600 font-bold">+</span><span>${escapeHtml(inc)}</span></li>\n`; });
+                    html += `      </ul>\n    </div>\n`;
+                }
+                if (s.exclusions && s.exclusions.length) {
+                    html += `    <div class="p-5 bg-rose-50/40 rounded-xl border border-rose-200">\n`;
+                    html += `      <h3 class="font-bold text-rose-900 mb-3">❌ What is Excluded</h3>\n`;
+                    html += `      <ul class="text-sm space-y-2 text-rose-950">\n`;
+                    s.exclusions.forEach(exc => { html += `        <li class="flex items-start gap-2"><span class="text-rose-600 font-bold">-</span><span>${escapeHtml(exc)}</span></li>\n`; });
+                    html += `      </ul>\n    </div>\n`;
+                }
+                html += `  </section>\n\n`;
+            }
+
+            // 10. FAQs
+            if (s.faq && s.faq.length) {
+                html += `  <section class="mb-8">\n`;
+                html += `    <h2 class="text-2xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>\n`;
+                html += `    <div class="space-y-3">\n`;
+                s.faq.forEach(f => {
+                    const q = f.question || f.q || '';
+                    const a = f.answer || f.a || '';
+                    html += `      <details class="p-4 bg-slate-50 rounded-xl border border-slate-200 group">\n`;
+                    html += `        <summary class="font-semibold text-slate-900 cursor-pointer flex items-center justify-between list-none"><span class="flex items-center gap-2"><span class="text-primary font-bold">Q.</span>${escapeHtml(q)}</span><span class="text-slate-400 group-open:rotate-180 transition">&darr;</span></summary>\n`;
+                    html += `        <p class="mt-3 text-sm text-slate-700 leading-relaxed border-t border-slate-200 pt-3">${escapeHtml(a)}</p>\n`;
+                    html += `      </details>\n`;
+                });
+                html += `    </div>\n`;
+                html += `  </section>\n\n`;
+            }
+
+            // 11. Policies & Terms
+            if (s.cancellation_policy || s.terms_conditions) {
+                html += `  <section class="mb-8 p-5 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600">\n`;
+                html += `    <h3 class="font-bold text-slate-800 mb-2">Policies, Terms & Cancellation</h3>\n`;
+                if (s.cancellation_policy) html += `    <p class="mb-2"><strong>Cancellation:</strong> ${escapeHtml(s.cancellation_policy)}</p>\n`;
+                if (s.terms_conditions && s.terms_conditions.length) {
+                    html += `    <ul class="list-disc pl-4 space-y-1">\n`;
+                    s.terms_conditions.forEach(t => { html += `      <li>${escapeHtml(t)}</li>\n`; });
+                    html += `    </ul>\n`;
+                }
+                html += `  </section>\n`;
+            }
+
+            html += `</article>`;
+            return html;
+        }
+
         async function loadOutputs(silent = false) {
             const status = document.getElementById('statusFilter').value;
             const search = document.getElementById('searchInput').value;
@@ -681,6 +940,10 @@
         function renderOutputs(outputs, silent) {
             const container = document.getElementById('outputsList');
             
+            // Cache in global map
+            window.allOutputsMap = {};
+            (outputs || []).forEach(o => { window.allOutputsMap[o.id] = o; });
+
             // Preserve checked state
             const checkedIds = Array.from(document.querySelectorAll('.bulk-check:checked')).map(cb => cb.value);
             // Preserve expanded details state
@@ -699,7 +962,9 @@
                 rejected: 'bg-rose-100 text-rose-800 border-rose-200'
             };
 
-            container.innerHTML = outputs.map(o => `
+            container.innerHTML = outputs.map(o => {
+                const htmlCode = generatePackageHtml(o);
+                return `
                 <div class="p-5 hover:bg-slate-50 transition group">
                     <div class="flex items-start gap-4">
                         <div class="pt-1">
@@ -707,13 +972,13 @@
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-start mb-1">
-                                <h4 class="text-lg font-semibold text-slate-800 truncate pr-4">${o.package_input.name}</h4>
+                                <h4 class="text-lg font-semibold text-slate-800 truncate pr-4">${escapeHtml(o.package_input.name)}</h4>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize shrink-0 ${statusColors[o.status]}">${o.status}</span>
                             </div>
                             <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-slate-500 mb-3">
                                 <span class="inline-flex items-center" title="Target Keyword">
                                     <svg class="w-4 h-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
-                                    ${o.primary_keyword}
+                                    ${escapeHtml(o.primary_keyword)}
                                 </span>
                                 <span class="inline-flex items-center" title="QA Score">
                                     <svg class="w-4 h-4 mr-1 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
@@ -726,31 +991,90 @@
                             
                             <!-- Badges -->
                             <div class="flex flex-wrap gap-2 mb-3">
-                                ${o.qa_flags.map(f => `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-800"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>${f}</span>`).join('')}
+                                ${o.qa_flags.map(f => `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-rose-100 text-rose-800"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>${escapeHtml(f)}</span>`).join('')}
                                 ${o.qa_flags.length === 0 ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-800"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Passed SEO Checks</span>` : ''}
                             </div>
 
-                            <button onclick="toggleOutputDetails(${o.id})" class="text-sm text-primary font-medium hover:text-primaryHover focus:outline-none">View full generated content &darr;</button>
+                            <!-- Fast Action Toolbar -->
+                            <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
+                                <button onclick="toggleOutputDetails(${o.id})" class="text-sm text-primary font-semibold hover:text-primaryHover inline-flex items-center gap-1.5 focus:outline-none">
+                                    <span id="btn-label-${o.id}">View Full Generated Content</span> &darr;
+                                </button>
+                                <div class="flex items-center gap-2">
+                                    <button onclick="previewOutputHtml(${o.id})" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition inline-flex items-center gap-1" title="Open Fullscreen HTML Visual Preview">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                        HTML Preview
+                                    </button>
+                                    <button onclick="copyOutputHtml(${o.id})" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition inline-flex items-center gap-1" title="Copy clean HTML code directly">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                        Copy HTML
+                                    </button>
+                                </div>
+                            </div>
                             
-                            <div id="details-${o.id}" class="hidden mt-4 bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                                <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">SEO Meta</div>
-                                <div class="p-4 border-b border-slate-100">
-                                    <p class="text-sm mb-1"><span class="font-medium text-slate-700">Title Tag:</span> <span class="text-blue-600 font-medium">${o.title_tag}</span></p>
-                                    <p class="text-sm"><span class="font-medium text-slate-700">Meta Desc:</span> <span class="text-slate-600">${o.meta_description}</span></p>
+                            <div id="details-${o.id}" class="hidden mt-4 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                <!-- Meta Block -->
+                                <div class="bg-slate-50 px-5 py-3 border-b border-slate-200">
+                                    <p class="text-sm mb-1.5"><span class="font-bold text-slate-700">Title Tag:</span> <span class="text-blue-600 font-medium">${escapeHtml(o.title_tag)}</span></p>
+                                    <p class="text-sm"><span class="font-bold text-slate-700">Meta Desc:</span> <span class="text-slate-600">${escapeHtml(o.meta_description)}</span></p>
                                 </div>
-                                <div class="bg-slate-50 px-4 py-2 border-y border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">Content Preview</div>
-                                <div class="p-4 bg-slate-50">
-                                    <pre class="text-xs text-slate-700 font-mono whitespace-pre-wrap max-h-64 overflow-y-auto bg-white p-3 border rounded shadow-inner">${JSON.stringify(o.sections, null, 2)}</pre>
+
+                                <!-- Tab Mode Switcher Toolbar -->
+                                <div class="bg-slate-100/90 px-4 py-2.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                                    <div class="flex items-center gap-1.5">
+                                        <button id="btn-tab-preview-${o.id}" onclick="switchOutputTab(${o.id}, 'preview')" class="px-3 py-1.5 text-xs font-bold rounded-md bg-white text-slate-800 shadow-sm border border-slate-300 transition">👁️ Visual HTML Preview</button>
+                                        <button id="btn-tab-html-${o.id}" onclick="switchOutputTab(${o.id}, 'html')" class="px-3 py-1.5 text-xs font-semibold rounded-md text-slate-600 hover:bg-white/70 transition">💻 HTML Code</button>
+                                        <button id="btn-tab-json-${o.id}" onclick="switchOutputTab(${o.id}, 'json')" class="px-3 py-1.5 text-xs font-semibold rounded-md text-slate-600 hover:bg-white/70 transition">📋 JSON Data</button>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <button onclick="previewOutputHtml(${o.id})" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition inline-flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                                            Fullscreen Preview
+                                        </button>
+                                        <button onclick="copyOutputHtml(${o.id})" class="px-3 py-1.5 text-xs font-semibold rounded-md bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition inline-flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                            Copy HTML Code
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="p-3 border-t border-slate-200 bg-slate-50 flex gap-2 justify-end">
-                                    <button class="px-3 py-1.5 text-xs font-medium rounded text-emerald-700 bg-emerald-100 hover:bg-emerald-200 transition" onclick="updateStatus(${o.id}, 'approved')">Approve</button>
-                                    <button class="px-3 py-1.5 text-xs font-medium rounded text-rose-700 bg-rose-100 hover:bg-rose-200 transition" onclick="updateStatus(${o.id}, 'rejected')">Reject</button>
+
+                                <!-- Tab 1: Visual HTML Preview -->
+                                <div id="view-preview-${o.id}" class="p-6 bg-white max-h-[500px] overflow-y-auto border-b border-slate-200">
+                                    ${htmlCode}
+                                </div>
+
+                                <!-- Tab 2: HTML Code -->
+                                <div id="view-html-${o.id}" class="hidden p-4 bg-slate-900 border-b border-slate-200">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs text-slate-400 font-mono">Semantic Clean HTML Code</span>
+                                        <button onclick="copyOutputHtml(${o.id})" class="text-xs text-emerald-400 hover:text-emerald-300 font-semibold inline-flex items-center gap-1">Copy Code</button>
+                                    </div>
+                                    <textarea readonly class="w-full h-80 bg-slate-950 text-emerald-300 font-mono text-xs p-3 rounded-lg border border-slate-800 resize-none focus:outline-none">${escapeHtml(htmlCode)}</textarea>
+                                </div>
+
+                                <!-- Tab 3: JSON Data -->
+                                <div id="view-json-${o.id}" class="hidden p-4 bg-slate-50 border-b border-slate-200">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-xs text-slate-500 font-mono">Structured JSON Output</span>
+                                        <button onclick="copyOutputJson(${o.id})" class="text-xs text-primary hover:text-primaryHover font-semibold inline-flex items-center gap-1">Copy JSON</button>
+                                    </div>
+                                    <pre class="text-xs text-slate-700 font-mono whitespace-pre-wrap max-h-80 overflow-y-auto bg-white p-3 border rounded shadow-inner">${JSON.stringify(o.sections, null, 2)}</pre>
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="p-3 border-t border-slate-200 bg-slate-50 flex gap-2 justify-between items-center">
+                                    <span class="text-xs text-slate-500">ID: #${o.id} • Score: ${o.qa_score}/100</span>
+                                    <div class="flex gap-2">
+                                        <button class="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-emerald-700 bg-emerald-100 hover:bg-emerald-200 transition" onclick="updateStatus(${o.id}, 'approved')">Approve</button>
+                                        <button class="px-3.5 py-1.5 text-xs font-semibold rounded-lg text-rose-700 bg-rose-100 hover:bg-rose-200 transition" onclick="updateStatus(${o.id}, 'rejected')">Reject</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
 
             // Restore checked state after re-render
             checkedIds.forEach(id => {
@@ -766,11 +1090,79 @@
 
         function toggleOutputDetails(id) {
             const el = document.getElementById('details-' + id);
+            const label = document.getElementById('btn-label-' + id);
             if (el.classList.contains('hidden')) {
                 el.classList.remove('hidden');
+                if (label) label.textContent = 'Hide Generated Content';
             } else {
                 el.classList.add('hidden');
+                if (label) label.textContent = 'View Full Generated Content';
             }
+        }
+
+        function switchOutputTab(id, tab) {
+            ['preview', 'html', 'json'].forEach(t => {
+                const view = document.getElementById(`view-${t}-${id}`);
+                const btn = document.getElementById(`btn-tab-${t}-${id}`);
+                if (view) view.classList.add('hidden');
+                if (btn) {
+                    btn.classList.remove('bg-white', 'text-slate-800', 'shadow-sm', 'border', 'border-slate-300', 'font-bold');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+
+            const activeView = document.getElementById(`view-${tab}-${id}`);
+            const activeBtn = document.getElementById(`btn-tab-${tab}-${id}`);
+            if (activeView) activeView.classList.remove('hidden');
+            if (activeBtn) {
+                activeBtn.classList.add('bg-white', 'text-slate-800', 'shadow-sm', 'border', 'border-slate-300', 'font-bold');
+                activeBtn.classList.remove('text-slate-600');
+            }
+        }
+
+        function copyOutputHtml(id) {
+            const o = window.allOutputsMap[id];
+            if (!o) return;
+            const html = generatePackageHtml(o);
+            navigator.clipboard.writeText(html).then(() => {
+                showToast('📋 Clean HTML Code Copied to Clipboard!');
+            }).catch(e => {
+                prompt('Copy HTML manually:', html);
+            });
+        }
+
+        function copyOutputJson(id) {
+            const o = window.allOutputsMap[id];
+            if (!o) return;
+            const jsonStr = JSON.stringify(o.sections, null, 2);
+            navigator.clipboard.writeText(jsonStr).then(() => {
+                showToast('📋 JSON Data Copied to Clipboard!');
+            });
+        }
+
+        function previewOutputHtml(id) {
+            const o = window.allOutputsMap[id];
+            if (!o) return;
+            activeModalOutputId = id;
+            const modal = document.getElementById('htmlPreviewModal');
+            const title = document.getElementById('modalPreviewTitle');
+            const content = document.getElementById('modalHtmlContent');
+            if (!modal || !content) return;
+
+            title.textContent = o.package_input.name || o.title_tag || 'Package Preview';
+            content.innerHTML = generatePackageHtml(o);
+            modal.style.display = 'flex';
+        }
+
+        function copyModalHtml() {
+            if (!activeModalOutputId) return;
+            copyOutputHtml(activeModalOutputId);
+        }
+
+        function closeHtmlPreviewModal() {
+            const modal = document.getElementById('htmlPreviewModal');
+            if (modal) modal.style.display = 'none';
+            activeModalOutputId = null;
         }
 
         async function updateStatus(id, status) {
@@ -782,6 +1174,7 @@
                 });
                 loadOutputs();
                 loadStats();
+                showToast(`Output #${id} status set to ${status}`);
             } catch(e) { console.error(e); }
         }
 
