@@ -25,7 +25,8 @@ def extract_package_data(html: str, url: Optional[str] = None) -> Dict[str, Any]
 
     # Extract name from slug if missing
     if not data.get("name") and url:
-        slug = url.rstrip("/").split("/")[-1].replace("-", " ")
+        slug = url.rstrip("/").split("/")[-1]
+        slug = re.sub(r'\.html?$', '', slug, flags=re.IGNORECASE).replace("-", " ")
         data["name"] = slug.title()
 
     # Destination - parse from 'in <Location>' or slug
@@ -38,6 +39,7 @@ def extract_package_data(html: str, url: Optional[str] = None) -> Dict[str, Any]
     if not dest and url:
         url_parts = url.rstrip("/").split("/")
         last_part = url_parts[-1] if url_parts else ""
+        last_part = re.sub(r'\.html?$', '', last_part, flags=re.IGNORECASE)
         if "-in-" in last_part:
             dest = last_part.split("-in-")[-1].replace("-", " ").title()
         else:

@@ -74,45 +74,48 @@ CRITICAL: Do NOT repeat the package name. Write a FRESH, benefit-focused summary
     except json.JSONDecodeError:
         result = {}
 
-    meta = result.get("meta_description", "")
+    meta = str(result.get("meta_description") or "").strip()
 
     # Anti-repetition check: if the package name appears more than once, rebuild
     if meta and name and meta.lower().count(name.lower()[:20]) > 1:
         meta = ""  # Force fallback — repetitive content detected
 
-    # Smart fallback if empty — build from components, never repeat name
-    if not meta:
-        # Extract actual destination city from raw data
-        dest = destination if destination else "India"
-        dur = duration if duration else ""
+    # Smart fallback if empty or too short
+    if not meta or len(meta) < 40:
+        dest = destination if destination else "Yamunotri, Uttarakhand"
+        dur = duration if duration else "15 Days"
 
         # Build a natural description from components
-        if "ayurved" in name.lower() or "ayurved" in primary_keyword.lower():
-            meta = f"Rejuvenate with a {dur} Ayurvedic wellness retreat in {dest}. Includes therapies, yoga, healthy meals & verified stay through YatraDham. Book now!"
+        if "gmvn" in name.lower() or "trh" in name.lower() or "dharamshala" in name.lower() or "ashram" in name.lower():
+            meta = f"Book verified stay at {name[:40]} in {dest}. Clean rooms, hot water, authentic satvik meals & easy temple access. Reserve your spot now!"
+        elif "ayurved" in name.lower() or "ayurved" in primary_keyword.lower():
+            meta = f"Rejuvenate with a {dur} Ayurvedic wellness retreat in {dest}. Includes therapies, yoga, healthy meals & verified stay. Book now!"
         elif "yoga" in name.lower() or "yoga" in primary_keyword.lower():
-            meta = f"Join a {dur} yoga retreat in {dest} with guided meditation, pranayama, healthy meals & comfortable accommodation via YatraDham. Book now!"
+            meta = f"Join a {dur} yoga retreat in {dest} with guided meditation, pranayama, healthy meals & verified accommodation. Book now!"
         elif "detox" in name.lower() or "panchakarma" in primary_keyword.lower():
-            meta = f"Experience a {dur} Panchakarma detox program in {dest}. Includes herbal therapies, yoga, organic meals & verified accommodation. Enquire today!"
+            meta = f"Experience a {dur} Panchakarma detox program in {dest}. Includes herbal therapies, yoga, organic meals & verified stay. Enquire today!"
         else:
-            meta = f"Discover a {dur} wellness retreat in {dest}. Includes accommodation, meals, guided activities & YatraDham booking support. Reserve your spot!"
+            meta = f"Discover verified accommodation & tour packages in {dest} with YatraDham. Clean rooms, satvik meals & seamless booking. Book now!"
 
-        meta = meta.replace("  ", " ").strip()
+    # Clean double periods or whitespace glitches
+    meta = meta.replace("..", ".").replace("  ", " ").strip()
 
-    # Enforce length: 145-155 characters
-    if len(meta) < 145:
-        meta = (meta.rstrip("!.") + ". Discover authentic wellness with YatraDham. Book now!").replace("  ", " ").strip()
-    if len(meta) > 155:
-        meta = meta[:152].rsplit(" ", 1)[0] + "..."
-        if len(meta) < 145:
-            meta = meta.rstrip(".") + " Book now!"
-
-    # Force CTA at end
+    # Ensure CTA at end
     ctas = ["book now", "enquire today", "reserve your spot", "plan your trip", "contact us"]
-    has_cta = any(cta in meta.lower() for cta in ctas)
-    if not has_cta:
-        meta = meta.rstrip(".!") + ". Book now!"
-        if len(meta) > 155:
-            meta = meta[:152].rsplit(" ", 1)[0] + ". Book now!"
+    if not any(cta in meta.lower() for cta in ctas):
+        meta = meta.rstrip(".!, ") + ". Book now!"
+
+    # Enforce strictly: max 155 characters (and NEVER exceed 160)
+    if len(meta) > 155:
+        target_cta = " Book now!"
+        max_base = 155 - len(target_cta)
+        base = meta[:max_base].rsplit(" ", 1)[0].rstrip(".!, ")
+        meta = f"{base}.{target_cta}"
+
+    # Final length and sanity check
+    meta = meta.replace("..", ".").strip()
+    if len(meta) > 160:
+        meta = meta[:157].rsplit(" ", 1)[0] + "..."
 
     result["meta_description"] = meta
     return result

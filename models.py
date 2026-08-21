@@ -1,5 +1,5 @@
 """Pydantic models for the SEO pipeline."""
-from pydantic import BaseModel, Field, HttpUrl, ConfigDict
+from pydantic import BaseModel, Field, HttpUrl, ConfigDict, field_validator
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 
@@ -102,6 +102,22 @@ class SEOOutput(BaseModel):
     status: str = "pending"  # pending, approved, rejected
     created_at: str = ""
     updated_at: str = ""
+
+    @field_validator("title_tag", mode="before")
+    @classmethod
+    def sanitize_title_tag(cls, v: Any) -> str:
+        s = str(v or "").strip()
+        if len(s) > 65:
+            s = s[:62].rsplit(" ", 1)[0] + "..." if " " in s[:62] else s[:65]
+        return s
+
+    @field_validator("meta_description", mode="before")
+    @classmethod
+    def sanitize_meta_description(cls, v: Any) -> str:
+        s = str(v or "").strip()
+        if len(s) > 160:
+            s = s[:157].rsplit(" ", 1)[0] + "..." if " " in s[:157] else s[:160]
+        return s
 
 
 class BatchRequest(BaseModel):
