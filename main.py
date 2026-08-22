@@ -504,9 +504,71 @@ def localize(req: LocalizeRequest):
         raise HTTPException(status_code=500, detail=f"Localization failed: {str(e)}")
 
 
+class WpVerifyRequest(BaseModel):
+    site_url: str
+    username: str
+    app_password: str
+
+
+@app.post("/api/wp/verify")
+def verify_wordpress_connection(req: WpVerifyRequest):
+    """Verify WordPress credentials and REST API availability."""
+    from wordpress_publisher import WordPressPublisher
+    wp = WordPressPublisher(req.site_url, req.username, req.app_password)
+    result = wp.verify_connection()
+    return result
+
+
+class WpPublishRequest(BaseModel):
+    site_url: str
+    username: str
+    app_password: str
+    title: str
+    content_html: str
+    meta_description: Optional[str] = ""
+    status: str = "draft"  # "draft" or "publish"
+    post_type: str = "posts"
+    slug: Optional[str] = None
+    categories: Optional[list] = None
+    tags: Optional[list] = None
+
+
+@app.post("/api/wp/publish")
+def publish_to_wordpress(req: WpPublishRequest):
+    """Publish generated SEO content directly to WordPress."""
+    from wordpress_publisher import WordPressPublisher
+    wp = WordPressPublisher(req.site_url, req.username, req.app_password)
+    result = wp.publish_post(
+        title=req.title,
+        content_html=req.content_html,
+        meta_description=req.meta_description or "",
+        status=req.status,
+        post_type=req.post_type,
+        slug=req.slug,
+        categories=req.categories,
+        tags=req.tags
+    )
+    return result
+
+
+class SitemapCrawlRequest(BaseModel):
+    source_url: str
+    max_urls: int = 100
+
+
+@app.post("/api/sitemap/crawl")
+def crawl_sitemap(req: SitemapCrawlRequest):
+    """Crawl an XML Sitemap or Category Landing Page to extract package links."""
+    from sitemap_crawler import SitemapCrawler
+    result = SitemapCrawler.fetch_urls(req.source_url, req.max_urls)
+    return result
+
+
+
 @app.get("/stats")
 def stats():
     return get_stats()
+
 
 
 

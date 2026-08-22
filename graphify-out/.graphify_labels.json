@@ -4,12 +4,13 @@
   "2": "stress_test.py",
   "3": "LLMClient",
   "4": "models.py",
-  "5": "extract_package_data",
-  "6": "run_suite",
+  "5": "WordPressPublisher",
+  "6": "SitemapCrawler",
   "7": "run_seo_linter",
   "8": "e2e_browser_test.py",
   "9": "live_qa.py",
   "10": "__init__.py",
   "11": "qa_agent.py",
-  "12": ".sanitize_meta_description"
+  "12": ".sanitize_meta_description",
+  "13": "generate_json_ld"
 }
