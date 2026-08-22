@@ -12,5 +12,8 @@
   "10": "__init__.py",
   "11": "qa_agent.py",
   "12": ".sanitize_meta_description",
-  "13": "generate_json_ld"
+  "13": "generate_json_ld",
+  "14": "content_creator_agent.py",
+  "15": "extract_package_data",
+  "16": "scratch_e2e_run.py"
 }

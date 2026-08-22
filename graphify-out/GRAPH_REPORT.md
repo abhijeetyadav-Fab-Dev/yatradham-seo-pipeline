@@ -1,16 +1,16 @@
 # Graph Report - yatradham-seo-pipeline  (2026-08-22)
 
 ## Corpus Check
-- 26 files · ~56,235 words
+- 27 files · ~57,132 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 267 nodes · 581 edges · 14 communities (11 shown, 3 thin omitted)
+- 269 nodes · 582 edges · 17 communities (14 shown, 3 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 45 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `771fbdac`
+- Built from commit: `65c34a8b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -26,6 +26,8 @@
 - qa_agent.py
 - .sanitize_meta_description
 - generate_json_ld
+- content_creator_agent.py
+- extract_package_data
 
 ## God Nodes (most connected - your core abstractions)
 1. `LLMClient` - 34 edges
@@ -40,41 +42,41 @@
 10. `run()` - 10 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `_generate_long_form_blog()` --uses--> `LLMClient`  [INFERRED]
+  agents/content_creator_agent.py → llm_client.py
+- `run()` --uses--> `LLMClient`  [INFERRED]
+  agents/content_creator_agent.py → llm_client.py
 - `run()` --uses--> `LLMClient`  [INFERRED]
   agents/qa_agent.py → llm_client.py
 - `_sections_to_dict()` --uses--> `SectionedContent`  [INFERRED]
   database.py → models.py
 - `_row_to_output()` --uses--> `PackageInput`  [INFERRED]
   database.py → models.py
-- `localize()` --uses--> `LLMClient`  [INFERRED]
-  main.py → llm_client.py
-- `process_batch_background()` --uses--> `LLMClient`  [INFERRED]
-  main.py → llm_client.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (14 total, 3 thin omitted)
+## Communities (17 total, 3 thin omitted)
 
 ### Community 0 - "📅 Day-by-Day Comprehensive Itinerary"
 Cohesion: 0.10
 Nodes (20): 7-Day Haridwar Spiritual & Wellness Retreat | YatraDham, Day 1, Day 2, Day 3, Day 4, Day 5, Day 6, Day 7 (+12 more)
 
 ### Community 1 - "main.py"
-Cohesion: 0.06
-Nodes (57): BackgroundTasks, clear_all_outputs(), FastAPI, batch_urls(), BatchURLRequest, bulk_action(), check_ai_endpoint(), CheckAIRequest (+49 more)
+Cohesion: 0.07
+Nodes (50): BackgroundTasks, clear_all_outputs(), FastAPI, batch_urls(), BatchURLRequest, bulk_action(), check_ai_endpoint(), CheckAIRequest (+42 more)
 
 ### Community 2 - "stress_test.py"
 Cohesion: 0.10
-Nodes (45): bulk_update_status(), delete_output(), _dict_to_sections(), _execute_with_retry(), get_conn(), get_output(), get_stats(), init_db() (+37 more)
+Nodes (44): bulk_update_status(), delete_output(), _dict_to_sections(), _execute_with_retry(), get_conn(), get_output(), get_stats(), init_db() (+36 more)
 
 ### Community 3 - "LLMClient"
 Cohesion: 0.06
-Nodes (45): _extract_json_from_response(), Any, Content agent: generates all 19 structured sections from scraped page data., Robustly extract JSON from LLM response, handling markdown blocks and…, run(), _clean_markdown(), _generate_long_form_blog(), _parse_markdown_sections() (+37 more)
+Nodes (40): _extract_json_from_response(), Any, Content agent: generates all 19 structured sections from scraped page data., Robustly extract JSON from LLM response, handling markdown blocks and…, run(), Any, Keyword agent: enforces 2-4 word primary keyword., run() (+32 more)
 
 ### Community 4 - "models.py"
-Cohesion: 0.13
-Nodes (21): get_smart_internal_links(), Intelligent Cross-Domain Internal Linking Engine for YatraDham Ecosystem., Return contextual internal links filtered to avoid linking to the current page…, batch_process(), process_single(), Process a single package through all 5 agents (manual JSON input)., Process multiple packages from JSON (manual input)., BatchRequest (+13 more)
+Cohesion: 0.23
+Nodes (13): batch_process(), Process multiple packages from JSON (manual input)., BatchRequest, BulkActionRequest, FAQItem, ItineraryDay, NearbyLocation, PricingRow (+5 more)
 
 ### Community 7 - "run_seo_linter"
 Cohesion: 0.33
@@ -88,6 +90,14 @@ Nodes (17): _check_banned(), _check_sections(), _check_sentences(), _flesch_esti
 Cohesion: 0.40
 Nodes (4): generate_json_ld(), Any, Schema.org JSON-LD Structured Data Generator for YatraDham Packages., Generate comprehensive stacked Schema.org JSON-LD for Google Rich Results, SGE…
 
+### Community 14 - "content_creator_agent.py"
+Cohesion: 0.22
+Nodes (15): _clean_markdown(), _generate_long_form_blog(), _parse_markdown_sections(), Any, Content Creator Agent: Generates net-new SEO content from scratch., Parse a markdown string into a dictionary based on H1 headings and H2…, Strip LLM loops AND apply Anti-AI-Detection replacements to bypass Copyleaks., Remove LLM chain-of-thought / reasoning blocks that leak into output. Models… (+7 more)
+
+### Community 15 - "extract_package_data"
+Cohesion: 0.33
+Nodes (6): clean_price_string(), extract_package_data(), Any, Extract structured data from Yatradham HTML pages., Sanitize and format price strings to eliminate broken artifacts like 'rs,'., Extract package metadata, category, and raw text for LLM processing with robust…
+
 ## Knowledge Gaps
 - **17 isolated node(s):** `📍 Package Overview`, `⚡ Quick Facts`, `🌟 Why Choose This Package?`, `Day 1`, `Day 2` (+12 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -96,11 +106,11 @@ Nodes (4): generate_json_ld(), Any, Schema.org JSON-LD Structured Data Generator
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `LLMClient` connect `LLMClient` to `main.py`, `stress_test.py`, `qa_agent.py`, `models.py`?**
-  _High betweenness centrality (0.181) - this node is a cross-community bridge._
-- **Why does `process_package()` connect `models.py` to `main.py`, `stress_test.py`, `LLMClient`, `run_seo_linter`, `qa_agent.py`, `generate_json_ld`?**
+- **Why does `LLMClient` connect `LLMClient` to `main.py`, `stress_test.py`, `qa_agent.py`, `content_creator_agent.py`?**
+  _High betweenness centrality (0.178) - this node is a cross-community bridge._
+- **Why does `process_package()` connect `LLMClient` to `main.py`, `stress_test.py`, `models.py`, `run_seo_linter`, `qa_agent.py`, `generate_json_ld`?**
   _High betweenness centrality (0.040) - this node is a cross-community bridge._
-- **Why does `run_seo_linter()` connect `run_seo_linter` to `main.py`, `LLMClient`, `models.py`?**
+- **Why does `run_seo_linter()` connect `run_seo_linter` to `main.py`, `LLMClient`?**
   _High betweenness centrality (0.040) - this node is a cross-community bridge._
 - **Are the 13 inferred relationships involving `LLMClient` (e.g. with `run()` and `_generate_long_form_blog()`) actually correct?**
   _`LLMClient` has 13 INFERRED edges - model-reasoned connections that need verification._

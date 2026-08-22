@@ -186,6 +186,19 @@
       "norm_label": "llmclient"
     },
     {
+      "label": "PackageInput",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L7",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "models_packageinput",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "packageinput"
+    },
+    {
       "label": "BatchRequest",
       "file_type": "code",
       "source_file": "models.py",
@@ -249,19 +262,6 @@
       "community": 4,
       "community_name": "models.py",
       "norm_label": "nearbylocation"
-    },
-    {
-      "label": "PackageInput",
-      "file_type": "code",
-      "source_file": "models.py",
-      "source_location": "L7",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "models_packageinput",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "packageinput"
     },
     {
       "label": "PricingRow",
@@ -429,7 +429,7 @@
       "label": "humanize_endpoint()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L827",
+      "source_location": "L828",
       "_callable": true,
       "_origin": "ast",
       "id": "main_humanize_endpoint",
@@ -484,18 +484,6 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "localize()"
-    },
-    {
-      "label": "process_batch_background()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L196",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_process_batch_background",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "process_batch_background()"
     },
     {
       "label": "publish_to_wordpress()",
@@ -582,18 +570,6 @@
       "norm_label": "verify_wordpress_connection()"
     },
     {
-      "label": "clean_price_string()",
-      "file_type": "code",
-      "source_file": "scraper.py",
-      "source_location": "L40",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "scraper_clean_price_string",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "clean_price_string()"
-    },
-    {
       "label": "detect_url_category()",
       "file_type": "code",
       "source_file": "scraper.py",
@@ -604,18 +580,6 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "detect_url_category()"
-    },
-    {
-      "label": "extract_package_data()",
-      "file_type": "code",
-      "source_file": "scraper.py",
-      "source_location": "L58",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "scraper_extract_package_data",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "extract_package_data()"
     },
     {
       "label": "_check_banned()",
@@ -760,6 +724,126 @@
       "community": 13,
       "community_name": "generate_json_ld",
       "norm_label": "generate_json_ld()"
+    },
+    {
+      "label": "_clean_markdown()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L295",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_clean_markdown",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "_clean_markdown()"
+    },
+    {
+      "label": "_generate_long_form_blog()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L308",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_generate_long_form_blog",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "_generate_long_form_blog()"
+    },
+    {
+      "label": "_parse_markdown_sections()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L165",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_parse_markdown_sections",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "_parse_markdown_sections()"
+    },
+    {
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L574",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_run",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "run()"
+    },
+    {
+      "label": "_sanitize_repetition()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L192",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_sanitize_repetition",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "_sanitize_repetition()"
+    },
+    {
+      "label": "_strip_thinking_tags()",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L262",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_strip_thinking_tags",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "_strip_thinking_tags()"
+    },
+    {
+      "label": "de_slop_and_humanize()",
+      "file_type": "code",
+      "source_file": "anti_ai_guardrails.py",
+      "source_location": "L282",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "anti_ai_guardrails_de_slop_and_humanize",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "de_slop_and_humanize()"
+    },
+    {
+      "label": "clean_price_string()",
+      "file_type": "code",
+      "source_file": "scraper.py",
+      "source_location": "L40",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "scraper_clean_price_string",
+      "community": 15,
+      "community_name": "extract_package_data",
+      "norm_label": "clean_price_string()"
+    },
+    {
+      "label": "extract_package_data()",
+      "file_type": "code",
+      "source_file": "scraper.py",
+      "source_location": "L58",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "scraper_extract_package_data",
+      "community": 15,
+      "community_name": "extract_package_data",
+      "norm_label": "extract_package_data()"
+    },
+    {
+      "label": "record()",
+      "file_type": "code",
+      "source_file": "scratch_e2e_run.py",
+      "source_location": "L16",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "scratch_e2e_run_record",
+      "community": 16,
+      "community_name": "scratch_e2e_run.py",
+      "norm_label": "record()"
     },
     {
       "label": "bulk_update_status()",
@@ -1074,18 +1158,6 @@
       "norm_label": "worker_humanizer_stress()"
     },
     {
-      "label": "record()",
-      "file_type": "code",
-      "source_file": "test_e2e_suite.py",
-      "source_location": "L30",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "test_e2e_suite_record",
-      "community": 2,
-      "community_name": "stress_test.py",
-      "norm_label": "record()"
-    },
-    {
       "label": "run_suite()",
       "file_type": "code",
       "source_file": "test_e2e_suite.py",
@@ -1120,78 +1192,6 @@
       "community": 3,
       "community_name": "LLMClient",
       "norm_label": "run()"
-    },
-    {
-      "label": "_clean_markdown()",
-      "file_type": "code",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L295",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_clean_markdown",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "_clean_markdown()"
-    },
-    {
-      "label": "_generate_long_form_blog()",
-      "file_type": "code",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L308",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_generate_long_form_blog",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "_generate_long_form_blog()"
-    },
-    {
-      "label": "_parse_markdown_sections()",
-      "file_type": "code",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L165",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_parse_markdown_sections",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "_parse_markdown_sections()"
-    },
-    {
-      "label": "run()",
-      "file_type": "code",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L574",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_run",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "run()"
-    },
-    {
-      "label": "_sanitize_repetition()",
-      "file_type": "code",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L192",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_sanitize_repetition",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "_sanitize_repetition()"
-    },
-    {
-      "label": "_strip_thinking_tags()",
-      "file_type": "code",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L262",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_strip_thinking_tags",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "_strip_thinking_tags()"
     },
     {
       "label": "run()",
@@ -1230,18 +1230,6 @@
       "norm_label": "run()"
     },
     {
-      "label": "de_slop_and_humanize()",
-      "file_type": "code",
-      "source_file": "anti_ai_guardrails.py",
-      "source_location": "L282",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "anti_ai_guardrails_de_slop_and_humanize",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "de_slop_and_humanize()"
-    },
-    {
       "label": "localize_content()",
       "file_type": "code",
       "source_file": "indic_engine.py",
@@ -1252,6 +1240,18 @@
       "community": 3,
       "community_name": "LLMClient",
       "norm_label": "localize_content()"
+    },
+    {
+      "label": "get_smart_internal_links()",
+      "file_type": "code",
+      "source_file": "internal_linker.py",
+      "source_location": "L125",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "internal_linker_get_smart_internal_links",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "get_smart_internal_links()"
     },
     {
       "label": "clean_price_string()",
@@ -1374,16 +1374,52 @@
       "norm_label": "._wait_for_rate_limit()"
     },
     {
-      "label": "get_smart_internal_links()",
+      "label": "process_batch_background()",
       "file_type": "code",
-      "source_file": "internal_linker.py",
-      "source_location": "L125",
+      "source_file": "main.py",
+      "source_location": "L196",
       "_callable": true,
       "_origin": "ast",
-      "id": "internal_linker_get_smart_internal_links",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "get_smart_internal_links()"
+      "id": "main_process_batch_background",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "process_batch_background()"
+    },
+    {
+      "label": "process_single()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L272",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_process_single",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "process_single()"
+    },
+    {
+      "label": "process_package()",
+      "file_type": "code",
+      "source_file": "pipeline.py",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "pipeline_process_package",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "process_package()"
+    },
+    {
+      "label": "record()",
+      "file_type": "code",
+      "source_file": "test_e2e_suite.py",
+      "source_location": "L30",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "test_e2e_suite_record",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "record()"
     },
     {
       "label": "batch_process()",
@@ -1396,30 +1432,6 @@
       "community": 4,
       "community_name": "models.py",
       "norm_label": "batch_process()"
-    },
-    {
-      "label": "process_single()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L272",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_process_single",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "process_single()"
-    },
-    {
-      "label": "process_package()",
-      "file_type": "code",
-      "source_file": "pipeline.py",
-      "source_location": "L11",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "pipeline_process_package",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "process_package()"
     },
     {
       "label": ".get_headers()",
@@ -1851,28 +1863,6 @@
       "norm_label": "post"
     },
     {
-      "label": "scraper.py",
-      "file_type": "code",
-      "source_file": "scraper.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "scraper",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "scraper.py"
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "scraper_py_any",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "any"
-    },
-    {
       "label": "FastAPI server with .env auto-loading, URL auto-scraping, batch processing,\u2026",
       "file_type": "rationale",
       "source_file": "main.py",
@@ -2027,17 +2017,6 @@
       "norm_label": "validate if the selected category matches the target url."
     },
     {
-      "label": "Extract structured data from Yatradham HTML pages.",
-      "file_type": "rationale",
-      "source_file": "scraper.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "scraper_rationale_1",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "extract structured data from yatradham html pages."
-    },
-    {
       "label": "Classify the URL or page text into 'wellness', 'tour', 'stay', or 'puja'.",
       "file_type": "rationale",
       "source_file": "scraper.py",
@@ -2047,28 +2026,6 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "classify the url or page text into 'wellness', 'tour', 'stay', or 'puja'."
-    },
-    {
-      "label": "Sanitize and format price strings to eliminate broken artifacts like 'rs,'.",
-      "file_type": "rationale",
-      "source_file": "scraper.py",
-      "source_location": "L41",
-      "_origin": "ast",
-      "id": "scraper_rationale_41",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "sanitize and format price strings to eliminate broken artifacts like 'rs,'."
-    },
-    {
-      "label": "Extract package metadata, category, and raw text for LLM processing with robust\u2026",
-      "file_type": "rationale",
-      "source_file": "scraper.py",
-      "source_location": "L59",
-      "_origin": "ast",
-      "id": "scraper_rationale_59",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "extract package metadata, category, and raw text for llm processing with robust..."
     },
     {
       "label": "__init__.py",
@@ -2256,6 +2213,171 @@
       "community": 13,
       "community_name": "generate_json_ld",
       "norm_label": "generate comprehensive stacked schema.org json-ld for google rich results, sge..."
+    },
+    {
+      "label": "content_creator_agent.py",
+      "file_type": "code",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "content_creator_agent.py"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_py_any",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "any"
+    },
+    {
+      "label": "Content Creator Agent: Generates net-new SEO content from scratch.",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_rationale_1",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "content creator agent: generates net-new seo content from scratch."
+    },
+    {
+      "label": "Parse a markdown string into a dictionary based on H1 headings and H2\u2026",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L166",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_rationale_166",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "parse a markdown string into a dictionary based on h1 headings and h2..."
+    },
+    {
+      "label": "Strip LLM loops AND apply Anti-AI-Detection replacements to bypass Copyleaks.",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L193",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_rationale_193",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "strip llm loops and apply anti-ai-detection replacements to bypass copyleaks."
+    },
+    {
+      "label": "Remove LLM chain-of-thought / reasoning blocks that leak into output. Models\u2026",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L263",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_rationale_263",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "remove llm chain-of-thought / reasoning blocks that leak into output. models..."
+    },
+    {
+      "label": "Single-pass unified generation for 3,000+ word comprehensive master guides\u2026",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L317",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_rationale_317",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "single-pass unified generation for 3,000+ word comprehensive master guides..."
+    },
+    {
+      "label": "Generate net-new content based on user requirements using robust markdown\u2026",
+      "file_type": "rationale",
+      "source_file": "agents/content_creator_agent.py",
+      "source_location": "L584",
+      "_origin": "ast",
+      "id": "agents_content_creator_agent_rationale_584",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "generate net-new content based on user requirements using robust markdown..."
+    },
+    {
+      "label": "Deterministic anti-AI rewriting & de-slopping pipeline: 1. Replaces all 43\u2026",
+      "file_type": "rationale",
+      "source_file": "anti_ai_guardrails.py",
+      "source_location": "L283",
+      "_origin": "ast",
+      "id": "anti_ai_guardrails_rationale_283",
+      "community": 14,
+      "community_name": "content_creator_agent.py",
+      "norm_label": "deterministic anti-ai rewriting & de-slopping pipeline: 1. replaces all 43..."
+    },
+    {
+      "label": "scraper.py",
+      "file_type": "code",
+      "source_file": "scraper.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scraper",
+      "community": 15,
+      "community_name": "extract_package_data",
+      "norm_label": "scraper.py"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "scraper_py_any",
+      "community": 15,
+      "community_name": "extract_package_data",
+      "norm_label": "any"
+    },
+    {
+      "label": "Extract structured data from Yatradham HTML pages.",
+      "file_type": "rationale",
+      "source_file": "scraper.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scraper_rationale_1",
+      "community": 15,
+      "community_name": "extract_package_data",
+      "norm_label": "extract structured data from yatradham html pages."
+    },
+    {
+      "label": "Sanitize and format price strings to eliminate broken artifacts like 'rs,'.",
+      "file_type": "rationale",
+      "source_file": "scraper.py",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "scraper_rationale_41",
+      "community": 15,
+      "community_name": "extract_package_data",
+      "norm_label": "sanitize and format price strings to eliminate broken artifacts like 'rs,'."
+    },
+    {
+      "label": "Extract package metadata, category, and raw text for LLM processing with robust\u2026",
+      "file_type": "rationale",
+      "source_file": "scraper.py",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "scraper_rationale_59",
+      "community": 15,
+      "community_name": "extract_package_data",
+      "norm_label": "extract package metadata, category, and raw text for llm processing with robust..."
+    },
+    {
+      "label": "scratch_e2e_run.py",
+      "file_type": "code",
+      "source_file": "scratch_e2e_run.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "scratch_e2e_run",
+      "community": 16,
+      "community_name": "scratch_e2e_run.py",
+      "norm_label": "scratch_e2e_run.py"
     },
     {
       "label": "database.py",
@@ -2467,28 +2589,6 @@
       "norm_label": "any"
     },
     {
-      "label": "content_creator_agent.py",
-      "file_type": "code",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_content_creator_agent",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "content_creator_agent.py"
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_py_any",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "any"
-    },
-    {
       "label": "keyword_agent.py",
       "file_type": "code",
       "source_file": "agents/keyword_agent.py",
@@ -2577,6 +2677,17 @@
       "norm_label": "any"
     },
     {
+      "label": "internal_linker.py",
+      "file_type": "code",
+      "source_file": "internal_linker.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "internal_linker",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "internal_linker.py"
+    },
+    {
       "label": "llm_client.py",
       "file_type": "code",
       "source_file": "llm_client.py",
@@ -2654,72 +2765,6 @@
       "norm_label": "robustly extract json from llm response, handling markdown blocks and..."
     },
     {
-      "label": "Content Creator Agent: Generates net-new SEO content from scratch.",
-      "file_type": "rationale",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_rationale_1",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "content creator agent: generates net-new seo content from scratch."
-    },
-    {
-      "label": "Parse a markdown string into a dictionary based on H1 headings and H2\u2026",
-      "file_type": "rationale",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L166",
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_rationale_166",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "parse a markdown string into a dictionary based on h1 headings and h2..."
-    },
-    {
-      "label": "Strip LLM loops AND apply Anti-AI-Detection replacements to bypass Copyleaks.",
-      "file_type": "rationale",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L193",
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_rationale_193",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "strip llm loops and apply anti-ai-detection replacements to bypass copyleaks."
-    },
-    {
-      "label": "Remove LLM chain-of-thought / reasoning blocks that leak into output. Models\u2026",
-      "file_type": "rationale",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L263",
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_rationale_263",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "remove llm chain-of-thought / reasoning blocks that leak into output. models..."
-    },
-    {
-      "label": "Single-pass unified generation for 3,000+ word comprehensive master guides\u2026",
-      "file_type": "rationale",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L317",
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_rationale_317",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "single-pass unified generation for 3,000+ word comprehensive master guides..."
-    },
-    {
-      "label": "Generate net-new content based on user requirements using robust markdown\u2026",
-      "file_type": "rationale",
-      "source_file": "agents/content_creator_agent.py",
-      "source_location": "L584",
-      "_origin": "ast",
-      "id": "agents_content_creator_agent_rationale_584",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "generate net-new content based on user requirements using robust markdown..."
-    },
-    {
       "label": "Keyword agent: enforces 2-4 word primary keyword.",
       "file_type": "rationale",
       "source_file": "agents/keyword_agent.py",
@@ -2753,17 +2798,6 @@
       "norm_label": "title tag agent: 50-60 chars, optimized for click-through rate."
     },
     {
-      "label": "Deterministic anti-AI rewriting & de-slopping pipeline: 1. Replaces all 43\u2026",
-      "file_type": "rationale",
-      "source_file": "anti_ai_guardrails.py",
-      "source_location": "L283",
-      "_origin": "ast",
-      "id": "anti_ai_guardrails_rationale_283",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "deterministic anti-ai rewriting & de-slopping pipeline: 1. replaces all 43..."
-    },
-    {
       "label": "Indic Multi-Language Localization Engine for YatraDham (Hindi & Gujarati).",
       "file_type": "rationale",
       "source_file": "indic_engine.py",
@@ -2784,6 +2818,28 @@
       "community": 3,
       "community_name": "LLMClient",
       "norm_label": "translate and culturally localize seooutput sections into hindi or gujarati."
+    },
+    {
+      "label": "Intelligent Cross-Domain Internal Linking Engine for YatraDham Ecosystem.",
+      "file_type": "rationale",
+      "source_file": "internal_linker.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "internal_linker_rationale_1",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "intelligent cross-domain internal linking engine for yatradham ecosystem."
+    },
+    {
+      "label": "Return contextual internal links filtered to avoid linking to the current page\u2026",
+      "file_type": "rationale",
+      "source_file": "internal_linker.py",
+      "source_location": "L126",
+      "_origin": "ast",
+      "id": "internal_linker_rationale_126",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "return contextual internal links filtered to avoid linking to the current page..."
     },
     {
       "label": "Dynamically query the provider's live models list to avoid model_not_found\u2026",
@@ -2852,6 +2908,17 @@
       "norm_label": "allow setting runtime keys dynamically for a request without server restart."
     },
     {
+      "label": "Process a single package through all 5 agents (manual JSON input).",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L273",
+      "_origin": "ast",
+      "id": "main_rationale_273",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "process a single package through all 5 agents (manual json input)."
+    },
+    {
       "label": "Orchestrator: runs all 5 agents with fault-tolerant parallel acceleration.",
       "file_type": "rationale",
       "source_file": "pipeline.py",
@@ -2863,6 +2930,17 @@
       "norm_label": "orchestrator: runs all 5 agents with fault-tolerant parallel acceleration."
     },
     {
+      "label": "Run the full pipeline on a single package with parallel agent execution and\u2026",
+      "file_type": "rationale",
+      "source_file": "pipeline.py",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "pipeline_rationale_12",
+      "community": 3,
+      "community_name": "LLMClient",
+      "norm_label": "run the full pipeline on a single package with parallel agent execution and..."
+    },
+    {
       "label": "Comprehensive End-to-End Test Suite for Yatradham SEO Pipeline.",
       "file_type": "rationale",
       "source_file": "test_e2e_suite.py",
@@ -2872,17 +2950,6 @@
       "community": 3,
       "community_name": "LLMClient",
       "norm_label": "comprehensive end-to-end test suite for yatradham seo pipeline."
-    },
-    {
-      "label": "internal_linker.py",
-      "file_type": "code",
-      "source_file": "internal_linker.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "internal_linker",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "internal_linker.py"
     },
     {
       "label": "models.py",
@@ -2907,39 +2974,6 @@
       "norm_label": "basemodel"
     },
     {
-      "label": "Intelligent Cross-Domain Internal Linking Engine for YatraDham Ecosystem.",
-      "file_type": "rationale",
-      "source_file": "internal_linker.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "internal_linker_rationale_1",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "intelligent cross-domain internal linking engine for yatradham ecosystem."
-    },
-    {
-      "label": "Return contextual internal links filtered to avoid linking to the current page\u2026",
-      "file_type": "rationale",
-      "source_file": "internal_linker.py",
-      "source_location": "L126",
-      "_origin": "ast",
-      "id": "internal_linker_rationale_126",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "return contextual internal links filtered to avoid linking to the current page..."
-    },
-    {
-      "label": "Process a single package through all 5 agents (manual JSON input).",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L273",
-      "_origin": "ast",
-      "id": "main_rationale_273",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "process a single package through all 5 agents (manual json input)."
-    },
-    {
       "label": "Process multiple packages from JSON (manual input).",
       "file_type": "rationale",
       "source_file": "main.py",
@@ -2960,17 +2994,6 @@
       "community": 4,
       "community_name": "models.py",
       "norm_label": "pydantic models for the seo pipeline."
-    },
-    {
-      "label": "Run the full pipeline on a single package with parallel agent execution and\u2026",
-      "file_type": "rationale",
-      "source_file": "pipeline.py",
-      "source_location": "L12",
-      "_origin": "ast",
-      "id": "pipeline_rationale_12",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "run the full pipeline on a single package with parallel agent execution and..."
     },
     {
       "label": "wordpress_publisher.py",
@@ -3664,7 +3687,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L799",
+      "source_location": "L800",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_check_ai_endpoint",
@@ -3760,7 +3783,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L832",
+      "source_location": "L833",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_endpoint",
@@ -3773,7 +3796,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "main.py",
-      "source_location": "L834",
+      "source_location": "L835",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_endpoint",
@@ -3784,7 +3807,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L835",
+      "source_location": "L836",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_endpoint",
@@ -4587,7 +4610,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L826",
+      "source_location": "L827",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -6424,7 +6447,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L827",
+      "source_location": "L828",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_endpoint",
@@ -7799,7 +7822,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L827",
+      "source_location": "L828",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -8002,6 +8025,17 @@
       "_origin": "ast",
       "source": "scraper",
       "target": "scraper_extract_package_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "scratch_e2e_run.py",
+      "source_location": "L16",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "scratch_e2e_run",
+      "target": "scratch_e2e_run_record",
       "confidence_score": 1.0
     },
     {
@@ -9827,5 +9861,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "771fbdac9aeba904f078e5de1c366fafc1a4c802"
+  "built_at_commit": "65c34a8b39ae78f7e140259afa6b48e9b4986eff"
 }
