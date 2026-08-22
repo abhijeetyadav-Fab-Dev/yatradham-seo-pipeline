@@ -818,16 +818,22 @@
             if (name === 'outputs') loadOutputs();
         }
 
-        function showSubTab(name) {
+        function showSubTab(name, btn) {
             document.querySelectorAll('[id$="SubPanel"]').forEach(p => p.style.display = 'none');
             document.querySelectorAll('.sub-tab-btn').forEach(t => {
-                t.classList.remove('active', 'bg-slate-50');
+                t.classList.remove('active', 'bg-slate-50', 'bg-primary', 'text-white');
                 t.classList.add('bg-white', 'text-slate-700');
             });
-            document.getElementById(name + 'SubPanel').style.display = 'block';
-            event.target.classList.add('active');
-            event.target.classList.remove('bg-white', 'text-slate-700');
+            const targetPanel = document.getElementById(name + 'SubPanel');
+            if (targetPanel) targetPanel.style.display = 'block';
+            
+            const activeBtn = btn || (typeof event !== 'undefined' && event && event.target && event.target.classList && event.target.classList.contains('sub-tab-btn') ? event.target : document.querySelector(`.sub-tab-btn[onclick*="'${name}'"]`));
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.classList.remove('bg-white', 'text-slate-700');
+            }
         }
+
 
         function showAlert(containerId, type, message) {
             const colors = {
@@ -2739,18 +2745,29 @@
                 return;
             }
 
+            if (!discoveredSitemapItems || !discoveredSitemapItems.length) {
+                alert('No crawled URLs available in memory. Please run crawl first.');
+                return;
+            }
+
             const selectedItems = selectedIndices.map(i => discoveredSitemapItems[i]).filter(Boolean);
             const urlsText = selectedItems.map(item => item.url).join('\n');
 
-            // Switch to Scrape tab and populate Batch URL textarea
+            // Switch to Scrape tab and activate Batch URLs sub-tab
             showTab('scrape');
             showSubTab('batch');
-            const batchInput = document.getElementById('batchUrlsInput');
+
+            const batchInput = document.getElementById('batchUrls');
             if (batchInput) {
                 batchInput.value = urlsText;
-                showToast(`✅ ${selectedItems.length} URLs populated in Batch Ingestion queue!`);
+                showToast(`⚡ ${selectedItems.length} URLs populated in Batch Processing queue!`);
+                batchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                batchInput.focus();
+            } else {
+                console.error('batchUrls textarea element not found');
             }
         }
+
 
         // ==================== WORDPRESS PUBLISHER ====================
         function loadWpCredentials() {
