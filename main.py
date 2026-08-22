@@ -463,9 +463,51 @@ def generate_content(request: ContentGenerateRequest):
         raise HTTPException(status_code=500, detail=f"Content generation failed: {str(e)}")
 
 
+class LocalizeRequest(BaseModel):
+    output: Dict[str, Any]
+    target_language: str = "hi"  # "hi" or "gu"
+    keys: Optional[Dict[str, str]] = None
+
+
+@app.post("/localize")
+def localize(req: LocalizeRequest):
+    """Translate and localize generated SEO content into Hindi or Gujarati."""
+    from indic_engine import localize_content
+    from schema_generator import generate_json_ld
+    from linter import run_seo_linter
+
+    client = LLMClient()
+    if req.keys:
+        for prov, key in req.keys.items():
+            if key:
+                client.set_custom_keys(prov, key)
+
+    try:
+        localized = localize_content(req.output, req.target_language, client)
+        
+        # Regenerate Schema & Linter for the localized package
+        json_ld = generate_json_ld(localized)
+        sec = localized.get("sections", {})
+        linter = run_seo_linter(
+            localized.get("title_tag", ""),
+            localized.get("meta_description", ""),
+            localized.get("primary_keyword", ""),
+            sec,
+            json_ld_present=True
+        )
+        localized["json_ld_schema"] = json_ld
+        localized["linter_metrics"] = linter
+        
+        return {"success": True, "output": localized}
+    except Exception as e:
+        logger.exception(f"Localization error: {e}")
+        raise HTTPException(status_code=500, detail=f"Localization failed: {str(e)}")
+
+
 @app.get("/stats")
 def stats():
     return get_stats()
+
 
 
 @app.get("/export/csv")

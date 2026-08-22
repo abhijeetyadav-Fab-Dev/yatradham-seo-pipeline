@@ -20,7 +20,7 @@
       "label": "CheckAIRequest",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L601",
+      "source_location": "L559",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -46,7 +46,7 @@
       "label": "HumanizeRequest",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L607",
+      "source_location": "L565",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -54,19 +54,6 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "humanizerequest"
-    },
-    {
-      "label": "LocalizeRequest",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L466",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "main_localizerequest",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "localizerequest"
     },
     {
       "label": "ProviderSettingsRequest",
@@ -108,6 +95,19 @@
       "norm_label": "validatecategoryrequest"
     },
     {
+      "label": "PackageInput",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L7",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "models_packageinput",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "packageinput"
+    },
+    {
       "label": "SectionedContent",
       "file_type": "code",
       "source_file": "models.py",
@@ -117,20 +117,20 @@
       "_origin": "ast",
       "id": "models_sectionedcontent",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "sectionedcontent"
     },
     {
       "label": "SEOOutput",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L101",
+      "source_location": "L99",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
       "id": "models_seooutput",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "seooutput"
     },
     {
@@ -147,23 +147,10 @@
       "norm_label": "llmclient"
     },
     {
-      "label": "PackageInput",
-      "file_type": "code",
-      "source_file": "models.py",
-      "source_location": "L7",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "models_packageinput",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "packageinput"
-    },
-    {
       "label": "BatchRequest",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L135",
+      "source_location": "L129",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -176,7 +163,7 @@
       "label": "BulkActionRequest",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L139",
+      "source_location": "L133",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -328,7 +315,7 @@
       "label": "check_ai_endpoint()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L722",
+      "source_location": "L680",
       "_callable": true,
       "_origin": "ast",
       "id": "main_check_ai_endpoint",
@@ -359,18 +346,6 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "delete_single_output()"
-    },
-    {
-      "label": "export_csv()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L514",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_export_csv",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "export_csv()"
     },
     {
       "label": "generate_content()",
@@ -412,7 +387,7 @@
       "label": "humanize_endpoint()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L765",
+      "source_location": "L723",
       "_callable": true,
       "_origin": "ast",
       "id": "main_humanize_endpoint",
@@ -424,7 +399,7 @@
       "label": "humanize_markdown_content()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L671",
+      "source_location": "L629",
       "_callable": true,
       "_origin": "ast",
       "id": "main_humanize_markdown_content",
@@ -436,7 +411,7 @@
       "label": "humanize_single_chunk()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L641",
+      "source_location": "L599",
       "_callable": true,
       "_origin": "ast",
       "id": "main_humanize_single_chunk",
@@ -469,10 +444,22 @@
       "norm_label": "process_batch_background()"
     },
     {
+      "label": "process_single()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L272",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_process_single",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "process_single()"
+    },
+    {
       "label": "query_undetectable_detector()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L616",
+      "source_location": "L574",
       "_callable": true,
       "_origin": "ast",
       "id": "main_query_undetectable_detector",
@@ -508,7 +495,7 @@
       "label": "stats()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L508",
+      "source_location": "L467",
       "_callable": true,
       "_origin": "ast",
       "id": "main_stats",
@@ -551,6 +538,18 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "validate_category()"
+    },
+    {
+      "label": "process_package()",
+      "file_type": "code",
+      "source_file": "pipeline.py",
+      "source_location": "L11",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "pipeline_process_package",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "process_package()"
     },
     {
       "label": "_check_banned()",
@@ -664,7 +663,7 @@
       "label": ".sanitize_meta_description()",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L128",
+      "source_location": "L122",
       "_callable": true,
       "_origin": "ast",
       "id": "models_seooutput_sanitize_meta_description",
@@ -676,7 +675,7 @@
       "label": ".sanitize_title_tag()",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L120",
+      "source_location": "L114",
       "_callable": true,
       "_origin": "ast",
       "id": "models_seooutput_sanitize_title_tag",
@@ -693,7 +692,7 @@
       "_origin": "ast",
       "id": "database_bulk_update_status",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "bulk_update_status()"
     },
     {
@@ -705,7 +704,7 @@
       "_origin": "ast",
       "id": "database_delete_output",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "delete_output()"
     },
     {
@@ -717,7 +716,7 @@
       "_origin": "ast",
       "id": "database_dict_to_sections",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "_dict_to_sections()"
     },
     {
@@ -729,7 +728,7 @@
       "_origin": "ast",
       "id": "database_execute_with_retry",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "_execute_with_retry()"
     },
     {
@@ -741,7 +740,7 @@
       "_origin": "ast",
       "id": "database_get_conn",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "get_conn()"
     },
     {
@@ -753,7 +752,7 @@
       "_origin": "ast",
       "id": "database_get_output",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "get_output()"
     },
     {
@@ -765,7 +764,7 @@
       "_origin": "ast",
       "id": "database_get_stats",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "get_stats()"
     },
     {
@@ -777,7 +776,7 @@
       "_origin": "ast",
       "id": "database_init_db",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "init_db()"
     },
     {
@@ -789,7 +788,7 @@
       "_origin": "ast",
       "id": "database_list_outputs",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "list_outputs()"
     },
     {
@@ -801,7 +800,7 @@
       "_origin": "ast",
       "id": "database_row_to_output",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "_row_to_output()"
     },
     {
@@ -813,7 +812,7 @@
       "_origin": "ast",
       "id": "database_save_output",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "save_output()"
     },
     {
@@ -825,7 +824,7 @@
       "_origin": "ast",
       "id": "database_sections_to_dict",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "_sections_to_dict()"
     },
     {
@@ -837,8 +836,20 @@
       "_origin": "ast",
       "id": "database_update_output",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "update_output()"
+    },
+    {
+      "label": "export_csv()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L472",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_export_csv",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "export_csv()"
     },
     {
       "label": "update_single_output()",
@@ -849,7 +860,7 @@
       "_origin": "ast",
       "id": "main_update_single_output",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "update_single_output()"
     },
     {
@@ -861,7 +872,7 @@
       "_origin": "ast",
       "id": "stress_test_record_metric",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "record_metric()"
     },
     {
@@ -873,7 +884,7 @@
       "_origin": "ast",
       "id": "stress_test_run_stress_test",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "run_stress_test()"
     },
     {
@@ -885,7 +896,7 @@
       "_origin": "ast",
       "id": "stress_test_worker_db_stress",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "worker_db_stress()"
     },
     {
@@ -897,7 +908,7 @@
       "_origin": "ast",
       "id": "stress_test_worker_detector_stress",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "worker_detector_stress()"
     },
     {
@@ -909,7 +920,7 @@
       "_origin": "ast",
       "id": "stress_test_worker_export_stress",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "worker_export_stress()"
     },
     {
@@ -921,8 +932,32 @@
       "_origin": "ast",
       "id": "stress_test_worker_humanizer_stress",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "worker_humanizer_stress()"
+    },
+    {
+      "label": "record()",
+      "file_type": "code",
+      "source_file": "test_e2e_suite.py",
+      "source_location": "L30",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "test_e2e_suite_record",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "record()"
+    },
+    {
+      "label": "run_suite()",
+      "file_type": "code",
+      "source_file": "test_e2e_suite.py",
+      "source_location": "L35",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "test_e2e_suite_run_suite",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "run_suite()"
     },
     {
       "label": "_extract_json_from_response()",
@@ -983,18 +1018,6 @@
       "community": 3,
       "community_name": "LLMClient",
       "norm_label": "run()"
-    },
-    {
-      "label": "get_smart_internal_links()",
-      "file_type": "code",
-      "source_file": "internal_linker.py",
-      "source_location": "L125",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "internal_linker_get_smart_internal_links",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "get_smart_internal_links()"
     },
     {
       "label": "clean_price_string()",
@@ -1117,30 +1140,6 @@
       "norm_label": "._wait_for_rate_limit()"
     },
     {
-      "label": "process_single()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L272",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_process_single",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "process_single()"
-    },
-    {
-      "label": "process_package()",
-      "file_type": "code",
-      "source_file": "pipeline.py",
-      "source_location": "L11",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "pipeline_process_package",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "process_package()"
-    },
-    {
       "label": "clean_price_string()",
       "file_type": "code",
       "source_file": "scraper.py",
@@ -1185,7 +1184,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_clean_markdown",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "_clean_markdown()"
     },
     {
@@ -1197,7 +1196,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_generate_long_form_blog",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "_generate_long_form_blog()"
     },
     {
@@ -1209,7 +1208,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_parse_markdown_sections",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "_parse_markdown_sections()"
     },
     {
@@ -1221,7 +1220,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_run",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "run()"
     },
     {
@@ -1233,7 +1232,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_sanitize_repetition",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "_sanitize_repetition()"
     },
     {
@@ -1245,7 +1244,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_strip_thinking_tags",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "_strip_thinking_tags()"
     },
     {
@@ -1257,92 +1256,8 @@
       "_origin": "ast",
       "id": "anti_ai_guardrails_de_slop_and_humanize",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "de_slop_and_humanize()"
-    },
-    {
-      "label": "record()",
-      "file_type": "code",
-      "source_file": "test_e2e_suite.py",
-      "source_location": "L30",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "test_e2e_suite_record",
-      "community": 6,
-      "community_name": "run_suite",
-      "norm_label": "record()"
-    },
-    {
-      "label": "run_suite()",
-      "file_type": "code",
-      "source_file": "test_e2e_suite.py",
-      "source_location": "L35",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "test_e2e_suite_run_suite",
-      "community": 6,
-      "community_name": "run_suite",
-      "norm_label": "run_suite()"
-    },
-    {
-      "label": "localize_content()",
-      "file_type": "code",
-      "source_file": "indic_engine.py",
-      "source_location": "L19",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "indic_engine_localize_content",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "localize_content()"
-    },
-    {
-      "label": "calculate_flesch_reading_ease()",
-      "file_type": "code",
-      "source_file": "linter.py",
-      "source_location": "L6",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "linter_calculate_flesch_reading_ease",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "calculate_flesch_reading_ease()"
-    },
-    {
-      "label": "run_seo_linter()",
-      "file_type": "code",
-      "source_file": "linter.py",
-      "source_location": "L33",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "linter_run_seo_linter",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "run_seo_linter()"
-    },
-    {
-      "label": "localize()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L473",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_localize",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "localize()"
-    },
-    {
-      "label": "generate_json_ld()",
-      "file_type": "code",
-      "source_file": "schema_generator.py",
-      "source_location": "L7",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "schema_generator_generate_json_ld",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "generate_json_ld()"
     },
     {
       "label": "run()",
@@ -1721,6 +1636,17 @@
       "norm_label": "scrape and process multiple urls automatically in the background."
     },
     {
+      "label": "Process a single package through all 5 agents (manual JSON input).",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L273",
+      "_origin": "ast",
+      "id": "main_rationale_273",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "process a single package through all 5 agents (manual json input)."
+    },
+    {
       "label": "Process multiple packages from JSON (manual input).",
       "file_type": "rationale",
       "source_file": "main.py",
@@ -1798,23 +1724,12 @@
       "norm_label": "generate net-new seo content from scratch using ai."
     },
     {
-      "label": "Export outputs to CSV.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L515",
-      "_origin": "ast",
-      "id": "main_rationale_515",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "export outputs to csv."
-    },
-    {
       "label": "Humanize multi-section markdown text concurrently with 21-pattern de-slopper\u2026",
       "file_type": "rationale",
       "source_file": "main.py",
-      "source_location": "L672",
+      "source_location": "L630",
       "_origin": "ast",
-      "id": "main_rationale_672",
+      "id": "main_rationale_630",
       "community": 1,
       "community_name": "main.py",
       "norm_label": "humanize multi-section markdown text concurrently with 21-pattern de-slopper..."
@@ -1829,6 +1744,17 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "validate if the selected category matches the target url."
+    },
+    {
+      "label": "Run the full pipeline on a single package with parallel agent execution and\u2026",
+      "file_type": "rationale",
+      "source_file": "pipeline.py",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "pipeline_rationale_12",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "run the full pipeline on a single package with parallel agent execution and..."
     },
     {
       "label": "__init__.py",
@@ -1981,7 +1907,7 @@
       "_origin": "ast",
       "id": "database",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "database.py"
     },
     {
@@ -1992,7 +1918,7 @@
       "_origin": "ast",
       "id": "database_py_any",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "any"
     },
     {
@@ -2003,7 +1929,7 @@
       "_origin": "ast",
       "id": "main_py_any",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "any"
     },
     {
@@ -2014,7 +1940,7 @@
       "_origin": "ast",
       "id": "put",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "put"
     },
     {
@@ -2025,7 +1951,7 @@
       "_origin": "ast",
       "id": "row",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "row"
     },
     {
@@ -2036,8 +1962,19 @@
       "_origin": "ast",
       "id": "stress_test",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "stress_test.py"
+    },
+    {
+      "label": "test_e2e_suite.py",
+      "file_type": "code",
+      "source_file": "test_e2e_suite.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "test_e2e_suite",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "test_e2e_suite.py"
     },
     {
       "label": "SQLite database with JSON storage for sections.",
@@ -2047,7 +1984,7 @@
       "_origin": "ast",
       "id": "database_rationale_1",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "sqlite database with json storage for sections."
     },
     {
@@ -2058,8 +1995,19 @@
       "_origin": "ast",
       "id": "database_rationale_24",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "execute a database operation with exponential backoff on lock contention."
+    },
+    {
+      "label": "Export outputs to CSV.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L473",
+      "_origin": "ast",
+      "id": "main_rationale_473",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "export outputs to csv."
     },
     {
       "label": "High-Concurrency Multi-Threaded Stress Test Suite for Yatradham SEO Pipeline.",
@@ -2069,7 +2017,7 @@
       "_origin": "ast",
       "id": "stress_test_rationale_1",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "high-concurrency multi-threaded stress test suite for yatradham seo pipeline."
     },
     {
@@ -2080,7 +2028,7 @@
       "_origin": "ast",
       "id": "stress_test_rationale_105",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "stress test ai detector endpoint concurrently."
     },
     {
@@ -2091,7 +2039,7 @@
       "_origin": "ast",
       "id": "stress_test_rationale_123",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "stress test multi-threaded parallel markdown humanizer."
     },
     {
@@ -2102,7 +2050,7 @@
       "_origin": "ast",
       "id": "stress_test_rationale_143",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "stress test csv export streaming and stats aggregation."
     },
     {
@@ -2113,8 +2061,19 @@
       "_origin": "ast",
       "id": "stress_test_rationale_61",
       "community": 2,
-      "community_name": "stress_test.py",
+      "community_name": "test_e2e_suite.py",
       "norm_label": "stress test concurrent database writes, reads, status updates, and deletions."
+    },
+    {
+      "label": "Comprehensive End-to-End Test Suite for Yatradham SEO Pipeline.",
+      "file_type": "rationale",
+      "source_file": "test_e2e_suite.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "test_e2e_suite_rationale_1",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "comprehensive end-to-end test suite for yatradham seo pipeline."
     },
     {
       "label": "content_agent.py",
@@ -2205,28 +2164,6 @@
       "norm_label": "any"
     },
     {
-      "label": "indic_engine.py",
-      "file_type": "code",
-      "source_file": "indic_engine.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "indic_engine",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "indic_engine.py"
-    },
-    {
-      "label": "internal_linker.py",
-      "file_type": "code",
-      "source_file": "internal_linker.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "internal_linker",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "internal_linker.py"
-    },
-    {
       "label": "llm_client.py",
       "file_type": "code",
       "source_file": "llm_client.py",
@@ -2269,17 +2206,6 @@
       "community": 3,
       "community_name": "LLMClient",
       "norm_label": "pipeline.py"
-    },
-    {
-      "label": "test_e2e_suite.py",
-      "file_type": "code",
-      "source_file": "test_e2e_suite.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "test_e2e_suite",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "test_e2e_suite.py"
     },
     {
       "label": "Content agent: generates all 19 structured sections from scraped page data.",
@@ -2335,39 +2261,6 @@
       "community": 3,
       "community_name": "LLMClient",
       "norm_label": "title tag agent: 50-60 chars, optimized for click-through rate."
-    },
-    {
-      "label": "Indic Multi-Language Localization Engine for YatraDham (Hindi & Gujarati).",
-      "file_type": "rationale",
-      "source_file": "indic_engine.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "indic_engine_rationale_1",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "indic multi-language localization engine for yatradham (hindi & gujarati)."
-    },
-    {
-      "label": "Intelligent Cross-Domain Internal Linking Engine for YatraDham Ecosystem.",
-      "file_type": "rationale",
-      "source_file": "internal_linker.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "internal_linker_rationale_1",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "intelligent cross-domain internal linking engine for yatradham ecosystem."
-    },
-    {
-      "label": "Return contextual internal links filtered to avoid linking to the current page\u2026",
-      "file_type": "rationale",
-      "source_file": "internal_linker.py",
-      "source_location": "L126",
-      "_origin": "ast",
-      "id": "internal_linker_rationale_126",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "return contextual internal links filtered to avoid linking to the current page..."
     },
     {
       "label": "Dynamically query the provider's live models list to avoid model_not_found\u2026",
@@ -2436,17 +2329,6 @@
       "norm_label": "allow setting runtime keys dynamically for a request without server restart."
     },
     {
-      "label": "Process a single package through all 5 agents (manual JSON input).",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L273",
-      "_origin": "ast",
-      "id": "main_rationale_273",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "process a single package through all 5 agents (manual json input)."
-    },
-    {
       "label": "Orchestrator: runs all 5 agents with fault-tolerant parallel acceleration.",
       "file_type": "rationale",
       "source_file": "pipeline.py",
@@ -2456,28 +2338,6 @@
       "community": 3,
       "community_name": "LLMClient",
       "norm_label": "orchestrator: runs all 5 agents with fault-tolerant parallel acceleration."
-    },
-    {
-      "label": "Run the full pipeline on a single package with parallel agent execution and\u2026",
-      "file_type": "rationale",
-      "source_file": "pipeline.py",
-      "source_location": "L12",
-      "_origin": "ast",
-      "id": "pipeline_rationale_12",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "run the full pipeline on a single package with parallel agent execution and..."
-    },
-    {
-      "label": "Comprehensive End-to-End Test Suite for Yatradham SEO Pipeline.",
-      "file_type": "rationale",
-      "source_file": "test_e2e_suite.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "test_e2e_suite_rationale_1",
-      "community": 3,
-      "community_name": "LLMClient",
-      "norm_label": "comprehensive end-to-end test suite for yatradham seo pipeline."
     },
     {
       "label": "models.py",
@@ -2586,7 +2446,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "content_creator_agent.py"
     },
     {
@@ -2597,7 +2457,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_py_any",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "any"
     },
     {
@@ -2608,7 +2468,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_1",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "content creator agent: generates net-new seo content from scratch."
     },
     {
@@ -2619,7 +2479,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_166",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "parse a markdown string into a dictionary based on h1 headings and h2..."
     },
     {
@@ -2630,7 +2490,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_193",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "strip llm loops and apply anti-ai-detection replacements to bypass copyleaks."
     },
     {
@@ -2641,7 +2501,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_263",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "remove llm chain-of-thought / reasoning blocks that leak into output. models..."
     },
     {
@@ -2652,7 +2512,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_317",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "single-pass unified generation for 3,000+ word comprehensive master guides..."
     },
     {
@@ -2663,7 +2523,7 @@
       "_origin": "ast",
       "id": "agents_content_creator_agent_rationale_584",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "generate net-new content based on user requirements using robust markdown..."
     },
     {
@@ -2674,140 +2534,8 @@
       "_origin": "ast",
       "id": "anti_ai_guardrails_rationale_283",
       "community": 6,
-      "community_name": "run_suite",
+      "community_name": "content_creator_agent.py",
       "norm_label": "deterministic anti-ai rewriting & de-slopping pipeline: 1. replaces all 43..."
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "indic_engine_py_any",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "any"
-    },
-    {
-      "label": "linter.py",
-      "file_type": "code",
-      "source_file": "linter.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "linter",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "linter.py"
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "linter_py_any",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "any"
-    },
-    {
-      "label": "schema_generator.py",
-      "file_type": "code",
-      "source_file": "schema_generator.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "schema_generator",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "schema_generator.py"
-    },
-    {
-      "label": "Any",
-      "file_type": "code",
-      "source_file": "",
-      "source_location": "",
-      "_origin": "ast",
-      "id": "schema_generator_py_any",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "any"
-    },
-    {
-      "label": "Translate and culturally localize SEOOutput sections into Hindi or Gujarati.",
-      "file_type": "rationale",
-      "source_file": "indic_engine.py",
-      "source_location": "L20",
-      "_origin": "ast",
-      "id": "indic_engine_rationale_20",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "translate and culturally localize seooutput sections into hindi or gujarati."
-    },
-    {
-      "label": "Real-Time SEO & GEO (Generative Engine Optimization) Linter for YatraDham.",
-      "file_type": "rationale",
-      "source_file": "linter.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "linter_rationale_1",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "real-time seo & geo (generative engine optimization) linter for yatradham."
-    },
-    {
-      "label": "Audit content for SEO and AI Overview (GEO) citation compliance.",
-      "file_type": "rationale",
-      "source_file": "linter.py",
-      "source_location": "L40",
-      "_origin": "ast",
-      "id": "linter_rationale_40",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "audit content for seo and ai overview (geo) citation compliance."
-    },
-    {
-      "label": "Calculate Flesch Reading Ease score (0-100).",
-      "file_type": "rationale",
-      "source_file": "linter.py",
-      "source_location": "L7",
-      "_origin": "ast",
-      "id": "linter_rationale_7",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "calculate flesch reading ease score (0-100)."
-    },
-    {
-      "label": "Translate and localize generated SEO content into Hindi or Gujarati.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L474",
-      "_origin": "ast",
-      "id": "main_rationale_474",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "translate and localize generated seo content into hindi or gujarati."
-    },
-    {
-      "label": "Schema.org JSON-LD Structured Data Generator for YatraDham Packages.",
-      "file_type": "rationale",
-      "source_file": "schema_generator.py",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "schema_generator_rationale_1",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "schema.org json-ld structured data generator for yatradham packages."
-    },
-    {
-      "label": "Generate comprehensive stacked Schema.org JSON-LD for Google Rich Results, SGE\u2026",
-      "file_type": "rationale",
-      "source_file": "schema_generator.py",
-      "source_location": "L8",
-      "_origin": "ast",
-      "id": "schema_generator_rationale_8",
-      "community": 7,
-      "community_name": "run_seo_linter",
-      "norm_label": "generate comprehensive stacked schema.org json-ld for google rich results, sge..."
     },
     {
       "label": "e2e_browser_test.py",
@@ -3221,18 +2949,6 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "linter.py",
-      "source_location": "L84",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "linter_run_seo_linter",
-      "target": "linter_calculate_flesch_reading_ease",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
       "source_file": "llm_client.py",
       "source_location": "L253",
       "weight": 1.0,
@@ -3391,7 +3107,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "main.py",
-      "source_location": "L728",
+      "source_location": "L686",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_check_ai_endpoint",
@@ -3402,7 +3118,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L737",
+      "source_location": "L695",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_check_ai_endpoint",
@@ -3439,7 +3155,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "main.py",
-      "source_location": "L516",
+      "source_location": "L474",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_export_csv",
@@ -3486,7 +3202,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L770",
+      "source_location": "L728",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_endpoint",
@@ -3499,7 +3215,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "main.py",
-      "source_location": "L772",
+      "source_location": "L730",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_endpoint",
@@ -3510,7 +3226,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L773",
+      "source_location": "L731",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_endpoint",
@@ -3522,48 +3238,12 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L677",
+      "source_location": "L635",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_markdown_content",
       "target": "anti_ai_guardrails_de_slop_and_humanize",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "main.py",
-      "source_location": "L486",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main_localize",
-      "target": "indic_engine_localize_content"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "main.py",
-      "source_location": "L489",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main_localize",
-      "target": "schema_generator_generate_json_ld"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "main.py",
-      "source_location": "L491",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main_localize",
-      "target": "linter_run_seo_linter"
     },
     {
       "relation": "calls",
@@ -3667,7 +3347,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "main.py",
-      "source_location": "L509",
+      "source_location": "L468",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_stats",
@@ -3713,30 +3393,6 @@
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
-      "source_file": "pipeline.py",
-      "source_location": "L101",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pipeline_process_package",
-      "target": "schema_generator_generate_json_ld",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "pipeline.py",
-      "source_location": "L102",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pipeline_process_package",
-      "target": "linter_run_seo_linter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "pipeline.py",
       "source_location": "L17",
@@ -3756,18 +3412,6 @@
       "_origin": "ast",
       "source": "pipeline_process_package",
       "target": "agents_qa_agent_run"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "pipeline.py",
-      "source_location": "L76",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pipeline_process_package",
-      "target": "internal_linker_get_smart_internal_links",
-      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -4169,7 +3813,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L721",
+      "source_location": "L679",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -4205,7 +3849,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L513",
+      "source_location": "L471",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -4253,23 +3897,11 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L764",
+      "source_location": "L722",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
       "source": "main_humanize_endpoint",
-      "target": "post",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L472",
-      "weight": 1.0,
-      "context": "decorator",
-      "_origin": "ast",
-      "source": "main_localize",
       "target": "post",
       "confidence_score": 1.0
     },
@@ -4313,7 +3945,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L507",
+      "source_location": "L466",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -4373,7 +4005,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L126",
+      "source_location": "L120",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -4385,7 +4017,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L118",
+      "source_location": "L112",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -4553,30 +4185,6 @@
       "relation": "references",
       "context": "generic_arg",
       "confidence": "EXTRACTED",
-      "source_file": "indic_engine.py",
-      "source_location": "L19",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "indic_engine_localize_content",
-      "target": "indic_engine_py_any",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "generic_arg",
-      "confidence": "EXTRACTED",
-      "source_file": "linter.py",
-      "source_location": "L33",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "linter_run_seo_linter",
-      "target": "linter_py_any",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "generic_arg",
-      "confidence": "EXTRACTED",
       "source_file": "llm_client.py",
       "source_location": "L154",
       "weight": 1.0,
@@ -4595,18 +4203,6 @@
       "_origin": "ast",
       "source": "main_update_single_output",
       "target": "main_py_any",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "generic_arg",
-      "confidence": "EXTRACTED",
-      "source_file": "schema_generator.py",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "schema_generator_generate_json_ld",
-      "target": "schema_generator_py_any",
       "confidence_score": 1.0
     },
     {
@@ -4775,18 +4371,6 @@
       "_origin": "ast",
       "source": "database",
       "target": "models_seooutput",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "indic_engine.py",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "indic_engine",
-      "target": "llm_client_llmclient",
       "confidence_score": 1.0
     },
     {
@@ -4998,43 +4582,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L475",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main",
-      "target": "indic_engine_localize_content",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L476",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main",
-      "target": "schema_generator_generate_json_ld",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L477",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main",
-      "target": "linter_run_seo_linter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L614",
+      "source_location": "L572",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -5046,7 +4594,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L614",
+      "source_location": "L572",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -5058,7 +4606,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L614",
+      "source_location": "L572",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -5070,7 +4618,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L614",
+      "source_location": "L572",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -5082,7 +4630,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L614",
+      "source_location": "L572",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -5142,47 +4690,11 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "pipeline.py",
-      "source_location": "L68",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pipeline",
-      "target": "internal_linker_get_smart_internal_links",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "pipeline.py",
-      "source_location": "L69",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pipeline",
-      "target": "schema_generator_generate_json_ld",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "pipeline.py",
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pipeline",
       "target": "llm_client_llmclient",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "pipeline.py",
-      "source_location": "L70",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pipeline",
-      "target": "linter_run_seo_linter",
       "confidence_score": 1.0
     },
     {
@@ -5693,18 +5205,6 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "indic_engine.py",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "indic_engine",
-      "target": "llm_client",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
       "source_file": "llm_client.py",
       "source_location": "L6",
       "weight": 1.0,
@@ -5790,7 +5290,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L614",
+      "source_location": "L572",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -5970,7 +5470,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L722",
+      "source_location": "L680",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_check_ai_endpoint",
@@ -5994,7 +5494,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L765",
+      "source_location": "L723",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_endpoint",
@@ -6011,18 +5511,6 @@
       "_origin": "ast",
       "source": "main_lifespan",
       "target": "fastapi",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "parameter_type",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L473",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main_localize",
-      "target": "main_localizerequest",
       "confidence_score": 1.0
     },
     {
@@ -6078,7 +5566,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L128",
+      "source_location": "L122",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput_sanitize_meta_description",
@@ -6090,7 +5578,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L120",
+      "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput_sanitize_title_tag",
@@ -6860,50 +6348,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "indic_engine.py",
-      "source_location": "L19",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "indic_engine",
-      "target": "indic_engine_localize_content",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "internal_linker.py",
-      "source_location": "L125",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "internal_linker",
-      "target": "internal_linker_get_smart_internal_links",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "linter.py",
-      "source_location": "L33",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "linter",
-      "target": "linter_run_seo_linter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "linter.py",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "linter",
-      "target": "linter_calculate_flesch_reading_ease",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "live_qa.py",
       "source_location": "L5",
       "weight": 1.0,
@@ -7125,11 +6569,11 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L466",
+      "source_location": "L467",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
-      "target": "main_localizerequest",
+      "target": "main_stats",
       "confidence_score": 1.0
     },
     {
@@ -7147,29 +6591,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L473",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main",
-      "target": "main_localize",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L508",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main",
-      "target": "main_stats",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L514",
+      "source_location": "L472",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -7191,6 +6613,39 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
+      "source_location": "L559",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_checkairequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L565",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_humanizerequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
+      "source_location": "L574",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "main",
+      "target": "main_query_undetectable_detector",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "main.py",
       "source_location": "L59",
       "weight": 1.0,
       "_origin": "ast",
@@ -7202,40 +6657,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L601",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main",
-      "target": "main_checkairequest",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L607",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main",
-      "target": "main_humanizerequest",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L616",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main",
-      "target": "main_query_undetectable_detector",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L641",
+      "source_location": "L599",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -7246,7 +6668,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L671",
+      "source_location": "L629",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -7257,7 +6679,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L722",
+      "source_location": "L680",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -7268,7 +6690,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L765",
+      "source_location": "L723",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main",
@@ -7301,18 +6723,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L101",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "models",
-      "target": "models_seooutput",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "models.py",
-      "source_location": "L135",
+      "source_location": "L129",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models",
@@ -7323,7 +6734,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L139",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models",
@@ -7432,23 +6843,23 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "models.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "models",
+      "target": "models_seooutput",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "pipeline.py",
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pipeline",
       "target": "pipeline_process_package",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "schema_generator.py",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "schema_generator",
-      "target": "schema_generator_generate_json_ld",
       "confidence_score": 1.0
     },
     {
@@ -7587,7 +6998,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L601",
+      "source_location": "L559",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_checkairequest",
@@ -7609,21 +7020,10 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L607",
+      "source_location": "L565",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanizerequest",
-      "target": "main_py_basemodel",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "inherits",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L466",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main_localizerequest",
       "target": "main_py_basemodel",
       "confidence_score": 1.0
     },
@@ -7664,7 +7064,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L135",
+      "source_location": "L129",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_batchrequest",
@@ -7675,7 +7075,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L139",
+      "source_location": "L133",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_bulkactionrequest",
@@ -7785,7 +7185,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L101",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput",
@@ -7895,7 +7295,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L120",
+      "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput",
@@ -7906,7 +7306,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L128",
+      "source_location": "L122",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput",
@@ -8136,83 +7536,6 @@
     {
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
-      "source_file": "indic_engine.py",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "indic_engine_rationale_1",
-      "target": "indic_engine",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "indic_engine.py",
-      "source_location": "L20",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "indic_engine_rationale_20",
-      "target": "indic_engine_localize_content",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "internal_linker.py",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "internal_linker_rationale_1",
-      "target": "internal_linker",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "internal_linker.py",
-      "source_location": "L126",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "internal_linker_rationale_126",
-      "target": "internal_linker_get_smart_internal_links",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "linter.py",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "linter_rationale_1",
-      "target": "linter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "linter.py",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "linter_rationale_40",
-      "target": "linter_run_seo_linter",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "linter.py",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "linter_rationale_7",
-      "target": "linter_calculate_flesch_reading_ease",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
       "source_file": "llm_client.py",
       "source_location": "L120",
       "weight": 1.0,
@@ -8401,21 +7724,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L474",
+      "source_location": "L473",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "main_rationale_474",
-      "target": "main_localize",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "main.py",
-      "source_location": "L515",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "main_rationale_515",
+      "source": "main_rationale_473",
       "target": "main_export_csv",
       "confidence_score": 1.0
     },
@@ -8423,10 +7735,10 @@
       "relation": "rationale_for",
       "confidence": "EXTRACTED",
       "source_file": "main.py",
-      "source_location": "L672",
+      "source_location": "L630",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "main_rationale_672",
+      "source": "main_rationale_630",
       "target": "main_humanize_markdown_content",
       "confidence_score": 1.0
     },
@@ -8472,28 +7784,6 @@
       "_origin": "ast",
       "source": "pipeline_rationale_12",
       "target": "pipeline_process_package",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "schema_generator.py",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "schema_generator_rationale_1",
-      "target": "schema_generator",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "rationale_for",
-      "confidence": "EXTRACTED",
-      "source_file": "schema_generator.py",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "schema_generator_rationale_8",
-      "target": "schema_generator_generate_json_ld",
       "confidence_score": 1.0
     },
     {
@@ -8623,7 +7913,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "main.py",
-      "source_location": "L704",
+      "source_location": "L662",
       "weight": 1.0,
       "_origin": "ast",
       "source": "main_humanize_markdown_content",
@@ -8970,18 +8260,6 @@
       "relation": "uses",
       "context": "parameter_type",
       "confidence": "INFERRED",
-      "source_file": "indic_engine.py",
-      "source_location": "L19",
-      "weight": 0.8,
-      "_origin": "ast",
-      "source": "indic_engine_localize_content",
-      "target": "llm_client_llmclient",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "context": "parameter_type",
-      "confidence": "INFERRED",
       "source_file": "main.py",
       "source_location": "L283",
       "weight": 0.8,
@@ -9078,17 +8356,6 @@
       "relation": "uses",
       "confidence": "INFERRED",
       "source_file": "main.py",
-      "source_location": "L479",
-      "weight": 0.8,
-      "_origin": "ast",
-      "source": "main_localize",
-      "target": "llm_client_llmclient",
-      "confidence_score": 0.5
-    },
-    {
-      "relation": "uses",
-      "confidence": "INFERRED",
-      "source_file": "main.py",
       "source_location": "L134",
       "weight": 0.8,
       "_origin": "ast",
@@ -9109,5 +8376,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "be88c4cfcf6772ad2174fb63dd7d6c8e37a70078"
+  "built_at_commit": "c9bbe7cdc2ed67d8bac492cc93d17150d7a55b6f"
 }

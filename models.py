@@ -67,6 +67,7 @@ class FAQItem(BaseModel):
 
 class SectionedContent(BaseModel):
     package_overview: str = ""
+    geo_quick_answer: str = ""  # GEO Answer-First Quick Summary for AI Overviews / Search
     quick_facts: QuickFacts = Field(default_factory=QuickFacts)
     why_choose_heading: str = ""
     why_choose_intro: str = ""
@@ -90,6 +91,7 @@ class SectionedContent(BaseModel):
     exclusions: List[str] = Field(default_factory=list)
     nearby_locations_heading: str = ""
     nearby_locations: List[NearbyLocation] = Field(default_factory=list)
+    smart_internal_links: List[Dict[str, Any]] = Field(default_factory=list)
     cancellation_policy: str = ""
     payment_policy_bullets: List[str] = Field(default_factory=list)
     terms_conditions: List[str] = Field(default_factory=list)
@@ -105,9 +107,13 @@ class SEOOutput(BaseModel):
     sections: SectionedContent = Field(default_factory=SectionedContent)
     qa_score: int = Field(0, ge=0, le=100)
     qa_flags: List[str] = Field(default_factory=list)
+    json_ld_schema: Optional[Dict[str, Any]] = None
+    linter_metrics: Optional[Dict[str, Any]] = None
+    language: str = "en"  # en, hi, gu
     status: str = "pending"  # pending, approved, rejected
     created_at: str = ""
     updated_at: str = ""
+
 
     @field_validator("title_tag", mode="before")
     @classmethod

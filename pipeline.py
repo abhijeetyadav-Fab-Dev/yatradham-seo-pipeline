@@ -64,9 +64,42 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
     except Exception:
         qa_result = {"score": 85, "flags": ["Automated evaluation completed"]}
 
+    # Smart Cross-Domain Internal Links
+    from internal_linker import get_smart_internal_links
+    from schema_generator import generate_json_ld
+    from linter import run_seo_linter
+
+    dest_val = pkg_data.get("destination") or "India"
+    cat_val = pkg_data.get("category") or "tour"
+    url_val = pkg_data.get("url") or ""
+
+    smart_links = get_smart_internal_links(dest_val, cat_val, url_val)
+    content_result["smart_internal_links"] = smart_links
+
+    # Formulate GEO Quick Answer (Answer-First for Google SGE / AI Overviews)
+    if not content_result.get("geo_quick_answer"):
+        dur = pkg_data.get("duration", "program")
+        cost = pkg_data.get("cost", "verified rates")
+        name = pkg_data.get("name", "Package")
+        content_result["geo_quick_answer"] = (
+            f"The {name} is a {dur} journey in {dest_val} ({cost}) featuring verified accommodation, "
+            f"Sattvic vegetarian meals, and guided support through YatraDham.Org."
+        )
+
     # Build output
     sections = SectionedContent(**content_result)
     now = datetime.now().isoformat()
+
+    prelim_output = {
+        "package_input": pkg_data,
+        "title_tag": title_tag,
+        "meta_description": meta_description,
+        "sections": content_result,
+    }
+
+    # Generate JSON-LD & Linter Metrics
+    json_ld = generate_json_ld(prelim_output)
+    linter_metrics = run_seo_linter(title_tag, meta_description, primary_keyword, content_result, json_ld_present=True)
 
     return SEOOutput(
         package_input=package_input,
@@ -76,7 +109,11 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
         sections=sections,
         qa_score=qa_result.get("score", 0),
         qa_flags=qa_result.get("flags", []),
+        json_ld_schema=json_ld,
+        linter_metrics=linter_metrics,
+        language="en",
         status="pending",
         created_at=now,
         updated_at=now,
     )
+
