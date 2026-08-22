@@ -1412,8 +1412,9 @@
             // Append Schema.org JSON-LD Script Block
             if (o.json_ld_schema) {
                 html += `\n<!-- Schema.org JSON-LD Structured Data (Google Rich Results & SGE) -->\n`;
-                html += `<script type="application/ld+json">\n${JSON.stringify(o.json_ld_schema, null, 2)}\n</script>`;
+                html += `<script type="application/ld+json">\n${JSON.stringify(o.json_ld_schema, null, 2)}\n<\/script>`;
             }
+
 
             return html;
         }
@@ -1721,13 +1722,14 @@
                 showToast('No JSON-LD schema available to copy.');
                 return;
             }
-            const scriptTag = `<script type="application/ld+json">\n${JSON.stringify(o.json_ld_schema, null, 2)}\n</script>`;
+            const scriptTag = `<script type="application/ld+json">\n${JSON.stringify(o.json_ld_schema, null, 2)}\n<\/script>`;
             navigator.clipboard.writeText(scriptTag).then(() => {
                 showToast('🏷️ Schema.org JSON-LD Script Copied!');
             }).catch(() => {
                 prompt('Copy Schema Script:', scriptTag);
             });
         }
+
 
         async function triggerLocalize(id, targetLang) {
             const o = window.allOutputsMap[id];
