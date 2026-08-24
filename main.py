@@ -587,6 +587,19 @@ def enrich_destination_endpoint(destination: str):
     return enrich_destination_data(destination)
 
 
+@app.get("/api/providers/status")
+def get_providers_status():
+    """Return status of configured backend AI providers."""
+    return {
+        "nvidia": bool(client.nvidia_api_key),
+        "groq": bool(client.groq_api_key),
+        "gemini": bool(client.gemini_api_key),
+        "openrouter": bool(client.openrouter_api_key),
+        "active_provider": "nvidia" if client.nvidia_api_key else ("groq" if client.groq_api_key else ("gemini" if client.gemini_api_key else ("openrouter" if client.openrouter_api_key else "mock")))
+    }
+
+
+
 
 @app.get("/stats")
 def stats():

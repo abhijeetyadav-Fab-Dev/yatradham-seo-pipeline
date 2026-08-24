@@ -3014,7 +3014,18 @@
         // Initialize and auto-poll
         loadWpCredentials();
         loadStats();
+        async function checkServerProviderStatus() {
+            try {
+                const res = await fetch(API + '/api/providers/status');
+                const data = await res.json();
+                if (data.nvidia) {
+                    console.log('🟢 NVIDIA NIM is active on server environment');
+                }
+            } catch(e) {}
+        }
+        checkServerProviderStatus();
         setInterval(loadStats, 3000);
+
         
         // Auto-refresh outputs if on the outputs or wordpress tab
         setInterval(() => {
