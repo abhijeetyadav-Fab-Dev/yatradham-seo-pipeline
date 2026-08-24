@@ -69,9 +69,24 @@ def init_db():
         conn.execute("""
             CREATE INDEX IF NOT EXISTS idx_package_name ON seo_outputs(package_name)
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS audit_trail (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                row_id INTEGER,
+                event_type TEXT NOT NULL,
+                actor TEXT DEFAULT 'system',
+                model_used TEXT,
+                details TEXT,
+                created_at TEXT
+            )
+        """)
+        conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_audit_row_id ON audit_trail(row_id)
+        """)
         conn.commit()
         conn.close()
     _execute_with_retry(_op)
+
 
 
 def _sections_to_dict(sections: SectionedContent) -> dict:
@@ -242,6 +257,35 @@ def get_stats() -> Dict[str, Any]:
         "approved_candidate": approved_candidates,
         "average_qa_score": round(avg_score, 1),
     }
+
+
+def log_audit_event(row_id: int, event_type: str, actor: str = "system", model_used: Optional[str] = None, details: Optional[str] = None) -> int:
+    """Log an audit event for enterprise traceability and compliance."""
+    def _op():
+        conn = get_conn()
+        now = __import__("datetime").datetime.now().isoformat()
+        cur = conn.execute(
+            """INSERT INTO audit_trail (row_id, event_type, actor, model_used, details, created_at)
+               VALUES (?, ?, ?, ?, ?, ?)""",
+            (row_id, event_type, actor, model_used, details, now)
+        )
+        conn.commit()
+        last_id = cur.lastrowid
+        conn.close()
+        return last_id
+    return _execute_with_retry(_op)
+
+
+def get_audit_trail(row_id: Optional[int] = None, limit: int = 50) -> List[Dict[str, Any]]:
+    """Retrieve audit history for a package or global pipeline activity."""
+    conn = get_conn()
+    if row_id is not None:
+        rows = conn.execute("SELECT * FROM audit_trail WHERE row_id = ? ORDER BY id DESC LIMIT ?", (row_id, limit)).fetchall()
+    else:
+        rows = conn.execute("SELECT * FROM audit_trail ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
 
 
 

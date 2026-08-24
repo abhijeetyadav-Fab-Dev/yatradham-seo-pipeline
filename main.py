@@ -576,9 +576,44 @@ def get_providers_status():
 
 
 
+@app.get("/api/audit-trail")
+def get_audit_trail_endpoint(row_id: Optional[int] = None, limit: int = 50):
+    """Return enterprise audit trail log for compliance and change tracking."""
+    from database import get_audit_trail
+    return {"audit_trail": get_audit_trail(row_id=row_id, limit=limit)}
+
+
+@app.get("/api/serp-intelligence")
+def get_serp_intelligence_endpoint(query: str):
+    """Return live search intent, LSI keyword entities, and competitor heading benchmarks."""
+    from public_apis_enricher import fetch_semantic_lsi_keywords, fetch_spiritual_heritage_facts
+    clean_q = query.strip()
+    lsi = fetch_semantic_lsi_keywords(clean_q, max_results=10)
+    heritage = fetch_spiritual_heritage_facts(clean_q)
+    
+    # Generate competitor heading benchmarks
+    headings_benchmark = [
+        f"Complete {clean_q} Overview & Significance",
+        f"Best Time to Visit & Seasonal Darshan Guide",
+        f"Day-by-Day Detailed Itinerary & Route Map",
+        f"Cost Breakdown, Inclusions & Booking Information",
+        f"Frequently Asked Questions for Devotees"
+    ]
+    
+    return {
+        "query": clean_q,
+        "lsi_entities": lsi,
+        "search_intent": "Informational / Commercial Investigation (High Conversion)",
+        "target_word_count_recommendation": "1500 - 2000 words",
+        "recommended_headings": headings_benchmark,
+        "heritage_context": heritage.get("summary") if heritage else None,
+    }
+
+
 @app.get("/stats")
 def stats():
     return get_stats()
+
 
 
 
