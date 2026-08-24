@@ -270,7 +270,14 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
             dest = center_loc
 
     if not dest:
-        # Check specific destination patterns in title (e.g. "at Gangasagar", "in Rishikesh", "in Delhi")
+        # 1. Direct search across known spiritual destinations in name and URL slug
+        for key, val in DESTINATIONS_MAP.items():
+            if re.search(rf'\b{re.escape(key)}\b', name_and_slug, re.IGNORECASE):
+                dest = val
+                break
+
+    if not dest:
+        # 2. Check specific destination patterns in title (e.g. "at Gangasagar", "in Rishikesh", "in Delhi")
         in_match = re.search(r'\b(?:in|at)\s+([A-Za-z\s]+?)(?:\s*[-–|,]|\s*Package|\s*Retreat|\s*Camp|\s*Tour|$)', data["name"], re.IGNORECASE)
         if in_match:
             candidate = in_match.group(1).strip().lower()
@@ -281,7 +288,11 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
             if not dest and len(candidate) > 2 and candidate not in ["the", "this", "our", "three", "seven", "ayurveda", "wellness", "yatradham", "days", "day"]:
                 dest = f"{candidate.title()}, India"
 
-    data["destination"] = dest or "Rishikesh, Uttarakhand"
+    if not dest and slug_dest:
+        dest = f"{slug_dest}, India"
+
+    data["destination"] = dest or "India"
+
 
     # Duration Extraction
     dur = ""

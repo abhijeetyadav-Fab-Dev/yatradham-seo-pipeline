@@ -134,13 +134,13 @@ class LLMClient:
         if self.dry_run:
             return
         if self.nvidia_api_key:
-            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=self.nvidia_api_key, timeout=15.0)
+            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=self.nvidia_api_key, timeout=10.0, max_retries=0)
         if self.groq_api_key:
-            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=self.groq_api_key, timeout=12.0)
+            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=self.groq_api_key, timeout=8.0, max_retries=0)
         if self.gemini_api_key:
-            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=self.gemini_api_key, timeout=12.0)
+            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=self.gemini_api_key, timeout=8.0, max_retries=0)
         if self.openrouter_api_key:
-            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=self.openrouter_api_key, timeout=12.0)
+            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=self.openrouter_api_key, timeout=6.0, max_retries=0)
 
     def set_custom_keys(self, provider: str, api_key: str, model: Optional[str] = None):
         """Allow setting runtime keys dynamically for a request without server restart."""
@@ -151,19 +151,20 @@ class LLMClient:
         if provider == "nvidia":
             self.nvidia_api_key = clean_key
             if model: self.nvidia_model = model
-            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=clean_key, timeout=15.0)
+            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=clean_key, timeout=10.0, max_retries=0)
         elif provider == "groq":
             self.groq_api_key = clean_key
             if model: self.groq_model = model
-            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=12.0)
+            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=8.0, max_retries=0)
         elif provider == "gemini":
             self.gemini_api_key = clean_key
             if model: self.gemini_model = model
-            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=12.0)
+            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=8.0, max_retries=0)
         elif provider == "openrouter":
             self.openrouter_api_key = clean_key
             if model: self.openrouter_model = model
-            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=12.0)
+            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=6.0, max_retries=0)
+
 
     _model_cache = {}
 
@@ -359,8 +360,11 @@ class LLMClient:
             self.last_error = "No API keys configured. Set GROQ_API_KEY or GEMINI_API_KEY."
             return self._mock_response(messages)
 
+        failed_providers_in_request = set()
         self.errors = {}
         for provider_name, client_inst, active_model in providers:
+            if provider_name in failed_providers_in_request:
+                continue
             self._wait_for_rate_limit()
             try:
                 safe_temp = max(0.2, min(temperature, 0.65))
@@ -370,7 +374,7 @@ class LLMClient:
                     "messages": messages,
                     "max_tokens": safe_max_tokens,
                     "temperature": safe_temp,
-                    "timeout": 12.0,
+                    "timeout": 8.0,
                 }
                 if provider_name in ["groq", "openrouter"]:
                     kwargs["top_p"] = 0.95
@@ -415,16 +419,16 @@ class LLMClient:
             except Exception as e:
                 err_msg = str(e)
                 self.errors[f"{provider_name}:{active_model}"] = err_msg
-                logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next model/provider...")
-                if "429" in err_msg or "rate limit" in err_msg.lower():
-                    time.sleep(0.3)
+                logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next provider...")
+                if any(x in err_msg.lower() for x in ["429", "rate limit", "credits", "quota", "401", "unauthorized", "invalid api key"]):
+                    failed_providers_in_request.add(provider_name)
                 continue
 
         # If all providers fail, record error and return mock
         self.last_provider_used = "mock (all providers failed)"
-
         self.last_error = "; ".join([f"{k}: {v}" for k, v in self.errors.items()][:2])
         return self._mock_response(messages)
+
 
 
     def _mock_response(self, messages: List[Dict[str, str]]) -> str:
