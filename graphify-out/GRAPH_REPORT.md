@@ -1,16 +1,16 @@
 # Graph Report - yatradham-seo-pipeline  (2026-08-24)
 
 ## Corpus Check
-- 27 files · ~58,281 words
+- 28 files · ~59,324 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 270 nodes · 583 edges · 16 communities (13 shown, 3 thin omitted)
+- 274 nodes · 595 edges · 16 communities (14 shown, 2 thin omitted)
 - Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 45 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6da1d06d`
+- Built from commit: `e643ee66`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,7 +21,7 @@
 - LLMClient
 - models.py
 - WordPressPublisher
-- SitemapCrawler
+- crawl_sitemap
 - pipeline.py
 - qa_agent.py
 - .sanitize_meta_description
@@ -31,8 +31,8 @@
 ## God Nodes (most connected - your core abstractions)
 1. `LLMClient` - 34 edges
 2. `run_suite()` - 19 edges
-3. `SEOOutput` - 17 edges
-4. `process_package()` - 17 edges
+3. `process_package()` - 18 edges
+4. `SEOOutput` - 17 edges
 5. `PackageInput` - 14 edges
 6. `SectionedContent` - 13 edges
 7. `save_output()` - 12 edges
@@ -49,13 +49,13 @@
   agents/qa_agent.py → llm_client.py
 - `_sections_to_dict()` --uses--> `SectionedContent`  [INFERRED]
   database.py → models.py
-- `_row_to_output()` --uses--> `PackageInput`  [INFERRED]
-  database.py → models.py
+- `localize()` --uses--> `LLMClient`  [INFERRED]
+  main.py → llm_client.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (16 total, 3 thin omitted)
+## Communities (16 total, 2 thin omitted)
 
 ### Community 0 - "📅 Day-by-Day Comprehensive Itinerary"
 Cohesion: 0.10
@@ -63,23 +63,27 @@ Nodes (20): 7-Day Haridwar Spiritual & Wellness Retreat | YatraDham, Day 1, Day 
 
 ### Community 1 - "main.py"
 Cohesion: 0.06
-Nodes (55): BackgroundTasks, clear_all_outputs(), delete, FastAPI, get, batch_urls(), BatchURLRequest, bulk_action() (+47 more)
+Nodes (55): BackgroundTasks, delete, FastAPI, get, batch_urls(), BatchURLRequest, bulk_action(), check_ai_endpoint() (+47 more)
 
 ### Community 2 - "test_e2e_suite.py"
-Cohesion: 0.12
-Nodes (39): bulk_update_status(), delete_output(), _dict_to_sections(), _execute_with_retry(), get_conn(), get_output(), get_stats(), init_db() (+31 more)
+Cohesion: 0.13
+Nodes (39): bulk_update_status(), clear_all_outputs(), delete_output(), _dict_to_sections(), _execute_with_retry(), get_conn(), get_output(), get_stats() (+31 more)
 
 ### Community 3 - "LLMClient"
 Cohesion: 0.07
 Nodes (28): _extract_json_from_response(), Any, Content agent: generates all 19 structured sections from scraped page data., Robustly extract JSON from LLM response, handling markdown blocks and…, run(), Any, Keyword agent: enforces 2-4 word primary keyword., run() (+20 more)
 
 ### Community 4 - "models.py"
-Cohesion: 0.23
-Nodes (13): batch_process(), Process multiple packages from JSON (manual input)., BatchRequest, BulkActionRequest, FAQItem, ItineraryDay, NearbyLocation, PricingRow (+5 more)
+Cohesion: 0.29
+Nodes (11): BatchRequest, BulkActionRequest, FAQItem, ItineraryDay, NearbyLocation, PricingRow, ProgramHighlights, ProgramSession (+3 more)
+
+### Community 6 - "crawl_sitemap"
+Cohesion: 0.36
+Nodes (4): crawl_sitemap(), Crawl an XML Sitemap or Category Landing Page to extract package links., Any, SitemapCrawler
 
 ### Community 7 - "pipeline.py"
-Cohesion: 0.11
-Nodes (20): get_smart_internal_links(), Intelligent Cross-Domain Internal Linking Engine for YatraDham Ecosystem., Return contextual internal links filtered to avoid linking to the current page…, calculate_flesch_reading_ease(), Any, Real-Time SEO & GEO (Generative Engine Optimization) Linter for YatraDham., Audit content for SEO and AI Overview (GEO) citation compliance., Calculate Flesch Reading Ease score (0-100). (+12 more)
+Cohesion: 0.09
+Nodes (23): _extract_numeric_price(), Any, verify_ground_truth(), get_smart_internal_links(), Intelligent Cross-Domain Internal Linking Engine for YatraDham Ecosystem., Return contextual internal links filtered to avoid linking to the current page…, calculate_flesch_reading_ease(), Any (+15 more)
 
 ### Community 11 - "qa_agent.py"
 Cohesion: 0.19
@@ -96,22 +100,22 @@ Nodes (8): clean_price_string(), detect_url_category(), extract_package_data(), 
 ## Knowledge Gaps
 - **17 isolated node(s):** `📍 Package Overview`, `⚡ Quick Facts`, `🌟 Why Choose This Package?`, `Day 1`, `Day 2` (+12 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `LLMClient` connect `LLMClient` to `main.py`, `test_e2e_suite.py`, `pipeline.py`, `qa_agent.py`, `content_creator_agent.py`?**
-  _High betweenness centrality (0.178) - this node is a cross-community bridge._
-- **Why does `process_package()` connect `pipeline.py` to `main.py`, `test_e2e_suite.py`, `LLMClient`, `models.py`, `qa_agent.py`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
-- **Why does `run_seo_linter()` connect `pipeline.py` to `main.py`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+  _High betweenness centrality (0.176) - this node is a cross-community bridge._
+- **Why does `process_package()` connect `pipeline.py` to `qa_agent.py`, `main.py`, `test_e2e_suite.py`, `LLMClient`?**
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
+- **Why does `run_seo_linter()` connect `pipeline.py` to `main.py`, `test_e2e_suite.py`?**
+  _High betweenness centrality (0.040) - this node is a cross-community bridge._
 - **Are the 13 inferred relationships involving `LLMClient` (e.g. with `run()` and `_generate_long_form_blog()`) actually correct?**
   _`LLMClient` has 13 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 4 inferred relationships involving `run_suite()` (e.g. with `LLMClient` and `PackageInput`) actually correct?**
   _`run_suite()` has 4 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 8 inferred relationships involving `SEOOutput` (e.g. with `get_output()` and `list_outputs()`) actually correct?**
-  _`SEOOutput` has 8 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 4 inferred relationships involving `process_package()` (e.g. with `LLMClient` and `PackageInput`) actually correct?**
   _`process_package()` has 4 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 8 inferred relationships involving `SEOOutput` (e.g. with `get_output()` and `list_outputs()`) actually correct?**
+  _`SEOOutput` has 8 INFERRED edges - model-reasoned connections that need verification._

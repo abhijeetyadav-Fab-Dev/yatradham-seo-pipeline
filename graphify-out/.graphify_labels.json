@@ -5,7 +5,7 @@
   "3": "LLMClient",
   "4": "models.py",
   "5": "WordPressPublisher",
-  "6": "SitemapCrawler",
+  "6": "crawl_sitemap",
   "7": "pipeline.py",
   "8": "e2e_browser_test.py",
   "9": "live_qa.py",

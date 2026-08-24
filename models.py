@@ -107,12 +107,15 @@ class SEOOutput(BaseModel):
     sections: SectionedContent = Field(default_factory=SectionedContent)
     qa_score: int = Field(0, ge=0, le=100)
     qa_flags: List[str] = Field(default_factory=list)
+    factual_integrity_score: int = Field(100, ge=0, le=100)
+    ground_truth_report: Optional[Dict[str, Any]] = None
     json_ld_schema: Optional[Dict[str, Any]] = None
     linter_metrics: Optional[Dict[str, Any]] = None
     language: str = "en"  # en, hi, gu
-    status: str = "pending"  # pending, approved, rejected
+    status: str = "pending"  # pending, approved, flagged_review, rejected
     created_at: str = ""
     updated_at: str = ""
+
 
 
     @field_validator("title_tag", mode="before")

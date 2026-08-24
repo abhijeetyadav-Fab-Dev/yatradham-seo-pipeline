@@ -101,19 +101,38 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
     json_ld = generate_json_ld(prelim_output)
     linter_metrics = run_seo_linter(title_tag, meta_description, primary_keyword, content_result, json_ld_present=True)
 
+    # Enterprise Ground-Truth Fact Verification Gate
+    from fact_checker import verify_ground_truth
+    gt_report = verify_ground_truth(pkg_data, content_result, title_tag, meta_description)
+    factual_score = gt_report.get("factual_integrity_score", 100)
+    
+    # Automated Approval / Review Routing
+    qa_score_val = qa_result.get("score", 0)
+    composite_score = int(round((factual_score * 0.5) + (qa_score_val * 0.3) + (linter_metrics.get("overall_score", 85) * 0.2)))
+    
+    if gt_report.get("verification_status") == "MISMATCH_DETECTED" or factual_score < 70:
+        initial_status = "flagged_review"
+    elif composite_score >= 80:
+        initial_status = "approved"
+    else:
+        initial_status = "pending"
+
     return SEOOutput(
         package_input=package_input,
         primary_keyword=primary_keyword,
         title_tag=title_tag,
         meta_description=meta_description,
         sections=sections,
-        qa_score=qa_result.get("score", 0),
-        qa_flags=qa_result.get("flags", []),
+        qa_score=composite_score,
+        qa_flags=qa_result.get("flags", []) + gt_report.get("flags", []),
+        factual_integrity_score=factual_score,
+        ground_truth_report=gt_report,
         json_ld_schema=json_ld,
         linter_metrics=linter_metrics,
         language="en",
-        status="pending",
+        status=initial_status,
         created_at=now,
         updated_at=now,
     )
+
 

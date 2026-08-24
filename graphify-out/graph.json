@@ -147,6 +147,19 @@
       "norm_label": "wpverifyrequest"
     },
     {
+      "label": "PackageInput",
+      "file_type": "code",
+      "source_file": "models.py",
+      "source_location": "L7",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "id": "models_packageinput",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "packageinput"
+    },
+    {
       "label": "SectionedContent",
       "file_type": "code",
       "source_file": "models.py",
@@ -189,7 +202,7 @@
       "label": "BatchRequest",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L135",
+      "source_location": "L138",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -202,7 +215,7 @@
       "label": "BulkActionRequest",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L139",
+      "source_location": "L142",
       "_callable": true,
       "_callable_class": true,
       "_origin": "ast",
@@ -325,33 +338,8 @@
       "_origin": "ast",
       "id": "sitemap_crawler_sitemapcrawler",
       "community": 6,
-      "community_name": "SitemapCrawler",
+      "community_name": "crawl_sitemap",
       "norm_label": "sitemapcrawler"
-    },
-    {
-      "label": "PackageInput",
-      "file_type": "code",
-      "source_file": "models.py",
-      "source_location": "L7",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "id": "models_packageinput",
-      "community": 7,
-      "community_name": "pipeline.py",
-      "norm_label": "packageinput"
-    },
-    {
-      "label": "clear_all_outputs()",
-      "file_type": "code",
-      "source_file": "database.py",
-      "source_location": "L214",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "database_clear_all_outputs",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "clear_all_outputs()"
     },
     {
       "label": "batch_urls()",
@@ -402,18 +390,6 @@
       "norm_label": "clear_cache()"
     },
     {
-      "label": "crawl_sitemap()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L562",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_crawl_sitemap",
-      "community": 1,
-      "community_name": "main.py",
-      "norm_label": "crawl_sitemap()"
-    },
-    {
       "label": "delete_single_output()",
       "file_type": "code",
       "source_file": "main.py",
@@ -424,6 +400,18 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "delete_single_output()"
+    },
+    {
+      "label": "export_csv()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L578",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_export_csv",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "export_csv()"
     },
     {
       "label": "generate_content()",
@@ -520,6 +508,18 @@
       "community": 1,
       "community_name": "main.py",
       "norm_label": "localize()"
+    },
+    {
+      "label": "process_batch_background()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L196",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_process_batch_background",
+      "community": 1,
+      "community_name": "main.py",
+      "norm_label": "process_batch_background()"
     },
     {
       "label": "publish_to_wordpress()",
@@ -729,7 +729,7 @@
       "label": ".sanitize_meta_description()",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L128",
+      "source_location": "L131",
       "_callable": true,
       "_origin": "ast",
       "id": "models_seooutput_sanitize_meta_description",
@@ -741,7 +741,7 @@
       "label": ".sanitize_title_tag()",
       "file_type": "code",
       "source_file": "models.py",
-      "source_location": "L120",
+      "source_location": "L123",
       "_callable": true,
       "_origin": "ast",
       "id": "models_seooutput_sanitize_title_tag",
@@ -892,6 +892,18 @@
       "community": 2,
       "community_name": "test_e2e_suite.py",
       "norm_label": "bulk_update_status()"
+    },
+    {
+      "label": "clear_all_outputs()",
+      "file_type": "code",
+      "source_file": "database.py",
+      "source_location": "L214",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "database_clear_all_outputs",
+      "community": 2,
+      "community_name": "test_e2e_suite.py",
+      "norm_label": "clear_all_outputs()"
     },
     {
       "label": "delete_output()",
@@ -1048,18 +1060,6 @@
       "community": 2,
       "community_name": "test_e2e_suite.py",
       "norm_label": "update_output()"
-    },
-    {
-      "label": "export_csv()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L578",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_export_csv",
-      "community": 2,
-      "community_name": "test_e2e_suite.py",
-      "norm_label": "export_csv()"
     },
     {
       "label": "query_undetectable_detector()",
@@ -1374,18 +1374,6 @@
       "norm_label": "._wait_for_rate_limit()"
     },
     {
-      "label": "batch_process()",
-      "file_type": "code",
-      "source_file": "main.py",
-      "source_location": "L285",
-      "_callable": true,
-      "_origin": "ast",
-      "id": "main_batch_process",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "batch_process()"
-    },
-    {
       "label": ".get_headers()",
       "file_type": "code",
       "source_file": "wordpress_publisher.py",
@@ -1434,6 +1422,18 @@
       "norm_label": ".verify_connection()"
     },
     {
+      "label": "crawl_sitemap()",
+      "file_type": "code",
+      "source_file": "main.py",
+      "source_location": "L562",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "main_crawl_sitemap",
+      "community": 6,
+      "community_name": "crawl_sitemap",
+      "norm_label": "crawl_sitemap()"
+    },
+    {
       "label": ".fetch_urls()",
       "file_type": "code",
       "source_file": "sitemap_crawler.py",
@@ -1442,7 +1442,7 @@
       "_origin": "ast",
       "id": "sitemap_crawler_sitemapcrawler_fetch_urls",
       "community": 6,
-      "community_name": "SitemapCrawler",
+      "community_name": "crawl_sitemap",
       "norm_label": ".fetch_urls()"
     },
     {
@@ -1454,7 +1454,7 @@
       "_origin": "ast",
       "id": "sitemap_crawler_sitemapcrawler_parse_html_links",
       "community": 6,
-      "community_name": "SitemapCrawler",
+      "community_name": "crawl_sitemap",
       "norm_label": "._parse_html_links()"
     },
     {
@@ -1466,8 +1466,32 @@
       "_origin": "ast",
       "id": "sitemap_crawler_sitemapcrawler_parse_xml_sitemap",
       "community": 6,
-      "community_name": "SitemapCrawler",
+      "community_name": "crawl_sitemap",
       "norm_label": "._parse_xml_sitemap()"
+    },
+    {
+      "label": "_extract_numeric_price()",
+      "file_type": "code",
+      "source_file": "fact_checker.py",
+      "source_location": "L6",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "fact_checker_extract_numeric_price",
+      "community": 7,
+      "community_name": "pipeline.py",
+      "norm_label": "_extract_numeric_price()"
+    },
+    {
+      "label": "verify_ground_truth()",
+      "file_type": "code",
+      "source_file": "fact_checker.py",
+      "source_location": "L17",
+      "_callable": true,
+      "_origin": "ast",
+      "id": "fact_checker_verify_ground_truth",
+      "community": 7,
+      "community_name": "pipeline.py",
+      "norm_label": "verify_ground_truth()"
     },
     {
       "label": "get_smart_internal_links()",
@@ -1506,16 +1530,16 @@
       "norm_label": "run_seo_linter()"
     },
     {
-      "label": "process_batch_background()",
+      "label": "batch_process()",
       "file_type": "code",
       "source_file": "main.py",
-      "source_location": "L196",
+      "source_location": "L285",
       "_callable": true,
       "_origin": "ast",
-      "id": "main_process_batch_background",
+      "id": "main_batch_process",
       "community": 7,
       "community_name": "pipeline.py",
-      "norm_label": "process_batch_background()"
+      "norm_label": "batch_process()"
     },
     {
       "label": "process_single()",
@@ -2029,15 +2053,15 @@
       "norm_label": "publish generated seo content directly to wordpress."
     },
     {
-      "label": "Crawl an XML Sitemap or Category Landing Page to extract package links.",
+      "label": "Export outputs to CSV.",
       "file_type": "rationale",
       "source_file": "main.py",
-      "source_location": "L563",
+      "source_location": "L579",
       "_origin": "ast",
-      "id": "main_rationale_563",
+      "id": "main_rationale_579",
       "community": 1,
       "community_name": "main.py",
-      "norm_label": "crawl an xml sitemap or category landing page to extract package links."
+      "norm_label": "export outputs to csv."
     },
     {
       "label": "Humanize multi-section markdown text concurrently with 21-pattern de-slopper\u2026",
@@ -2480,17 +2504,6 @@
       "norm_label": "execute a database operation with exponential backoff on lock contention."
     },
     {
-      "label": "Export outputs to CSV.",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L579",
-      "_origin": "ast",
-      "id": "main_rationale_579",
-      "community": 2,
-      "community_name": "test_e2e_suite.py",
-      "norm_label": "export outputs to csv."
-    },
-    {
       "label": "High-Concurrency Multi-Threaded Stress Test Suite for Yatradham SEO Pipeline.",
       "file_type": "rationale",
       "source_file": "stress_test.py",
@@ -2865,17 +2878,6 @@
       "norm_label": "basemodel"
     },
     {
-      "label": "Process multiple packages from JSON (manual input).",
-      "file_type": "rationale",
-      "source_file": "main.py",
-      "source_location": "L286",
-      "_origin": "ast",
-      "id": "main_rationale_286",
-      "community": 4,
-      "community_name": "models.py",
-      "norm_label": "process multiple packages from json (manual input)."
-    },
-    {
       "label": "Pydantic models for the SEO pipeline.",
       "file_type": "rationale",
       "source_file": "models.py",
@@ -2916,7 +2918,7 @@
       "_origin": "ast",
       "id": "sitemap_crawler",
       "community": 6,
-      "community_name": "SitemapCrawler",
+      "community_name": "crawl_sitemap",
       "norm_label": "sitemap_crawler.py"
     },
     {
@@ -2927,7 +2929,40 @@
       "_origin": "ast",
       "id": "sitemap_crawler_py_any",
       "community": 6,
-      "community_name": "SitemapCrawler",
+      "community_name": "crawl_sitemap",
+      "norm_label": "any"
+    },
+    {
+      "label": "Crawl an XML Sitemap or Category Landing Page to extract package links.",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L563",
+      "_origin": "ast",
+      "id": "main_rationale_563",
+      "community": 6,
+      "community_name": "crawl_sitemap",
+      "norm_label": "crawl an xml sitemap or category landing page to extract package links."
+    },
+    {
+      "label": "fact_checker.py",
+      "file_type": "code",
+      "source_file": "fact_checker.py",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "fact_checker",
+      "community": 7,
+      "community_name": "pipeline.py",
+      "norm_label": "fact_checker.py"
+    },
+    {
+      "label": "Any",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "_origin": "ast",
+      "id": "fact_checker_py_any",
+      "community": 7,
+      "community_name": "pipeline.py",
       "norm_label": "any"
     },
     {
@@ -3061,6 +3096,17 @@
       "community": 7,
       "community_name": "pipeline.py",
       "norm_label": "process a single package through all 5 agents (manual json input)."
+    },
+    {
+      "label": "Process multiple packages from JSON (manual input).",
+      "file_type": "rationale",
+      "source_file": "main.py",
+      "source_location": "L286",
+      "_origin": "ast",
+      "id": "main_rationale_286",
+      "community": 7,
+      "community_name": "pipeline.py",
+      "norm_label": "process multiple packages from json (manual input)."
     },
     {
       "label": "Orchestrator: runs all 5 agents with fault-tolerant parallel acceleration.",
@@ -3483,11 +3529,47 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "database.py",
-      "source_location": "L250",
+      "source_location": "L245",
       "weight": 1.0,
       "_origin": "ast",
       "source": "database_row_to_output",
       "target": "database_dict_to_sections",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L254",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "database_row_to_output",
+      "target": "fact_checker_verify_ground_truth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L262",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "database_row_to_output",
+      "target": "schema_generator_generate_json_ld",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L263",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "database_row_to_output",
+      "target": "linter_run_seo_linter",
       "confidence_score": 1.0
     },
     {
@@ -3512,6 +3594,18 @@
       "_origin": "ast",
       "source": "database_update_output",
       "target": "database_execute_with_retry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "fact_checker.py",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "fact_checker_verify_ground_truth",
+      "target": "fact_checker_extract_numeric_price",
       "confidence_score": 1.0
     },
     {
@@ -4040,6 +4134,18 @@
       "_origin": "ast",
       "source": "pipeline_process_package",
       "target": "linter_run_seo_linter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pipeline_process_package",
+      "target": "fact_checker_verify_ground_truth",
       "confidence_score": 1.0
     },
     {
@@ -4766,7 +4872,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L126",
+      "source_location": "L129",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -4778,7 +4884,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L118",
+      "source_location": "L121",
       "weight": 1.0,
       "context": "decorator",
       "_origin": "ast",
@@ -4940,6 +5046,18 @@
       "_origin": "ast",
       "source": "database_get_stats",
       "target": "database_py_any",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "generic_arg",
+      "confidence": "EXTRACTED",
+      "source_file": "fact_checker.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "fact_checker_verify_ground_truth",
+      "target": "fact_checker_py_any",
       "confidence_score": 1.0
     },
     {
@@ -5168,6 +5286,42 @@
       "_origin": "ast",
       "source": "agents_title_agent",
       "target": "llm_client_llmclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L250",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "database",
+      "target": "fact_checker_verify_ground_truth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L251",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "database",
+      "target": "schema_generator_generate_json_ld",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "database.py",
+      "source_location": "L252",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "database",
+      "target": "linter_run_seo_linter",
       "confidence_score": 1.0
     },
     {
@@ -5552,6 +5706,18 @@
       "_origin": "ast",
       "source": "main",
       "target": "scraper_detect_url_category",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "pipeline.py",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pipeline",
+      "target": "fact_checker_verify_ground_truth",
       "confidence_score": 1.0
     },
     {
@@ -6567,7 +6733,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L128",
+      "source_location": "L131",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput_sanitize_meta_description",
@@ -6579,7 +6745,7 @@
       "context": "parameter_type",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L120",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput_sanitize_title_tag",
@@ -7135,6 +7301,28 @@
       "_origin": "ast",
       "source": "e2e_browser_test",
       "target": "e2e_browser_test_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "fact_checker.py",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "fact_checker",
+      "target": "fact_checker_verify_ground_truth",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "fact_checker.py",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "fact_checker",
+      "target": "fact_checker_extract_numeric_price",
       "confidence_score": 1.0
     },
     {
@@ -7878,7 +8066,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L135",
+      "source_location": "L138",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models",
@@ -7889,7 +8077,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L139",
+      "source_location": "L142",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models",
@@ -8296,7 +8484,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L135",
+      "source_location": "L138",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_batchrequest",
@@ -8307,7 +8495,7 @@
       "relation": "inherits",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L139",
+      "source_location": "L142",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_bulkactionrequest",
@@ -8527,7 +8715,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L120",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput",
@@ -8538,7 +8726,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "models.py",
-      "source_location": "L128",
+      "source_location": "L131",
       "weight": 1.0,
       "_origin": "ast",
       "source": "models_seooutput",
@@ -9425,7 +9613,7 @@
       "context": "call",
       "confidence": "INFERRED",
       "source_file": "database.py",
-      "source_location": "L246",
+      "source_location": "L244",
       "weight": 0.8,
       "_origin": "ast",
       "source": "database_row_to_output",
@@ -9884,5 +10072,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6da1d06d5ac9bcf622964f7e4d7fac60e889bafd"
+  "built_at_commit": "e643ee66692aaad4e199bd090e2f3e52e879e663"
 }

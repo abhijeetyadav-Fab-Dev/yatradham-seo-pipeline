@@ -241,16 +241,42 @@ def get_stats() -> Dict[str, Any]:
 
 
 def _row_to_output(row: sqlite3.Row) -> SEOOutput:
+    pkg_input = PackageInput(**json.loads(row["package_data"]))
+    sections = _dict_to_sections(json.loads(row["sections"]))
+    title_tag = row["title_tag"] or ""
+    meta_desc = row["meta_description"] or ""
+    
+    # Ground-truth fact verification & schema metrics
+    from fact_checker import verify_ground_truth
+    from schema_generator import generate_json_ld
+    from linter import run_seo_linter
+    
+    gt = verify_ground_truth(pkg_input.model_dump(), sections.model_dump(), title_tag, meta_desc)
+    
+    prelim = {
+        "package_input": pkg_input.model_dump(),
+        "title_tag": title_tag,
+        "meta_description": meta_desc,
+        "sections": sections.model_dump()
+    }
+    json_ld = generate_json_ld(prelim)
+    linter_metrics = run_seo_linter(title_tag, meta_desc, row["primary_keyword"] or "", sections.model_dump(), json_ld_present=True)
+    
     return SEOOutput(
         id=row["id"],
-        package_input=PackageInput(**json.loads(row["package_data"])),
+        package_input=pkg_input,
         primary_keyword=row["primary_keyword"] or "",
-        title_tag=row["title_tag"] or "",
-        meta_description=row["meta_description"] or "",
-        sections=_dict_to_sections(json.loads(row["sections"])),
+        title_tag=title_tag,
+        meta_description=meta_desc,
+        sections=sections,
         qa_score=row["qa_score"] or 0,
         qa_flags=json.loads(row["qa_flags"]) if row["qa_flags"] else [],
+        factual_integrity_score=gt.get("factual_integrity_score", 100),
+        ground_truth_report=gt,
+        json_ld_schema=json_ld,
+        linter_metrics=linter_metrics,
         status=row["status"] or "pending",
         created_at=row["created_at"] or "",
         updated_at=row["updated_at"] or "",
     )
+
