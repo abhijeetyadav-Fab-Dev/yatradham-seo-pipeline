@@ -89,8 +89,9 @@ class SitemapCrawler:
 
 
     @staticmethod
-    def _parse_xml_sitemap(xml_text: str) -> List[str]:
+    def _parse_xml_sitemap(xml_text: str, max_depth: int = 2) -> List[str]:
         urls = []
+        is_index = '<sitemapindex' in xml_text or '<sitemap>' in xml_text
         try:
             clean_xml = re.sub(' xmlns=\"[^\"]+\"', '', xml_text, count=1)
             root = ET.fromstring(clean_xml)
@@ -100,7 +101,24 @@ class SitemapCrawler:
         except Exception:
             matches = re.findall(r'<loc>\s*(https?://[^\s<]+)\s+</loc>', xml_text, re.IGNORECASE)
             urls.extend(matches)
+        
+        # If this is a sitemap index containing child sitemaps (e.g., post-sitemap.xml, page-sitemap.xml), recursively fetch child URLs
+        if is_index and max_depth > 0:
+            nested_urls = []
+            child_sitemaps = [u for u in urls if u.endswith('.xml') or 'sitemap' in u]
+            for child_url in child_sitemaps[:5]:  # Process top 5 relevant sub-sitemaps
+                try:
+                    resp = requests.get(child_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
+                    if resp.status_code == 200:
+                        child_extracted = SitemapCrawler._parse_xml_sitemap(resp.text, max_depth=max_depth - 1)
+                        nested_urls.extend(child_extracted)
+                except Exception as e:
+                    logger.warning(f"Failed to fetch nested sitemap {child_url}: {e}")
+            if nested_urls:
+                return nested_urls
+
         return urls
+
 
 
     @staticmethod

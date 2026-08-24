@@ -1497,7 +1497,7 @@
       "label": "._parse_html_links()",
       "file_type": "code",
       "source_file": "sitemap_crawler.py",
-      "source_location": "L107",
+      "source_location": "L125",
       "_callable": true,
       "_origin": "ast",
       "id": "sitemap_crawler_sitemapcrawler_parse_html_links",
@@ -8526,22 +8526,22 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "sitemap_crawler.py",
-      "source_location": "L107",
+      "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
       "source": "sitemap_crawler_sitemapcrawler",
-      "target": "sitemap_crawler_sitemapcrawler_parse_html_links",
+      "target": "sitemap_crawler_sitemapcrawler_fetch_urls",
       "confidence_score": 1.0
     },
     {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "sitemap_crawler.py",
-      "source_location": "L12",
+      "source_location": "L125",
       "weight": 1.0,
       "_origin": "ast",
       "source": "sitemap_crawler_sitemapcrawler",
-      "target": "sitemap_crawler_sitemapcrawler_fetch_urls",
+      "target": "sitemap_crawler_sitemapcrawler_parse_html_links",
       "confidence_score": 1.0
     },
     {
@@ -9861,5 +9861,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "58005d557634ea4be2e79e97c72a318de802b6ca"
+  "built_at_commit": "6645b19c4fdb045ae8eabfb43ad3a4d4c61066be"
 }

@@ -20,10 +20,11 @@ def generate_json_ld(output_dict: Dict[str, Any]) -> Dict[str, Any]:
     description = output_dict.get("meta_description") or sections.get("package_overview") or ""
     
     cost_str = qf.get("cost") or pkg_input.get("cost") or ""
-    price_digits = re.findall(r'[\d,]+', cost_str)
-    price_val = price_digits[0].replace(",", "") if price_digits else "2124"
+    price_digits = re.findall(r'[\d,]+(?:\.\d{2})?', cost_str)
+    price_val = price_digits[0].replace(",", "") if price_digits else ""
     
     graph: List[Dict[str, Any]] = []
+
 
     # 1. Primary Entity (TouristTrip vs HealthAndBeautyBusiness vs Hotel / Lodging)
     if category == "wellness":

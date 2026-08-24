@@ -1,7 +1,7 @@
 # Graph Report - yatradham-seo-pipeline  (2026-08-24)
 
 ## Corpus Check
-- 27 files · ~58,143 words
+- 27 files · ~58,238 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `58005d55`
+- Built from commit: `6645b19c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
