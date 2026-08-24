@@ -486,10 +486,15 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
     cleaned = _clean_markdown(raw_response)
     sections = _parse_markdown_sections(cleaned)
 
-    title = _sanitize_repetition(sections.get("TITLE", topic))
-    meta_desc = _sanitize_repetition(sections.get("META DESCRIPTION", ""))
+    title = _sanitize_repetition(sections.get("TITLE", "")).lstrip("#").strip()
+    if not title or "Spiritual Tour Package" in title:
+        title = f"{topic} — Complete Cost Breakdown, Route & Verified Booking Guide | YatraDham"
+    meta_desc = _sanitize_repetition(sections.get("META DESCRIPTION", "")).lstrip("#").strip()
+    if not meta_desc:
+        meta_desc = f"Discover verified {topic} with our complete 2026 guide. Exact route pricing, dharamshala stays & Satvik meals on YatraDham. Book now!"
     tags_str = sections.get("SUGGESTED TAGS", "")
-    tags = [_sanitize_repetition(t) for t in tags_str.split(",") if _sanitize_repetition(t)] if tags_str else []
+    tags = [_sanitize_repetition(t).lstrip("#").strip() for t in tags_str.split(",") if _sanitize_repetition(t).strip()] if tags_str else [topic, "Pilgrimage", "YatraDham"]
+
 
     part_content = sections.get("CONTENT", "")
     if not part_content:
@@ -557,8 +562,41 @@ CRITICAL: Output ONLY markdown text starting with the first missing section head
             if cleaned_finale:
                 full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_finale)}"
 
+    # Check word count against requested target and perform deep expansion if needed
+    target_words = word_count if (word_count and word_count >= 1000) else 1500
+    current_words = len(full_content.split())
+    if current_words < int(target_words * 0.85):
+        logger.info(f"Generated blog has {current_words} words, requested target is {target_words}. Running in-depth expansion pass...")
+        expansion_prompt = f"""You are writing a comprehensive {target_words}-word master guide on: "{topic}".
+Current draft is {current_words} words.
+
+Generate an in-depth expansion section titled:
+## Detailed Route Distances, Temple Darshan Guidelines & Logistics Breakdown
+(Write ~500-800 words. Provide:
+1. Exact road distances and travel times between key checkpoints from the starting hub.
+2. Temple opening schedules, Mangala Aarti timings, special puja booking steps, and registration requirements (e.g. biometric registration, token counters).
+3. Complete transport alternatives: government bus routes, private taxi fares in INR, helicopter booking procedures, and trekking/pony government rates.
+4. Comprehensive accommodation guide: dharamshala room types, hot water facilities, and satvik meal arrangements via YatraDham.Org).
+
+Output ONLY this markdown section starting with the H2 header."""
+
+        exp_raw = client.chat_completion(
+            messages=[
+                {"role": "system", "content": brand_context},
+                {"role": "user", "content": master_prompt},
+                {"role": "assistant", "content": full_content},
+                {"role": "user", "content": expansion_prompt}
+            ],
+            max_tokens=3000,
+            temperature=0.6,
+        )
+        cleaned_exp = _clean_markdown(exp_raw)
+        if cleaned_exp:
+            full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_exp)}"
+
     # Apply automatic Google Helpful Content & Copyleaks de-slopping to ensure 95%+ Human score
     clean_human_content = de_slop_and_humanize(full_content)
+
 
     return {
         "title": title,
@@ -583,20 +621,23 @@ def run(
 ) -> Dict[str, Any]:
     """Generate net-new content based on user requirements using robust markdown parsing."""
     
-    # If the user requested an exhaustive long-form blog post (2,000 - 3,500 words), use the 2-stage chained generator
-    if content_type in ["blog_post", "destination_guide"] and word_count and word_count >= 2000:
+    # Always route blog posts and destination guides to the comprehensive multi-stage generator
+    # to strictly enforce 1,500 - 3,500 word length requirements
+    if content_type in ["blog_post", "destination_guide"]:
+        effective_words = word_count if (word_count and word_count >= 1000) else 1500
         return _generate_long_form_blog(
             topic=topic,
             client=client,
             target_keyword=target_keyword,
             audience=audience,
             tone=tone,
-            word_count=word_count,
+            word_count=effective_words,
             additional_instructions=additional_instructions
         )
 
     base_prompt = CONTENT_TYPE_PROMPTS.get(content_type, CONTENT_TYPE_PROMPTS["blog_post"])
     target_tokens = min(4000, max(2000, int((word_count or 1000) * 1.5)))
+
 
     custom_rules = []
     if target_keyword:
