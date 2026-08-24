@@ -1,7 +1,7 @@
-# Graph Report - yatradham-seo-pipeline  (2026-08-24)
+# Graph Report - yatradham-seo-pipeline  (2026-08-22)
 
 ## Corpus Check
-- 27 files · ~58,143 words
+- 27 files · ~57,132 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `58005d55`
+- Built from commit: `65c34a8b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -96,7 +96,7 @@ Nodes (15): _clean_markdown(), _generate_long_form_blog(), _parse_markdown_secti
 
 ### Community 15 - "extract_package_data"
 Cohesion: 0.33
-Nodes (6): clean_price_string(), extract_package_data(), Any, Extract structured data from Yatradham HTML pages., Extract package metadata, category, and raw text for LLM processing with robust…, Sanitize and format price strings cleanly. Never return hardcoded mock numbers.
+Nodes (6): clean_price_string(), extract_package_data(), Any, Extract structured data from Yatradham HTML pages., Sanitize and format price strings to eliminate broken artifacts like 'rs,'., Extract package metadata, category, and raw text for LLM processing with robust…
 
 ## Knowledge Gaps
 - **17 isolated node(s):** `📍 Package Overview`, `⚡ Quick Facts`, `🌟 Why Choose This Package?`, `Day 1`, `Day 2` (+12 more)

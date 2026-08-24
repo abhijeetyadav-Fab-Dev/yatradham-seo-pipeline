@@ -30,19 +30,24 @@ GEMINI_FALLBACK_MODELS = [
 
 
 def clean_price_string(raw_cost: str) -> str:
-    """Sanitize and format price strings to eliminate broken artifacts like 'rs,'."""
-    if not raw_cost or raw_cost.strip().lower() in ["rs,", "rs.", "rs", "inr", "contact for pricing", ""]:
-        return "Starting From Rs. 2,124.00 Per Person/Per night"
+    """Sanitize and format price strings cleanly. Never return hardcoded mock numbers."""
+    if not raw_cost or raw_cost.strip().lower() in ["rs,", "rs.", "rs", "inr", "contact for pricing", "null", "none", ""]:
+        return "Starting From ₹ Contact for Pricing"
     
-    clean = raw_cost.replace("rs,", "Rs.").replace("Rs ,", "Rs.").replace(" ,", "").strip()
-    if not re.search(r'\d', clean):
-        return "Starting From Rs. 2,124.00 Per Person/Per night"
+    clean = raw_cost.replace("rs,", "").replace("Rs ,", "").replace(" ,", "").strip()
+    digits_match = re.search(r'[\d,]+(?:\.\d{2})?', clean)
+    if not digits_match:
+        return "Starting From ₹ Contact for Pricing"
     
-    clean = re.sub(r'^[,\s]+', '', clean)
-    clean = re.sub(r'[,\s]+$', '', clean)
-    if not re.match(r'^(?:Starting\s+From\s+)?(?:Rs\.?|INR|₹)', clean, re.IGNORECASE):
-        clean = f"Starting From Rs. {clean}"
-    return clean
+    amount_str = digits_match.group(0)
+    suffix = ""
+    if re.search(r'per\s*night', clean, re.I):
+        suffix = " Per Person/Per night"
+    elif re.search(r'per\s*person', clean, re.I):
+        suffix = " Per Person"
+        
+    return f"Starting From ₹ {amount_str}{suffix}".strip()
+
 
 
 import logging
@@ -402,7 +407,7 @@ class LLMClient:
             elif line_lower.startswith("primary keyword:") or line_lower.startswith("target keyword:") or line_lower.startswith("target seo keyword:"):
                 extracted = line_str.split(":", 1)[1].strip()
                 if extracted: keyword = extracted
-            elif line_lower.startswith("cost:") or line_lower.startswith("price:"):
+            elif any(line_lower.startswith(k) for k in ["cost:", "price:", "starting cost", "starting price", "starting cost / price:"]):
                 extracted = line_str.split(":", 1)[1].strip()
                 if extracted: cost = extracted
             elif line_lower.startswith("target audience:") or line_lower.startswith("audience:"):
@@ -471,11 +476,15 @@ class LLMClient:
                 keyword = f"{duration} {destination} Tour Package"
 
         # Extract & sanitize cost
-        cost_match = re.search(r'(?:Starting\s+From\s+)?(?:Rs\.?|INR|₹)\s*[\d,]+(?:\.\d{2})?(?:\s*(?:Per\s*Person\/?(?:Per\s*night)?|per\s*night|per\s*person|\/-))?', combined_text, re.IGNORECASE)
-        if cost_match:
-            cost = clean_price_string(cost_match.group(0).strip())
-        elif not cost or cost.lower().strip() in ["contact for pricing", "rs,", "rs.", "rs"]:
-            cost = "Starting From Rs. 2,124.00 Per Person/Per night" if pkg_category == "wellness" else "Starting From Rs. 3,500.00 Per Person"
+        if cost and cost.strip() and cost.strip().lower() not in ["contact for pricing", "rs,", "rs.", "rs", "null", "none", ""]:
+            cost = clean_price_string(cost)
+        else:
+            cost_match = re.search(r'(?:Starting\s+From\s+[-:]?\s*)?(?:Rs\.?|INR|₹)\s*[\d,]+(?:\.\d{2})?(?:\s*(?:Per\s*(?:Room\/)?Person\/?(?:Per\s*night)?|per\s*night|per\s*person|\/-))?', combined_text, re.IGNORECASE)
+            if cost_match:
+                cost = clean_price_string(cost_match.group(0).strip())
+            else:
+                cost = "Starting From ₹ Contact for Pricing"
+
 
 
         # Find custom URLs
@@ -492,172 +501,267 @@ class LLMClient:
             
             if pkg_category == "wellness":
                 clean_cost_val = clean_price_string(cost)
+                
+                # Extract numeric base price if present
+                price_match = re.search(r'[\d,]+(?:\.\d{2})?', clean_cost_val)
+                if price_match and "Contact for Pricing" not in clean_cost_val:
+                    try:
+                        clean_num_str = price_match.group(0).replace(",", "")
+                        base_p = int(float(clean_num_str))
+                        if base_p > 0:
+                            p_single = int(base_p * 1.35)
+                            p_double = base_p
+                            p_triple = int(base_p * 0.85)
+                            pricing_table = [
+                                {"guests": "Single Room (Private)", "cost_per_person": f"₹ {p_single:,}/- per night"},
+                                {"guests": "Double Sharing Room", "cost_per_person": f"₹ {p_double:,}/- per night (Base Rate)"},
+                                {"guests": "Triple / Dormitory Sharing", "cost_per_person": f"₹ {p_triple:,}/- per night"}
+                            ]
+                        else:
+                            pricing_table = [
+                                {"guests": "Single Room (Private)", "cost_per_person": clean_cost_val},
+                                {"guests": "Double Sharing Room", "cost_per_person": clean_cost_val},
+                                {"guests": "Triple / Group Sharing", "cost_per_person": "Contact YatraDham"}
+                            ]
+                    except Exception:
+                        pricing_table = [
+                            {"guests": "Single Room (Private)", "cost_per_person": clean_cost_val},
+                            {"guests": "Double Sharing Room", "cost_per_person": clean_cost_val},
+                            {"guests": "Triple / Group Sharing", "cost_per_person": "Contact YatraDham"}
+                        ]
+                else:
+                    pricing_table = [
+                        {"guests": "Single Room (Private)", "cost_per_person": "Contact YatraDham for pricing"},
+                        {"guests": "Double Sharing Room", "cost_per_person": "Contact YatraDham for pricing"},
+                        {"guests": "Triple / Dormitory", "cost_per_person": "Contact YatraDham for pricing"}
+                    ]
+
+                # Destination-specific landmarks
+                dest_lower = f"{destination} {pkg_name}".lower()
+                if "gangasagar" in dest_lower or "24 parganas" in dest_lower:
+                    near_locs = [
+                        {"name": "Nearest Airport", "distance": "Netaji Subhash Chandra Bose Intl Airport Kolkata (~130 km)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "Kakdwip Railway Station (~30 km)", "type": "railway"},
+                        {"name": "Kapil Muni Ashram & Beach", "distance": "Walking distance from center premises", "type": "sightseeing"}
+                    ]
+                    nat_feature = f"tranquil Sagar Island where the holy Ganga meets the Bay of Bengal in {destination}"
+                    walk_act = "Morning meditative beach walk & sun salutations"
+
+                elif "nalsarovar" in dest_lower or "ahmedabad" in dest_lower:
+                    near_locs = [
+                        {"name": "Nearest Airport", "distance": "Sardar Vallabhbhai Patel Intl Airport Ahmedabad (~65 km)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "Ahmedabad Junction Railway Station (~60 km)", "type": "railway"},
+                        {"name": "Nalsarovar Bird Sanctuary", "distance": "5 km from retreat campus", "type": "sightseeing"}
+                    ]
+                    nat_feature = f"peaceful lakeside environment near Nalsarovar in {destination}"
+                    walk_act = "Guided lakeside nature walk and birdwatching meditation"
+                elif "bhubaneswar" in dest_lower or "odisha" in dest_lower:
+                    near_locs = [
+                        {"name": "Nearest Airport", "distance": "Biju Patnaik International Airport (~8 km)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "Bhubaneswar Railway Station (~6 km)", "type": "railway"},
+                        {"name": "Lingaraj & Khandagiri Temples", "distance": "Short drive from center", "type": "sightseeing"}
+                    ]
+                    nat_feature = f"spiritual temple city ambiance of {destination}"
+                    walk_act = "Morning herbal garden walk and mindful breathing"
+                elif "kerala" in dest_lower or "kumarakom" in dest_lower or "palakkad" in dest_lower:
+                    near_locs = [
+                        {"name": "Nearest Airport", "distance": "Cochin International Airport (~75 km)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "Kottayam / Palakkad Railway Station (~15 km)", "type": "railway"},
+                        {"name": "Lush Backwaters & Herbal Groves", "distance": "Adjacent to retreat grounds", "type": "sightseeing"}
+                    ]
+                    nat_feature = f"lush tropical backwaters and traditional Ayurvedic herbal gardens of {destination}"
+                    walk_act = "Herbal plantation walk & Ayurvedic wellness consultation"
+                elif "delhi" in dest_lower:
+                    near_locs = [
+                        {"name": "Nearest Airport", "distance": "Indira Gandhi International Airport (~25 km)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "New Delhi Railway Station (~18 km)", "type": "railway"},
+                        {"name": "Nearest Metro Station", "distance": "Chhatarpur / Qutub Minar Metro (~3 km)", "type": "transit"}
+                    ]
+                    nat_feature = f"serene ashram campus insulated from city hustle in {destination}"
+                    walk_act = "Morning campus meditation walk and pranayama"
+                elif "haridwar" in dest_lower:
+                    near_locs = [
+                        {"name": "Nearest Airport", "distance": "Jolly Grant Airport Dehradun (~35 km)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "Haridwar Junction Railway Station (~4 km)", "type": "railway"},
+                        {"name": "Har Ki Pauri & Ganga Ghats", "distance": "Short auto ride from retreat", "type": "sightseeing"}
+                    ]
+                    nat_feature = f"sacred Ganga riverside ambiance of Haridwar"
+                    walk_act = "Guided morning walk along the holy Ganga ghats"
+                elif "rishikesh" in dest_lower:
+                    near_locs = [
+                        {"name": "Nearest Airport", "distance": "Jolly Grant Airport Dehradun (~21 km)", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": "Yog Nagari Rishikesh (~6 km)", "type": "railway"},
+                        {"name": "Holy Ganga River & Ram Jhula", "distance": "Walking distance from center premises", "type": "sightseeing"}
+                    ]
+                    nat_feature = f"quiet Himalayan foothills near the holy River Ganges in {destination}"
+                    walk_act = "Guided morning meditative walk to Ganga Ghat"
+                else:
+                    near_locs = [
+                        {"name": "Nearest Airport", "distance": f"Regional Airport serving {destination}", "type": "airport"},
+                        {"name": "Nearest Railway Station", "distance": f"Main Railway Junction in {destination}", "type": "railway"},
+                        {"name": "Local Spiritual Landmarks", "distance": f"Convenient access within {destination}", "type": "sightseeing"}
+                    ]
+                    nat_feature = f"tranquil natural surroundings of {destination}"
+                    walk_act = "Guided morning nature walk & mindfulness session"
+
                 sections_dict = {
-                    "package_overview": f"Embark on a refreshing {duration} at {pkg_name}, created to bring peace to your mind, strength to your body, and calm to your soul. Set in the quiet Himalayan foothills near the holy River Ganges in {destination}, this retreat offers a peaceful and spiritual environment. Whether you are new to yoga or have been practicing for years, this program is suitable for everyone. You will learn traditional yoga practices, enjoy healthy vegetarian Sattvic meals, and take part in activities that help reduce stress and improve overall well-being. This yoga vacation is perfect for anyone looking to relax, reconnect with themselves, and return home feeling calm, clear, and refreshed.",
+                    "package_overview": f"Embark on a refreshing {duration} at {pkg_name}, created to bring peace to your mind, strength to your body, and calm to your soul. Set in the {nat_feature}, this program offers an authentic and peaceful wellness environment. Whether you are new to wellness practices or have been practicing for years, this program is suitable for everyone. You will experience traditional yoga and therapies, enjoy healthy vegetarian Sattvic meals, and take part in activities that help reduce stress and improve overall well-being. This {duration} retreat is perfect for anyone looking to relax, reset, and return home feeling refreshed and energized.",
                     "quick_facts": {
                         "package_name": pkg_name,
                         "cost": clean_cost_val,
                         "duration": duration,
                         "destination": destination,
-                        "level": "Beginner / Intermediate",
-                        "accommodation": "Standard / Deluxe Clean Ashram Room",
-                        "food": "Sattvik Vegetarian Food",
-                        "activities": "Yoga Practice Sessions, Walk to Ganga & Bhakti Yoga",
-                        "center_name": "Maa Yoga Ashram (Arogyadham) - Rishikesh" if "rishikesh" in destination.lower() else f"Verified Wellness Center ({destination})",
+                        "level": "Beginner / Intermediate / All Levels",
+                        "accommodation": f"Clean Verified Stay in {destination}",
+                        "food": "100% Pure Sattvik Vegetarian Food",
+                        "activities": f"Yoga Practice Sessions, Guided {walk_act} & Wellness Consultation",
+                        "center_name": f"Verified Wellness Center ({destination})",
                         "yoga_sessions": "Daily Morning & Evening Practice Sessions"
                     },
                     "why_choose_heading": f"Why Choose This {duration} in {destination}?",
-                    "why_choose_intro": f"Experience authentic traditional teachings and deep rejuvenation in peaceful {destination} under experienced yoga masters.",
+                    "why_choose_intro": f"Experience authentic traditional wellness practices and deep rejuvenation in peaceful {destination} under experienced instructors.",
                     "why_choose_bullets": [
-                        f"Yoga Capital of The World: Set in the quiet Himalayan foothills near the holy River Ganges in {destination}, offering a peaceful environment to meditate and reconnect with nature.",
-                        "Complete Wellness Experience: A well-planned daily routine with asanas, relaxation techniques, breathing exercises (pranayama), and Bhakti yoga sessions.",
-                        "Traditional and Easy for Everyone: Teachings are authentic yet gentle, suitable for complete beginners as well as experienced practitioners.",
-                        "Holistic Bodily Detox: Gentle practices and herbal infusions that cleanse your body, boost energy, and support emotional balance.",
-                        "Verified Peaceful Stay: Clean ashram rooms with fresh Sattvic meals and dedicated YatraDham traveler support.",
+                        f"Serene Environment: Located in the {nat_feature}, offering a peaceful space to meditate and reconnect with nature.",
+                        "Structured Daily Routine: A well-planned schedule with asanas, relaxation techniques, breathing exercises (pranayama), and mindfulness sessions.",
+                        "Gentle & Suitable for All: Teachings are authentic yet gentle, suitable for complete beginners as well as experienced practitioners.",
+                        "Holistic Wellness: Practices and herbal nutrition designed to help reduce stress, cleanse your system, and boost natural vitality.",
+                        "Verified Accommodation: Clean rooms with fresh Sattvic meals and dedicated YatraDham booking assistance.",
                     ],
-                    "who_can_benefit_heading": f"Who Can Join This {destination} Yoga Retreat?",
+                    "who_can_benefit_heading": f"Who Can Join This {destination} Retreat?",
                     "who_can_benefit_intro": "This program is for you if:",
                     "who_can_benefit_bullets": [
-                        "You feel constantly stressed, anxious, or overwhelmed by modern routines.",
-                        "You need a peaceful break from daily life to reset, recharge, and clear your mind.",
-                        "You experience tension headaches, poor posture, or physical body stiffness.",
-                        "Beginners with no prior yoga experience looking to learn authentic fundamentals in a guided setting.",
-                        "Anyone looking for wellness, peace, and spiritual growth, returning home calm, clear, and refreshed.",
+                        "You feel stressed, tired, or overwhelmed by modern daily routines.",
+                        "You need a quiet, structured break to rest, recharge, and clear your mind.",
+                        "You experience lifestyle fatigue, poor posture, or physical stiffness.",
+                        "Beginners looking to learn authentic yoga and meditation fundamentals in a guided setting.",
+                        "Anyone seeking better physical health, mental clarity, and spiritual peace.",
                     ],
                     "program_highlights": {
-                        "heading": f"Daily Yoga Retreat Routine & Schedule in {destination}",
+                        "heading": f"Daily Retreat Routine & Schedule in {destination}",
                         "morning": [
-                            {"time": "5:00 AM", "activity": "Wake Up & Morning Awakening"},
-                            {"time": "5:30 AM - 7:30 AM", "activity": "Practice Yoga in Yoga Hall No. 1"},
-                            {"time": "7:30 AM - 8:30 AM", "activity": "Guided Walk to Holy Ganga Ghat (Optional)"},
-                            {"time": "8:30 AM - 11:30 AM", "activity": "Nutritious Vegetarian Sattvic Breakfast & Rest"}
+                            {"time": "05:30 AM", "activity": "Morning Wake Up & Cleansing Practice"},
+                            {"time": "06:00 AM - 07:30 AM", "activity": "Morning Asana & Pranayama Session"},
+                            {"time": "07:30 AM - 08:30 AM", "activity": walk_act},
+                            {"time": "08:30 AM - 10:00 AM", "activity": "Nutritious Sattvic Breakfast & Rest Period"}
                         ],
                         "daytime": [
-                            {"time": "11:30 AM - 12:30 PM", "activity": "Relaxation Techniques in Yoga Hall No.1 / No.2"},
-                            {"time": "12:30 PM - 2:00 PM", "activity": "Fresh Vegetarian Sattvic Lunch"},
-                            {"time": "2:00 PM - 4:00 PM", "activity": "Rest & Personal Self-Time"}
+                            {"time": "10:30 AM - 12:00 PM", "activity": "Wellness Consultation, Therapy or Relaxation Session"},
+                            {"time": "12:30 PM - 02:00 PM", "activity": "Fresh Vegetarian Sattvic Lunch"},
+                            {"time": "02:00 PM - 04:00 PM", "activity": "Rest & Personal Mindfulness Time"}
                         ],
                         "evening": [
-                            {"time": "4:00 PM - 5:00 PM", "activity": "Yogic Concepts, Games, Circle Time & Parisamwad"},
-                            {"time": "5:00 PM - 6:30 PM", "activity": "Fresh Fruit & Ayurvedic Herbal Infusion"},
-                            {"time": "6:30 PM - 7:30 PM", "activity": "Wholesome Vegetarian Sattvic Dinner"},
-                            {"time": "7:30 PM - 9:00 PM", "activity": "Bhakti Yoga, Kirtan & Chanting"},
-                            {"time": "9:00 PM", "activity": "Lights Off & Deep Restful Sleep"}
+                            {"time": "04:30 PM - 05:30 PM", "activity": "Yogic Philosophy, Discussions & Breathing Techniques"},
+                            {"time": "05:30 PM - 06:30 PM", "activity": "Herbal Tea Infusion & Light Stretching"},
+                            {"time": "06:30 PM - 07:30 PM", "activity": "Wholesome Sattvic Vegetarian Dinner"},
+                            {"time": "07:30 PM - 08:30 PM", "activity": "Evening Meditation, Chanting & Quiet Reflection"},
+                            {"time": "09:00 PM", "activity": "Restful Sleep"}
                         ],
                     },
                     "meal_section_heading": "Healthy & Sattvic Meals Offered",
                     "meal_section_bullets": [
-                        "All meals are fresh, 100% pure vegetarian, and prepared according to Sattvic Ayurvedic principles.",
-                        "The food is light, nutritious, and easy to digest, helping to cleanse your body, boost energy, and support your daily yoga practice.",
+                        "All meals are fresh, 100% pure vegetarian, and prepared according to Sattvic nutritional principles.",
+                        "The food is light, nourishing, and easy to digest, helping to cleanse your body, boost energy, and support your daily practice.",
                     ],
                     "accommodation_heading": f"Comfortable Accommodations in {destination}",
                     "accommodation_bullets": [
-                        f"Choose clean single, double, or dormitory triple sharing rooms in {destination} designed to help you rest well after daily sessions.",
-                        "Quiet ashram surroundings with attached clean bathrooms and peaceful Himalayan greenery.",
+                        f"Clean single, double, or shared rooms in {destination} designed to help you rest comfortably after daily sessions.",
+                        "Peaceful surroundings with attached clean bathrooms and hygienic amenities.",
                     ],
-                    "benefits_heading": f"Benefits of The Yoga & Wellness Retreat",
+                    "benefits_heading": f"Benefits of This {duration} Program",
                     "benefits_items": [
-                        "Reduce Stress & Bring Mental Calm: Daily yoga and meditation help relax your mind, reduce anxiety, and sharpen focus.",
-                        "Improve Physical Health: Yoga postures and breathing exercises increase flexibility, muscular strength, and overall vitality.",
-                        "Inner Peace & Mindfulness: Quiet reflection, guided meditation, and nature walks help you feel grounded and emotionally balanced.",
-                        f"Digital Detox & Nature Time: Take a break from mobile screens and daily rush in the tranquil Himalayan foothills of {destination}.",
-                        "Digestive Cleansing: Nutrient-rich Sattvic nutrition helps cleanse your system and boost metabolic energy.",
-                        "Circadian Rhythm Alignment: Consistent early morning and evening routines restore restful, deep sleep cycles.",
-                        "Practical Yogic Wisdom: Gain timeless breathing techniques and lifestyle practices to continue maintaining health at home.",
-                        "Supportive Community: Practice with like-minded seekers in a welcoming, peaceful ashram atmosphere.",
+                        "Reduce Stress & Mental Fatigue: Daily guided practices help calm your mind and improve focus.",
+                        "Improve Flexibility & Strength: Gentle postures and stretching enhance physical vitality.",
+                        "Mindfulness & Emotional Balance: Meditation sessions help you feel grounded and emotionally refreshed.",
+                        f"Natural Rejuvenation: Enjoy time away from digital screens in the serene environment of {destination}.",
+                        "Digestive Cleansing: Nutrient-rich Sattvic food supports healthy digestion and metabolism.",
+                        "Restore Healthy Sleep: Structured morning and evening routines encourage deep, restful sleep cycles.",
+                        "Practical Daily Habits: Learn breathing and mindfulness tools you can continue practicing at home.",
+                        "Supportive Community: Practice with like-minded seekers in a welcoming, tranquil atmosphere.",
                     ],
                     "how_to_book_heading": "How to Book on YatraDham.Org",
                     "how_to_book_steps": [
                         f"Visit the {pkg_name} page on YatraDham.Org and select your preferred dates.",
-                        "Choose your preferred room type (Single Room, Double Room, or Dormitory Sharing).",
-                        "Enter guest details and any specific dietary or health requirements.",
+                        "Choose your preferred room category and enter traveler details.",
+                        "Add any special dietary or health preferences in the booking notes.",
                         "Complete the secure advance payment using UPI, NetBanking, or Cards.",
-                        "Receive your confirmed booking voucher and retreat schedule immediately.",
-                        f"Arrive at the retreat center in {destination} and begin your transformational journey.",
+                        "Receive your booking confirmation voucher with venue address and directions.",
+                        f"Arrive at the retreat center in {destination} and begin your wellness stay.",
                     ],
-                    "prices_photos_reviews": f"Retreat packages start from {clean_cost_val}. Check live availability, room photos, and real traveler reviews on YatraDham.Org.",
+                    "prices_photos_reviews": f"Program pricing starts from {clean_cost_val}. Check real room photos, live dates, and verified traveler reviews on YatraDham.Org.",
                     "itinerary": [
                         {
                             "day_number": 1,
                             "sessions": [
-                                {"time": "12:00 PM", "activity": f"Arrival in {destination}, room check-in, and welcome herbal infusion."},
-                                {"time": "04:00 PM", "activity": "Retreat orientation, yogic concepts, and introduction to teachers."},
-                                {"time": "06:30 PM", "activity": "Wholesome Sattvic vegetarian dinner."},
-                                {"time": "07:30 PM", "activity": "Evening Bhakti Yoga, kirtan, and peaceful rest."}
+                                {"time": "12:00 PM", "activity": f"Arrival in {destination}, room check-in, and welcome herbal drink."},
+                                {"time": "04:00 PM", "activity": "Program orientation, teacher introduction, and wellness overview."},
+                                {"time": "06:30 PM", "activity": "Fresh Sattvic dinner."},
+                                {"time": "07:30 PM", "activity": "Evening introductory meditation and restful sleep."}
                             ]
                         },
                         {
                             "day_number": 2,
                             "sessions": [
-                                {"time": "05:00 AM", "activity": "Morning wake up and cleansing ritual."},
-                                {"time": "05:30 AM", "activity": "Asana practice and pranayama in Yoga Hall No. 1."},
-                                {"time": "07:30 AM", "activity": "Morning meditative walk to River Ganga."},
-                                {"time": "08:30 AM", "activity": "Sattvic vegetarian breakfast and rest."},
-                                {"time": "11:30 AM", "activity": "Guided relaxation techniques and mindfulness."},
-                                {"time": "12:30 PM", "activity": "Nutritious Sattvic lunch."},
-                                {"time": "04:00 PM", "activity": "Parisamwad circle and yogic discussion."},
-                                {"time": "06:30 PM", "activity": "Dinner followed by Bhakti yoga."}
+                                {"time": "05:30 AM", "activity": "Morning wake-up and herbal tea."},
+                                {"time": "06:00 AM", "activity": "Asana practice and breathing exercises."},
+                                {"time": "07:30 AM", "activity": walk_act},
+                                {"time": "08:30 AM", "activity": "Sattvic breakfast and rest."},
+                                {"time": "11:00 AM", "activity": "Relaxation and wellness session."},
+                                {"time": "12:30 PM", "activity": "Nutritious lunch and personal time."},
+                                {"time": "04:30 PM", "activity": "Evening wellness discussion and stretching."},
+                                {"time": "06:30 PM", "activity": "Dinner followed by gentle meditation."}
                             ]
                         }
                     ],
-                    "pricing_table": [
-                        {"guests": "Single Room (1 Person)", "cost_per_person": "Rs. 2,950/- per night (Total: Rs. 17,700/-)"},
-                        {"guests": "Double Room (Double Sharing)", "cost_per_person": "Rs. 2,360/- per night (Total: Rs. 14,160/-)"},
-                        {"guests": "Dormitory (Triple Sharing)", "cost_per_person": "Starting From - ₹ 2,124.00 Per Room/Person/Per night (Total: Rs. 12,744/-)"}
-                    ],
+                    "pricing_table": pricing_table,
                     "inclusions": [
-                        f"Clean accommodation in verified ashram/center in {destination}",
-                        "Fresh Sattvic vegetarian meals (breakfast, lunch, dinner) and herbal infusions",
-                        "Daily morning asana, pranayama, and guided Ganga walks",
-                        "Relaxation techniques, Parisamwad yogic discussions, and Bhakti yoga",
-                        "Yoga mats, props, and retreat learning materials",
-                        "24/7 YatraDham reservation assistance and on-ground support"
+                        f"Accommodation for {duration} in verified center in {destination}",
+                        "Fresh Sattvic vegetarian meals (breakfast, lunch, dinner) and daily herbal teas",
+                        f"All scheduled wellness sessions, guided asanas, and {walk_act.lower()}",
+                        "Personal wellness consultation and guidance from instructors",
+                        "Yoga mats and learning materials during the stay",
+                        "Dedicated YatraDham reservation support"
                     ],
                     "exclusions": [
-                        "Airfare or train travel to and from the arrival hub",
-                        "Personal laundry, phone calls, and shopping expenses",
-                        "Specialized medical diagnostic tests",
-                        "Extra private treatments outside the standard schedule"
+                        "Travel tickets / flight / train fares to the destination",
+                        "Personal expenses, shopping, and laundry",
+                        "Medical treatments or private spa therapies outside the package",
+                        "Early check-in or late check-out beyond venue policies"
                     ],
                     "nearby_locations_heading": f"How to Reach & Nearby Landmarks in {destination}",
-                    "nearby_locations": [
-                        {"name": "Nearest Airport", "distance": "Jolly Grant Airport Dehradun (~21 km)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "Yog Nagari Rishikesh (~6 km) / Haridwar (~25 km)", "type": "railway"},
-                        {"name": "Holy Ganga River & Ghats", "distance": "Walking distance from center premises", "type": "sightseeing"}
-                    ],
-                    "cancellation_policy": "Free cancellation up to 48 hours before scheduled check-in for select partner centers. Check-in is at 12:00 PM and Check-out is at 12:00 PM.",
+                    "nearby_locations": near_locs,
+                    "cancellation_policy": "Flexible cancellation available for verified partner centers. Standard check-in is 12:00 PM and check-out is 12:00 PM.",
                     "payment_policy_bullets": [
-                        "Secure advance payment required to confirm room and instructor allocation.",
-                        "Balance amount can be cleared upon arrival at the wellness center.",
-                        "100% encrypted payment gateway supporting UPI, Google Pay, NetBanking, and Cards."
+                        "Partial advance payment required to confirm reservation.",
+                        "Remaining balance payable upon check-in at the retreat center.",
+                        "Secure payments accepted via UPI, Google Pay, Cards, and NetBanking."
                     ],
                     "terms_conditions": [
-                        "Valid government-issued photo ID (Aadhaar / Passport / Voter ID) is mandatory at check-in.",
-                        "Check-in time is 12:00 PM and Check-out time is 12:00 PM.",
-                        "Ashram premises are strictly non-smoking, alcohol-free, and 100% pure vegetarian.",
-                        "Participants are requested to maintain silence in meditation halls and attend sessions punctually.",
-                        "Guests are advised to inform the instructor of any pre-existing medical or physical conditions.",
-                        "Note: Schedule may change according to the respective center."
+                        "Valid government-issued photo ID is required for all guests at check-in.",
+                        "Standard check-in time is 12:00 PM and check-out time is 12:00 PM.",
+                        "Premises are strictly alcohol-free, non-smoking, and 100% vegetarian.",
+                        "Participants are requested to maintain punctuality and respect retreat quiet hours.",
+                        "Please inform retreat staff of any pre-existing medical conditions during orientation."
                     ],
                     "faq": [
                         {
-                            "question": f"Is the {pkg_name} suitable for complete beginners?",
-                            "answer": "Yes, absolutely. The yoga and meditation sessions are designed for all experience levels. Certified instructors adjust practices according to each participant's comfort and flexibility."
+                            "question": f"Is {pkg_name} suitable for beginners?",
+                            "answer": "Yes. The program is designed for all experience levels. Certified instructors guide you step-by-step according to your personal comfort and ability."
                         },
                         {
-                            "question": "What is the daily schedule during the retreat?",
-                            "answer": "The daily routine starts at 5:00 AM with morning yoga practice, optional walk to Ganga, Sattvic breakfast, relaxation techniques, healthy lunch, Parisamwad yogic concepts, fruit/infusions, dinner at 6:30 PM, and evening Bhakti yoga."
+                            "question": f"What kind of meals are served during the stay in {destination}?",
+                            "answer": "100% pure vegetarian, freshly cooked Sattvic meals prepared with fresh ingredients, low oil, and mild natural spices to support healthy digestion."
                         },
                         {
-                            "question": "What kind of food is provided during the stay?",
-                            "answer": "100% pure vegetarian, freshly cooked Sattvic meals (dal, seasonal vegetables, rotis, rice, herbal teas) are served. Food is prepared with minimal spices and no onion/garlic."
+                            "question": "How do I reach the center?",
+                            "answer": f"The retreat center is easily accessible from transit hubs in {destination}. Detailed driving directions and local landmark guidance are provided in your booking confirmation."
                         },
                         {
                             "question": "How do I confirm my booking on YatraDham.Org?",
-                            "answer": f"Visit the package page on YatraDham.Org, select your preferred dates and room type, and complete the secure partial advance payment. Your confirmed booking voucher is issued immediately."
+                            "answer": f"Visit YatraDham.Org, select your preferred dates and room type, and complete the partial advance payment. Your confirmed voucher is generated instantly."
                         }
                     ]
                 }
+
             elif pkg_category == "stay":
 
 

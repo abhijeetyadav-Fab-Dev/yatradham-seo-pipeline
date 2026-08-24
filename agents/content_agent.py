@@ -102,6 +102,7 @@ def run(package_data: Dict[str, Any], primary_keyword: str, client: LLMClient) -
     name = package_data.get('name', '')
     destination = package_data.get('destination', '')
     duration = package_data.get('duration', '')
+    cost = package_data.get('cost', '')
     url = package_data.get('url', '')
     category = package_data.get('category', 'auto')
 
@@ -112,7 +113,9 @@ Category: {category}
 URL: {url}
 Destination: {destination}
 Duration: {duration}
+Starting Cost / Price: {cost}
 Primary Keyword: {primary_keyword}
+
 
 --- RAW PAGE TEXT (extract real pricing, activities, accommodation, meals, FAQs from this) ---
 {raw_text}

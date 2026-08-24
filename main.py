@@ -238,15 +238,17 @@ def process_batch_background(urls: List[str], keys: Optional[Dict[str, str]] = N
             )
             result = process_package(pkg, batch_client)
             save_output(result)
-            logger.info(f"Successfully processed batch URL: {url}")
+            logger.info(f"Successfully processed batch URL: {url} -> {pkg.name} ({pkg.destination})")
+            time.sleep(1.0)
         except Exception as e:
             logger.error(f"Error processing {url} in batch: {e}", exc_info=True)
 
-    # Use max_workers=3 to avoid rate limits on LLM and Target Server
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+    # Use max_workers=2 with pacing to stay reliably within API limits
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
         executor.map(fetch_and_process, urls)
     
     logger.info("Finished background batch processing.")
+
 
 @app.post("/batch-urls")
 def batch_urls(request: BatchURLRequest, background_tasks: BackgroundTasks):
