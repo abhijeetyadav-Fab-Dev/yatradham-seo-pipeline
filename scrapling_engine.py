@@ -84,10 +84,11 @@ def extract_with_scrapling(html: str, url: Optional[str] = None) -> Dict[str, An
         # 3. Location / Center Extraction
         loc_val = page.css(".location::text, .center-details::text, .destination::text, [class*='location']::text").get()
         if not loc_val:
-            center_nodes = page.xpath("//*[contains(text(), 'Center Details') or contains(text(), 'Location:')]//following::text()[1]").getall()
+            center_nodes = page.xpath("//*[contains(text(), 'Center Details')]//following::text()[1]").getall()
             if center_nodes:
-                loc_val = " ".join([c.strip() for c in center_nodes if c.strip()])
+                loc_val = " ".join([c.strip() for c in center_nodes if c.strip() and not re.search(r'\b\d\s*/\s*5\b', c)])
         data["location_raw"] = (loc_val or "").strip()
+
 
         # 4. Inclusions & Itinerary Lists
         inclusions = page.css("ul.inclusions li::text, .inclusion-item::text, ul.package-inclusions li::text").getall()

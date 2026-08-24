@@ -261,13 +261,15 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
     dest = ""
     name_and_slug = f"{data['name']} {slug_name} {url}".lower()
 
-    if center_loc and not any(g in center_loc.lower() for g in ["yatradham", "inquiry", "+91"]):
+    valid_states = ["uttarakhand", "kerala", "gujarat", "himachal", "uttar pradesh", "west bengal", "odisha", "maharashtra", "delhi", "andhra", "tamil nadu", "madhya pradesh", "karnataka", "india"]
+    if center_loc and not any(g in center_loc.lower() for g in ["yatradham", "inquiry", "+91", "/5", "review", "star", "rating", "location:"]):
         # Clean up location (e.g. "West Bengal, 24 Parganas (s)" or "Uttarakhand, Rishikesh")
         loc_parts = [p.strip() for p in center_loc.split(",") if p.strip()]
-        if len(loc_parts) >= 2:
+        if len(loc_parts) >= 2 and any(s in center_loc.lower() for s in valid_states):
             dest = f"{loc_parts[1]}, {loc_parts[0]}"  # City, State
-        else:
+        elif any(s in center_loc.lower() for s in valid_states):
             dest = center_loc
+
 
     if not dest:
         # 1. Direct search across known spiritual destinations in name and URL slug
