@@ -277,8 +277,9 @@
                         </div>
                         <div class="flex items-center gap-2">
                             <select id="studioProviderSelect" class="rounded-md border-slate-300 border px-3 py-1.5 text-xs font-semibold focus:border-violet-500 focus:ring-violet-500 bg-white shadow-sm" onchange="toggleProviderKeyInput()">
-                                <option value="auto">⚡ Auto Engine (Groq Llama 3.3 ➔ Gemini 2.0 ➔ Fallbacks)</option>
-                                <option value="groq">🚀 Groq: Llama 3.3 70B & Llama 3.1 8B (~300+ tok/s - Recommended)</option>
+                                <option value="auto">⚡ Auto Engine (NVIDIA ➔ Groq ➔ Gemini ➔ Fallbacks)</option>
+                                <option value="nvidia">🟢 NVIDIA NIM: Llama 3.3 70B & Nemotron (~400+ tok/s)</option>
+                                <option value="groq">🚀 Groq: Llama 3.3 70B & Llama 3.1 8B (~300+ tok/s)</option>
                                 <option value="gemini">✨ Google Gemini 2.0 Flash (Free Google AI Studio)</option>
                                 <option value="openrouter">🌐 OpenRouter (Last Fallback - 50 req/day limit)</option>
                             </select>
@@ -295,9 +296,24 @@
                             </span>
                             <button onclick="toggleKeyModal()" class="text-slate-400 hover:text-slate-600 text-sm font-bold">&times;</button>
                         </div>
-                        <p class="text-slate-500 mb-3 leading-relaxed">Add free API keys from <a href="https://console.groq.com" target="_blank" class="text-violet-600 underline font-medium">Groq Console</a> or <a href="https://aistudio.google.com" target="_blank" class="text-violet-600 underline font-medium">Google AI Studio</a> to generate instant, full-length content with 0 cost.</p>
+                        <p class="text-slate-500 mb-3 leading-relaxed">Add free API keys from <a href="https://build.nvidia.com" target="_blank" class="text-emerald-600 underline font-medium">NVIDIA NIM</a>, <a href="https://console.groq.com" target="_blank" class="text-violet-600 underline font-medium">Groq Console</a> or <a href="https://aistudio.google.com" target="_blank" class="text-violet-600 underline font-medium">Google AI Studio</a> to generate instant, full-length content.</p>
                         
                         <div class="space-y-3">
+                            <!-- NVIDIA Key -->
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 min-w-[140px]">
+                                    <span class="font-semibold text-slate-800">🟢 NVIDIA NIM Key:</span>
+                                </div>
+                                <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                                    <input type="password" id="key_nvidia" class="rounded border-slate-300 px-3 py-1.5 text-xs w-full font-mono focus:border-violet-500" placeholder="nvapi-...">
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="saveSingleKey('nvidia')" class="px-3 py-1.5 rounded bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition">Save</button>
+                                    <button onclick="testKeyLive('nvidia')" id="btnTest_nvidia" class="px-3 py-1.5 rounded bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 border border-slate-300 transition">⚡ Test</button>
+                                    <span id="status_nvidia" class="text-xs ml-1"></span>
+                                </div>
+                            </div>
+
                             <!-- Groq Key -->
                             <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 min-w-[140px]">
@@ -312,6 +328,7 @@
                                     <span id="status_groq" class="text-xs ml-1"></span>
                                 </div>
                             </div>
+
 
                             <!-- Gemini Key -->
                             <div class="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
@@ -1945,10 +1962,12 @@
 
         function loadStoredKeysIntoUI() {
             const keys = getStoredKeys();
+            if (document.getElementById('key_nvidia')) document.getElementById('key_nvidia').value = keys.nvidia || '';
             if (document.getElementById('key_groq')) document.getElementById('key_groq').value = keys.groq || '';
             if (document.getElementById('key_gemini')) document.getElementById('key_gemini').value = keys.gemini || '';
             if (document.getElementById('key_openrouter')) document.getElementById('key_openrouter').value = keys.openrouter || '';
         }
+
 
         function toggleKeyModal() {
             const banner = document.getElementById('providerKeyBanner');
@@ -2284,11 +2303,12 @@
                 <div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-violet-100 text-violet-700 rounded-full">${typeLabels[type] || type}</div>`;
             
             if (!isMock) {
-                const provIcons = { groq: '🚀', gemini: '✨', openrouter: '🌐' };
+                const provIcons = { nvidia: '🟢', groq: '🚀', gemini: '✨', openrouter: '🌐' };
                 html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
                     <span class="mr-1">${provIcons[provider] || '✨'}</span> ${provider.toUpperCase()} ${model ? `(${model})` : ''}
                 </div>`;
             } else {
+
                 html += `<div class="px-3 py-1.5 inline-flex items-center text-xs font-semibold bg-amber-100 text-amber-800 rounded-full border border-amber-200">
                     ⚠️ Fallback Template
                 </div>`;

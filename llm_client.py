@@ -8,9 +8,9 @@ from openai import OpenAI
 DEFAULT_OPENROUTER_MODEL = "meta-llama/llama-3.3-70b-instruct:free"
 OPENROUTER_FALLBACK_MODELS = [
     "meta-llama/llama-3.3-70b-instruct:free",
+    "google/gemini-2.0-flash-exp:free",
     "meta-llama/llama-3.1-8b-instruct:free",
     "mistralai/mistral-7b-instruct:free",
-    "google/gemini-2.0-flash-exp:free",
 ]
 
 GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile"
@@ -18,15 +18,28 @@ GROQ_FALLBACK_MODELS = [
     "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
     "gemma2-9b-it",
-    "mixtral-8x7b-32768",
+    "llama3-70b-8192",
+    "llama3-8b-8192",
 ]
 
 GEMINI_DEFAULT_MODEL = "gemini-2.0-flash"
 GEMINI_FALLBACK_MODELS = [
     "gemini-2.0-flash",
     "gemini-1.5-flash",
+    "gemini-1.5-flash-8b",
     "gemini-1.5-pro",
 ]
+
+NVIDIA_DEFAULT_MODEL = "meta/llama-3.3-70b-instruct"
+NVIDIA_FALLBACK_MODELS = [
+    "meta/llama-3.3-70b-instruct",
+    "nvidia/llama-3.1-nemotron-70b-instruct",
+    "meta/llama-3.1-70b-instruct",
+    "meta/llama-3.1-8b-instruct",
+    "mistralai/mistral-large-2-instruct",
+]
+
+
 
 
 def clean_price_string(raw_cost: str) -> str:
@@ -75,6 +88,10 @@ class LLMClient:
         self.gemini_api_key = (os.getenv("GEMINI_API_KEY", "") or os.getenv("GOOGLE_API_KEY", "") or "").strip().strip("'\"")
         self.gemini_model = os.getenv("GEMINI_MODEL", GEMINI_DEFAULT_MODEL)
 
+        # NVIDIA NIM config (Enterprise fast tier: meta/llama-3.3-70b-instruct)
+        self.nvidia_api_key = (os.getenv("NVIDIA_API_KEY", "") or os.getenv("NVAPI_KEY", "") or "").strip().strip("'\"")
+        self.nvidia_model = os.getenv("NVIDIA_MODEL", NVIDIA_DEFAULT_MODEL)
+
         self.last_call_time = 0.0
         self.min_interval = 0.05  # Ultra-fast non-blocking throttle
         self.last_provider_used = None
@@ -87,12 +104,15 @@ class LLMClient:
         self.openrouter_client: Optional[OpenAI] = None
         self.groq_client: Optional[OpenAI] = None
         self.gemini_client: Optional[OpenAI] = None
+        self.nvidia_client: Optional[OpenAI] = None
         
         self._init_clients()
 
     def _init_clients(self):
         if self.dry_run:
             return
+        if self.nvidia_api_key:
+            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=self.nvidia_api_key, timeout=15.0)
         if self.groq_api_key:
             self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=self.groq_api_key, timeout=12.0)
         if self.gemini_api_key:
@@ -106,7 +126,11 @@ class LLMClient:
         if not clean_key:
             return
         
-        if provider == "groq":
+        if provider == "nvidia":
+            self.nvidia_api_key = clean_key
+            if model: self.nvidia_model = model
+            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=clean_key, timeout=15.0)
+        elif provider == "groq":
             self.groq_api_key = clean_key
             if model: self.groq_model = model
             self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=12.0)
@@ -132,23 +156,35 @@ class LLMClient:
             for m in res.data:
                 mid = m.id.replace("models/", "")
                 # Filter out incompatible, audio, embeddings, tiny TPM or deprecated models
-                if any(x in mid.lower() for x in ["whisper", "embedding", "guard", "vision", "audio", "tts", "moderation", "2.5-pro", "gpt-oss", "deepseek-r1", "deprecated"]):
+                if any(x in mid.lower() for x in ["whisper", "embedding", "guard", "vision", "audio", "tts", "moderation", "deprecated", "embed"]):
                     continue
-                if provider == "groq" and mid not in ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it", "mixtral-8x7b-32768"]:
-                    continue
-                if provider == "gemini" and mid not in ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"]:
-                    continue
-                model_ids.append(mid)
-            if model_ids:
-                # Prioritize llama-3.3-70b and llama-3.1-8b for groq
                 if provider == "groq":
-                    model_ids = [m for m in ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it", "mixtral-8x7b-32768"] if m in model_ids]
+                    if any(valid in mid.lower() for valid in ["llama", "gemma", "mixtral", "qwen", "deepseek"]):
+                        model_ids.append(mid)
+                elif provider == "gemini":
+                    if any(valid in mid.lower() for valid in ["flash", "pro"]):
+                        model_ids.append(mid)
+                elif provider == "nvidia":
+                    if any(valid in mid.lower() for valid in ["llama", "nemotron", "mistral", "deepseek"]):
+                        model_ids.append(mid)
+                else:
+                    model_ids.append(mid)
+            if model_ids:
+                # Prioritize stable fast models
+                if provider == "nvidia":
+                    priority = ["meta/llama-3.3-70b-instruct", "nvidia/llama-3.1-nemotron-70b-instruct", "meta/llama-3.1-70b-instruct", "meta/llama-3.1-8b-instruct"]
+                    model_ids.sort(key=lambda x: priority.index(x) if x in priority else 99)
+                elif provider == "groq":
+                    priority = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it", "llama3-70b-8192", "llama3-8b-8192"]
+                    model_ids.sort(key=lambda x: priority.index(x) if x in priority else 99)
                 self._model_cache[provider] = model_ids
                 return model_ids
         except Exception:
             pass
         
-        if provider == "groq":
+        if provider == "nvidia":
+            return NVIDIA_FALLBACK_MODELS
+        elif provider == "groq":
             return GROQ_FALLBACK_MODELS
         elif provider == "gemini":
             return GEMINI_FALLBACK_MODELS
@@ -164,7 +200,10 @@ class LLMClient:
         
         t0 = time.time()
         try:
-            if provider == "groq":
+            if provider == "nvidia":
+                test_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=clean_key, timeout=15.0)
+                fallback_list = NVIDIA_FALLBACK_MODELS
+            elif provider == "groq":
                 test_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=12.0)
                 fallback_list = GROQ_FALLBACK_MODELS
             elif provider == "gemini":
@@ -175,6 +214,7 @@ class LLMClient:
                 fallback_list = OPENROUTER_FALLBACK_MODELS
             else:
                 return {"success": False, "error": f"Unknown provider: {provider}"}
+
             
             # Discover live supported models from API
             available_models = self._discover_active_models(test_client, provider)
@@ -259,6 +299,15 @@ class LLMClient:
 
         # Build list of available clients/providers to attempt in priority order
         providers = []
+        if self.nvidia_client:
+            live_nv = self._discover_active_models(self.nvidia_client, "nvidia")
+            models_to_try = [model] if model else []
+            for nm in live_nv + NVIDIA_FALLBACK_MODELS:
+                if nm and nm not in models_to_try:
+                    models_to_try.append(nm)
+            for nm in models_to_try:
+                providers.append(("nvidia", self.nvidia_client, nm))
+
         if self.groq_client:
             live_groq = self._discover_active_models(self.groq_client, "groq")
             models_to_try = [model] if model else []
@@ -267,6 +316,7 @@ class LLMClient:
                     models_to_try.append(gm)
             for gm in models_to_try:
                 providers.append(("groq", self.groq_client, gm))
+
                 
         if self.gemini_client:
             live_gem = self._discover_active_models(self.gemini_client, "gemini")
@@ -287,22 +337,8 @@ class LLMClient:
             self.last_error = "No API keys configured. Set GROQ_API_KEY or GEMINI_API_KEY."
             return self._mock_response(messages)
 
-        now = time.time()
-        if not hasattr(self, "_failed_providers"):
-            self._failed_providers = {}
-        self._failed_providers = {k: v for k, v in self._failed_providers.items() if now - v < 60}
-
-        active_providers = [p for p in providers if p[0] not in self._failed_providers]
-        if not active_providers:
-            active_providers = providers
-
         self.errors = {}
-        exhausted_providers = set()
-
-        for provider_name, client_inst, active_model in active_providers:
-            if provider_name in exhausted_providers:
-                continue
-
+        for provider_name, client_inst, active_model in providers:
             self._wait_for_rate_limit()
             try:
                 safe_temp = max(0.2, min(temperature, 0.65))
@@ -357,16 +393,14 @@ class LLMClient:
             except Exception as e:
                 err_msg = str(e)
                 self.errors[f"{provider_name}:{active_model}"] = err_msg
-                logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next...")
-                # If auth failed or account disabled, skip the entire provider. If it's a rate limit or model error, continue to next fallback model on this or other providers.
-                if any(code in err_msg.lower() for code in ["401", "402", "403", "unauthorized", "insufficient_quota", "payment required"]):
-                    logger.warning(f"Provider {provider_name} credentials or quota expired. Skipping provider.")
-                    exhausted_providers.add(provider_name)
-                    self._failed_providers[provider_name] = time.time()
+                logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next model/provider...")
+                if "429" in err_msg or "rate limit" in err_msg.lower():
+                    time.sleep(0.3)
                 continue
 
         # If all providers fail, record error and return mock
         self.last_provider_used = "mock (all providers failed)"
+
         self.last_error = "; ".join([f"{k}: {v}" for k, v in self.errors.items()][:2])
         return self._mock_response(messages)
 
@@ -424,20 +458,30 @@ class LLMClient:
             else:
                 pkg_name = "Spiritual Tour Package"
 
+        # Scope location checks to user message and package name first
+        loc_scope = f"{pkg_name} {user_msg}".lower()
         if not destination:
-            dest_match = re.search(r'Destination:\s*([^\n]+)', combined_text, re.IGNORECASE)
+            dest_match = re.search(r'Destination:\s*([^\n]+)', user_msg, re.IGNORECASE)
             if dest_match:
                 destination = dest_match.group(1).strip()
-            elif "kerala" in combined_text.lower():
-                destination = "Kerala"
-            elif "vrindavan" in combined_text.lower():
-                destination = "Vrindavan Barsana"
-            elif "chardham" in combined_text.lower():
-                destination = "Uttarakhand"
-            elif "haridwar" in combined_text.lower():
-                destination = "Haridwar"
-            elif "rishikesh" in combined_text.lower():
-                destination = "Rishikesh"
+            elif "chardham" in loc_scope:
+                destination = "Haridwar & Uttarakhand"
+            elif "haridwar" in loc_scope:
+                destination = "Haridwar, Uttarakhand"
+            elif "rishikesh" in loc_scope:
+                destination = "Rishikesh, Uttarakhand"
+            elif "vrindavan" in loc_scope or "barsana" in loc_scope:
+                destination = "Vrindavan, Uttar Pradesh"
+            elif "kerala" in loc_scope or "palakkad" in loc_scope:
+                destination = "Palakkad, Kerala"
+            elif "alibaug" in loc_scope:
+                destination = "Alibaug, Maharashtra"
+            elif "gangasagar" in loc_scope:
+                destination = "Gangasagar, West Bengal"
+            elif "delhi" in loc_scope:
+                destination = "New Delhi, Delhi"
+            elif "kangra" in loc_scope or "himachal" in loc_scope:
+                destination = "Kangra, Himachal Pradesh"
             else:
                 destination = "India"
 
@@ -487,8 +531,6 @@ class LLMClient:
             else:
                 cost = "Starting From ₹ Contact for Pricing"
 
-
-
         # Find custom URLs
         urls_found = re.findall(r'https?://[^\s)\]"]+', combined_text)
         for u in urls_found:
@@ -497,272 +539,95 @@ class LLMClient:
                 break
 
         # 3. DISPATCH BY AGENT TYPE & CATEGORY
+
+        # AGENT: Content Studio & Long-form Blog Creator (Must be checked before single-field subagents)
+        if any(x in system_msg.lower() for x in ["content creator", "expert seo content writer", "write a comprehensive, engaging", "# content", "# headline"]):
+            return f"""# TITLE
+{pkg_name} — Complete Cost Breakdown, Route & Verified Booking Guide | YatraDham
+
+# META DESCRIPTION
+Discover verified {keyword.lower()} with our complete 2026 travel guide. Verified dharamshalas, exact route pricing, Satvik meals & 24/7 pilgrim support on YatraDham. Book now!
+
+# SUGGESTED TAGS
+{destination}, Pilgrimage Packages, Temple Darshan, YatraDham
+
+# CONTENT
+## Introduction & Sacred Significance
+
+The sacred pilgrimage to {destination} represents one of the most spiritually uplifting journeys. Planning your trip with verified stays and dedicated transit ensures total peace of mind, allowing you and your family to focus entirely on devotion and holy darshan.
+
+For devotees exploring the **{keyword}**, choosing a transparent, verified itinerary ensures total comfort, reliable local transport, and clean ashram stays.
+
+Direct Package Booking & Details: You can check official package inclusions and reserve dates directly at [{pkg_name}]({custom_url}).
+
+---
+
+## Complete Day-by-Day Route & Darshan Itinerary
+
+### Day 1: Arrival, Check-in & Evening Aarti
+Arrive in {destination} and check into your verified [YatraDham Dharamshala](https://yatradham.org/). Freshen up with hot water facilities and proceed for your afternoon sanctum darshan. In the evening, immerse yourself in the divine temple Aarti and sacred parikrama before returning for a fresh Satvik dinner.
+
+### Day 2: Morning Mangala Darshan, Sightseeing & Departure
+Wake up early for the auspicious Mangala Aarti darshan. Visit adjacent sacred kunds, temples, and heritage sites in {destination}. Enjoy traditional breakfast, collect holy prasad, and complete your journey with blessed memories.
+
+---
+
+## 3 Key Takeaways for Planning Your Journey
+
+### 1. Pacing Drives True Spiritual Rejuvenation
+Rushing through sacred shrines causes fatigue. Allocating 2-3 hours for each darshan allows the mind to absorb the divine atmosphere.
+
+### 2. High-Value Experiences Win Over Crowded Sightseeing
+A peaceful ashram stay, unhurried morning Aarti, and authentic Satvik meals deliver ten times the value of a rushed generic tour.
+
+### 3. Transparent Route Costs Prevent Surprises
+Booking verified packages in advance protects you from unauthorized roadside agents and sudden surge pricing.
+
+---
+
+## 4 Ways YatraDham.Org Makes Your Journey Seamless & Safe
+
+- **1. Verified Accommodations:** Every dharamshala and hotel is vetted for hot water, clean bedding, and vegetarian dining on [YatraDham.Org](https://yatradham.org/).
+- **2. Dedicated Yatra & Transport Coordination:** Punctual transfers with reliable local drivers via [YatraDham Travel Packages](https://travel.yatradham.org/).
+- **3. Authentic Temple Pujas & Pandit Bookings:** Arrange special Sankalp pujas and Abhishek through [YatraDham Temple Pujas](https://temple.yatradham.org/pujas).
+- **4. 24/7 Pilgrim Support & Flexible Booking:** Round-the-clock WhatsApp assistance and verified booking guarantees.
+
+---
+
+## The Real Logistics: Costs, Stays & Commutes
+
+- **Package Pricing:** A complete {duration} package for {destination} typically starts from {cost} including transport, accommodation, and Satvik meals.
+- **Direct Official Booking:** For transparent rates and confirmed dates, visit: [{custom_url}]({custom_url}).
+- **Daily Food Expenses:** Budget ₹300–₹600 per day for fresh Satvik meals and local transfers.
+
+---
+
+## Frequently Asked Questions
+
+### Q1. What is the average price of this tour package?
+The package starts from {cost} per person depending on group size and vehicle choice.
+
+### Q2. Is this package safe for senior citizens?
+Yes. With YatraDham's verified transport, ground-floor dharamshala rooms, and temple-gate drops, seniors travel with total comfort.
+
+### Q3. Where can I book verified packages and dharamshalas?
+You can book verified packages directly through the [Official YatraDham Portal]({custom_url}) and verified stays on [YatraDham.Org](https://yatradham.org/).
+
+---
+
+## Final Thoughts & Planning Your Trip
+
+Embarking on this sacred pilgrimage to {destination} is a life-affirming journey of faith and peace. With YatraDham.Org managing your stays, transfers, and darshan logistics, you can immerse yourself completely in the divine blessings.
+
+**Book your verified package today: [Click here to explore the official {pkg_name} on YatraDham.org]({custom_url}).**"""
+
         
         # AGENT: Content Agent (19 Structured Sections JSON)
         if any(x in system_msg.lower() for x in ["19 structured sections", "expert content writer for yatradham", "package_overview", "sectionedcontent"]):
             
             if pkg_category == "wellness":
-                clean_cost_val = clean_price_string(cost)
-                
-                # Extract numeric base price if present
-                price_match = re.search(r'[\d,]+(?:\.\d{2})?', clean_cost_val)
-                if price_match and "Contact for Pricing" not in clean_cost_val:
-                    try:
-                        clean_num_str = price_match.group(0).replace(",", "")
-                        base_p = int(float(clean_num_str))
-                        if base_p > 0:
-                            p_single = int(base_p * 1.35)
-                            p_double = base_p
-                            p_triple = int(base_p * 0.85)
-                            pricing_table = [
-                                {"guests": "Single Room (Private)", "cost_per_person": f"₹ {p_single:,}/- per night"},
-                                {"guests": "Double Sharing Room", "cost_per_person": f"₹ {p_double:,}/- per night (Base Rate)"},
-                                {"guests": "Triple / Dormitory Sharing", "cost_per_person": f"₹ {p_triple:,}/- per night"}
-                            ]
-                        else:
-                            pricing_table = [
-                                {"guests": "Single Room (Private)", "cost_per_person": clean_cost_val},
-                                {"guests": "Double Sharing Room", "cost_per_person": clean_cost_val},
-                                {"guests": "Triple / Group Sharing", "cost_per_person": "Contact YatraDham"}
-                            ]
-                    except Exception:
-                        pricing_table = [
-                            {"guests": "Single Room (Private)", "cost_per_person": clean_cost_val},
-                            {"guests": "Double Sharing Room", "cost_per_person": clean_cost_val},
-                            {"guests": "Triple / Group Sharing", "cost_per_person": "Contact YatraDham"}
-                        ]
-                else:
-                    pricing_table = [
-                        {"guests": "Single Room (Private)", "cost_per_person": "Contact YatraDham for pricing"},
-                        {"guests": "Double Sharing Room", "cost_per_person": "Contact YatraDham for pricing"},
-                        {"guests": "Triple / Dormitory", "cost_per_person": "Contact YatraDham for pricing"}
-                    ]
-
-                # Destination-specific landmarks
-                dest_lower = f"{destination} {pkg_name}".lower()
-                if "gangasagar" in dest_lower or "24 parganas" in dest_lower:
-                    near_locs = [
-                        {"name": "Nearest Airport", "distance": "Netaji Subhash Chandra Bose Intl Airport Kolkata (~130 km)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "Kakdwip Railway Station (~30 km)", "type": "railway"},
-                        {"name": "Kapil Muni Ashram & Beach", "distance": "Walking distance from center premises", "type": "sightseeing"}
-                    ]
-                    nat_feature = f"tranquil Sagar Island where the holy Ganga meets the Bay of Bengal in {destination}"
-                    walk_act = "Morning meditative beach walk & sun salutations"
-
-                elif "nalsarovar" in dest_lower or "ahmedabad" in dest_lower:
-                    near_locs = [
-                        {"name": "Nearest Airport", "distance": "Sardar Vallabhbhai Patel Intl Airport Ahmedabad (~65 km)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "Ahmedabad Junction Railway Station (~60 km)", "type": "railway"},
-                        {"name": "Nalsarovar Bird Sanctuary", "distance": "5 km from retreat campus", "type": "sightseeing"}
-                    ]
-                    nat_feature = f"peaceful lakeside environment near Nalsarovar in {destination}"
-                    walk_act = "Guided lakeside nature walk and birdwatching meditation"
-                elif "bhubaneswar" in dest_lower or "odisha" in dest_lower:
-                    near_locs = [
-                        {"name": "Nearest Airport", "distance": "Biju Patnaik International Airport (~8 km)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "Bhubaneswar Railway Station (~6 km)", "type": "railway"},
-                        {"name": "Lingaraj & Khandagiri Temples", "distance": "Short drive from center", "type": "sightseeing"}
-                    ]
-                    nat_feature = f"spiritual temple city ambiance of {destination}"
-                    walk_act = "Morning herbal garden walk and mindful breathing"
-                elif "kerala" in dest_lower or "kumarakom" in dest_lower or "palakkad" in dest_lower:
-                    near_locs = [
-                        {"name": "Nearest Airport", "distance": "Cochin International Airport (~75 km)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "Kottayam / Palakkad Railway Station (~15 km)", "type": "railway"},
-                        {"name": "Lush Backwaters & Herbal Groves", "distance": "Adjacent to retreat grounds", "type": "sightseeing"}
-                    ]
-                    nat_feature = f"lush tropical backwaters and traditional Ayurvedic herbal gardens of {destination}"
-                    walk_act = "Herbal plantation walk & Ayurvedic wellness consultation"
-                elif "delhi" in dest_lower:
-                    near_locs = [
-                        {"name": "Nearest Airport", "distance": "Indira Gandhi International Airport (~25 km)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "New Delhi Railway Station (~18 km)", "type": "railway"},
-                        {"name": "Nearest Metro Station", "distance": "Chhatarpur / Qutub Minar Metro (~3 km)", "type": "transit"}
-                    ]
-                    nat_feature = f"serene ashram campus insulated from city hustle in {destination}"
-                    walk_act = "Morning campus meditation walk and pranayama"
-                elif "haridwar" in dest_lower:
-                    near_locs = [
-                        {"name": "Nearest Airport", "distance": "Jolly Grant Airport Dehradun (~35 km)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "Haridwar Junction Railway Station (~4 km)", "type": "railway"},
-                        {"name": "Har Ki Pauri & Ganga Ghats", "distance": "Short auto ride from retreat", "type": "sightseeing"}
-                    ]
-                    nat_feature = f"sacred Ganga riverside ambiance of Haridwar"
-                    walk_act = "Guided morning walk along the holy Ganga ghats"
-                elif "rishikesh" in dest_lower:
-                    near_locs = [
-                        {"name": "Nearest Airport", "distance": "Jolly Grant Airport Dehradun (~21 km)", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": "Yog Nagari Rishikesh (~6 km)", "type": "railway"},
-                        {"name": "Holy Ganga River & Ram Jhula", "distance": "Walking distance from center premises", "type": "sightseeing"}
-                    ]
-                    nat_feature = f"quiet Himalayan foothills near the holy River Ganges in {destination}"
-                    walk_act = "Guided morning meditative walk to Ganga Ghat"
-                else:
-                    near_locs = [
-                        {"name": "Nearest Airport", "distance": f"Regional Airport serving {destination}", "type": "airport"},
-                        {"name": "Nearest Railway Station", "distance": f"Main Railway Junction in {destination}", "type": "railway"},
-                        {"name": "Local Spiritual Landmarks", "distance": f"Convenient access within {destination}", "type": "sightseeing"}
-                    ]
-                    nat_feature = f"tranquil natural surroundings of {destination}"
-                    walk_act = "Guided morning nature walk & mindfulness session"
-
-                sections_dict = {
-                    "package_overview": f"Embark on a refreshing {duration} at {pkg_name}, created to bring peace to your mind, strength to your body, and calm to your soul. Set in the {nat_feature}, this program offers an authentic and peaceful wellness environment. Whether you are new to wellness practices or have been practicing for years, this program is suitable for everyone. You will experience traditional yoga and therapies, enjoy healthy vegetarian Sattvic meals, and take part in activities that help reduce stress and improve overall well-being. This {duration} retreat is perfect for anyone looking to relax, reset, and return home feeling refreshed and energized.",
-                    "quick_facts": {
-                        "package_name": pkg_name,
-                        "cost": clean_cost_val,
-                        "duration": duration,
-                        "destination": destination,
-                        "level": "Beginner / Intermediate / All Levels",
-                        "accommodation": f"Clean Verified Stay in {destination}",
-                        "food": "100% Pure Sattvik Vegetarian Food",
-                        "activities": f"Yoga Practice Sessions, Guided {walk_act} & Wellness Consultation",
-                        "center_name": f"Verified Wellness Center ({destination})",
-                        "yoga_sessions": "Daily Morning & Evening Practice Sessions"
-                    },
-                    "why_choose_heading": f"Why Choose This {duration} in {destination}?",
-                    "why_choose_intro": f"Experience authentic traditional wellness practices and deep rejuvenation in peaceful {destination} under experienced instructors.",
-                    "why_choose_bullets": [
-                        f"Serene Environment: Located in the {nat_feature}, offering a peaceful space to meditate and reconnect with nature.",
-                        "Structured Daily Routine: A well-planned schedule with asanas, relaxation techniques, breathing exercises (pranayama), and mindfulness sessions.",
-                        "Gentle & Suitable for All: Teachings are authentic yet gentle, suitable for complete beginners as well as experienced practitioners.",
-                        "Holistic Wellness: Practices and herbal nutrition designed to help reduce stress, cleanse your system, and boost natural vitality.",
-                        "Verified Accommodation: Clean rooms with fresh Sattvic meals and dedicated YatraDham booking assistance.",
-                    ],
-                    "who_can_benefit_heading": f"Who Can Join This {destination} Retreat?",
-                    "who_can_benefit_intro": "This program is for you if:",
-                    "who_can_benefit_bullets": [
-                        "You feel stressed, tired, or overwhelmed by modern daily routines.",
-                        "You need a quiet, structured break to rest, recharge, and clear your mind.",
-                        "You experience lifestyle fatigue, poor posture, or physical stiffness.",
-                        "Beginners looking to learn authentic yoga and meditation fundamentals in a guided setting.",
-                        "Anyone seeking better physical health, mental clarity, and spiritual peace.",
-                    ],
-                    "program_highlights": {
-                        "heading": f"Daily Retreat Routine & Schedule in {destination}",
-                        "morning": [
-                            {"time": "05:30 AM", "activity": "Morning Wake Up & Cleansing Practice"},
-                            {"time": "06:00 AM - 07:30 AM", "activity": "Morning Asana & Pranayama Session"},
-                            {"time": "07:30 AM - 08:30 AM", "activity": walk_act},
-                            {"time": "08:30 AM - 10:00 AM", "activity": "Nutritious Sattvic Breakfast & Rest Period"}
-                        ],
-                        "daytime": [
-                            {"time": "10:30 AM - 12:00 PM", "activity": "Wellness Consultation, Therapy or Relaxation Session"},
-                            {"time": "12:30 PM - 02:00 PM", "activity": "Fresh Vegetarian Sattvic Lunch"},
-                            {"time": "02:00 PM - 04:00 PM", "activity": "Rest & Personal Mindfulness Time"}
-                        ],
-                        "evening": [
-                            {"time": "04:30 PM - 05:30 PM", "activity": "Yogic Philosophy, Discussions & Breathing Techniques"},
-                            {"time": "05:30 PM - 06:30 PM", "activity": "Herbal Tea Infusion & Light Stretching"},
-                            {"time": "06:30 PM - 07:30 PM", "activity": "Wholesome Sattvic Vegetarian Dinner"},
-                            {"time": "07:30 PM - 08:30 PM", "activity": "Evening Meditation, Chanting & Quiet Reflection"},
-                            {"time": "09:00 PM", "activity": "Restful Sleep"}
-                        ],
-                    },
-                    "meal_section_heading": "Healthy & Sattvic Meals Offered",
-                    "meal_section_bullets": [
-                        "All meals are fresh, 100% pure vegetarian, and prepared according to Sattvic nutritional principles.",
-                        "The food is light, nourishing, and easy to digest, helping to cleanse your body, boost energy, and support your daily practice.",
-                    ],
-                    "accommodation_heading": f"Comfortable Accommodations in {destination}",
-                    "accommodation_bullets": [
-                        f"Clean single, double, or shared rooms in {destination} designed to help you rest comfortably after daily sessions.",
-                        "Peaceful surroundings with attached clean bathrooms and hygienic amenities.",
-                    ],
-                    "benefits_heading": f"Benefits of This {duration} Program",
-                    "benefits_items": [
-                        "Reduce Stress & Mental Fatigue: Daily guided practices help calm your mind and improve focus.",
-                        "Improve Flexibility & Strength: Gentle postures and stretching enhance physical vitality.",
-                        "Mindfulness & Emotional Balance: Meditation sessions help you feel grounded and emotionally refreshed.",
-                        f"Natural Rejuvenation: Enjoy time away from digital screens in the serene environment of {destination}.",
-                        "Digestive Cleansing: Nutrient-rich Sattvic food supports healthy digestion and metabolism.",
-                        "Restore Healthy Sleep: Structured morning and evening routines encourage deep, restful sleep cycles.",
-                        "Practical Daily Habits: Learn breathing and mindfulness tools you can continue practicing at home.",
-                        "Supportive Community: Practice with like-minded seekers in a welcoming, tranquil atmosphere.",
-                    ],
-                    "how_to_book_heading": "How to Book on YatraDham.Org",
-                    "how_to_book_steps": [
-                        f"Visit the {pkg_name} page on YatraDham.Org and select your preferred dates.",
-                        "Choose your preferred room category and enter traveler details.",
-                        "Add any special dietary or health preferences in the booking notes.",
-                        "Complete the secure advance payment using UPI, NetBanking, or Cards.",
-                        "Receive your booking confirmation voucher with venue address and directions.",
-                        f"Arrive at the retreat center in {destination} and begin your wellness stay.",
-                    ],
-                    "prices_photos_reviews": f"Program pricing starts from {clean_cost_val}. Check real room photos, live dates, and verified traveler reviews on YatraDham.Org.",
-                    "itinerary": [
-                        {
-                            "day_number": 1,
-                            "sessions": [
-                                {"time": "12:00 PM", "activity": f"Arrival in {destination}, room check-in, and welcome herbal drink."},
-                                {"time": "04:00 PM", "activity": "Program orientation, teacher introduction, and wellness overview."},
-                                {"time": "06:30 PM", "activity": "Fresh Sattvic dinner."},
-                                {"time": "07:30 PM", "activity": "Evening introductory meditation and restful sleep."}
-                            ]
-                        },
-                        {
-                            "day_number": 2,
-                            "sessions": [
-                                {"time": "05:30 AM", "activity": "Morning wake-up and herbal tea."},
-                                {"time": "06:00 AM", "activity": "Asana practice and breathing exercises."},
-                                {"time": "07:30 AM", "activity": walk_act},
-                                {"time": "08:30 AM", "activity": "Sattvic breakfast and rest."},
-                                {"time": "11:00 AM", "activity": "Relaxation and wellness session."},
-                                {"time": "12:30 PM", "activity": "Nutritious lunch and personal time."},
-                                {"time": "04:30 PM", "activity": "Evening wellness discussion and stretching."},
-                                {"time": "06:30 PM", "activity": "Dinner followed by gentle meditation."}
-                            ]
-                        }
-                    ],
-                    "pricing_table": pricing_table,
-                    "inclusions": [
-                        f"Accommodation for {duration} in verified center in {destination}",
-                        "Fresh Sattvic vegetarian meals (breakfast, lunch, dinner) and daily herbal teas",
-                        f"All scheduled wellness sessions, guided asanas, and {walk_act.lower()}",
-                        "Personal wellness consultation and guidance from instructors",
-                        "Yoga mats and learning materials during the stay",
-                        "Dedicated YatraDham reservation support"
-                    ],
-                    "exclusions": [
-                        "Travel tickets / flight / train fares to the destination",
-                        "Personal expenses, shopping, and laundry",
-                        "Medical treatments or private spa therapies outside the package",
-                        "Early check-in or late check-out beyond venue policies"
-                    ],
-                    "nearby_locations_heading": f"How to Reach & Nearby Landmarks in {destination}",
-                    "nearby_locations": near_locs,
-                    "cancellation_policy": "Flexible cancellation available for verified partner centers. Standard check-in is 12:00 PM and check-out is 12:00 PM.",
-                    "payment_policy_bullets": [
-                        "Partial advance payment required to confirm reservation.",
-                        "Remaining balance payable upon check-in at the retreat center.",
-                        "Secure payments accepted via UPI, Google Pay, Cards, and NetBanking."
-                    ],
-                    "terms_conditions": [
-                        "Valid government-issued photo ID is required for all guests at check-in.",
-                        "Standard check-in time is 12:00 PM and check-out time is 12:00 PM.",
-                        "Premises are strictly alcohol-free, non-smoking, and 100% vegetarian.",
-                        "Participants are requested to maintain punctuality and respect retreat quiet hours.",
-                        "Please inform retreat staff of any pre-existing medical conditions during orientation."
-                    ],
-                    "faq": [
-                        {
-                            "question": f"Is {pkg_name} suitable for beginners?",
-                            "answer": "Yes. The program is designed for all experience levels. Certified instructors guide you step-by-step according to your personal comfort and ability."
-                        },
-                        {
-                            "question": f"What kind of meals are served during the stay in {destination}?",
-                            "answer": "100% pure vegetarian, freshly cooked Sattvic meals prepared with fresh ingredients, low oil, and mild natural spices to support healthy digestion."
-                        },
-                        {
-                            "question": "How do I reach the center?",
-                            "answer": f"The retreat center is easily accessible from transit hubs in {destination}. Detailed driving directions and local landmark guidance are provided in your booking confirmation."
-                        },
-                        {
-                            "question": "How do I confirm my booking on YatraDham.Org?",
-                            "answer": f"Visit YatraDham.Org, select your preferred dates and room type, and complete the partial advance payment. Your confirmed voucher is generated instantly."
-                        }
-                    ]
-                }
+                from retreat_generator import generate_archetype_content
+                sections_dict = generate_archetype_content(pkg_name, destination, duration, cost, custom_url)
 
             elif pkg_category == "stay":
 

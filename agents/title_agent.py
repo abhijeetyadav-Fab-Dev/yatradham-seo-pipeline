@@ -1,5 +1,5 @@
-"""Title tag agent: 50-60 chars, optimized for click-through rate."""
-import json
+"""Title tag agent: 50-60 chars, optimized for click-through rate with accurate product matching."""
+import json, re
 from typing import Dict, Any
 from llm_client import LLMClient
 
@@ -12,14 +12,14 @@ STRICT RULES:
 - MUST be EXACTLY between 50 and 60 characters including spaces. Count carefully.
 - MUST include the destination (city/state).
 - Format: "Primary Benefit/Feature in Destination | YatraDham"
-- NEVER repeat words unnecessarily (e.g., "Retreat Retreat").
-- NEVER include the exact package name if it makes the title too long or repetitive.
-- Keep it punchy and clickable.
+- NEVER repeat words unnecessarily.
+- Keep it punchy, authentic and clickable.
 
 GOOD examples:
 - "Ayurvedic Stress Relief Retreat in Kerala | YatraDham" (55 chars)
-- "3-Day Panchakarma Detox in Almora | YatraDham.Org" (49 chars)
+- "3-Day Panchakarma Detox in Kangra, HP | YatraDham" (50 chars)
 - "Yoga & Meditation Ashram Stay in Rishikesh | YatraDham" (54 chars)
+- "Corporate Wellness & Stress Relief in Delhi | YatraDham" (55 chars)
 
 Output valid JSON only: {"title_tag": "your title here"}"""
 
@@ -37,7 +37,7 @@ Destination: {destination}
 Duration: {duration}
 
 Generate ONE perfect SEO title tag between 50 and 60 characters for this {category.upper()} package.
-CRITICAL: Do NOT repeat words. End with " | YatraDham"."""
+CRITICAL: Do NOT repeat words. Match the exact program topic. End with " | YatraDham"."""
 
     content = client.chat_completion(
         messages=[
@@ -61,40 +61,53 @@ CRITICAL: Do NOT repeat words. End with " | YatraDham"."""
         if "{" in clean and "}" in clean:
             clean = clean[clean.find("{"):clean.rfind("}") + 1]
         result = json.loads(clean)
-    except json.JSONDecodeError:
+    except Exception:
         result = {}
 
     title = result.get("title_tag", "")
 
-    # Basic anti-repetition check
-    if title and name and title.lower().count(name.lower()[:15]) > 1:
-        title = ""
-
-    if not title:
-        dest = destination if destination else "India"
-        name_lower = f"{name} {primary_keyword}".lower()
-        if category == "wellness" or "yoga" in name_lower or "ayurved" in name_lower:
-            base = name if len(name) < 45 and not name.lower().startswith("spiritual") else f"Yoga & Wellness Retreat in {dest}"
-            title = f"{base} | YatraDham"
-        elif category == "stay" or any(k in name_lower for k in ["dharamshala", "ashram stay", "bhavan", "hotel", "room", "trh", "gmvn"]):
-            base = name if len(name) < 45 and not name.lower().startswith("spiritual") else f"Dharamshala Stay in {dest}"
-            title = f"{base} | YatraDham"
-        elif category == "puja" or "puja" in name_lower:
-            base = name if len(name) < 45 else f"Online Puja & Pandit Booking in {dest}"
-            title = f"{base} | YatraDham"
+    # If title is empty or generic, build an authentic title from package name
+    if not title or len(title) < 20 or "Tour Package" in title and category == "wellness":
+        dest_city = destination.split(",")[0].strip() if destination else "India"
+        clean_name = re.sub(r'\s*\|.*$', '', name).strip()
+        
+        # Match product theme accurately
+        if "corporate" in clean_name.lower():
+            base = f"Corporate Wellness & Leadership Retreat in {dest_city}"
+        elif "ayurved" in clean_name.lower() or "panchakarma" in clean_name.lower():
+            if "panchakarma" in clean_name.lower():
+                base = f"{duration} Panchakarma Detox in {dest_city}"
+            else:
+                base = f"{duration} Ayurveda Retreat in {dest_city}"
+        elif "kriya" in clean_name.lower() or "silence" in clean_name.lower() or "ashram" in clean_name.lower():
+            base = f"{duration} Meditation & Ashram Stay in {dest_city}"
+        elif "yoga" in clean_name.lower():
+            base = f"{duration} Yoga & Wellness Retreat in {dest_city}"
+        elif category == "wellness":
+            base = f"{clean_name} in {dest_city}" if len(clean_name) < 40 else f"{duration} Wellness Retreat in {dest_city}"
+        elif category == "stay":
+            base = f"{clean_name} Stay Booking in {dest_city}" if len(clean_name) < 38 else f"Dharamshala Stay in {dest_city}"
+        elif category == "puja":
+            base = f"{clean_name} Online Puja Booking" if len(clean_name) < 40 else f"Online Puja & Pandit Booking in {dest_city}"
         else:
-            base = name if len(name) < 45 and not name.lower().startswith("spiritual") else f"{duration} {dest} Tour Package"
-            title = f"{base} | YatraDham"
+            base = f"{duration} {dest_city} Spiritual Yatra Tour"
 
-    # Enforce length
+        title = f"{base} | YatraDham"
+
+    # Enforce exact 50-60 character boundary cleanly at word boundaries
     if len(title) > 60:
-        parts = title.split(" | ")
-        if len(parts) == 2:
-            main_part = parts[0]
-            if len(main_part) > 45:
-                main_part = main_part[:42] + "..."
-            title = f"{main_part} | YatraDham"
-        else:
-            title = title[:57] + "..."
+        suffix = " | YatraDham"
+        max_main_len = 60 - len(suffix)
+        main_part = title.split(" | ")[0]
+        if len(main_part) > max_main_len:
+            words = main_part.split(" ")
+            shortened = ""
+            for w in words:
+                if len((shortened + " " + w).strip()) <= max_main_len:
+                    shortened = (shortened + " " + w).strip()
+                else:
+                    break
+            main_part = shortened if shortened else main_part[:max_main_len]
+        title = f"{main_part}{suffix}"
 
     return {"title_tag": title}

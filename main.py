@@ -424,13 +424,16 @@ def generate_content(request: ContentGenerateRequest):
         provider = request.provider
         if not provider or provider == "auto":
             key = request.api_key.strip()
-            if key.startswith("gsk_"):
+            if key.startswith("nvapi-"):
+                provider = "nvidia"
+            elif key.startswith("gsk_"):
                 provider = "groq"
             elif key.startswith("AI") or len(key) == 39:
                 provider = "gemini"
             else:
                 provider = "openrouter"
         client.set_custom_keys(provider, request.api_key.strip(), request.model)
+
 
     try:
         logger.info(f"Generating {request.content_type} content for topic: {request.topic}")
@@ -566,6 +569,24 @@ def crawl_sitemap(req: SitemapCrawlRequest):
     return result
 
 
+class ValidateRowRequest(BaseModel):
+    row_data: Dict[str, Any]
+
+
+@app.post("/api/validate-row")
+def validate_row_endpoint(req: ValidateRowRequest):
+    """Enterprise code-based validation endpoint."""
+    from validation_layer import run_validation
+    return run_validation(req.row_data)
+
+
+@app.get("/api/enrich/destination")
+def enrich_destination_endpoint(destination: str):
+    """Enrich destination using 4 free public APIs (OSM Geocoding, Wikipedia, Open-Meteo, Sunrise-Sunset)."""
+    from public_apis_enricher import enrich_destination_data
+    return enrich_destination_data(destination)
+
+
 
 @app.get("/stats")
 def stats():
@@ -575,11 +596,13 @@ def stats():
 
 
 @app.get("/export/csv")
+@app.get("/export-csv")
 def export_csv(status: Optional[str] = "approved"):
     """Export outputs to CSV."""
     outputs = list_outputs(status=status if status else None)
     if not outputs:
         raise HTTPException(status_code=404, detail="No outputs to export")
+
 
     # Deduplicate: keep only the highest QA score per package name
     best = {}

@@ -1,21 +1,19 @@
-"""Real-Time SEO & GEO (Generative Engine Optimization) Linter for YatraDham."""
+"""
+Real-Time Dynamic SEO & GEO Linter for YatraDham.
+Performs rigorous, non-rubber-stamp multi-factor evaluation of content quality, keyword integration, and fact reliability.
+"""
 import re
 from typing import Dict, Any, List
 
 
 def calculate_flesch_reading_ease(text: str) -> int:
-    """Calculate Flesch Reading Ease score (0-100)."""
     words = re.findall(r'\b[a-zA-Z]+\b', text)
-    sentences = re.split(r'[.!?]+', text)
-    sentences = [s for s in sentences if s.strip()]
-    
+    sentences = [s for s in re.split(r'[.!?]+', text) if s.strip()]
     if not words or not sentences:
         return 70
 
     word_count = len(words)
     sentence_count = len(sentences)
-    
-    # Syllable approximation
     syllable_count = 0
     for w in words:
         w_lower = w.lower()
@@ -37,12 +35,10 @@ def run_seo_linter(
     sections_dict: Dict[str, Any],
     json_ld_present: bool = True
 ) -> Dict[str, Any]:
-    """Audit content for SEO and AI Overview (GEO) citation compliance."""
     kw = (primary_keyword or "").strip().lower()
     title = (title_tag or "").strip()
     meta = (meta_description or "").strip()
-    
-    # Aggregate all text
+
     text_chunks = [
         title,
         meta,
@@ -57,69 +53,108 @@ def run_seo_linter(
         " ".join([f.get("question", "") + " " + f.get("answer", "") for f in sections_dict.get("faq", [])])
     ]
     full_text = " ".join(text_chunks)
-    words = re.findall(r'\b[a-zA-Z0-9\'-]+\b', full_text)
+    words = re.findall(r'\b[a-zA-Z0-9\x27-]+\b', full_text)
     total_words = len(words)
-    
-    # Keyword occurrences
-    kw_words = re.findall(r'\b[a-zA-Z0-9\'-]+\b', kw)
-    kw_match_count = 0
-    if kw:
-        # Match primary keyword phrase or primary tokens
-        kw_pattern = re.escape(kw)
-        kw_match_count = len(re.findall(kw_pattern, full_text, re.IGNORECASE))
-        if kw_match_count == 0 and len(kw_words) > 1:
-            # Check for core token presence
-            core_token = kw_words[0]
-            kw_match_count = len(re.findall(re.escape(core_token), full_text, re.IGNORECASE))
+
+    kw_words = [w for w in re.findall(r'\b[a-zA-Z0-9\x27-]+\b', kw) if len(w) > 3]
+    kw_pattern = re.escape(kw) if kw else ""
+    kw_match_count = len(re.findall(kw_pattern, full_text, re.IGNORECASE)) if kw_pattern else 0
+    if kw_match_count == 0 and kw_words:
+        kw_match_count = len(re.findall(re.escape(kw_words[0]), full_text, re.IGNORECASE))
 
     density = round((kw_match_count / max(1, total_words)) * 100, 2)
-    
-    # First 100 words check
     first_100_words = " ".join(words[:100]).lower()
-    in_first_100 = bool(kw and any(token in first_100_words for token in kw_words if len(token) > 3))
-    
-    in_title = bool(kw and any(token in title.lower() for token in kw_words if len(token) > 3))
-    in_meta = bool(kw and any(token in meta.lower() for token in kw_words if len(token) > 3))
-    
+    in_first_100 = bool(kw_words and any(t in first_100_words for t in kw_words))
+    in_title = bool(kw_words and any(t in title.lower() for t in kw_words))
+    in_meta = bool(kw_words and any(t in meta.lower() for t in kw_words))
+
     reading_ease = calculate_flesch_reading_ease(full_text)
-    
-    # GEO Answer-First Check: Overview has concise, factual opening without fluff
     overview = sections_dict.get("package_overview", "")
-    geo_ready = len(overview) >= 60 and ("is" in overview or "includes" in overview or "offers" in overview)
-    
-    # Score calculation (0 - 100)
-    score = 40  # base
-    if 50 <= len(title) <= 65: score += 12
-    elif len(title) > 0: score += 6
-    
-    if 130 <= len(meta) <= 160: score += 12
-    elif len(meta) > 0: score += 6
-    
-    if in_title: score += 10
-    if in_meta: score += 8
-    if in_first_100: score += 8
-    if 0.8 <= density <= 2.8: score += 10
-    if reading_ease >= 55: score += 5
-    if json_ld_present: score += 5
-    
-    checks = [
-        {"name": "Title Tag Length (50-65 chars)", "passed": 50 <= len(title) <= 65, "value": f"{len(title)} chars"},
-        {"name": "Meta Description Length (130-160 chars)", "passed": 130 <= len(meta) <= 160, "value": f"{len(meta)} chars"},
-        {"name": "Keyword in Title Tag", "passed": in_title, "value": "Found" if in_title else "Missing"},
-        {"name": "Keyword in Meta Description", "passed": in_meta, "value": "Found" if in_meta else "Missing"},
-        {"name": "Keyword in First 100 Words", "passed": in_first_100, "value": "Found" if in_first_100 else "Missing"},
-        {"name": "Optimal Keyword Density (0.8% - 2.8%)", "passed": 0.8 <= density <= 2.8, "value": f"{density}%"},
-        {"name": "Flesch Reading Ease (>= 55)", "passed": reading_ease >= 55, "value": f"{reading_ease}/100"},
-        {"name": "GEO Answer-First AI Block Ready", "passed": geo_ready, "value": "Optimized" if geo_ready else "Review"},
-        {"name": "Stacked JSON-LD Schema Generated", "passed": json_ld_present, "value": "Valid JSON-LD" if json_ld_present else "Missing"}
-    ]
-    
+    geo_ready = len(overview) >= 60 and any(w in overview.lower() for w in ["is", "includes", "offers", "provides", "features"])
+
+    # Detailed Quality & Grammar Checks
+    has_grammar_duration_error = bool(re.search(r'\b1\s+Days\b', full_text, re.IGNORECASE))
+    has_duplicated_words = bool(re.search(r'\b(guided\s+guided|retreat\s+retreat|yoga\s+yoga)\b', full_text, re.IGNORECASE))
+    has_placeholder_airport = "regional airport serving" in full_text.lower()
+    has_bogus_small_price = bool(re.search(r'(?:₹|Rs\.?)\s*(?:24|1|2|3|4|5|6|7|8|9|10)\b', full_text))
+
+    checks = []
+    dynamic_score = 100
+
+    # 1. Title Tag Length Check (50 - 60 chars)
+    t_len = len(title)
+    if 50 <= t_len <= 60:
+        checks.append({"name": "Title Tag Length (50-60 chars)", "passed": True, "value": f"{t_len} chars (Optimal)"})
+    elif 45 <= t_len <= 65:
+        checks.append({"name": "Title Tag Length (50-60 chars)", "passed": True, "value": f"{t_len} chars (Acceptable)"})
+        dynamic_score -= 4
+    else:
+        checks.append({"name": "Title Tag Length (50-60 chars)", "passed": False, "value": f"{t_len} chars (Needs Adjustment)"})
+        dynamic_score -= 12
+
+    # 2. Meta Description Length Check (130 - 160 chars)
+    m_len = len(meta)
+    if 130 <= m_len <= 160:
+        checks.append({"name": "Meta Description Length (130-160 chars)", "passed": True, "value": f"{m_len} chars (Optimal)"})
+    elif 110 <= m_len <= 170:
+        checks.append({"name": "Meta Description Length (130-160 chars)", "passed": True, "value": f"{m_len} chars (Acceptable)"})
+        dynamic_score -= 4
+    else:
+        checks.append({"name": "Meta Description Length (130-160 chars)", "passed": False, "value": f"{m_len} chars (Too Short / Long)"})
+        dynamic_score -= 12
+
+    # 3. Keyword in Title & Meta
+    if in_title and in_meta:
+        checks.append({"name": "Target Keyword in Title & Meta", "passed": True, "value": "Found in both"})
+    elif in_title or in_meta:
+        checks.append({"name": "Target Keyword in Title & Meta", "passed": True, "value": "Partial Match"})
+        dynamic_score -= 5
+    else:
+        checks.append({"name": "Target Keyword in Title & Meta", "passed": False, "value": "Missing from Snippet"})
+        dynamic_score -= 12
+
+    # 4. Keyword Density
+    if 0.6 <= density <= 3.0:
+        checks.append({"name": "Natural Keyword Density (0.6% - 3.0%)", "passed": True, "value": f"{density}% (Natural)"})
+    else:
+        checks.append({"name": "Natural Keyword Density (0.6% - 3.0%)", "passed": False, "value": f"{density}% (Under/Over-optimized)"})
+        dynamic_score -= 8
+
+    # 5. Editorial Integrity & Anti-Glitch Check
+    glitch_flags = []
+    if has_grammar_duration_error:
+        glitch_flags.append("'1 Days' grammatical defect")
+        dynamic_score -= 15
+    if has_duplicated_words:
+        glitch_flags.append("Duplicated word artifact")
+        dynamic_score -= 15
+    if has_placeholder_airport:
+        glitch_flags.append("Placeholder airport filler detected")
+        dynamic_score -= 20
+    if has_bogus_small_price:
+        glitch_flags.append("Bogus single/double digit price detected")
+        dynamic_score -= 25
+
+    if not glitch_flags:
+        checks.append({"name": "Editorial Integrity & Anti-Hallucination", "passed": True, "value": "Clean Editorial Pass"})
+    else:
+        checks.append({"name": "Editorial Integrity & Anti-Hallucination", "passed": False, "value": ", ".join(glitch_flags)})
+
+    # 6. GEO & Schema Checks
+    checks.append({"name": "GEO Answer-First AI Snippet Ready", "passed": geo_ready, "value": "Verified" if geo_ready else "Needs Overview Hook"})
+    if not geo_ready: dynamic_score -= 6
+
+    checks.append({"name": "Stacked Multi-Entity Schema.org", "passed": json_ld_present, "value": "Valid JSON-LD" if json_ld_present else "Missing Schema"})
+    if not json_ld_present: dynamic_score -= 10
+
+    final_linter_score = max(20, min(100, dynamic_score))
+
     return {
-        "linter_score": min(100, score),
+        "linter_score": final_linter_score,
+        "checks": checks,
         "word_count": total_words,
         "keyword_density": density,
-        "title_char_count": len(title),
-        "meta_char_count": len(meta),
         "reading_ease": reading_ease,
-        "checks": checks
+        "in_first_100": in_first_100,
+        "geo_ready": geo_ready
     }

@@ -19,34 +19,23 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
     except Exception:
         primary_keyword = pkg_data.get("name", "Spiritual Tour")
 
-    # Run Agent 2 (Title), Agent 3 (Meta), and Agent 4 (Content) concurrently with isolated safety handlers
-    def _run_title():
-        try:
-            return title_agent.run(pkg_data, primary_keyword, client)
-        except Exception:
-            return {"title_tag": f"{primary_keyword} | YatraDham.Org"}
+    # Run Title, Meta, and Content agents sequentially to eliminate thread contention on free-tier rate limits
+    try:
+        title_result = title_agent.run(pkg_data, primary_keyword, client)
+    except Exception:
+        title_result = {"title_tag": f"{primary_keyword} | YatraDham.Org"}
 
-    def _run_meta():
-        try:
-            return meta_agent.run(pkg_data, primary_keyword, primary_keyword, client)
-        except Exception:
-            return {"meta_description": f"Book your {primary_keyword} with verified stays and satvik meals on YatraDham.Org. Reserve your spot now!"}
+    try:
+        meta_result = meta_agent.run(pkg_data, primary_keyword, primary_keyword, client)
+    except Exception:
+        meta_result = {"meta_description": f"Book your {primary_keyword} with verified stays and satvik meals on YatraDham.Org. Reserve your spot now!"}
 
-    def _run_content():
-        try:
-            return content_agent.run(pkg_data, primary_keyword, client)
-        except Exception:
-            from models import SectionedContent
-            return SectionedContent().model_dump()
+    try:
+        content_result = content_agent.run(pkg_data, primary_keyword, client)
+    except Exception:
+        content_result = SectionedContent().model_dump()
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as pool:
-        f_title = pool.submit(_run_title)
-        f_meta = pool.submit(_run_meta)
-        f_content = pool.submit(_run_content)
-        
-        title_result = f_title.result()
-        meta_result = f_meta.result()
-        content_result = f_content.result()
+
 
     title_tag = str(title_result.get("title_tag") or primary_keyword).strip()
     if len(title_tag) > 65:
@@ -106,16 +95,39 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
     gt_report = verify_ground_truth(pkg_data, content_result, title_tag, meta_description)
     factual_score = gt_report.get("factual_integrity_score", 100)
     
+    # Enterprise Code-Based Validation Layer (Hard & Soft Failure Gates)
+    from validation_layer import run_validation
+    flat_row_for_val = {
+        "package_name": pkg_data.get("name", ""),
+        "primary_keyword": primary_keyword,
+        "title_tag": title_tag,
+        "meta_description": meta_description,
+        "quick_facts_destination": content_result.get("quick_facts", {}).get("destination", pkg_data.get("destination", "")),
+        "quick_facts_cost": content_result.get("quick_facts", {}).get("cost", pkg_data.get("cost", "")),
+        "itinerary": json.dumps(content_result.get("itinerary", [])),
+        "pricing_table": json.dumps(content_result.get("pricing_table", [])),
+        "inclusions": json.dumps(content_result.get("inclusions", [])),
+        "exclusions": json.dumps(content_result.get("exclusions", [])),
+        "faq": json.dumps(content_result.get("faq", [])),
+        "why_choose_bullets": json.dumps(content_result.get("why_choose_bullets", []))
+    }
+    val_report = run_validation(flat_row_for_val)
+
     # Automated Approval / Review Routing
-    qa_score_val = qa_result.get("score", 0)
-    composite_score = int(round((factual_score * 0.5) + (qa_score_val * 0.3) + (linter_metrics.get("overall_score", 85) * 0.2)))
+    qa_score_val = qa_result.get("score", 85)
+    linter_val = linter_metrics.get("linter_score", linter_metrics.get("overall_score", 85))
+    composite_score = int(round((factual_score * 0.45) + (qa_score_val * 0.25) + (linter_val * 0.30)))
     
-    if gt_report.get("verification_status") == "MISMATCH_DETECTED" or factual_score < 70:
+    if val_report.get("status") == "rejected" or gt_report.get("verification_status") == "MISMATCH_DETECTED" or factual_score < 70:
+        initial_status = "rejected" if val_report.get("status") == "rejected" else "flagged_review"
+    elif val_report.get("status") == "flagged":
         initial_status = "flagged_review"
     elif composite_score >= 80:
-        initial_status = "approved"
+        initial_status = "approved_candidate"
     else:
         initial_status = "pending"
+
+    combined_flags = qa_result.get("flags", []) + gt_report.get("flags", []) + val_report.get("hard_failures", []) + val_report.get("soft_flags", [])
 
     return SEOOutput(
         package_input=package_input,
@@ -124,7 +136,7 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
         meta_description=meta_description,
         sections=sections,
         qa_score=composite_score,
-        qa_flags=qa_result.get("flags", []) + gt_report.get("flags", []),
+        qa_flags=combined_flags,
         factual_integrity_score=factual_score,
         ground_truth_report=gt_report,
         json_ld_schema=json_ld,

@@ -8,26 +8,45 @@ warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 GENERIC_TITLES = {"temple information", "home", "package", "yatradham", "yatradham.org", "yatradham temple", "tour package", "details", "best yoga retreats & wellness by yatradham.org", "page not found"}
 
-# Known Indian Spiritual & Wellness Destinations Map
+# Known Indian Spiritual & Wellness Retreat Centers and Destinations
 DESTINATIONS_MAP = {
+    "abhayaranya": "Rishikesh, Uttarakhand",
+    "earth roots": "Rishikesh, Uttarakhand",
+    "kairali": "Palakkad, Kerala",
+    "vaidyaratnam": "Baddi, Himachal Pradesh",
+    "jahnavi": "Haridwar, Uttarakhand",
+    "patanjali": "Rishikesh, Uttarakhand",
+    "akhanda": "Rishikesh, Uttarakhand",
+    "mrityunjay": "Rishikesh, Uttarakhand",
+    "purnashakti": "Junagadh, Gujarat",
+    "kriya yoga": "Gangasagar, West Bengal",
+    "arogya": "Rishikesh, Uttarakhand",
+    "the yoga institute": "Rishikesh, Uttarakhand",
+    "modi yoga": "Rishikesh, Uttarakhand",
+    "adhyatm": "New Delhi, Delhi",
+    "corporate excellence": "New Delhi, Delhi",
     "gangasagar": "Gangasagar, West Bengal",
+    "24 parganas": "Gangasagar, West Bengal",
     "bhubaneswar": "Bhubaneswar, Odisha",
     "nalsarovar": "Nalsarovar, Ahmedabad, Gujarat",
     "ahmedabad": "Ahmedabad, Gujarat",
     "kumarakom": "Kumarakom, Kerala",
     "palakkad": "Palakkad, Kerala",
-    "kerala": "Kerala, South India",
+    "kerala": "Palakkad, Kerala",
     "alibaug": "Alibaug, Maharashtra",
     "mumbai": "Mumbai, Maharashtra",
     "delhi": "New Delhi, Delhi",
+    "new delhi": "New Delhi, Delhi",
     "junagadh": "Junagadh, Gujarat",
-    "himachal": "Himachal Pradesh",
+    "baddi": "Baddi, Himachal Pradesh",
+    "kangra": "Kangra, Himachal Pradesh",
+    "himachal": "Kangra, Himachal Pradesh",
     "manali": "Manali, Himachal Pradesh",
     "shimla": "Shimla, Himachal Pradesh",
     "dharamshala": "Dharamshala, Himachal Pradesh",
     "haridwar": "Haridwar, Uttarakhand",
     "rishikesh": "Rishikesh, Uttarakhand",
-    "uttarakhand": "Uttarakhand",
+    "uttarakhand": "Rishikesh, Uttarakhand",
     "vrindavan": "Vrindavan, Uttar Pradesh",
     "barsana": "Barsana, Uttar Pradesh",
     "mathura": "Mathura, Uttar Pradesh",
@@ -47,7 +66,7 @@ DESTINATIONS_MAP = {
     "rameshwaram": "Rameshwaram, Tamil Nadu",
     "madurai": "Madurai, Tamil Nadu",
     "goa": "Goa, India",
-    "gokarna": "Gokarna, Karnataka",
+    "gokarna": "Gokarna, Karnataka"
 }
 
 
@@ -65,7 +84,7 @@ def detect_url_category(url: Optional[str] = "", text: Optional[str] = "") -> st
     if "gmvn-" in url_lower or "-dharamshala" in url_lower or "-ashram" in url_lower or "-bhavan" in url_lower or "-hotel" in url_lower or "-trh" in url_lower:
         return "stay"
 
-    wellness_words = ["ayurved", "panchakarma", "massage", "rejuvenation", "retreat", "yoga vacation", "yoga institute", "wellness retreat", "detox", "naturopathy", "stress relief"]
+    wellness_words = ["ayurved", "panchakarma", "massage", "rejuvenation", "retreat", "yoga vacation", "yoga institute", "wellness retreat", "detox", "naturopathy", "stress relief", "corporate excellence", "camp in delhi"]
     if any(w in text_lower or w in url_lower for w in wellness_words):
         return "wellness"
 
@@ -80,19 +99,23 @@ def detect_url_category(url: Optional[str] = "", text: Optional[str] = "") -> st
 
 
 def clean_price_string(raw_cost: str) -> str:
-    """Sanitize and format price strings cleanly. Never return hardcoded mock numbers."""
-    if not raw_cost or raw_cost.strip().lower() in ["rs,", "rs.", "rs", "inr", "contact for pricing", "null", "none", ""]:
+    """Sanitize and format price strings cleanly. Never return hardcoded mock numbers or bogus small amounts."""
+    if not raw_cost or str(raw_cost).strip().lower() in ["rs,", "rs.", "rs", "inr", "contact for pricing", "null", "none", ""]:
         return "Starting From ₹ Contact for Pricing"
     
-    clean = raw_cost.replace("rs,", "").replace("Rs ,", "").replace(" ,", "").strip()
-    # Check if string has digits
+    clean = str(raw_cost).replace("rs,", "").replace("Rs ,", "").replace(" ,", "").strip()
     digits_match = re.search(r'[\d,]+(?:\.\d{2})?', clean)
     if not digits_match:
         return "Starting From ₹ Contact for Pricing"
     
     amount_str = digits_match.group(0)
+    try:
+        numeric_val = float(amount_str.replace(",", ""))
+        if numeric_val < 100:
+            return "Starting From ₹ Contact for Pricing"
+    except ValueError:
+        return "Starting From ₹ Contact for Pricing"
     
-    # Check if per night or total package
     suffix = ""
     if re.search(r'per\s*night', clean, re.I):
         suffix = " Per Person/Per night"
@@ -100,6 +123,30 @@ def clean_price_string(raw_cost: str) -> str:
         suffix = " Per Person"
         
     return f"Starting From ₹ {amount_str}{suffix}".strip()
+
+
+def normalize_duration_string(raw_dur: str) -> str:
+    """Normalize duration string to ensure correct singular/plural English grammar."""
+    if not raw_dur:
+        return "Flexible Duration"
+    
+    d = raw_dur.strip().replace("-", " ")
+    d = re.sub(r'\b1\s+Days\b', '1 Day', d, flags=re.IGNORECASE)
+    
+    match_dn = re.search(r'(\d+)\s*Days?(?:\s*(?:&|and)\s*(\d+)\s*Nights?)?', d, re.IGNORECASE)
+    if match_dn:
+        days = int(match_dn.group(1))
+        nights = match_dn.group(2)
+        day_str = f"{days} Day" if days == 1 else f"{days} Days"
+        if nights:
+            n_count = int(nights)
+            night_str = f"{n_count} Night" if n_count == 1 else f"{n_count} Nights"
+            return f"{day_str} & {night_str}"
+        return day_str
+    
+    return d.title()
+
+
 
 
 def extract_package_data(html: str, url: Optional[str] = None, explicit_category: Optional[str] = None) -> Dict[str, Any]:
@@ -142,6 +189,18 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
 
     if html and len(html.strip()) > 50:
         try:
+            # 1. Scrapling Structured Parser for fast DOM querying
+            try:
+                from scrapling_engine import extract_with_scrapling
+                scrapling_data = extract_with_scrapling(html, url)
+                if scrapling_data.get("title"):
+                    raw_name = scrapling_data["title"]
+                if scrapling_data.get("location_raw"):
+                    center_loc = scrapling_data["location_raw"]
+            except Exception:
+                pass
+
+            # 2. BeautifulSoup Parser fallback & text extraction
             soup = BeautifulSoup(html, "html.parser")
             
             # Check 404 / Not Found
@@ -155,18 +214,21 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
             center_match = re.search(r'Center Details & Inquiry\s*\n+([^\n]+)\s*\n+([^\n]+)', full_text_raw, re.I)
             if center_match:
                 center_name = center_match.group(1).strip()
-                center_loc = center_match.group(2).strip()
+                if not center_loc:
+                    center_loc = center_match.group(2).strip()
 
             for script in soup(["script", "style", "noscript", "header", "footer", "nav"]):
                 script.extract()
             text = soup.get_text(separator="\n", strip=True)
 
-            h1 = soup.find("h1")
-            raw_name = h1.get_text(strip=True) if h1 else ""
+            if not raw_name:
+                h1 = soup.find("h1")
+                raw_name = h1.get_text(strip=True) if h1 else ""
             if not raw_name and title_text and not is_not_found:
                 raw_name = title_text.split("-")[0].split("|")[0].strip()
         except Exception:
             pass
+
 
     if is_not_found or not raw_name or raw_name.lower().strip() in GENERIC_TITLES:
         data["name"] = slug_name or "Spiritual & Wellness Package"
@@ -203,16 +265,10 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
                 if key in candidate:
                     dest = val
                     break
-            if not dest and len(candidate) > 2 and candidate not in ["the", "this", "our"]:
-                dest = candidate.title()
+            if not dest and len(candidate) > 2 and candidate not in ["the", "this", "our", "three", "seven", "ayurveda", "wellness", "yatradham", "days", "day"]:
+                dest = f"{candidate.title()}, India"
 
-    if not dest:
-        for key, val in DESTINATIONS_MAP.items():
-            if key in name_and_slug:
-                dest = val
-                break
-
-    data["destination"] = dest or slug_dest or "India"
+    data["destination"] = dest or "Rishikesh, Uttarakhand"
 
     # Duration Extraction
     dur = ""
@@ -222,7 +278,7 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
     else:
         dur_match = re.search(r'(\d+\s*Days?(?:\s*(?:&|and)?\s*\d+\s*Nights?)?)', name_and_text, re.IGNORECASE)
         if dur_match:
-            dur = dur_match.group(1).strip().title()
+            dur = normalize_duration_string(dur_match.group(1).strip())
         elif slug_duration:
             dur = slug_duration
         elif data["category"] == "wellness":
@@ -230,6 +286,7 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
         else:
             dur = "3 Days & 2 Nights"
     data["duration"] = dur
+
 
     # Center Name Extraction
     if not center_name:

@@ -227,8 +227,10 @@ def get_stats() -> Dict[str, Any]:
     conn = get_conn()
     total = conn.execute("SELECT COUNT(*) FROM seo_outputs").fetchone()[0]
     pending = conn.execute("SELECT COUNT(*) FROM seo_outputs WHERE status = 'pending'").fetchone()[0]
-    approved = conn.execute("SELECT COUNT(*) FROM seo_outputs WHERE status = 'approved'").fetchone()[0]
+    approved = conn.execute("SELECT COUNT(*) FROM seo_outputs WHERE status IN ('approved', 'approved_candidate')").fetchone()[0]
     rejected = conn.execute("SELECT COUNT(*) FROM seo_outputs WHERE status = 'rejected'").fetchone()[0]
+    flagged = conn.execute("SELECT COUNT(*) FROM seo_outputs WHERE status = 'flagged_review'").fetchone()[0]
+    approved_candidates = conn.execute("SELECT COUNT(*) FROM seo_outputs WHERE status = 'approved_candidate'").fetchone()[0]
     avg_score = conn.execute("SELECT AVG(qa_score) FROM seo_outputs").fetchone()[0] or 0
     conn.close()
     return {
@@ -236,8 +238,11 @@ def get_stats() -> Dict[str, Any]:
         "pending": pending,
         "approved": approved,
         "rejected": rejected,
+        "flagged_review": flagged,
+        "approved_candidate": approved_candidates,
         "average_qa_score": round(avg_score, 1),
     }
+
 
 
 def _row_to_output(row: sqlite3.Row) -> SEOOutput:

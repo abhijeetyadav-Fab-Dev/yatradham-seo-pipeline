@@ -124,11 +124,26 @@ class SitemapCrawler:
     @staticmethod
     def _parse_html_links(html_text: str, base_url: str) -> List[str]:
         urls = []
-        soup = BeautifulSoup(html_text, 'html.parser')
-
         parts = base_url.split('//')
         base_domain = parts[-1].split('/')[0] if len(parts) > 1 else base_url
 
+        try:
+            from scrapling.parser import Selector
+            page = Selector(html_text)
+            hrefs = page.css("a::attr(href)").getall()
+            for href in hrefs:
+                href = href.strip()
+                if href.startswith('/'):
+                    scheme = 'https:' if base_url.startswith('https:') else 'http:'
+                    href = f'{scheme}//{base_domain}{href}'
+                if href.startswith('http') and base_domain in href:
+                    urls.append(href)
+            if urls:
+                return urls
+        except Exception:
+            pass
+
+        soup = BeautifulSoup(html_text, 'html.parser')
         for a in soup.find_all('a', href=True):
             href = a['href'].strip()
             if href.startswith('/'):
@@ -138,3 +153,4 @@ class SitemapCrawler:
                 urls.append(href)
 
         return urls
+

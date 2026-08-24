@@ -40,4 +40,20 @@ def run(package_data: Dict[str, Any], client: LLMClient) -> Dict[str, Any]:
         words = [w for w in (package_data.get("name", "") + " " + package_data.get("destination", "")).split() if w]
         result["primary_keyword"] = " ".join(words[:3]) if len(words) >= 3 else " ".join(words) + " Retreat"
 
+    # Enrich secondary keywords via Datamuse API (free, keyless)
+    try:
+        from public_apis_enricher import fetch_semantic_lsi_keywords
+        dest_term = package_data.get("destination", "").split(",")[0].strip()
+        lsi = fetch_semantic_lsi_keywords(f"{dest_term} yoga wellness", max_results=4)
+        if lsi:
+            existing = result.get("secondary_keywords", [])
+            for term in lsi:
+                kw_candidate = f"{term} in {dest_term}".title()
+                if kw_candidate not in existing and len(kw_candidate.split()) <= 4:
+                    existing.append(kw_candidate)
+            result["secondary_keywords"] = existing[:5]
+    except Exception:
+        pass
+
     return result
+
