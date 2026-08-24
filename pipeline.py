@@ -111,23 +111,22 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
         "faq": json.dumps(content_result.get("faq", [])),
         "why_choose_bullets": json.dumps(content_result.get("why_choose_bullets", []))
     }
+    from validation_layer import run_validation, compute_objective_qa_score
     val_report = run_validation(flat_row_for_val)
 
-    # Automated Approval / Review Routing
-    qa_score_val = qa_result.get("score", 85)
-    linter_val = linter_metrics.get("linter_score", linter_metrics.get("overall_score", 85))
-    composite_score = int(round((factual_score * 0.45) + (qa_score_val * 0.25) + (linter_val * 0.30)))
+    combined_flags = qa_result.get("flags", []) + gt_report.get("flags", []) + val_report.get("hard_failures", []) + val_report.get("soft_flags", [])
+
+    # Objective Deterministic Code-Based QA Score (Replaces LLM self-grading)
+    objective_score = compute_objective_qa_score(val_report, combined_flags, factual_score, linter_metrics)
     
     if val_report.get("status") == "rejected" or gt_report.get("verification_status") == "MISMATCH_DETECTED" or factual_score < 70:
         initial_status = "rejected" if val_report.get("status") == "rejected" else "flagged_review"
-    elif val_report.get("status") == "flagged":
+    elif val_report.get("status") == "flagged" or objective_score < 80:
         initial_status = "flagged_review"
-    elif composite_score >= 80:
+    elif objective_score >= 80:
         initial_status = "approved_candidate"
     else:
         initial_status = "pending"
-
-    combined_flags = qa_result.get("flags", []) + gt_report.get("flags", []) + val_report.get("hard_failures", []) + val_report.get("soft_flags", [])
 
     return SEOOutput(
         package_input=package_input,
@@ -135,9 +134,10 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
         title_tag=title_tag,
         meta_description=meta_description,
         sections=sections,
-        qa_score=composite_score,
+        qa_score=objective_score,
         qa_flags=combined_flags,
         factual_integrity_score=factual_score,
+
         ground_truth_report=gt_report,
         json_ld_schema=json_ld,
         linter_metrics=linter_metrics,

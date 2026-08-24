@@ -97,6 +97,10 @@ def extract_price_number(price_string: str) -> int | None:
 
 
 def validate_price(price_string: str) -> tuple[bool, str]:
+    if not price_string or not price_string.strip():
+        return False, "Price field is empty."
+    if any(q in price_string.lower() for q in ["contact for pricing", "on request", "inquire", "custom quote"]):
+        return True, "Price on request / custom quote mode."
     amount = extract_price_number(price_string)
     if amount is None:
         return False, f"Could not parse a numeric price from '{price_string}'."
@@ -105,6 +109,7 @@ def validate_price(price_string: str) -> tuple[bool, str]:
     if amount > MAX_PRICE_PER_NIGHT_INR:
         return False, f"Price ₹{amount} exceeds sanity ceiling (₹{MAX_PRICE_PER_NIGHT_INR}) — flag for manual check."
     return True, "OK"
+
 
 
 # ---------------------------------------------------------------------
@@ -246,11 +251,58 @@ def run_validation(row: dict, existing_approved_rows: list[dict] | None = None) 
     else:
         status = "approved_candidate"  # still needs a human click, per review-gate policy
 
+    # Compute 100% deterministic code-based score
+    base_score = 100
+    base_score -= len(hard_failures) * 35
+    base_score -= len(soft_flags) * 8
+    objective_score = max(15, min(100, base_score))
+
     return {
         "status": status,
         "hard_failures": hard_failures,
         "soft_flags": soft_flags,
+        "objective_score": objective_score,
     }
+
+
+def compute_objective_qa_score(val_report: dict, all_flags: list, factual_score: int = 100, linter_metrics: dict = None) -> int:
+    """
+    100% deterministic, code-based QA scoring.
+    Replaces artificial LLM self-grading with objective rule deductions:
+    - Hard failures (bad destination, broken price, missing fields): -35 pts each
+    - Soft flags (repeated words, banned phrases, AI-isms, long sentences): -5 to -10 pts each
+    - Factual discrepancy: -15 pts
+    - Linter / formatting issues: -5 to -10 pts
+    """
+    score = 100
+    hard_fails = val_report.get("hard_failures", [])
+    soft_flags = val_report.get("soft_flags", [])
+
+    # 1. Hard Failures (each drops 35 pts immediately)
+    score -= len(hard_fails) * 35
+
+    # 2. Soft Flags (each drops 8 pts)
+    score -= len(soft_flags) * 8
+
+    # 3. Critical Flags (banned phrases, AI-isms)
+    banned_count = sum(1 for f in all_flags if f.startswith("BANNED_PHRASES"))
+    score -= banned_count * 10
+
+    ai_ism_count = sum(1 for f in all_flags if f.startswith("AI_ISMS_FOUND"))
+    score -= ai_ism_count * 5
+
+    # 4. Factual Integrity
+    if factual_score < 80:
+        score -= int((80 - factual_score) * 0.5)
+
+    # 5. Linter Score
+    if linter_metrics:
+        lint_score = linter_metrics.get("overall_score", 100)
+        if lint_score < 90:
+            score -= int((90 - lint_score) * 0.4)
+
+    return max(15, min(100, score))
+
 
 
 # ---------------------------------------------------------------------
