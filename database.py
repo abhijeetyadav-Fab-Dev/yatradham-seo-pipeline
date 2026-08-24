@@ -8,7 +8,15 @@ from models import SEOOutput, SectionedContent, PackageInput
 import time
 import random
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "seo_pipeline.db")
+def get_db_path() -> str:
+    env_path = os.environ.get("SQLITE_DB_PATH") or os.environ.get("DATABASE_PATH")
+    if env_path:
+        return env_path
+    if os.path.exists("/data") and os.access("/data", os.W_OK):
+        return "/data/seo_pipeline.db"
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "seo_pipeline.db")
+
+DB_PATH = get_db_path()
 
 
 def get_conn():
@@ -18,6 +26,7 @@ def get_conn():
     conn.execute("PRAGMA journal_mode = WAL")
     conn.execute("PRAGMA synchronous = NORMAL")
     return conn
+
 
 
 def _execute_with_retry(func, max_attempts=5):

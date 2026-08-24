@@ -358,8 +358,9 @@ class LLMClient:
                 err_msg = str(e)
                 self.errors[f"{provider_name}:{active_model}"] = err_msg
                 logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next...")
-                if any(code in err_msg.lower() for code in ["429", "rate_limit", "rate limit", "401", "402", "403", "404", "model_not_found", "unauthorized", "insufficient_quota", "payment"]):
-                    logger.warning(f"Provider {provider_name} is exhausted or blocked. Skipping remaining models on {provider_name}.")
+                # If auth failed or account disabled, skip the entire provider. If it's a rate limit or model error, continue to next fallback model on this or other providers.
+                if any(code in err_msg.lower() for code in ["401", "402", "403", "unauthorized", "insufficient_quota", "payment required"]):
+                    logger.warning(f"Provider {provider_name} credentials or quota expired. Skipping provider.")
                     exhausted_providers.add(provider_name)
                     self._failed_providers[provider_name] = time.time()
                 continue
@@ -368,6 +369,7 @@ class LLMClient:
         self.last_provider_used = "mock (all providers failed)"
         self.last_error = "; ".join([f"{k}: {v}" for k, v in self.errors.items()][:2])
         return self._mock_response(messages)
+
 
     def _mock_response(self, messages: List[Dict[str, str]]) -> str:
         """Return a rich, dynamic response when no LLM provider key is available.
