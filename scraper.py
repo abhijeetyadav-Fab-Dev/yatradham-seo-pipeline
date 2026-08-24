@@ -104,6 +104,11 @@ def clean_price_string(raw_cost: str) -> str:
         return "Starting From ₹ Contact for Pricing"
     
     clean = str(raw_cost).replace("rs,", "").replace("Rs ,", "").replace(" ,", "").strip()
+    
+    # Reject negative prices, 0, or free
+    if "-" in clean or re.search(r'\b(?:free|0)\b', clean, re.I):
+        return "Starting From ₹ Contact for Pricing"
+
     digits_match = re.search(r'[\d,]+(?:\.\d{2})?', clean)
     if not digits_match:
         return "Starting From ₹ Contact for Pricing"
@@ -116,13 +121,21 @@ def clean_price_string(raw_cost: str) -> str:
     except ValueError:
         return "Starting From ₹ Contact for Pricing"
     
+    if "." in amount_str:
+        parts = amount_str.split(".")
+        main_num = int(parts[0].replace(",", ""))
+        formatted_amount = f"{main_num:,}.{parts[1]}"
+    else:
+        formatted_amount = f"{int(numeric_val):,}"
+
     suffix = ""
     if re.search(r'per\s*night', clean, re.I):
         suffix = " Per Person/Per night"
     elif re.search(r'per\s*person', clean, re.I):
         suffix = " Per Person"
         
-    return f"Starting From ₹ {amount_str}{suffix}".strip()
+    return f"Starting From ₹ {formatted_amount}{suffix}".strip()
+
 
 
 def normalize_duration_string(raw_dur: str) -> str:
