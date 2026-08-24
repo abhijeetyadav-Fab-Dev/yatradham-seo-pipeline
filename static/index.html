@@ -1000,9 +1000,11 @@
                 }
                 if (d.success) {
                     const catBadge = d.category ? `<span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 text-xs font-semibold ml-2 uppercase">${d.category}</span>` : '';
-                    showAlert('singleResult', 'success', `<strong>Success!</strong> Package "${d.package.name}" processed in <strong>${tat}s</strong> ${catBadge}.<br>ID: #${d.id} | Keyword: ${d.output.primary_keyword} | Score: ${d.output.qa_score}/100`);
+                    const viewBtn = `<div class="mt-2.5"><button onclick="showTab('outputs'); loadOutputs(); setTimeout(() => openOutputModal(${d.id}), 300);" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary text-white text-xs font-semibold rounded-md shadow-xs hover:bg-primaryHover transition cursor-pointer"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> View Full 19 Sections (#${d.id})</button></div>`;
+                    showAlert('singleResult', 'success', `<strong>Success!</strong> Package "${d.package.name}" processed in <strong>${tat}s</strong> ${catBadge}.<br>ID: #${d.id} | Keyword: <strong>${d.output.primary_keyword}</strong> | QA Score: <strong>${d.output.qa_score}/100</strong>${viewBtn}`);
                     loadStats();
                 } else {
+
                     showAlert('singleResult', 'error', `Error (${tat}s): ${d.detail || 'Unknown server error'}`);
                 }
             } catch(e) {

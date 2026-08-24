@@ -139,24 +139,10 @@ def scrape_and_process(request: URLRequest):
         if request.provider and request.api_key:
             req_client.set_custom_keys(request.provider, request.api_key)
 
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 YatradhamBot/1.0",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-        }
-        
-        html = ""
-        try:
-            resp = requests.get(request.url, headers=headers, timeout=4.0)
-            if resp.status_code == 200 and resp.text:
-                html = resp.text
-        except Exception:
-            try:
-                import urllib.request
-                req = urllib.request.Request(request.url, headers=headers)
-                with urllib.request.urlopen(req, timeout=4.0) as uresp:
-                    html = uresp.read().decode('utf-8', errors='ignore')
-            except Exception as net_err:
-                logger.info(f"Live HTML fetch skipped for {request.url} ({net_err}). Extracting from URL metadata.")
+        from scrapling_engine import fetch_url_html
+        html = fetch_url_html(request.url, timeout=12)
+        if not html:
+            logger.info(f"Live HTML fetch skipped or blocked for {request.url}. Extracting from URL metadata.")
 
         scraped = extract_package_data(html, request.url, request.category)
 
@@ -208,20 +194,8 @@ def process_batch_background(urls: List[str], keys: Optional[Dict[str, str]] = N
             return
         try:
             logger.info(f"Batch processing URL: {url}")
-            headers = {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 YatradhamBot/1.0",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
-            }
-            try:
-                resp = requests.get(url, headers=headers, timeout=25)
-                resp.raise_for_status()
-                html = resp.text
-            except Exception:
-                import urllib.request
-                req = urllib.request.Request(url, headers=headers)
-                with urllib.request.urlopen(req, timeout=25) as uresp:
-                    html = uresp.read().decode('utf-8', errors='ignore')
-
+            from scrapling_engine import fetch_url_html
+            html = fetch_url_html(url, timeout=12)
             scraped = extract_package_data(html, url)
             pkg = PackageInput(
                 url=scraped.get("url", url),
@@ -238,6 +212,7 @@ def process_batch_background(urls: List[str], keys: Optional[Dict[str, str]] = N
             )
             result = process_package(pkg, batch_client)
             save_output(result)
+
             logger.info(f"Successfully processed batch URL: {url} -> {pkg.name} ({pkg.destination})")
             time.sleep(1.0)
         except Exception as e:
