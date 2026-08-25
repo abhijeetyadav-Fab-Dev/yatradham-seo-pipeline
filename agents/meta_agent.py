@@ -85,17 +85,20 @@ CRITICAL: Do NOT repeat the package name. Write a FRESH, benefit-focused summary
         dest = destination if destination else "Yamunotri, Uttarakhand"
         dur = duration if duration else "15 Days"
 
-        # Build a natural description from components
+        # Build a natural description from components with distinct travel/stay angles
         if "gmvn" in name.lower() or "trh" in name.lower() or "dharamshala" in name.lower() or "ashram" in name.lower():
-            meta = f"Book verified stay at {name[:40]} in {dest}. Clean rooms, hot water, authentic satvik meals & easy temple access. Reserve your spot now!"
+            meta = f"Book verified stay at {name[:35]} in {dest}. Features clean rooms, hot water, Satvik food & quick temple access. Reserve your room now!"
         elif "ayurved" in name.lower() or "ayurved" in primary_keyword.lower():
-            meta = f"Rejuvenate with a {dur} Ayurvedic wellness retreat in {dest}. Includes therapies, yoga, healthy meals & verified stay. Book now!"
+            meta = f"Recharge with a personalized {dur} Ayurvedic healing program in {dest}. Includes daily therapies, yoga & nourishing meals. Book today!"
         elif "yoga" in name.lower() or "yoga" in primary_keyword.lower():
-            meta = f"Join a {dur} yoga retreat in {dest} with guided meditation, pranayama, healthy meals & verified accommodation. Book now!"
+            meta = f"Deepen your practice with a {dur} guided yoga retreat in {dest}. Experience daily pranayama, meditation & peaceful stays. Book now!"
+        elif "chardham" in name.lower() or "yatra" in name.lower() or "darshan" in name.lower():
+            meta = f"Plan your sacred {name[:35]} journey to {dest}. Enjoy verified Dharamshala bookings, guided darshan & reliable transport. Book now!"
         elif "detox" in name.lower() or "panchakarma" in primary_keyword.lower():
-            meta = f"Experience a {dur} Panchakarma detox program in {dest}. Includes herbal therapies, yoga, organic meals & verified stay. Enquire today!"
+            meta = f"Cleanse your mind and body with authentic {dur} Panchakarma in {dest}. Expert consultations & organic Satvik meals. Enquire today!"
         else:
-            meta = f"Discover verified accommodation & tour packages in {dest} with YatraDham. Clean rooms, satvik meals & seamless booking. Book now!"
+            meta = f"Experience authentic spiritual travel with {name[:35]} in {dest}. Verified lodging, Satvik dining & seamless support. Book now!"
+
 
     # Clean double periods or whitespace glitches
     meta = meta.replace("..", ".").replace("  ", " ").strip()

@@ -32,13 +32,23 @@ def run(package_data: Dict[str, Any], client: LLMClient) -> Dict[str, Any]:
     except json.JSONDecodeError:
         result = {"primary_keyword": package_data.get("name", "Yoga Retreat"), "secondary_keywords": []}
 
-    # Enforce 2-4 words
-    pk = result.get("primary_keyword", "")
-    word_count = len(pk.split())
-    if word_count < 2 or word_count > 4:
-        # Fallback
-        words = [w for w in (package_data.get("name", "") + " " + package_data.get("destination", "")).split() if w]
-        result["primary_keyword"] = " ".join(words[:3]) if len(words) >= 3 else " ".join(words) + " Retreat"
+    # Enforce 2-4 words and eliminate heading slogans like 'Begin Your Wellness'
+    pk = result.get("primary_keyword", "").strip()
+    banned_slogans = ["begin your", "start your", "discover our", "welcome to", "about our", "join us"]
+    if any(pk.lower().startswith(s) for s in banned_slogans) or len(pk.split()) < 2 or len(pk.split()) > 4:
+        name_clean = package_data.get("name", "")
+        dest_clean = package_data.get("destination", "").split(",")[0].strip()
+        cat = package_data.get("category", "tour").lower()
+        
+        if cat == "wellness":
+            result["primary_keyword"] = f"Yoga Retreat {dest_clean}" if dest_clean else f"{name_clean[:20]} Retreat"
+        elif cat == "stay":
+            result["primary_keyword"] = f"Dharamshala in {dest_clean}" if dest_clean else f"{name_clean[:20]} Stay"
+        elif "chardham" in name_clean.lower():
+            result["primary_keyword"] = "Char Dham Yatra Package"
+        else:
+            result["primary_keyword"] = f"{dest_clean} Tour Package" if dest_clean else f"{name_clean[:20]} Tour"
+
 
     # Enrich secondary keywords via Datamuse API (free, keyless)
     try:

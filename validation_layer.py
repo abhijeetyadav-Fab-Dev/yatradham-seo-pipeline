@@ -190,10 +190,23 @@ def validate_required_fields(row: dict) -> tuple[bool, str]:
     return True, "OK"
 
 
+def validate_no_template_leak(text_blob: str) -> tuple[bool, str]:
+    """
+    Hard failure check: Ensures no unparsed template variables like {destination},
+    {name}, {cost}, {duration}, {city}, {location} leak into output.
+    """
+    leaks = re.findall(r"\{[a-zA-Z0-9_\-]+\}", text_blob)
+    if leaks:
+        unique_leaks = list(set(leaks))
+        return False, f"Unresolved template placeholders detected in content: {unique_leaks}"
+    return True, "OK"
+
+
 
 # ---------------------------------------------------------------------
 # 6. TITLE / PRODUCT NAME CONSISTENCY CHECK
 # ---------------------------------------------------------------------
+
 # Problem observed: title_tag said "Tour Package" while package_name
 # said "Corporate Excellence Program" — mismatched product framing.
 
@@ -238,9 +251,14 @@ def run_validation(row: dict, existing_approved_rows: list[dict] | None = None) 
         hard_failures.append(msg)
 
     full_text_blob = " ".join(str(v) for v in row.values())
+    ok, msg = validate_no_template_leak(full_text_blob)
+    if not ok:
+        hard_failures.append(msg)
+
     ok, msg = validate_no_duplicated_words(full_text_blob)
     if not ok:
         soft_flags.append(msg)  # grammar issue — annoying but not catastrophic
+
 
     ok, msg = validate_title_matches_product(
         row.get("package_name", ""), row.get("title_tag", "")

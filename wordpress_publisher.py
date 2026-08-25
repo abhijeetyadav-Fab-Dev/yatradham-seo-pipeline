@@ -59,6 +59,15 @@ class WordPressPublisher:
         categories: Optional[list] = None,
         tags: Optional[list] = None
     ) -> Dict[str, Any]:
+        # Hard QA Gate: Block publication if unresolved template variables exist in content or title
+        combined_text = f"{title} {content_html} {meta_description}"
+        leaks = re.findall(r"\{[a-zA-Z0-9_\-]+\}", combined_text)
+        if leaks:
+            return {
+                'success': False,
+                'error': f'Publishing Blocked: Unresolved template placeholders found in content: {list(set(leaks))}. Please edit before publishing.'
+            }
+
         endpoint = f'{self.site_url}/wp-json/wp/v2/{post_type}'
         
         payload: Dict[str, Any] = {
@@ -67,6 +76,7 @@ class WordPressPublisher:
             'status': status,
             'excerpt': meta_description
         }
+
         
         if slug:
             payload['slug'] = slug
