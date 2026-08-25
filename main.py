@@ -652,7 +652,50 @@ def get_screenshot_preview_endpoint(url: str, width: int = 1280, height: int = 7
     return generate_screenshot_preview_url(target_url=url, viewport_width=width, viewport_height=height)
 
 
+# =====================================================================
+# NLP, GRAMMAR, DICTIONARY & URL SAFETY ENDPOINTS
+# =====================================================================
+@app.get("/api/nlp/dictionary")
+def get_dictionary_endpoint(word: str):
+    """Lookup English definitions, phonetics, parts of speech via Free Dictionary API."""
+    from nlp_and_safety_toolkit import lookup_word_dictionary
+    return lookup_word_dictionary(word)
+
+
+@app.post("/api/nlp/proofread")
+def proofread_endpoint(payload: Dict[str, str]):
+    """Grammar, spellcheck & stylistic review via LanguageTool API."""
+    from nlp_and_safety_toolkit import proofread_text_languagetool
+    text = payload.get("text", "")
+    return proofread_text_languagetool(text)
+
+
+@app.post("/api/nlp/analyze-keywords")
+def analyze_keywords_endpoint(payload: Dict[str, Any]):
+    """Extract top unigrams, bigrams, trigrams & Flesch reading score."""
+    from nlp_and_safety_toolkit import analyze_keywords_and_readability
+    text = payload.get("text", "")
+    top_n = payload.get("top_n", 8)
+    return analyze_keywords_and_readability(text=text, top_n=top_n)
+
+
+@app.post("/api/nlp/moderate-text")
+def moderate_text_endpoint(payload: Dict[str, str]):
+    """Evaluate tone sentiment, spiritual reverence, and toxicity."""
+    from nlp_and_safety_toolkit import analyze_sentiment_and_moderation
+    text = payload.get("text", "")
+    return analyze_sentiment_and_moderation(text)
+
+
+@app.get("/api/nlp/link-safety-preview")
+def link_safety_preview_endpoint(url: str):
+    """Scan URL safety protocol, SSL certificate, and extract OpenGraph preview."""
+    from nlp_and_safety_toolkit import inspect_url_safety_and_preview
+    return inspect_url_safety_and_preview(url)
+
+
 @app.get("/api/serp-intelligence")
+
 
 def get_serp_intelligence_endpoint(query: str):
     """Return live search intent, LSI keyword entities, and competitor heading benchmarks."""
