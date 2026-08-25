@@ -80,6 +80,23 @@ app = FastAPI(
     openapi_url="/openapi.json" if docs_enabled else None
 )
 
+from starlette.middleware.base import BaseHTTPMiddleware
+from security_firewall import enforce_rate_limit
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Injects enterprise OWASP security headers on all HTTP responses."""
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:;"
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
+
 # Serve static dashboard
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -92,7 +109,8 @@ def get_robots_txt():
 
 
 @app.get("/")
-def root():
+def root(request: Request):
+    enforce_rate_limit(request)
     return FileResponse(
         "static/index.html",
         headers={
@@ -104,6 +122,7 @@ def root():
             "Referrer-Policy": "strict-origin-when-cross-origin"
         }
     )
+
 
 
 
@@ -318,19 +337,22 @@ def get_outputs(
     status: Optional[str] = None, 
     search: Optional[str] = None,
     limit: Optional[int] = None,
-    offset: Optional[int] = None
+    offset: Optional[int] = None,
+    auth_ok: bool = Depends(verify_admin_access)
 ):
-    """List all SEO outputs with optional filter and pagination."""
+    """List all SEO outputs with optional filter and pagination (Admin Protected)."""
     outputs = list_outputs(status=status, search=search, limit=limit, offset=offset)
     return {"count": len(outputs), "outputs": [o.model_dump() for o in outputs]}
 
 
 @app.get("/outputs/{output_id}")
-def get_single_output(output_id: int):
+def get_single_output(output_id: int, auth_ok: bool = Depends(verify_admin_access)):
+    """Get single output with authorization check (Prevents IDOR)."""
     output = get_output(output_id)
     if not output:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=404, detail="Output not found")
     return output.model_dump()
+
 
 
 @app.put("/outputs/{output_id}")
@@ -392,8 +414,8 @@ class ProviderSettingsRequest(BaseModel):
 
 
 @app.post("/settings/provider")
-def update_provider_settings(request: ProviderSettingsRequest):
-    """Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime."""
+def update_provider_settings(request: ProviderSettingsRequest, auth_ok: bool = Depends(verify_admin_access)):
+    """Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime (Admin Protected)."""
     valid_providers = ["groq", "gemini", "openrouter"]
     if request.provider not in valid_providers:
         raise HTTPException(status_code=400, detail=f"Provider must be one of: {', '.join(valid_providers)}")
@@ -404,10 +426,11 @@ def update_provider_settings(request: ProviderSettingsRequest):
 
 
 @app.post("/test-provider")
-def test_provider_endpoint(request: ProviderSettingsRequest):
-    """Test a provider API key live and return latency & status."""
+def test_provider_endpoint(request: ProviderSettingsRequest, auth_ok: bool = Depends(verify_admin_access)):
+    """Test a provider API key live and return latency & status (Admin Protected)."""
     res = client.test_provider(request.provider, request.api_key, request.model)
     return res
+
 
 
 class ContentGenerateRequest(BaseModel):

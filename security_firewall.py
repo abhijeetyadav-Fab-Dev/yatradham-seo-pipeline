@@ -24,15 +24,86 @@ from fastapi import HTTPException, Request, Security, Depends
 from fastapi.security import APIKeyHeader, HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
 
-# Admin API Key configuration (Defaults to secure hash comparison or env)
+import html
+from collections import defaultdict
+import time
+
+# =====================================================================
+# 1. XSS SANITIZATION ENGINE
+# =====================================================================
+XSS_PATTERNS = [
+    r"<\s*script[^>]*>.*?<\s*/\s*script\s*>",
+    r"<\s*script[^>]*>",
+    r"javascript\s*:",
+    r"onerror\s*=",
+    r"onload\s*=",
+    r"onclick\s*=",
+    r"<\s*iframe[^>]*>",
+    r"<\s*body[^>]*>",
+    r"<\s*img[^>]*onerror[^>]*>",
+    r"eval\s*\(",
+    r"alert\s*\(",
+    r"document\.cookie",
+    r"window\.location",
+]
+
+def sanitize_xss(text: Any) -> Any:
+    """
+    Sanitizes string inputs by stripping executable HTML script tags, event handlers,
+    and javascript: URI schemes to prevent Stored & Reflected XSS.
+    Recursively cleans dicts and lists.
+    """
+    if isinstance(text, str):
+        cleaned = text
+        for pattern in XSS_PATTERNS:
+            cleaned = re.sub(pattern, "", cleaned, flags=re.IGNORECASE | re.DOTALL)
+        # Escape any remaining stray script/iframe/object tags
+        cleaned = re.sub(r"<\s*(script|iframe|object|embed|applet|meta|form)[^>]*>", "", cleaned, flags=re.IGNORECASE)
+        return cleaned.strip()
+    elif isinstance(text, dict):
+        return {k: sanitize_xss(v) for k, v in text.items()}
+    elif isinstance(text, list):
+        return [sanitize_xss(item) for item in text]
+    return text
+
+
+# =====================================================================
+# 2. IN-MEMORY TOKEN-BUCKET RATE LIMITER
+# =====================================================================
+class InMemoryRateLimiter:
+    """Token-bucket rate limiter enforcing max requests per window per IP."""
+    def __init__(self, requests_per_minute: int = 30):
+        self.rpm = requests_per_minute
+        self.requests = defaultdict(list)
+
+    def check_rate_limit(self, client_ip: str):
+        now = time.time()
+        window_start = now - 60.0
+        # Prune old timestamps
+        self.requests[client_ip] = [ts for ts in self.requests[client_ip] if ts > window_start]
+        
+        if len(self.requests[client_ip]) >= self.rpm:
+            raise HTTPException(
+                status_code=429,
+                detail=f"Too Many Requests: Rate limit of {self.rpm} requests per minute exceeded. Please slow down."
+            )
+        self.requests[client_ip].append(now)
+
+rate_limiter = InMemoryRateLimiter(requests_per_minute=30)
+
+def enforce_rate_limit(request: Request):
+    """FastAPI dependency to rate-limit requests by client IP."""
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    rate_limiter.check_rate_limit(client_ip)
+
+
+# =====================================================================
+# 3. AUTHENTICATION & ACCESS CONTROL
+# =====================================================================
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "yatradham-admin-secure-key-2026")
 API_KEY_HEADER = APIKeyHeader(name="X-Admin-Key", auto_error=False)
 BEARER_AUTH = HTTPBearer(auto_error=False)
 
-
-# =====================================================================
-# 1. AUTHENTICATION & ACCESS CONTROL
-# =====================================================================
 def verify_admin_access(request: Request, api_key: Optional[str] = Security(API_KEY_HEADER), bearer: Optional[HTTPAuthorizationCredentials] = Security(BEARER_AUTH)) -> bool:
     """
     Verifies that the caller has valid administrative access.
@@ -42,6 +113,7 @@ def verify_admin_access(request: Request, api_key: Optional[str] = Security(API_
     - Local loopback development environment without configured secret
     """
     token_candidate = api_key or (bearer.credentials if bearer else None) or request.headers.get("X-API-Key")
+
     
     # Check query param as fallback for downloads/exports if configured
     if not token_candidate and "admin_key" in request.query_params:

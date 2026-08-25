@@ -76,14 +76,16 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
         dur = pkg_data.get("duration", "program")
         cost = pkg_data.get("cost", "verified rates")
         name = pkg_data.get("name", "Package")
-        content_result["geo_quick_answer"] = (
-            f"The {name} is a {dur} journey in {dest_val} ({cost}) featuring verified accommodation, "
-            f"Sattvic vegetarian meals, and guided support through YatraDham.Org."
-        )
+    from security_firewall import sanitize_xss
+    content_result = sanitize_xss(content_result)
+    title_tag = sanitize_xss(title_tag)
+    meta_description = sanitize_xss(meta_description)
+    primary_keyword = sanitize_xss(primary_keyword)
 
     # Build output
     sections = SectionedContent(**content_result)
     now = datetime.now().isoformat()
+
 
     prelim_output = {
         "package_input": pkg_data,
