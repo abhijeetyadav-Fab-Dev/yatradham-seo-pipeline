@@ -322,44 +322,20 @@ class LLMClient:
             self.last_provider_used = "dry_run"
             return self._mock_response(messages)
 
-        # Build list of available clients/providers to attempt in priority order
+        # Build prioritized list: 1 best model per provider to eliminate cascading lag
         providers = []
-        if self.nvidia_client:
-            live_nv = self._discover_active_models(self.nvidia_client, "nvidia")
-            models_to_try = [model] if model else []
-            for nm in live_nv + NVIDIA_FALLBACK_MODELS:
-                if nm and nm not in models_to_try:
-                    models_to_try.append(nm)
-            for nm in models_to_try:
-                providers.append(("nvidia", self.nvidia_client, nm))
-
         if self.groq_client:
-            live_groq = self._discover_active_models(self.groq_client, "groq")
-            models_to_try = [model] if model else []
-            for gm in live_groq + GROQ_FALLBACK_MODELS:
-                if gm and gm not in models_to_try:
-                    models_to_try.append(gm)
-            for gm in models_to_try:
-                providers.append(("groq", self.groq_client, gm))
-
-                
+            providers.append(("groq", self.groq_client, self.groq_model or "llama-3.3-70b-versatile"))
         if self.gemini_client:
-            live_gem = self._discover_active_models(self.gemini_client, "gemini")
-            models_to_try = [model] if model else []
-            for gm in live_gem + GEMINI_FALLBACK_MODELS:
-                if gm and gm not in models_to_try:
-                    models_to_try.append(gm)
-            for gm in models_to_try:
-                providers.append(("gemini", self.gemini_client, gm))
-                
+            providers.append(("gemini", self.gemini_client, self.gemini_model or "gemini-2.0-flash"))
+        if self.nvidia_client:
+            providers.append(("nvidia", self.nvidia_client, self.nvidia_model or "meta/llama-3.3-70b-instruct"))
         if self.openrouter_client:
-            primary_or = model or self.openrouter_model
-            for or_model in [primary_or] + [m for m in OPENROUTER_FALLBACK_MODELS if m != primary_or]:
-                providers.append(("openrouter", self.openrouter_client, or_model))
+            providers.append(("openrouter", self.openrouter_client, self.openrouter_model or "nvidia/nemotron-3-super-120b-a12b:free"))
 
         if not providers:
             self.last_provider_used = "mock (no keys configured)"
-            self.last_error = "No API keys configured. Set GROQ_API_KEY or GEMINI_API_KEY."
+            self.last_error = "No API keys configured. Set GROQ_API_KEY, GEMINI_API_KEY, or NVIDIA_API_KEY."
             return self._mock_response(messages)
 
         failed_providers_in_request = set(self.failed_providers)
@@ -370,13 +346,13 @@ class LLMClient:
             self._wait_for_rate_limit()
             try:
                 safe_temp = max(0.2, min(temperature, 0.65))
-                safe_max_tokens = min(max_tokens, 4096) if provider_name == "groq" else max_tokens
+                safe_max_tokens = min(max_tokens, 3000) if provider_name == "groq" else max_tokens
                 kwargs = {
                     "model": active_model,
                     "messages": messages,
                     "max_tokens": safe_max_tokens,
                     "temperature": safe_temp,
-                    "timeout": 8.0,
+                    "timeout": 4.0,
                 }
                 if provider_name in ["groq", "openrouter"]:
                     kwargs["top_p"] = 0.95
@@ -386,31 +362,6 @@ class LLMClient:
                 resp = client_inst.chat.completions.create(**kwargs)
                 choice = resp.choices[0]
                 content = choice.message.content or ""
-                finish_reason = getattr(choice, 'finish_reason', None)
-
-                # Seamlessly continue if response was cut off mid-way by token limit
-                continuation_pass = 0
-                while finish_reason == "length" and continuation_pass < 2 and content.strip():
-                    continuation_pass += 1
-                    logger.info(f"Response truncated (finish_reason=length). Running auto-continuation pass {continuation_pass}...")
-                    try:
-                        cont_messages = messages + [
-                            {"role": "assistant", "content": content},
-                            {"role": "user", "content": "Continue generating the rest of the content seamlessly from where you stopped. Do not repeat any text already written above."}
-                        ]
-                        cont_kwargs = dict(kwargs)
-                        cont_kwargs["messages"] = cont_messages
-                        cont_resp = client_inst.chat.completions.create(**cont_kwargs)
-                        cont_choice = cont_resp.choices[0]
-                        cont_text = cont_choice.message.content or ""
-                        if cont_text.strip():
-                            content += "\n" + cont_text.strip()
-                            finish_reason = getattr(cont_choice, 'finish_reason', None)
-                        else:
-                            break
-                    except Exception as cont_err:
-                        logger.warning(f"Auto-continuation pass failed: {cont_err}")
-                        break
 
                 if content.strip():
                     cleaned_content = self._strip_reasoning(content)
@@ -421,11 +372,11 @@ class LLMClient:
             except Exception as e:
                 err_msg = str(e)
                 self.errors[f"{provider_name}:{active_model}"] = err_msg
-                logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next provider...")
-                if any(x in err_msg.lower() for x in ["429", "rate limit", "credits", "quota", "401", "unauthorized", "invalid api key"]):
-                    failed_providers_in_request.add(provider_name)
-                    self.failed_providers.add(provider_name)
+                logger.warning(f"Provider {provider_name} failed: {err_msg}. Instant failover to next provider...")
+                failed_providers_in_request.add(provider_name)
+                self.failed_providers.add(provider_name)
                 continue
+
 
 
         # If all providers fail, record error and return mock
