@@ -203,6 +203,16 @@ def inspect_url_safety_and_preview(target_url: str) -> Dict[str, Any]:
     clean_url = target_url.strip()
     parsed = urllib.parse.urlparse(clean_url)
     
+    from ssrf_protection import is_safe_url
+    ssrf_ok, ssrf_reason = is_safe_url(clean_url)
+    if not ssrf_ok:
+        return {
+            "url": clean_url,
+            "is_safe": False,
+            "safety_checks": [f"SSRF Violation: {ssrf_reason}"],
+            "preview": {"title": "", "description": "", "image": "", "status_code": 403, "error": ssrf_reason}
+        }
+
     # Safety heuristic checks
     is_https = parsed.scheme == "https"
     has_ip_host = bool(re.match(r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", parsed.hostname or ""))
@@ -223,7 +233,8 @@ def inspect_url_safety_and_preview(target_url: str) -> Dict[str, Any]:
     preview_data = {"title": "", "description": "", "image": "", "status_code": 0}
     try:
         headers = {"User-Agent": "YatraDhamLinkSafetyScanner/2.0"}
-        r = requests.get(clean_url, headers=headers, timeout=5)
+        r = requests.get(clean_url, headers=headers, timeout=4, allow_redirects=False)
+
         preview_data["status_code"] = r.status_code
         if r.status_code == 200:
             from bs4 import BeautifulSoup

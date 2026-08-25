@@ -21,8 +21,13 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 
 
 def fetch_url_html(url: str, timeout: float = 3.5) -> str:
-    """Fetch URL with browser-grade headers and stealth resilience."""
+    """Fetch URL with SSRF protection, browser-grade headers and stealth resilience."""
     if not url:
+        return ""
+    from ssrf_protection import is_safe_url
+    safe, reason = is_safe_url(url)
+    if not safe:
+        logger.warning(f"SSRF block triggered for {url}: {reason}")
         return ""
     import requests
     headers = {
@@ -33,12 +38,13 @@ def fetch_url_html(url: str, timeout: float = 3.5) -> str:
         "Upgrade-Insecure-Requests": "1"
     }
     try:
-        r = requests.get(url, headers=headers, timeout=timeout)
+        r = requests.get(url, headers=headers, timeout=timeout, allow_redirects=False)
         if r.status_code == 200 and r.text:
             return r.text
     except Exception as e:
         logger.warning(f"Failed to fetch {url}: {e}")
     return ""
+
 
 
 

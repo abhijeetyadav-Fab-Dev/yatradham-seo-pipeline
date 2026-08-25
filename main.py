@@ -125,6 +125,12 @@ def scrape_and_process(request: URLRequest):
     try:
         logger.info(f"Scraping single URL: {request.url} | Category: {request.category}")
         
+        from ssrf_protection import is_safe_url
+        is_safe, reason = is_safe_url(request.url)
+        if not is_safe:
+            logger.warning(f"SSRF violation blocked on /scrape: {request.url} -> {reason}")
+            raise HTTPException(status_code=400, detail=f"SSRF Violation: {reason}")
+
         # Configure scoped LLM client with keys
         req_client = LLMClient()
         if request.keys:
@@ -135,12 +141,13 @@ def scrape_and_process(request: URLRequest):
             req_client.set_custom_keys(request.provider, request.api_key)
 
         from scrapling_engine import fetch_url_html
-        html = fetch_url_html(request.url, timeout=6)
+        html = fetch_url_html(request.url, timeout=3.5)
 
         if not html:
             logger.info(f"Live HTML fetch skipped or blocked for {request.url}. Extracting from URL metadata.")
 
         scraped = extract_package_data(html, request.url, request.category)
+
 
         pkg = PackageInput(
             url=scraped.get("url", request.url),
@@ -190,9 +197,15 @@ def process_batch_background(urls: List[str], keys: Optional[Dict[str, str]] = N
             return
         try:
             logger.info(f"Batch processing URL: {url}")
+            from ssrf_protection import is_safe_url
+            safe, reason = is_safe_url(url)
+            if not safe:
+                logger.warning(f"Skipping SSRF blocked URL in batch: {url} -> {reason}")
+                return
             from scrapling_engine import fetch_url_html
-            html = fetch_url_html(url, timeout=12)
+            html = fetch_url_html(url, timeout=3.5)
             scraped = extract_package_data(html, url)
+
             pkg = PackageInput(
                 url=scraped.get("url", url),
                 name=scraped.get("name", "Unknown Package"),
