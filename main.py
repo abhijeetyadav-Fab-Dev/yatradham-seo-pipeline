@@ -27,8 +27,15 @@ from database import init_db, save_output, get_output, list_outputs, update_outp
 from llm_client import LLMClient
 from pipeline import process_package
 from scraper import extract_package_data
-from agents import content_creator_agent
-
+from security_firewall import (
+    verify_admin_access,
+    OutputUpdateRequest,
+    sanitize_user_prompt,
+    mask_secret,
+    sanitize_error_detail,
+    ROBOTS_TXT_CONTENT
+)
+from ssrf_protection import is_safe_url
 
 # Ensure DB exists
 init_db()
@@ -45,7 +52,7 @@ class URLRequest(BaseModel):
 
 
 class BatchURLRequest(BaseModel):
-    urls: List[str]
+    urls: List[str] = Field(..., max_items=50)
     category: Optional[str] = "auto"
     keys: Optional[Dict[str, str]] = None
 
@@ -63,11 +70,25 @@ async def lifespan(app: FastAPI):
     print("Server shutting down")
 
 
-
-app = FastAPI(title="Yatradham SEO Pipeline", lifespan=lifespan)
+# Restrict Swagger/ReDoc docs in production unless explicitly enabled
+docs_enabled = os.environ.get("ENABLE_PUBLIC_DOCS", "false").lower() == "true"
+app = FastAPI(
+    title="Yatradham SEO Pipeline",
+    lifespan=lifespan,
+    docs_url="/docs" if docs_enabled else None,
+    redoc_url="/redoc" if docs_enabled else None,
+    openapi_url="/openapi.json" if docs_enabled else None
+)
 
 # Serve static dashboard
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/robots.txt")
+def get_robots_txt():
+    """Serve hardened robots.txt preventing search engine indexing of API endpoints."""
+    from fastapi.responses import PlainTextResponse
+    return PlainTextResponse(ROBOTS_TXT_CONTENT, media_type="text/plain")
 
 
 @app.get("/")
@@ -77,9 +98,13 @@ def root():
         headers={
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache",
-            "Expires": "0"
+            "Expires": "0",
+            "X-Content-Type-Options": "nosniff",
+            "X-Frame-Options": "DENY",
+            "Referrer-Policy": "strict-origin-when-cross-origin"
         }
     )
+
 
 
 import logging
@@ -235,13 +260,13 @@ def process_batch_background(urls: List[str], keys: Optional[Dict[str, str]] = N
 
 
 @app.post("/batch-urls")
-def batch_urls(request: BatchURLRequest, background_tasks: BackgroundTasks):
-    """Scrape and process multiple URLs automatically in the background."""
+def batch_urls(request: BatchURLRequest, background_tasks: BackgroundTasks, auth_ok: bool = Depends(verify_admin_access)):
+    """Scrape and process multiple URLs automatically in the background (Admin Protected, Max 25 URLs)."""
     if not request.urls:
         raise HTTPException(status_code=400, detail="No URLs provided")
     
-    # Deduplicate URLs
-    unique_urls = list(dict.fromkeys(request.urls))
+    # Deduplicate and enforce hard rate-limit bounds
+    unique_urls = list(dict.fromkeys(request.urls))[:25]
     
     background_tasks.add_task(process_batch_background, unique_urls, request.keys)
     return {
@@ -262,22 +287,24 @@ def process_single(package: PackageInput):
         row_id = save_output(result)
         return {"success": True, "id": row_id, "output": result.model_dump()}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=sanitize_error_detail(e))
 
 
 @app.post("/batch")
-def batch_process(request: BatchRequest):
-    """Process multiple packages from JSON (manual input)."""
+def batch_process(request: BatchRequest, auth_ok: bool = Depends(verify_admin_access)):
+    """Process multiple packages from JSON (Admin Protected, Max 25 items)."""
     results = []
     errors = []
-    for pkg in request.packages:
+    packages_to_run = request.packages[:25]
+    for pkg in packages_to_run:
         try:
             result = process_package(pkg, client)
             row_id = save_output(result)
             results.append({"id": row_id, "name": pkg.name, "status": "ok"})
         except Exception as e:
-            errors.append({"name": pkg.name, "error": str(e)})
+            errors.append({"name": pkg.name, "error": sanitize_error_detail(e)})
     return {"success": True, "processed": len(results), "errors": len(errors), "results": results, "error_details": errors}
+
 
 
 @app.get("/outputs")
@@ -301,22 +328,23 @@ def get_single_output(output_id: int):
 
 
 @app.put("/outputs/{output_id}")
-def update_single_output(output_id: int, update_data: Dict[str, Any]):
+def update_single_output(output_id: int, update_data: OutputUpdateRequest, auth_ok: bool = Depends(verify_admin_access)):
+    """Update SEO output with strict schema validation against mass assignment."""
     existing = get_output(output_id)
     if not existing:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=404, detail="Output not found")
 
-    if "title_tag" in update_data:
-        existing.title_tag = update_data["title_tag"]
-    if "meta_description" in update_data:
-        existing.meta_description = update_data["meta_description"]
-    if "primary_keyword" in update_data:
-        existing.primary_keyword = update_data["primary_keyword"]
-    if "status" in update_data:
-        existing.status = update_data["status"]
-    if "sections" in update_data:
+    if update_data.title_tag is not None:
+        existing.title_tag = update_data.title_tag
+    if update_data.meta_description is not None:
+        existing.meta_description = update_data.meta_description
+    if update_data.primary_keyword is not None:
+        existing.primary_keyword = update_data.primary_keyword
+    if update_data.status is not None:
+        existing.status = update_data.status
+    if update_data.sections is not None:
         from models import SectionedContent
-        existing.sections = SectionedContent(**update_data["sections"])
+        existing.sections = SectionedContent(**update_data.sections)
 
     existing.updated_at = datetime.now().isoformat()
     update_output(output_id, existing)
@@ -324,8 +352,8 @@ def update_single_output(output_id: int, update_data: Dict[str, Any]):
 
 
 @app.post("/bulk-action")
-def bulk_action(request: BulkActionRequest):
-    """Bulk approve or reject outputs."""
+def bulk_action(request: BulkActionRequest, auth_ok: bool = Depends(verify_admin_access)):
+    """Bulk approve or reject outputs with admin authorization."""
     if request.action not in ("approve", "reject"):
         raise HTTPException(status_code=400, detail="Action must be approve or reject")
     status = "approved" if request.action == "approve" else "rejected"
@@ -334,19 +362,21 @@ def bulk_action(request: BulkActionRequest):
 
 
 @app.delete("/outputs/{output_id}")
-def delete_single_output(output_id: int):
+def delete_single_output(output_id: int, auth_ok: bool = Depends(verify_admin_access)):
+    """Delete a single output with admin authorization."""
     deleted = delete_output(output_id)
     if not deleted:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(status_code=404, detail="Output not found")
     return {"success": True}
 
 
 @app.post("/clear-cache")
-def clear_cache():
-    """Wipe all outputs from the database to start fresh."""
+def clear_cache(auth_ok: bool = Depends(verify_admin_access)):
+    """Wipe all outputs from the database to start fresh (Protected Admin Action)."""
     count = clear_all_outputs()
     logger.info(f"Database cache cleared. Deleted {count} records.")
     return {"success": True, "message": f"Cleared {count} items from cache.", "deleted_count": count}
+
 
 
 class ProviderSettingsRequest(BaseModel):
@@ -398,6 +428,10 @@ def generate_content(request: ContentGenerateRequest):
     if not request.topic or len(request.topic.strip()) < 3:
         raise HTTPException(status_code=400, detail="Topic must be at least 3 characters")
     
+    # Prompt injection and malicious payload sanitization
+    sanitized_topic = sanitize_user_prompt(request.topic, max_chars=300)
+    sanitized_instructions = sanitize_user_prompt(request.additional_instructions or "", max_chars=1000)
+
     # Configure any keys passed directly in payload
     if request.keys:
         for p, k in request.keys.items():
@@ -418,19 +452,20 @@ def generate_content(request: ContentGenerateRequest):
                 provider = "openrouter"
         client.set_custom_keys(provider, request.api_key.strip(), request.model)
 
-
     try:
-        logger.info(f"Generating {request.content_type} content for topic: {request.topic}")
+        from agents import content_creator_agent
+        logger.info(f"Generating {request.content_type} content for topic: {sanitized_topic}")
         result = content_creator_agent.run(
             content_type=request.content_type,
-            topic=request.topic,
+            topic=sanitized_topic,
             client=client,
             target_keyword=request.target_keyword,
             audience=request.audience,
             tone=request.tone,
             word_count=request.word_count,
-            additional_instructions=request.additional_instructions,
+            additional_instructions=sanitized_instructions,
         )
+
         
         used_provider = client.last_provider_used or "unknown"
         logger.info(f"Successfully generated {request.content_type} using [{used_provider}] for: {request.topic}")
@@ -500,8 +535,12 @@ class WpVerifyRequest(BaseModel):
 
 
 @app.post("/api/wp/verify")
-def verify_wordpress_connection(req: WpVerifyRequest):
-    """Verify WordPress credentials and REST API availability."""
+def verify_wordpress_connection(req: WpVerifyRequest, auth_ok: bool = Depends(verify_admin_access)):
+    """Verify WordPress credentials and REST API availability (Admin Protected)."""
+    from ssrf_protection import is_safe_url
+    safe, reason = is_safe_url(req.site_url)
+    if not safe:
+        raise HTTPException(status_code=400, detail=f"SSRF Violation on WordPress URL: {reason}")
     from wordpress_publisher import WordPressPublisher
     wp = WordPressPublisher(req.site_url, req.username, req.app_password)
     result = wp.verify_connection()
@@ -523,8 +562,12 @@ class WpPublishRequest(BaseModel):
 
 
 @app.post("/api/wp/publish")
-def publish_to_wordpress(req: WpPublishRequest):
-    """Publish generated SEO content directly to WordPress."""
+def publish_to_wordpress(req: WpPublishRequest, auth_ok: bool = Depends(verify_admin_access)):
+    """Publish generated SEO content directly to WordPress (Admin Protected)."""
+    from ssrf_protection import is_safe_url
+    safe, reason = is_safe_url(req.site_url)
+    if not safe:
+        raise HTTPException(status_code=400, detail=f"SSRF Violation on WordPress URL: {reason}")
     from wordpress_publisher import WordPressPublisher
     wp = WordPressPublisher(req.site_url, req.username, req.app_password)
     result = wp.publish_post(
@@ -542,12 +585,16 @@ def publish_to_wordpress(req: WpPublishRequest):
 
 class SitemapCrawlRequest(BaseModel):
     source_url: str
-    max_urls: int = 100
+    max_urls: int = Field(default=50, le=100)
 
 
 @app.post("/api/sitemap/crawl")
 def crawl_sitemap(req: SitemapCrawlRequest):
-    """Crawl an XML Sitemap or Category Landing Page to extract package links."""
+    """Crawl an XML Sitemap or Category Landing Page to extract package links with SSRF check."""
+    from ssrf_protection import is_safe_url
+    safe, reason = is_safe_url(req.source_url)
+    if not safe:
+        raise HTTPException(status_code=400, detail=f"SSRF Violation on Sitemap URL: {reason}")
     from sitemap_crawler import SitemapCrawler
     result = SitemapCrawler.fetch_urls(req.source_url, req.max_urls)
     return result
@@ -591,14 +638,13 @@ def get_transit_distance_endpoint(from_lon: float, from_lat: float, to_lon: floa
 
 @app.get("/api/providers/status")
 def get_providers_status():
-    """Return status of configured backend AI providers."""
+    """Return hardened status of backend AI providers without exposing backend topology."""
     return {
-        "nvidia": bool(client.nvidia_api_key),
-        "groq": bool(client.groq_api_key),
-        "gemini": bool(client.gemini_api_key),
-        "openrouter": bool(client.openrouter_api_key),
-        "active_provider": "nvidia" if client.nvidia_api_key else ("groq" if client.groq_api_key else ("gemini" if client.gemini_api_key else ("openrouter" if client.openrouter_api_key else "mock")))
+        "status": "ready" if (client.nvidia_api_key or client.groq_api_key or client.gemini_api_key or client.openrouter_api_key) else "mock_mode",
+        "providers_available": bool(client.nvidia_api_key or client.groq_api_key or client.gemini_api_key or client.openrouter_api_key),
+        "gateway_health": "operational"
     }
+
 
 
 
@@ -742,11 +788,12 @@ def stats():
 
 @app.get("/export/csv")
 @app.get("/export-csv")
-def export_csv(status: Optional[str] = "approved"):
-    """Export outputs to CSV."""
+def export_csv(status: Optional[str] = "approved", auth_ok: bool = Depends(verify_admin_access)):
+    """Export outputs to CSV with authorized access."""
     outputs = list_outputs(status=status if status else None)
     if not outputs:
         raise HTTPException(status_code=404, detail="No outputs to export")
+
 
 
     # Deduplicate: keep only the highest QA score per package name
