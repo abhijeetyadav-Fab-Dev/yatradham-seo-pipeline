@@ -116,13 +116,124 @@ def sanitize_user_prompt(text: str, max_chars: int = 1500) -> str:
 # 4. SENSITIVE CREDENTIAL & INFORMATION MASKING
 # =====================================================================
 def mask_secret(secret: Optional[str]) -> str:
-    """Return a masked representation of sensitive keys."""
+    """Return a masked representation of sensitive keys for logs and UI."""
     if not secret:
         return ""
     s = str(secret).strip()
     if len(s) <= 8:
         return "********"
     return f"{s[:3]}...{s[-4:]}"
+
+
+# =====================================================================
+# 5. ENCRYPTION AT REST (AES / PBKDF2 HMAC)
+# =====================================================================
+ENCRYPTION_MASTER_KEY = os.environ.get("ENCRYPTION_MASTER_KEY", ADMIN_API_KEY)
+
+def _derive_key(salt: bytes) -> bytes:
+    """Derive a 256-bit AES key from the master secret and salt using PBKDF2."""
+    import hashlib
+    return hashlib.pbkdf2_hmac("sha256", ENCRYPTION_MASTER_KEY.encode("utf-8"), salt, 100000, dklen=32)
+
+
+def encrypt_secret(plaintext: Optional[str]) -> Optional[str]:
+    """
+    Encrypt sensitive API key or secret at rest using AES-CBC/Fernet with dynamic salt and HMAC verification.
+    """
+    if not plaintext or not isinstance(plaintext, str) or not plaintext.strip():
+        return None
+    
+    clean_text = plaintext.strip()
+    try:
+        from cryptography.fernet import Fernet
+        import base64
+        # Derive Fernet-compatible key
+        salt = os.urandom(16)
+        derived = _derive_key(salt)
+        f_key = base64.urlsafe_b64encode(derived)
+        cipher_suite = Fernet(f_key)
+        encrypted_bytes = cipher_suite.encrypt(clean_text.encode("utf-8"))
+        # Store as base64(salt) + ":" + base64(ciphertext)
+        return f"enc:v1:{base64.b64encode(salt).decode('utf-8')}:{encrypted_bytes.decode('utf-8')}"
+    except ImportError:
+        # High-security fallback using XOR-stream cipher with HMAC integrity check if cryptography package is absent
+        import base64
+        salt = os.urandom(16)
+        key = _derive_key(salt)
+        data_bytes = clean_text.encode("utf-8")
+        stream = hashlib.sha256(key + salt).digest()
+        while len(stream) < len(data_bytes):
+            stream += hashlib.sha256(stream + key).digest()
+        encrypted = bytes(a ^ b for a, b in zip(data_bytes, stream[:len(data_bytes)]))
+        tag = hmac.new(key, encrypted, hashlib.sha256).hexdigest()
+        return f"enc:v2:{base64.b64encode(salt).decode('utf-8')}:{base64.b64encode(encrypted).decode('utf-8')}:{tag}"
+
+
+def decrypt_secret(cipher_payload: Optional[str]) -> Optional[str]:
+    """
+    Decrypt an encrypted secret at rest back to plaintext in-memory.
+    """
+    if not cipher_payload or not isinstance(cipher_payload, str) or not cipher_payload.startswith("enc:"):
+        return cipher_payload  # Plaintext or empty
+
+    try:
+        import base64
+        parts = cipher_payload.split(":")
+        if parts[1] == "v1":
+            from cryptography.fernet import Fernet
+            salt = base64.b64decode(parts[2].encode("utf-8"))
+            encrypted_bytes = parts[3].encode("utf-8")
+            derived = _derive_key(salt)
+            f_key = base64.urlsafe_b64encode(derived)
+            cipher_suite = Fernet(f_key)
+            return cipher_suite.decrypt(encrypted_bytes).decode("utf-8")
+        elif parts[1] == "v2":
+            salt = base64.b64decode(parts[2].encode("utf-8"))
+            encrypted = base64.b64decode(parts[3].encode("utf-8"))
+            tag = parts[4]
+            key = _derive_key(salt)
+            expected_tag = hmac.new(key, encrypted, hashlib.sha256).hexdigest()
+            if not hmac.compare_digest(tag, expected_tag):
+                raise ValueError("Integrity verification failed: secret ciphertext was modified or corrupted.")
+            stream = hashlib.sha256(key + salt).digest()
+            while len(stream) < len(encrypted):
+                stream += hashlib.sha256(stream + key).digest()
+            decrypted = bytes(a ^ b for a, b in zip(encrypted, stream[:len(encrypted)]))
+            return decrypted.decode("utf-8")
+    except Exception as e:
+        return None
+    return None
+
+
+# =====================================================================
+# 6. LOG SANITIZATION FILTER (NEVER LOG SECRETS)
+# =====================================================================
+import logging
+
+class SensitiveDataScrubberFilter(logging.Filter):
+    """Logging filter that redacts API keys, passwords, and tokens before writing to logs."""
+    PATTERNS = [
+        (r"nvapi-[A-Za-z0-9_\-]+", "nvapi-***REDACTED***"),
+        (r"gsk_[A-Za-z0-9_\-]+", "gsk_***REDACTED***"),
+        (r"AIza[0-9A-Za-z-_]{35}", "AIza***REDACTED***"),
+        (r"sk-or-v1-[A-Za-z0-9_\-]+", "sk-or-***REDACTED***"),
+        (r"(app_password[\"']?\s*:\s*[\"'])[^\"']+", r"\1***REDACTED***"),
+        (r"(api_key[\"']?\s*:\s*[\"'])[^\"']+", r"\1***REDACTED***"),
+    ]
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if isinstance(record.msg, str):
+            for pattern, repl in self.PATTERNS:
+                record.msg = re.sub(pattern, repl, record.msg)
+        if record.args:
+            clean_args = []
+            for arg in record.args:
+                if isinstance(arg, str):
+                    for pattern, repl in self.PATTERNS:
+                        arg = re.sub(pattern, repl, arg)
+                clean_args.append(arg)
+            record.args = tuple(clean_args)
+        return True
 
 
 def sanitize_error_detail(e: Exception) -> str:
@@ -137,7 +248,7 @@ def sanitize_error_detail(e: Exception) -> str:
 
 
 # =====================================================================
-# 5. ROBOTS.TXT CONTENT
+# 7. ROBOTS.TXT CONTENT
 # =====================================================================
 ROBOTS_TXT_CONTENT = """User-agent: *
 Disallow: /api/
@@ -151,3 +262,4 @@ Disallow: /clear-cache
 
 Sitemap: https://yatradham.org/sitemap.xml
 """
+

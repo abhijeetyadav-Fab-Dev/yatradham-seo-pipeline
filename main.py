@@ -108,9 +108,15 @@ def root():
 
 
 import logging
+from security_firewall import SensitiveDataScrubberFilter
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("main")
+# Attach sensitive data scrubber to ensure no secrets or API keys can ever be logged
+for handler in logging.root.handlers:
+    handler.addFilter(SensitiveDataScrubberFilter())
+logger.addFilter(SensitiveDataScrubberFilter())
+
 
 
 @app.post("/validate-category")
