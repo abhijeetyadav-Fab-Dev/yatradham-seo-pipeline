@@ -58,15 +58,10 @@ class ValidateCategoryRequest(BaseModel):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print(f"Server starting | DRY_RUN={client.dry_run}")
-    # Run graphify on startup to keep codebase graph synchronized
-    try:
-        import subprocess
-        subprocess.run(["graphify", "update", "."], capture_output=True, text=True, timeout=15)
-        print("Graphify knowledge graph synchronized on startup.")
-    except Exception as e:
-        print(f"Graphify startup sync skipped: {e}")
+    init_db()
     yield
     print("Server shutting down")
+
 
 
 app = FastAPI(title="Yatradham SEO Pipeline", lifespan=lifespan)
@@ -140,7 +135,8 @@ def scrape_and_process(request: URLRequest):
             req_client.set_custom_keys(request.provider, request.api_key)
 
         from scrapling_engine import fetch_url_html
-        html = fetch_url_html(request.url, timeout=12)
+        html = fetch_url_html(request.url, timeout=6)
+
         if not html:
             logger.info(f"Live HTML fetch skipped or blocked for {request.url}. Extracting from URL metadata.")
 
