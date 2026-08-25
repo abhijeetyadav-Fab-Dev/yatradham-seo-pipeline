@@ -121,8 +121,10 @@ class LLMClient:
         self.last_error = None
         self.errors: Dict[str, str] = {}
         self.dry_run = False
+        self.failed_providers = set()
         
         # Initialize clients if keys exist
+
         self.openrouter_client: Optional[OpenAI] = None
         self.groq_client: Optional[OpenAI] = None
         self.gemini_client: Optional[OpenAI] = None
@@ -360,7 +362,7 @@ class LLMClient:
             self.last_error = "No API keys configured. Set GROQ_API_KEY or GEMINI_API_KEY."
             return self._mock_response(messages)
 
-        failed_providers_in_request = set()
+        failed_providers_in_request = set(self.failed_providers)
         self.errors = {}
         for provider_name, client_inst, active_model in providers:
             if provider_name in failed_providers_in_request:
@@ -422,7 +424,9 @@ class LLMClient:
                 logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}. Trying next provider...")
                 if any(x in err_msg.lower() for x in ["429", "rate limit", "credits", "quota", "401", "unauthorized", "invalid api key"]):
                     failed_providers_in_request.add(provider_name)
+                    self.failed_providers.add(provider_name)
                 continue
+
 
         # If all providers fail, record error and return mock
         self.last_provider_used = "mock (all providers failed)"

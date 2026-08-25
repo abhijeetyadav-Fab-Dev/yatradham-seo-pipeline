@@ -12,7 +12,9 @@ A row that fails any HARD check should be auto-set to "Rejected" or
 """
 
 import re
+from typing import Any
 from difflib import SequenceMatcher
+
 
 # ---------------------------------------------------------------------
 # 1. DESTINATION VALIDATION
@@ -173,11 +175,20 @@ REQUIRED_FIELDS = [
 ]
 
 
+def _is_empty_val(val: Any) -> bool:
+    if val is None:
+        return True
+    if isinstance(val, (list, dict)):
+        return len(val) == 0
+    return not str(val).strip()
+
+
 def validate_required_fields(row: dict) -> tuple[bool, str]:
-    missing = [f for f in REQUIRED_FIELDS if not row.get(f, "").strip()]
+    missing = [f for f in REQUIRED_FIELDS if _is_empty_val(row.get(f))]
     if missing:
         return False, f"Missing required fields: {missing}"
     return True, "OK"
+
 
 
 # ---------------------------------------------------------------------
