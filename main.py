@@ -562,6 +562,24 @@ def enrich_destination_endpoint(destination: str):
     return enrich_destination_data(destination)
 
 
+@app.get("/api/forex")
+def get_forex_rates_endpoint(inr: float):
+    """Convert INR price to USD, EUR, GBP, AUD, CAD, SGD via Frankfurter API (free, open-source)."""
+    from public_apis_enricher import convert_inr_to_forex
+    return {"inr": inr, "conversions": convert_inr_to_forex(inr)}
+
+
+@app.get("/api/transit-distance")
+def get_transit_distance_endpoint(from_lon: float, from_lat: float, to_lon: float, to_lat: float):
+    """Calculate driving distance and duration via Open Source Routing Machine (OSRM)."""
+    from public_apis_enricher import fetch_transit_distance_osrm
+    dist = fetch_transit_distance_osrm(from_lon, from_lat, to_lon, to_lat)
+    if not dist:
+        raise HTTPException(status_code=400, detail="Unable to calculate transit route")
+    return dist
+
+
+
 @app.get("/api/providers/status")
 def get_providers_status():
     """Return status of configured backend AI providers."""

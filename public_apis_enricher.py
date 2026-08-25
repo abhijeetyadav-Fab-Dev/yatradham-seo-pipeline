@@ -107,8 +107,43 @@ def fetch_semantic_lsi_keywords(keyword: str, max_results: int = 6) -> list:
     return []
 
 
+def convert_inr_to_forex(inr_amount: float) -> Dict[str, float]:
+    """Convert INR package pricing to major international currencies using Frankfurter API (free, open-source)."""
+    if not inr_amount or inr_amount <= 0:
+        return {}
+    try:
+        url = "https://api.frankfurter.app/latest?from=INR&to=USD,EUR,GBP,AUD,CAD,SGD"
+        r = requests.get(url, timeout=3)
+        if r.status_code == 200:
+            rates = r.json().get("rates", {})
+            return {curr: round(inr_amount * rate, 2) for curr, rate in rates.items()}
+    except Exception as e:
+        logger.warning(f"Frankfurter currency conversion failed: {e}")
+    return {}
+
+
+def fetch_transit_distance_osrm(from_lon: float, from_lat: float, to_lon: float, to_lat: float) -> Optional[Dict[str, Any]]:
+    """Compute driving distance and travel duration via Open Source Routing Machine (OSRM)."""
+    try:
+        url = f"http://router.project-osrm.org/route/v1/driving/{from_lon},{from_lat};{to_lon},{to_lat}?overview=false"
+        r = requests.get(url, timeout=4)
+        if r.status_code == 200:
+            routes = r.json().get("routes", [])
+            if routes:
+                dist_m = routes[0].get("distance", 0)
+                dur_s = routes[0].get("duration", 0)
+                return {
+                    "distance_km": round(dist_m / 1000.0, 1),
+                    "duration_hours": round(dur_s / 3600.0, 1),
+                    "formatted": f"{dist_m / 1000.0:.1f} km (~{dur_s / 3600.0:.1f} hrs driving)"
+                }
+    except Exception as e:
+        logger.warning(f"OSRM transit calculation failed: {e}")
+    return None
+
+
 def enrich_destination_data(destination: str) -> Dict[str, Any]:
-    """Orchestrate all free public APIs to produce a verified geo & environmental profile."""
+    """Orchestrate all free public APIs to produce a verified geo, environmental & transit profile."""
     profile = {
         "destination": destination,
         "geocoding": None,
@@ -129,4 +164,5 @@ def enrich_destination_data(destination: str) -> Dict[str, Any]:
     profile["lsi_keywords"] = fetch_semantic_lsi_keywords(city_name)
     
     return profile
+
 
