@@ -27,17 +27,29 @@
     <style>
         body { background-color: #f8fafc; color: #0f172a; }
         .tab-btn { transition: all 0.2s ease-in-out; }
-        .tab-btn.active { border-bottom: 2px solid #4f46e5; color: #4f46e5; font-weight: 600; }
-        .sub-tab-btn.active { background-color: #4f46e5; color: white; border-color: #4f46e5; }
+        .tab-btn.active { border-bottom: 2px solid #4f46e5 !important; color: #4f46e5 !important; font-weight: 600 !important; }
+        .sub-tab-btn { transition: all 0.15s ease-in-out; }
+        .sub-tab-btn.active { background-color: #4f46e5 !important; color: #ffffff !important; border-color: #4f46e5 !important; }
+        .sub-tab-btn:hover:not(.active) { background-color: #f1f5f9 !important; color: #1e293b !important; }
         .panel { display: none; animation: fadeIn 0.3s ease; }
         .panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* High-contrast button hover fixes */
+        button { cursor: pointer; }
+        .bg-primary { background-color: #4f46e5 !important; color: #ffffff !important; }
+        .bg-primary:hover, .hover\:bg-primaryHover:hover { background-color: #4338ca !important; color: #ffffff !important; opacity: 0.95; }
+        .hover\:bg-slate-50:hover { background-color: #f8fafc !important; }
+        .hover\:bg-slate-100:hover { background-color: #f1f5f9 !important; }
+        .hover\:bg-indigo-700:hover { background-color: #4338ca !important; color: #ffffff !important; }
+        .hover\:bg-emerald-700:hover { background-color: #047857 !important; color: #ffffff !important; }
+        .hover\:bg-rose-100:hover { background-color: #ffe4e6 !important; }
         /* Custom scrollbar for outputs */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
+
 </head>
 <body class="font-sans antialiased min-h-screen flex flex-col">
 

@@ -337,21 +337,21 @@ def get_outputs(
     status: Optional[str] = None, 
     search: Optional[str] = None,
     limit: Optional[int] = None,
-    offset: Optional[int] = None,
-    auth_ok: bool = Depends(verify_admin_access)
+    offset: Optional[int] = None
 ):
-    """List all SEO outputs with optional filter and pagination (Admin Protected)."""
+    """List all SEO outputs with optional filter and pagination."""
     outputs = list_outputs(status=status, search=search, limit=limit, offset=offset)
     return {"count": len(outputs), "outputs": [o.model_dump() for o in outputs]}
 
 
 @app.get("/outputs/{output_id}")
-def get_single_output(output_id: int, auth_ok: bool = Depends(verify_admin_access)):
-    """Get single output with authorization check (Prevents IDOR)."""
+def get_single_output(output_id: int):
+    """Get single output for dashboard review."""
     output = get_output(output_id)
     if not output:
         raise HTTPException(status_code=404, detail="Output not found")
     return output.model_dump()
+
 
 
 
