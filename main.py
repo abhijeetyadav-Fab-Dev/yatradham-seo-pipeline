@@ -601,7 +601,59 @@ def get_audit_trail_endpoint(row_id: Optional[int] = None, limit: int = 50):
     return {"audit_trail": get_audit_trail(row_id=row_id, limit=limit)}
 
 
+# =====================================================================
+# SEO & SERP TOOLKIT ENDPOINTS (publicapis.dev integrations)
+# =====================================================================
+@app.get("/api/seo/audit-score")
+def get_seo_audit_score_endpoint(title: str, meta_description: str, primary_keyword: str, word_count: int = 1000, url: Optional[str] = None):
+    """On-page SEO score & recommendations (Title, Meta, Keyword, Depth, Density)."""
+    from seo_toolkit import audit_onpage_seo_score
+    dummy_content = f"{primary_keyword} " * int(word_count / max(1, len(primary_keyword.split())))
+    return audit_onpage_seo_score(
+        title=title,
+        meta_description=meta_description,
+        primary_keyword=primary_keyword,
+        html_or_content=dummy_content,
+        url=url
+    )
+
+
+@app.get("/api/seo/serp-search")
+def get_serp_search_endpoint(query: str, num_results: int = 10):
+    """Live SERP search results, competitor rankings, and People Also Ask questions."""
+    from seo_toolkit import fetch_serp_results
+    return fetch_serp_results(query=query, num_results=num_results)
+
+
+@app.get("/api/seo/serp-rank")
+def get_serp_rank_endpoint(keyword: str, target_domain: str = "yatradham.org"):
+    """Check SERP ranking position of target domain for a specific keyword."""
+    from seo_toolkit import check_serp_rank
+    return check_serp_rank(keyword=keyword, target_domain=target_domain)
+
+
+@app.get("/api/seo/tags-generator")
+def get_seo_tags_generator_endpoint(package_name: str, destination: str, price_string: str = "", canonical_url: str = "https://yatradham.org", image_url: Optional[str] = None):
+    """Generate HTML Meta tags, OpenGraph tags, and Twitter Cards."""
+    from seo_toolkit import generate_seo_tags
+    return generate_seo_tags(
+        package_name=package_name,
+        destination=destination,
+        price_string=price_string,
+        canonical_url=canonical_url,
+        image_url=image_url
+    )
+
+
+@app.get("/api/seo/screenshot-preview")
+def get_screenshot_preview_endpoint(url: str, width: int = 1280, height: int = 720):
+    """Generate screenshot preview card URL for any landing page or competitor site."""
+    from seo_toolkit import generate_screenshot_preview_url
+    return generate_screenshot_preview_url(target_url=url, viewport_width=width, viewport_height=height)
+
+
 @app.get("/api/serp-intelligence")
+
 def get_serp_intelligence_endpoint(query: str):
     """Return live search intent, LSI keyword entities, and competitor heading benchmarks."""
     from public_apis_enricher import fetch_semantic_lsi_keywords, fetch_spiritual_heritage_facts
