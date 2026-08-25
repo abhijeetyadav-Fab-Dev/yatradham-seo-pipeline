@@ -7,3 +7,4 @@ openai>=1.30.0
 python-multipart>=0.0.9
 python-dotenv>=1.0.0
 aiofiles>=24.0.0
+scrapling>=0.2.0
