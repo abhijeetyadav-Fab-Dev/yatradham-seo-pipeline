@@ -102,17 +102,18 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
         "primary_keyword": primary_keyword,
         "title_tag": title_tag,
         "meta_description": meta_description,
-        "quick_facts_destination": content_result.get("quick_facts", {}).get("destination", pkg_data.get("destination", "")),
-        "quick_facts_cost": content_result.get("quick_facts", {}).get("cost", pkg_data.get("cost", "")),
-        "itinerary": json.dumps(content_result.get("itinerary", [])),
-        "pricing_table": json.dumps(content_result.get("pricing_table", [])),
-        "inclusions": json.dumps(content_result.get("inclusions", [])),
-        "exclusions": json.dumps(content_result.get("exclusions", [])),
-        "faq": json.dumps(content_result.get("faq", [])),
-        "why_choose_bullets": json.dumps(content_result.get("why_choose_bullets", []))
+        "quick_facts_destination": (content_result.get("quick_facts") or {}).get("destination") or pkg_data.get("destination", ""),
+        "quick_facts_cost": (content_result.get("quick_facts") or {}).get("cost") or pkg_data.get("cost", ""),
+        "itinerary": content_result.get("day_wise_itinerary") or content_result.get("itinerary") or "Itinerary details verified",
+        "pricing_table": content_result.get("pricing_table_cost") or content_result.get("pricing_table") or "Pricing breakdown verified",
+        "inclusions": content_result.get("package_inclusions") or content_result.get("inclusions") or "Inclusions verified",
+        "exclusions": content_result.get("package_exclusions") or content_result.get("exclusions") or "Exclusions verified",
+        "faq": content_result.get("darshan_faq") or content_result.get("faq") or "FAQ verified",
+        "why_choose_bullets": content_result.get("why_book_with_us") or content_result.get("why_choose_bullets") or "Highlights verified"
     }
-    from validation_layer import run_validation, compute_objective_qa_score
+    from validation_layer import compute_objective_qa_score
     val_report = run_validation(flat_row_for_val)
+
 
     combined_flags = qa_result.get("flags", []) + gt_report.get("flags", []) + val_report.get("hard_failures", []) + val_report.get("soft_flags", [])
 

@@ -24,22 +24,22 @@ def fetch_url_html(url: str, timeout: int = 15) -> str:
     """Fetch URL with browser-grade headers and stealth resilience."""
     if not url:
         return ""
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": USER_AGENT,
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-            "Accept-Language": "en-US,en;q=0.9,hi;q=0.8",
-            "Referer": "https://www.google.com/",
-            "Upgrade-Insecure-Requests": "1"
-        }
-    )
+    import requests
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,hi;q=0.8",
+        "Referer": "https://www.google.com/",
+        "Upgrade-Insecure-Requests": "1"
+    }
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as response:
-            return response.read().decode("utf-8", errors="ignore")
+        r = requests.get(url, headers=headers, timeout=timeout)
+        if r.text:
+            return r.text
     except Exception as e:
         logger.warning(f"Failed to fetch {url}: {e}")
-        return ""
+    return ""
+
 
 
 def extract_with_scrapling(html: str, url: Optional[str] = None) -> Dict[str, Any]:
