@@ -135,10 +135,11 @@ IMPORTANT REMINDERS:
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_msg},
         ],
-        max_tokens=4000,
+        max_tokens=2200,
         temperature=0.5,
         response_format={"type": "json_object"},
     )
+
 
     try:
         result = _extract_json_from_response(content)

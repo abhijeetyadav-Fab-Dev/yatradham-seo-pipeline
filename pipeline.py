@@ -19,21 +19,27 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
     except Exception:
         primary_keyword = pkg_data.get("name", "Spiritual Tour")
 
-    # Run Title, Meta, and Content agents sequentially to eliminate thread contention on free-tier rate limits
-    try:
-        title_result = title_agent.run(pkg_data, primary_keyword, client)
-    except Exception:
-        title_result = {"title_tag": f"{primary_keyword} | YatraDham.Org"}
+    # Run Title, Meta, and Content agents concurrently with timeout guards
+    with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
+        f_title = executor.submit(title_agent.run, pkg_data, primary_keyword, client)
+        f_meta = executor.submit(meta_agent.run, pkg_data, primary_keyword, primary_keyword, client)
+        f_content = executor.submit(content_agent.run, pkg_data, primary_keyword, client)
 
-    try:
-        meta_result = meta_agent.run(pkg_data, primary_keyword, primary_keyword, client)
-    except Exception:
-        meta_result = {"meta_description": f"Book your {primary_keyword} with verified stays and satvik meals on YatraDham.Org. Reserve your spot now!"}
+        try:
+            title_result = f_title.result(timeout=6.0)
+        except Exception:
+            title_result = {"title_tag": f"{primary_keyword} | YatraDham.Org"}
 
-    try:
-        content_result = content_agent.run(pkg_data, primary_keyword, client)
-    except Exception:
-        content_result = SectionedContent().model_dump()
+        try:
+            meta_result = f_meta.result(timeout=6.0)
+        except Exception:
+            meta_result = {"meta_description": f"Book your {primary_keyword} with verified stays and satvik meals on YatraDham.Org. Reserve your spot now!"}
+
+        try:
+            content_result = f_content.result(timeout=8.0)
+        except Exception:
+            content_result = SectionedContent().model_dump()
+
 
 
 

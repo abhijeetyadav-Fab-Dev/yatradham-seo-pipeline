@@ -20,7 +20,7 @@ except Exception as e:
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 YatradhamBot/2.0"
 
 
-def fetch_url_html(url: str, timeout: int = 15) -> str:
+def fetch_url_html(url: str, timeout: float = 3.5) -> str:
     """Fetch URL with browser-grade headers and stealth resilience."""
     if not url:
         return ""
@@ -34,11 +34,12 @@ def fetch_url_html(url: str, timeout: int = 15) -> str:
     }
     try:
         r = requests.get(url, headers=headers, timeout=timeout)
-        if r.text:
+        if r.status_code == 200 and r.text:
             return r.text
     except Exception as e:
         logger.warning(f"Failed to fetch {url}: {e}")
     return ""
+
 
 
 

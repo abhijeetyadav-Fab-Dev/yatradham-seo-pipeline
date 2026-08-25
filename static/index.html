@@ -1447,8 +1447,9 @@
             const status = document.getElementById('statusFilter').value;
             const search = document.getElementById('searchInput').value;
             let url = API + '/outputs?';
-            if (status) url += `status=${status}&`;
+            if (status && status !== 'all') url += `status=${status}&`;
             if (search) url += `search=${encodeURIComponent(search)}`;
+
 
             try {
                 const r = await fetch(url);

@@ -183,13 +183,13 @@ def list_outputs(
     conn = get_conn()
     query = "SELECT * FROM seo_outputs WHERE 1=1"
     params = []
-    if status:
+    if status and str(status).strip().lower() != "all":
         query += " AND status = ?"
         params.append(status)
     if search:
         query += " AND (package_name LIKE ? OR primary_keyword LIKE ? OR title_tag LIKE ?)"
         params.extend([f"%{search}%", f"%{search}%", f"%{search}%"])
-    query += " ORDER BY created_at DESC"
+    query += " ORDER BY id DESC"
     if limit is not None:
         query += " LIMIT ?"
         params.append(limit)
@@ -199,6 +199,7 @@ def list_outputs(
     rows = conn.execute(query, params).fetchall()
     conn.close()
     return [_row_to_output(row) for row in rows]
+
 
 
 def bulk_update_status(ids: List[int], status: str) -> int:
