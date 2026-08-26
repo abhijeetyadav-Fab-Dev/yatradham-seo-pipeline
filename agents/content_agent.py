@@ -123,11 +123,13 @@ Primary Keyword: {primary_keyword}
 
 IMPORTANT REMINDERS:
 - Follow the domain rules for {category.upper()}: No Darshan/Aarti/cabs for Wellness Retreats, and no fake therapies for Pilgrimage Tours.
+- For `package_overview`: Seamlessly integrate the retreat name and destination without awkward repetitive phrasing (e.g. NEVER write 'with the 7 Days at 7 Days' or repeat city names consecutively). Keep sentences crisp (12-18 words each), natural, and engaging.
 - Extract ACTUAL pricing from the text (e.g. Rs., ₹, per person, per night).
 - Extract ACTUAL destination city and state (not the package name).
 - Extract ACTUAL accommodation type (ashram, resort, dharamshala, hotel).
 - Extract ACTUAL meal type (Sattvik, vegetarian, Ayurvedic, organic).
 - Output ONLY valid JSON."""
+
 
 
     content = client.chat_completion(
