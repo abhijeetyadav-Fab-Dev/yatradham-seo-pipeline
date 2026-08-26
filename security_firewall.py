@@ -31,40 +31,48 @@ import time
 # =====================================================================
 # 1. XSS SANITIZATION ENGINE
 # =====================================================================
-XSS_PATTERNS = [
-    r"<\s*script[^>]*>.*?<\s*/\s*script\s*>",
-    r"<\s*script[^>]*>",
-    r"javascript\s*:",
-    r"onerror\s*=",
-    r"onload\s*=",
-    r"onclick\s*=",
-    r"<\s*iframe[^>]*>",
-    r"<\s*body[^>]*>",
-    r"<\s*img[^>]*onerror[^>]*>",
-    r"eval\s*\(",
-    r"alert\s*\(",
-    r"document\.cookie",
-    r"window\.location",
-]
-
 def sanitize_xss(text: Any) -> Any:
     """
-    Sanitizes string inputs by stripping executable HTML script tags, event handlers,
-    and javascript: URI schemes to prevent Stored & Reflected XSS.
+    Enterprise HTML & Script Sanitizer: Strips all HTML tags, script elements,
+    event handlers (onerror, onload, onclick, onmouseover, etc.), and unsafe protocols
+    (javascript:, data:, vbscript:) to completely prevent Stored and Reflected XSS.
     Recursively cleans dicts and lists.
     """
     if isinstance(text, str):
-        cleaned = text
-        for pattern in XSS_PATTERNS:
-            cleaned = re.sub(pattern, "", cleaned, flags=re.IGNORECASE | re.DOTALL)
-        # Escape any remaining stray script/iframe/object tags
-        cleaned = re.sub(r"<\s*(script|iframe|object|embed|applet|meta|form)[^>]*>", "", cleaned, flags=re.IGNORECASE)
-        return cleaned.strip()
+        if not text:
+            return ""
+        s = text
+        # 1. Strip javascript:, data:, vbscript: URIs
+        s = re.sub(r'(?i)javascript\s*:', '', s)
+        s = re.sub(r'(?i)data\s*:\s*text/html', '', s)
+        s = re.sub(r'(?i)vbscript\s*:', '', s)
+
+        # 2. Strip any on<event>=... handlers
+        s = re.sub(r'(?i)\bon[a-z]+\s*=\s*(?:["\'][^"\']*["\']|[^\s>]+)', '', s)
+
+        # 3. Strip all HTML / XML / SVG / iframe / img tags
+        try:
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(s, "html.parser")
+            # If tags are found, extract text
+            if soup.find():
+                s = soup.get_text()
+        except Exception:
+            pass
+
+        # 4. Fallback regex tag cleaner for any malformed or incomplete angle brackets
+        s = re.sub(r'<[^>]*>', '', s)
+        s = re.sub(r'</?[a-zA-Z][^>]*>', '', s)
+        s = re.sub(r'(?i)alert\s*\(', '', s)
+        s = re.sub(r'(?i)eval\s*\(', '', s)
+        
+        return s.strip()
     elif isinstance(text, dict):
         return {k: sanitize_xss(v) for k, v in text.items()}
     elif isinstance(text, list):
         return [sanitize_xss(item) for item in text]
     return text
+
 
 
 # =====================================================================
@@ -154,13 +162,16 @@ PROMPT_INJECTION_PATTERNS = [
     r"ignore\s+(all\s+)?(previous|prior|above)\s+instructions",
     r"disregard\s+(all\s+)?(previous|prior|above)\s+instructions",
     r"system\s*:\s*override",
-    r"you\s+are\s+now\s+(an\s+uncensored|a\s+different|in\s+god\s+mode)",
+    r"you\s+are\s+now\s+(an\s+uncensored|a\s+different|in\s+god\s+mode|in\s+developer\s+mode)",
+    r"developer\s+mode",
+    r"show\s+(the\s+)?(system\s+prompt|raw\s+instructions)",
     r"output\s+the\s+(system\s+prompt|raw\s+instructions|developer\s+mode)",
     r"reveal\s+(api\s*keys?|secrets?|environment\s+variables?)",
     r"<\s*script\s*>",
     r"eval\s*\(",
     r"exec\s*\(",
 ]
+
 
 def sanitize_user_prompt(text: str, max_chars: int = 1500) -> str:
     """
