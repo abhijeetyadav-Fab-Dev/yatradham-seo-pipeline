@@ -95,6 +95,8 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:;"
         return response
 
+from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
+
 class RateLimitingMiddleware(BaseHTTPMiddleware):
     """Enforces token-bucket rate limiting per IP across all endpoints (returns HTTP 429)."""
     async def dispatch(self, request: Request, call_next):
@@ -103,12 +105,20 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
             forwarded = request.headers.get("CF-Connecting-IP") or request.headers.get("X-Forwarded-For")
             if forwarded:
                 client_ip = forwarded.split(",")[0].strip()
-            rate_limiter.check_rate_limit(client_ip)
+            try:
+                rate_limiter.check_rate_limit(client_ip)
+            except HTTPException as exc:
+                return JSONResponse(
+                    status_code=exc.status_code,
+                    content={"detail": exc.detail},
+                    headers={"Retry-After": "60"}
+                )
         response = await call_next(request)
         return response
 
 app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(RateLimitingMiddleware)
+
 
 
 
