@@ -23,9 +23,12 @@ class PackageInput(BaseModel):
         if isinstance(v, str):
             from security_firewall import sanitize_xss, sanitize_user_prompt
             v = sanitize_xss(v)
-            # Check prompt injection patterns on input fields
-            v = sanitize_user_prompt(v, max_chars=10000)
+            try:
+                v = sanitize_user_prompt(v, max_chars=10000)
+            except Exception as e:
+                raise ValueError(f"Input validation error: {str(e)}")
         return v
+
 
 
 
