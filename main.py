@@ -13,10 +13,10 @@ import requests
 import urllib.request
 import urllib.error
 import concurrent.futures
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Request, Depends
 from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, HttpUrl, Field
 
 # Load .env before anything else
 from dotenv import load_dotenv
