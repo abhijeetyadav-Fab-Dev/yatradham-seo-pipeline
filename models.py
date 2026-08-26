@@ -21,13 +21,16 @@ class PackageInput(BaseModel):
     @classmethod
     def sanitize_xss_and_prompt_injection(cls, v: Any) -> Any:
         if isinstance(v, str):
-            from security_firewall import sanitize_xss, sanitize_user_prompt
+            from security_firewall import check_disallowed_xss_patterns, sanitize_xss, sanitize_user_prompt
+            # Strict rejection of active injection patterns
+            check_disallowed_xss_patterns(v)
             v = sanitize_xss(v)
             try:
                 v = sanitize_user_prompt(v, max_chars=10000)
             except Exception as e:
                 raise ValueError(f"Input validation error: {str(e)}")
         return v
+
 
 
 

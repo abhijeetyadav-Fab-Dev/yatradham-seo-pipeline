@@ -16,7 +16,8 @@ import concurrent.futures
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Request, Depends
 from fastapi.responses import StreamingResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, HttpUrl, Field
+from pydantic import BaseModel, HttpUrl, Field, field_validator
+
 
 # Load .env before anything else
 from dotenv import load_dotenv
@@ -49,6 +50,20 @@ class URLRequest(BaseModel):
     keys: Optional[Dict[str, str]] = None
     provider: Optional[str] = None
     api_key: Optional[str] = None
+
+    @field_validator("url", mode="before")
+    @classmethod
+    def validate_url_security(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            from security_firewall import check_disallowed_xss_patterns
+            check_disallowed_xss_patterns(v)
+            # Must start with http:// or https://
+            clean_url = v.strip()
+            if not re.match(r"^https?://", clean_url, re.IGNORECASE):
+                raise ValueError("URL must start with http:// or https://")
+            return clean_url
+        return v
+
 
 
 class BatchURLRequest(BaseModel):

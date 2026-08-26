@@ -28,9 +28,29 @@ import html
 from collections import defaultdict
 import time
 
-# =====================================================================
-# 1. XSS SANITIZATION ENGINE
-# =====================================================================
+DISALLOWED_XSS_INPUT_PATTERNS = [
+    r"javascript\s*:",
+    r"vbscript\s*:",
+    r"data\s*:\s*text/html",
+    r"<\s*script[^>]*>",
+    r"<\s*iframe[^>]*>",
+    r"<\s*svg[^>]*>",
+    r"<\s*body[^>]*>",
+    r"<\s*img[^>]*>",
+    r"<\s*form[^>]*>",
+    r"<\s*a\s+[^>]*href\s*=\s*['\"]?javascript:",
+    r"on[a-zA-Z]+\s*=",
+]
+
+def check_disallowed_xss_patterns(text: str) -> None:
+    """Raises ValueError (resulting in 422 HTTP status) if dangerous XSS payloads are detected in inputs."""
+    if not text or not isinstance(text, str):
+        return
+    for pattern in DISALLOWED_XSS_INPUT_PATTERNS:
+        if re.search(pattern, text, re.IGNORECASE):
+            raise ValueError(f"Dangerous input pattern detected: {pattern}")
+
+
 def sanitize_xss(text: Any) -> Any:
     """
     Enterprise HTML & Script Sanitizer: Strips all HTML tags, script elements,
@@ -41,20 +61,20 @@ def sanitize_xss(text: Any) -> Any:
     if isinstance(text, str):
         if not text:
             return ""
+
         s = text
         # 1. Strip javascript:, data:, vbscript: URIs
-        s = re.sub(r'(?i)javascript\s*:', '', s)
-        s = re.sub(r'(?i)data\s*:\s*text/html', '', s)
-        s = re.sub(r'(?i)vbscript\s*:', '', s)
+        s = re.sub(r'(?i)javascript\s*:[^"\'>\s]*', '', s)
+        s = re.sub(r'(?i)data\s*:\s*text/html[^"\'>\s]*', '', s)
+        s = re.sub(r'(?i)vbscript\s*:[^"\'>\s]*', '', s)
 
-        # 2. Strip any on<event>=... handlers
-        s = re.sub(r'(?i)\bon[a-z]+\s*=\s*(?:["\'][^"\']*["\']|[^\s>]+)', '', s)
+        # 2. Strip any on<event>=... handlers (including onmouseover, onmouseenter, onclick, etc.)
+        s = re.sub(r'(?i)\bon[a-zA-Z]+\s*=\s*(?:["\'][^"\']*["\']|[^\s>]+)', '', s)
 
-        # 3. Strip all HTML / XML / SVG / iframe / img tags
+        # 3. Strip all HTML / XML / SVG / iframe / img / form / a tags
         try:
             from bs4 import BeautifulSoup
             soup = BeautifulSoup(s, "html.parser")
-            # If tags are found, extract text
             if soup.find():
                 s = soup.get_text()
         except Exception:
@@ -63,15 +83,18 @@ def sanitize_xss(text: Any) -> Any:
         # 4. Fallback regex tag cleaner for any malformed or incomplete angle brackets
         s = re.sub(r'<[^>]*>', '', s)
         s = re.sub(r'</?[a-zA-Z][^>]*>', '', s)
-        s = re.sub(r'(?i)alert\s*\(', '', s)
-        s = re.sub(r'(?i)eval\s*\(', '', s)
+        s = re.sub(r'(?i)alert\s*\(.*?\)', '', s)
+        s = re.sub(r'(?i)eval\s*\(.*?\)', '', s)
+        s = re.sub(r'(?i)javascript\s*:', '', s)
         
         return s.strip()
+
     elif isinstance(text, dict):
         return {k: sanitize_xss(v) for k, v in text.items()}
     elif isinstance(text, list):
         return [sanitize_xss(item) for item in text]
     return text
+
 
 
 
