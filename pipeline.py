@@ -75,12 +75,29 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
     if not content_result.get("geo_quick_answer"):
         dur = pkg_data.get("duration", "program")
         cost = pkg_data.get("cost", "verified rates")
-        name = pkg_data.get("name", "Package")
+    # Clean and resolve any residual template variables
+    def _clean_template_vars(obj, dest, name, cost, dur):
+        if isinstance(obj, str):
+            s = obj.replace("{destination}", dest).replace("{name}", name).replace("{cost}", cost).replace("{duration}", dur)
+            # Strip any other stray {placeholders}
+            s = re.sub(r'\{[a-zA-Z0-9_\-]+\}', dest, s)
+            return s
+        elif isinstance(obj, dict):
+            return {k: _clean_template_vars(v, dest, name, cost, dur) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [_clean_template_vars(item, dest, name, cost, dur) for item in obj]
+        return obj
+
+    content_result = _clean_template_vars(content_result, dest_val, pkg_data.get("name", "Package"), pkg_data.get("cost", ""), pkg_data.get("duration", ""))
+    title_tag = _clean_template_vars(title_tag, dest_val, pkg_data.get("name", "Package"), pkg_data.get("cost", ""), pkg_data.get("duration", ""))
+    meta_description = _clean_template_vars(meta_description, dest_val, pkg_data.get("name", "Package"), pkg_data.get("cost", ""), pkg_data.get("duration", ""))
+
     from security_firewall import sanitize_xss
     content_result = sanitize_xss(content_result)
     title_tag = sanitize_xss(title_tag)
     meta_description = sanitize_xss(meta_description)
     primary_keyword = sanitize_xss(primary_keyword)
+
 
     # Build output
     sections = SectionedContent(**content_result)

@@ -81,7 +81,7 @@ app = FastAPI(
 )
 
 from starlette.middleware.base import BaseHTTPMiddleware
-from security_firewall import enforce_rate_limit
+from security_firewall import rate_limiter, enforce_rate_limit
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Injects enterprise OWASP security headers on all HTTP responses."""
@@ -95,7 +95,22 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Content-Security-Policy"] = "default-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:;"
         return response
 
+class RateLimitingMiddleware(BaseHTTPMiddleware):
+    """Enforces token-bucket rate limiting per IP across all endpoints (returns HTTP 429)."""
+    async def dispatch(self, request: Request, call_next):
+        if not request.url.path.startswith("/static"):
+            client_ip = request.client.host if request.client else "127.0.0.1"
+            forwarded = request.headers.get("CF-Connecting-IP") or request.headers.get("X-Forwarded-For")
+            if forwarded:
+                client_ip = forwarded.split(",")[0].strip()
+            rate_limiter.check_rate_limit(client_ip)
+        response = await call_next(request)
+        return response
+
 app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(RateLimitingMiddleware)
+
+
 
 # Serve static dashboard
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -223,12 +238,12 @@ def scrape_and_process(request: URLRequest):
             "package": pkg.model_dump(),
             "output": result.model_dump()
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception(f"Error processing {request.url}: {e}")
-        return {
-            "success": False,
-            "detail": f"Failed to process package URL: {str(e)}"
-        }
+        raise HTTPException(status_code=500, detail=f"Failed to process package URL: {str(e)}")
+
 
 
 
@@ -285,7 +300,10 @@ def process_batch_background(urls: List[str], keys: Optional[Dict[str, str]] = N
 
 
 @app.post("/batch-urls")
+@app.post("/batch_urls")
+@app.post("/api/batch/urls")
 def batch_urls(request: BatchURLRequest, background_tasks: BackgroundTasks, auth_ok: bool = Depends(verify_admin_access)):
+
     """Scrape and process multiple URLs automatically in the background (Admin Protected, Max 25 URLs)."""
     if not request.urls:
         raise HTTPException(status_code=400, detail="No URLs provided")
@@ -351,6 +369,52 @@ def get_single_output(output_id: int):
     if not output:
         raise HTTPException(status_code=404, detail="Output not found")
     return output.model_dump()
+
+
+@app.get("/export_csv")
+@app.get("/export/csv")
+def export_csv_endpoint(status: Optional[str] = None):
+    """Export all generated SEO outputs as a structured CSV spreadsheet."""
+    import csv
+    import io
+    outputs = list_outputs(status=status)
+    output_stream = io.StringIO()
+    writer = csv.writer(output_stream)
+    
+    # Headers
+    writer.writerow([
+        "ID", "Package Name", "Destination", "Category", "Duration", "Cost",
+        "Primary Keyword", "Title Tag", "Meta Description", "QA Score", "Status",
+        "Package Overview", "Why Choose Heading", "Created At"
+    ])
+    
+    for o in outputs:
+        pkg = o.package_input
+        sec = o.sections
+        writer.writerow([
+            o.id,
+            pkg.name if pkg else "",
+            pkg.destination if pkg else "",
+            pkg.category if pkg else "",
+            pkg.duration if pkg else "",
+            pkg.cost if pkg else "",
+            o.primary_keyword or "",
+            o.title_tag or "",
+            o.meta_description or "",
+            o.qa_score or 0,
+            o.status or "pending",
+            sec.package_overview if sec else "",
+            sec.why_choose_heading if sec else "",
+            o.created_at or ""
+        ])
+    
+    output_stream.seek(0)
+    return StreamingResponse(
+        iter([output_stream.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=yatradham_seo_outputs.csv"}
+    )
+
 
 
 
@@ -448,7 +512,10 @@ class ContentGenerateRequest(BaseModel):
 
 
 @app.post("/generate-content")
+@app.post("/generate_content")
+@app.post("/api/generate_content")
 def generate_content(request: ContentGenerateRequest):
+
     """Generate net-new SEO content from scratch using AI."""
     valid_types = ["blog_post", "landing_page", "destination_guide", "social_media"]
     if request.content_type not in valid_types:
@@ -523,20 +590,26 @@ class LocalizeRequest(BaseModel):
 
 
 @app.post("/localize")
+@app.post("/api/localize")
 def localize(req: LocalizeRequest):
     """Translate and localize generated SEO content into Hindi or Gujarati."""
     from indic_engine import localize_content
     from schema_generator import generate_json_ld
     from linter import run_seo_linter
 
-    client = LLMClient()
+    # Use main client if initialized with system keys, else clone
+    req_client = LLMClient()
     if req.keys:
         for prov, key in req.keys.items():
             if key:
-                client.set_custom_keys(prov, key)
+                req_client.set_custom_keys(prov, key)
+    elif client.nvidia_api_key or client.groq_api_key or client.gemini_api_key or client.openrouter_api_key:
+        req_client = client
+
 
     try:
-        localized = localize_content(req.output, req.target_language, client)
+        localized = localize_content(req.output, req.target_language, req_client)
+
         
         # Regenerate Schema & Linter for the localized package
         json_ld = generate_json_ld(localized)
@@ -564,6 +637,7 @@ class WpVerifyRequest(BaseModel):
 
 
 @app.post("/api/wp/verify")
+@app.post("/wp/verify")
 def verify_wordpress_connection(req: WpVerifyRequest, auth_ok: bool = Depends(verify_admin_access)):
     """Verify WordPress credentials and REST API availability (Admin Protected)."""
     from ssrf_protection import is_safe_url
@@ -591,7 +665,9 @@ class WpPublishRequest(BaseModel):
 
 
 @app.post("/api/wp/publish")
+@app.post("/wp/publish")
 def publish_to_wordpress(req: WpPublishRequest, auth_ok: bool = Depends(verify_admin_access)):
+
     """Publish generated SEO content directly to WordPress (Admin Protected)."""
     from ssrf_protection import is_safe_url
     safe, reason = is_safe_url(req.site_url)

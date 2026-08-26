@@ -17,13 +17,16 @@ class PackageInput(BaseModel):
     raw_html: Optional[str] = Field(None, description="Raw HTML for storage")
     raw_text: Optional[str] = Field(None, description="Cleaned raw text for the LLM context")
 
-    @field_validator("name", "destination", "center_name", "cost", mode="before")
+    @field_validator("name", "destination", "center_name", "cost", "raw_text", mode="before")
     @classmethod
-    def sanitize_xss_inputs(cls, v: Any) -> Any:
+    def sanitize_xss_and_prompt_injection(cls, v: Any) -> Any:
         if isinstance(v, str):
-            from security_firewall import sanitize_xss
-            return sanitize_xss(v)
+            from security_firewall import sanitize_xss, sanitize_user_prompt
+            v = sanitize_xss(v)
+            # Check prompt injection patterns on input fields
+            v = sanitize_user_prompt(v, max_chars=10000)
         return v
+
 
 
 
