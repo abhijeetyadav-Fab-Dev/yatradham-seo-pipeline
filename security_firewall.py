@@ -365,7 +365,14 @@ Disallow: /settings/
 Disallow: /outputs
 Disallow: /export_csv
 Disallow: /clear-cache
+Disallow: /batch_urls
+Disallow: /generate_content
+Disallow: /process
+Disallow: /scrape
+Disallow: /wp/
+Disallow: /localize
 
-Sitemap: https://yatradham.org/sitemap.xml
+Sitemap: https://yatradham-seo-pipeline.onrender.com/sitemap.xml
 """
+
 
