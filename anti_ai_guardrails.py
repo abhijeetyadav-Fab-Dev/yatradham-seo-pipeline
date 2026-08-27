@@ -318,5 +318,9 @@ def de_slop_and_humanize(text: str) -> str:
     out = re.sub(r' \.', '.', out)
     out = re.sub(r'\n{3,}', '\n\n', out)
 
+    # Step 4: Eliminate any residual template placeholders
+    out = re.sub(r'\{[a-zA-Z0-9_\-]+\}', '', out)
+
     return out.strip()
+
 

@@ -521,9 +521,95 @@ class LLMClient:
 
         # 3. DISPATCH BY AGENT TYPE & CATEGORY
 
+        # AGENT: Indic Localization (Hindi & Gujarati)
+        if "native hindi copywriter" in system_msg.lower() or "hindi" in system_msg.lower() and "devanagari" in system_msg.lower():
+            hi_dict = {
+                "title_tag": f"{pkg_name} — यात्रा पैकेज और बुकिंग | YatraDham.Org",
+                "meta_description": f"{destination} में {pkg_name} की सम्पूर्ण जानकारी। शुद्ध सात्विक भोजन, सुरक्षित आश्रम प्रवास और दर्शन सुविधा। आज ही बुक करें!",
+                "package_overview": f"{pkg_name} {destination} के लिए एक अत्यंत पावन और सुखद आध्यात्मिक यात्रा पैकेज है। यह यात्रा श्रद्धालुओं को दिव्य दर्शन, पवित्र आरती और शांत वातावरण में ध्यान का अद्वितीय अनुभव प्रदान करती है।",
+                "why_choose_heading": f"YatraDham से {pkg_name} क्यों चुनें?",
+                "why_choose_bullets": [
+                    f"{destination} में सत्यापित और स्वच्छ धर्मशाला/होटल में सुरक्षित प्रवास।",
+                    "ताज़ा और 100% शुद्ध सात्विक भोजन की उत्तम व्यवस्था।",
+                    "मंदिर दर्शन और पवित्र आरती के लिए समर्पित स्थानीय मार्गदर्शन।",
+                    "पारदर्शी दरें बिना किसी छिपे हुए शुल्क के।",
+                    "वरिष्ठ नागरिकों और परिवारों के लिए 24/7 सहायता।"
+                ],
+                "who_can_benefit_heading": "इस यात्रा पैकेज का लाभ कौन ले सकता है?",
+                "who_can_benefit_bullets": [
+                    "सुखद और सुगम तीर्थ दर्शन की इच्छा रखने वाले सभी श्रद्धालु एवं परिवार।",
+                    "वरिष्ठ नागरिक जिन्हें सुलभ परिवहन और आरामदायक आवास की आवश्यकता है।",
+                    "शांत और आध्यात्मिक वातावरण में समय बिताने के इच्छुक भक्त।"
+                ],
+                "meal_section_heading": "भोजन व्यवस्था",
+                "meal_section_bullets": [
+                    "प्रतिदिन ताज़ा तैयार सात्विक भोजन (दाल, रोटी, सब्ज़ी, चावल)।",
+                    "अनुरोध पर बिना प्याज-लहसुन का जैन भोजन भी उपलब्ध।"
+                ],
+                "accommodation_heading": "आवास एवं सुविधाएं",
+                "accommodation_bullets": [
+                    f"{destination} में मंदिर के समीप स्थित स्वच्छ और आरामदायक कमरे।",
+                    "24 घंटे गर्म पानी और शुद्ध पेयजल की सुविधा।"
+                ],
+                "benefits_heading": f"{pkg_name} के मुख्य लाभ",
+                "benefits_items": [
+                    "यात्रा की अग्रिम पुष्टि और निश्चित बुकिंग वाउचर।",
+                    "मंदिर के मुख्य द्वारों के निकट सुविधाजनक आवागमन।",
+                    "अनुभवी पुरोहितों द्वारा विशेष संकल्प पूजा की सुविधा।"
+                ],
+                "faq": [
+                    {"question": "इस पैकेज में क्या-क्या शामिल है?", "answer": f"इसमें {destination} में आवास, सात्वic भोजन और मंदिर दर्शन हेतु स्थानीय सहायता शामिल है।"},
+                    {"question": "बुकिंग कैसे करें?", "answer": "YatraDham.Org पर तारीखें चुनें और सुरक्षित ऑनलाइन भुगतान कर तुरंत वाउचर प्राप्त करें।"}
+                ]
+            }
+            return json.dumps(hi_dict, ensure_ascii=False)
+
+        if "native gujarati copywriter" in system_msg.lower() or "gujarati" in system_msg.lower() and "gujarati script" in system_msg.lower():
+            gu_dict = {
+                "title_tag": f"{pkg_name} — યાત્રા પેકેજ અને બુકિંગ | YatraDham.Org",
+                "meta_description": f"{destination} માં {pkg_name} ની સંપૂર્ણ વિગત. શુદ્ધ સાત્વિક ભોજન, સુરક્ષિત આશ્રમ રોકાણ અને દર્શન સુવિધા. આજે જ બુક કરો!",
+                "package_overview": f"{pkg_name} {destination} માટે એક પવિત્ર અને સુગમ યાત્રા પેકેજ છે. આ યાત્રા ભક્તોને દિવ્ય દર્શન, પવિત્ર આરતી અને શાંત વાતાવરણમાં આધ્યાત્મિક અનુભવ પ્રદાન કરે છે.",
+                "why_choose_heading": f"YatraDham સાથે {pkg_name} શા માટે પસંદ કરવું?",
+                "why_choose_bullets": [
+                    f"{destination} માં ચકાસાયેલ અને સ્વચ્છ ધર્મશાળા/હોટલમાં સુરક્ષિત રોકાણ.",
+                    "તાજું અને 100% શુદ્ધ સાત્વિક ભોજન.",
+                    "મંદિર દર્શન અને પવિત્ર આરતી માટે સ્થાનિક માર્ગદર્શન.",
+                    "કોઈપણ છુપા ચાર્જ વગર પારદર્શક દરો.",
+                    "પરિવારો અને વરિષ્ઠ નાગરિકો માટે 24/7 સહાય."
+                ],
+                "who_can_benefit_heading": "આ યાત્રા પેકેજનો લાભ કોણ લઈ શકે છે?",
+                "who_can_benefit_bullets": [
+                    "સુગમ તીર્થ દર્શન કરવા ઇચ્છતા તમામ શ્રદ્ધાળુઓ અને પરિવારો.",
+                    "વરિષ્ઠ નાગરિકો જેમને આરામદાયક સુવિધાઓની જરૂર છે.",
+                    "આધ્યાત્મિક શાંતિ મેળવવા ઇચ્છતા ભક્તો."
+                ],
+                "meal_section_heading": "ભોજન વ્યવસ્થા",
+                "meal_section_bullets": [
+                    "દરરોજ તાજું શુદ્ધ સાત્વિક ભોજન (દાળ, રોટલી, શાક, ભાત).",
+                    "વિનંતી પર જૈન ભોજન પણ ઉપલબ્ધ."
+                ],
+                "accommodation_heading": "રોકાણ અને સુવિધાઓ",
+                "accommodation_bullets": [
+                    f"{destination} માં મંદિર નજીક સ્વચ્છ અને સુરક્ષિત રૂમ.",
+                    "24 કલાક ગરમ પાણી અને પીવાના શુદ્ધ પાણીની સુવિધા."
+                ],
+                "benefits_heading": f"{pkg_name} ના મુખ્ય ફાયદા",
+                "benefits_items": [
+                    "યાત્રાની અગાઉથી ખાતરીપૂર્વક બુકિંગ વાઉચર.",
+                    "મંદિરના મુખ્ય દરવાજા નજીક અનુકૂળ રોકાણ.",
+                    "વિશેષ પૂજા અને સંકલ્પ વિધિ માટે સગવડ."
+                ],
+                "faq": [
+                    {"question": "આ પેકેજમાં શું શામેલ છે?", "answer": f"આમાં {destination} માં રોકાણ, સાત્વિક ભોજન અને દર્શન સહાય શામેલ છે."},
+                    {"question": "બુકિંગ કેવી રીતે કરવું?", "answer": "YatraDham.Org પર તારીખો પસંદ કરી ઓનલાઇન પેમેન્ટ દ્વારા તરત જ વાઉચર મેળવો."}
+                ]
+            }
+            return json.dumps(gu_dict, ensure_ascii=False)
+
         # AGENT: Content Studio & Long-form Blog Creator (Must be checked before single-field subagents)
         if any(x in system_msg.lower() for x in ["content creator", "expert seo content writer", "write a comprehensive, engaging", "# content", "# headline"]):
             return f"""# TITLE
+
 {pkg_name} — Complete Cost Breakdown, Route & Verified Booking Guide | YatraDham
 
 # META DESCRIPTION
