@@ -148,6 +148,12 @@ def get_robots_txt():
     return PlainTextResponse(ROBOTS_TXT_CONTENT, media_type="text/plain")
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    """Serve favicon directly for root browser icon requests."""
+    return FileResponse("static/favicon.ico", media_type="image/x-icon")
+
+
 @app.get("/")
 def root(request: Request):
     enforce_rate_limit(request)
@@ -247,6 +253,12 @@ def scrape_and_process(request: URLRequest):
             destination=scraped.get("destination", ""),
             category=scraped.get("category", "tour"),
             center_name=scraped.get("center_name", ""),
+            image_url=scraped.get("image_url", ""),
+            street_address=scraped.get("street_address", ""),
+            check_in=scraped.get("check_in", ""),
+            check_out=scraped.get("check_out", ""),
+            star_rating=scraped.get("star_rating", ""),
+            amenities=scraped.get("amenities", []),
             raw_html=scraped.get("raw_html", ""),
             raw_text=scraped.get("raw_text", ""),
         )
@@ -905,6 +917,119 @@ def get_serp_intelligence_endpoint(query: str):
         "target_word_count_recommendation": "1500 - 2000 words",
         "recommended_headings": headings_benchmark,
         "heritage_context": heritage.get("summary") if heritage else None,
+    }
+
+
+# =====================================================================
+# ENTERPRISE TOOLS & OPEN API HARNESS (Scrapling + DeepSeek + Open APIs)
+# =====================================================================
+
+class StealthScrapeRequest(BaseModel):
+    url: str
+    timeout: Optional[float] = 6.0
+
+
+@app.post("/api/tools/scrape-stealth")
+def scrape_stealth_endpoint(req: StealthScrapeRequest):
+    """Scrapling + curl_cffi Chrome 124 stealth scrape with deep JSON-LD extraction."""
+    from ssrf_protection import is_safe_url
+    safe, reason = is_safe_url(req.url)
+    if not safe:
+        raise HTTPException(status_code=400, detail=f"SSRF Violation: {reason}")
+    from scrapling_engine import fetch_url_html, extract_with_scrapling
+    html = fetch_url_html(req.url, timeout=req.timeout or 6.0)
+    if not html:
+        return {"success": False, "error": "Unable to fetch HTML (blocked or unreachable)", "data": {}}
+    data = extract_with_scrapling(html, req.url)
+    return {"success": True, "url": req.url, "html_length": len(html), "data": data}
+
+
+class DeepSeekReasonRequest(BaseModel):
+    topic: str
+    system_prompt: Optional[str] = None
+    provider: Optional[str] = None
+    api_key: Optional[str] = None
+    model: Optional[str] = None
+
+
+@app.post("/api/tools/deepseek-reason")
+def deepseek_reasoning_endpoint(req: DeepSeekReasonRequest):
+    """DeepSeek two-stage reasoning protocol with chain-of-thought verification."""
+    from security_firewall import sanitize_user_prompt
+    clean_topic = sanitize_user_prompt(req.topic, max_chars=500)
+    clean_sys = sanitize_user_prompt(req.system_prompt, max_chars=1000) if req.system_prompt else None
+    
+    scoped_client = LLMClient()
+    if req.provider and req.api_key:
+        scoped_client.set_custom_keys(req.provider, req.api_key, req.model)
+    elif req.api_key:
+        scoped_client.set_custom_keys("deepseek", req.api_key, req.model)
+        
+    res = scoped_client.run_deepseek_reasoning(clean_topic, system_prompt=clean_sys)
+    return res
+
+
+@app.get("/api/tools/temple-intel")
+def temple_intel_endpoint(destination: str):
+    """Destination intelligence fusing OSM Nominatim, Wikipedia, Open-Meteo, Sunrise-Sunset & Datamuse."""
+    if not destination or len(destination.strip()) < 2:
+        raise HTTPException(status_code=400, detail="Destination query must be at least 2 characters")
+    from public_apis_enricher import enrich_destination_data
+    return enrich_destination_data(destination.strip())
+
+
+class QualityAuditRequest(BaseModel):
+    title: str
+    meta_description: str
+    primary_keyword: str
+    content: str
+    destination: Optional[str] = None
+    category: Optional[str] = "tour"
+
+
+@app.post("/api/tools/quality-audit")
+def quality_audit_endpoint(req: QualityAuditRequest):
+    """Enterprise 100M-scale content quality, safety, readability, and AI-slop auditor."""
+    from anti_ai_guardrails import AI_WORDS_SET
+    
+    text = f"{req.title} {req.meta_description} {req.content}".lower()
+    slop_found = [word for word in AI_WORDS_SET if word in text]
+    
+    words = req.content.split()
+    word_count = len(words)
+    sentences = max(1, req.content.count('.') + req.content.count('!') + req.content.count('?'))
+    avg_sentence_len = round(word_count / sentences, 1)
+    
+    dest_lower = (req.destination or req.title).lower()
+    is_high_altitude = any(place in dest_lower for place in ["kedarnath", "badrinath", "yamunotri", "gangotri", "amarnath", "tungnath", "hemkund"])
+    has_altitude_warning = any(w in text for w in ["altitude", "oxygen", "acclimatization", "medical fitness", "yatra pass", "biometric"])
+    
+    safety_score = 100
+    safety_warnings = []
+    if is_high_altitude and not has_altitude_warning:
+        safety_score -= 30
+        safety_warnings.append("High-altitude Himalayan shrine detected but missing altitude sickness (AMS) / mandatory medical pass disclaimer.")
+        
+    has_senior_advice = any(w in text for w in ["senior", "elderly", "palki", "doli", "pony", "ground floor", "lift"])
+    if not has_senior_advice:
+        safety_warnings.append("Missing explicit guidance for senior citizens (palki/doli availability, accessibility).")
+
+    has_pricing = any(w in text for w in ["₹", "rs.", "inr", "price", "cost", "tariff", "booking", "starting from"])
+    commercial_score = 100 if has_pricing else 60
+    
+    slop_score = max(0, 100 - (len(slop_found) * 12))
+    overall_quality_score = int((slop_score * 0.35) + (safety_score * 0.35) + (commercial_score * 0.30))
+    
+    return {
+        "overall_quality_score": overall_quality_score,
+        "word_count": word_count,
+        "avg_sentence_length": avg_sentence_len,
+        "ai_slop_detected": slop_found,
+        "ai_slop_score": slop_score,
+        "pilgrim_safety_score": safety_score,
+        "safety_warnings": safety_warnings,
+        "commercial_readiness_score": commercial_score,
+        "verdict": "ENTERPRISE_READY" if overall_quality_score >= 85 else "NEEDS_REFINEMENT"
     }
 
 

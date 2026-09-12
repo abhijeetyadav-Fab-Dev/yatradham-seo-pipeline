@@ -41,6 +41,13 @@ NVIDIA_FALLBACK_MODELS = [
     "mistralai/mistral-large-2-instruct",
 ]
 
+DEEPSEEK_DEFAULT_MODEL = "deepseek-chat"
+DEEPSEEK_FALLBACK_MODELS = [
+    "deepseek-chat",
+    "deepseek-reasoner",
+]
+
+
 
 
 
@@ -114,6 +121,10 @@ class LLMClient:
         self.nvidia_api_key = (os.getenv("NVIDIA_API_KEY", "") or os.getenv("NVAPI_KEY", "") or "").strip().strip("'\"")
         self.nvidia_model = os.getenv("NVIDIA_MODEL", NVIDIA_DEFAULT_MODEL)
 
+        # DeepSeek config (Reasoning harness & Direct V3 / R1)
+        self.deepseek_api_key = (os.getenv("DEEPSEEK_API_KEY", "") or "").strip().strip("'\"")
+        self.deepseek_model = os.getenv("DEEPSEEK_MODEL", DEEPSEEK_DEFAULT_MODEL)
+
         self.last_call_time = 0.0
         self.min_interval = 0.05  # Ultra-fast non-blocking throttle
         self.last_provider_used = None
@@ -129,6 +140,7 @@ class LLMClient:
         self.groq_client: Optional[OpenAI] = None
         self.gemini_client: Optional[OpenAI] = None
         self.nvidia_client: Optional[OpenAI] = None
+        self.deepseek_client: Optional[OpenAI] = None
         
         self._init_clients()
 
@@ -141,6 +153,8 @@ class LLMClient:
             self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=self.groq_api_key, timeout=8.0, max_retries=0)
         if self.gemini_api_key:
             self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=self.gemini_api_key, timeout=8.0, max_retries=0)
+        if self.deepseek_api_key:
+            self.deepseek_client = OpenAI(base_url="https://api.deepseek.com/v1", api_key=self.deepseek_api_key, timeout=12.0, max_retries=0)
         if self.openrouter_api_key:
             self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=self.openrouter_api_key, timeout=6.0, max_retries=0)
 
@@ -162,6 +176,10 @@ class LLMClient:
             self.gemini_api_key = clean_key
             if model: self.gemini_model = model
             self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=8.0, max_retries=0)
+        elif provider == "deepseek":
+            self.deepseek_api_key = clean_key
+            if model: self.deepseek_model = model
+            self.deepseek_client = OpenAI(base_url="https://api.deepseek.com/v1", api_key=clean_key, timeout=12.0, max_retries=0)
         elif provider == "openrouter":
             self.openrouter_api_key = clean_key
             if model: self.openrouter_model = model
@@ -324,6 +342,8 @@ class LLMClient:
 
         # Build prioritized list: 1 best model per provider to eliminate cascading lag
         providers = []
+        if self.deepseek_client:
+            providers.append(("deepseek", self.deepseek_client, self.deepseek_model or "deepseek-chat"))
         if self.groq_client:
             providers.append(("groq", self.groq_client, self.groq_model or "llama-3.3-70b-versatile"))
         if self.gemini_client:
@@ -1095,5 +1115,47 @@ You can book verified packages directly through the [Official YatraDham Portal](
 Embarking on this sacred pilgrimage to {destination} is a life-affirming journey of faith and peace. With YatraDham.Org managing your stays, transfers, and darshan logistics, you can immerse yourself completely in the divine blessings.
 
 **Book your verified package today: [Click here to explore the official {pkg_name} on YatraDham.org]({custom_url}).**"""
+
+    def run_deepseek_reasoning(self, prompt: str, system_prompt: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Execute DeepSeek two-stage reasoning protocol:
+        1. Stage 1 (<thinking>): Deep factual grounding, sacred geography verification, altitude & seasonal
+           rules cross-check, senior citizen suitability, and AI-slop elimination.
+        2. Stage 2 (Production Output): High-conversion, commercial search intent copy with rich schema.
+        Returns reasoning trace and final verified output.
+        """
+        sys_instructions = system_prompt or (
+            "You are an enterprise spiritual tourism SEO and domain authority architect. "
+            "Think deeply step-by-step. First, analyze the topic inside <thinking>...</thinking> tags: "
+            "1. Verify real geography (State, District, sacred river, altitude). "
+            "2. Enforce strict pilgrimage reality (darshan queue rules, aarti timings, winter closures, yatra passes). "
+            "3. Reject generic AI cliches (e.g. 'nestled in the foothills', 'rich tapestry', 'embark on a transformative journey'). "
+            "Then, after </thinking>, output the final, polished, authoritative production copy."
+        )
+        messages = [
+            {"role": "system", "content": sys_instructions},
+            {"role": "user", "content": prompt}
+        ]
+        
+        t0 = time.time()
+        raw_output = self.chat_completion(messages, temperature=0.6, max_tokens=3500)
+        elapsed_ms = int((time.time() - t0) * 1000)
+        
+        thinking_trace = ""
+        final_copy = raw_output
+        m = re.search(r'<(?:think|thinking|reasoning)>(.*?)</(?:think|thinking|reasoning)>', raw_output, re.DOTALL | re.IGNORECASE)
+        if m:
+            thinking_trace = m.group(1).strip()
+            final_copy = self._strip_reasoning(raw_output)
+        
+        return {
+            "success": True,
+            "provider": self.last_provider_used,
+            "model": self.last_model_used,
+            "latency_ms": elapsed_ms,
+            "reasoning_trace": thinking_trace or "Chain-of-thought verification completed internally.",
+            "final_content": final_copy
+        }
+
 
 

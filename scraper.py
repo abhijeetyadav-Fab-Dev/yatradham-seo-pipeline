@@ -171,6 +171,7 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
     center_name = ""
     center_loc = ""
     is_not_found = False
+    scrapling_data: Dict[str, Any] = {}
 
     # Extract name and duration from slug as primary fallback
     slug_name = ""
@@ -372,9 +373,12 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
     data["parsed_schedule"] = parsed_schedule
     data["parsed_pricing"] = parsed_pricing
 
-    # Cost Extraction from Page Text
+    # Cost Extraction from Scrapling JSON-LD / Page Text
     cost_val = ""
-    if text and not is_not_found:
+    if scrapling_data.get("price_raw"):
+        cost_val = clean_price_string(scrapling_data["price_raw"])
+
+    if (not cost_val or "Contact for Pricing" in cost_val) and text and not is_not_found:
         # Find all price mentions
         all_prices = re.findall(r'(?:Starting\s+From\s+[-:]?\s*)?(?:₹|Rs\.?|INR)\s*[\d,]+(?:\.\d{2})?(?:\s*(?:Per\s*(?:Room\/)?Person\/?(?:Per\s*night)?|per\s*night|per\s*person|\/-))?', text, re.IGNORECASE)
         valid_prices = [p.strip() for p in all_prices if re.search(r'\d', p) and "0000" not in p]
@@ -386,10 +390,14 @@ def extract_package_data(html: str, url: Optional[str] = None, explicit_category
         cost_val = "Starting From ₹ Contact for Pricing"
     data["cost"] = cost_val
 
-    data["check_in"] = "12:00 PM"
-    data["check_out"] = "12:00 PM"
+    data["check_in"] = scrapling_data.get("checkin_time") or "12:00 PM"
+    data["check_out"] = scrapling_data.get("checkout_time") or "11:00 AM"
+    data["image_url"] = scrapling_data.get("hero_image_url") or ""
+    data["street_address"] = scrapling_data.get("street_address") or ""
+    data["star_rating"] = scrapling_data.get("star_rating") or ""
+    data["amenities"] = scrapling_data.get("amenities") or []
     data["raw_html"] = html[:50000] if html else ""
-    data["raw_text"] = (text or f"{data['name']} in {data['destination']} with verified accommodation and healthy meals.")[:20000]
+    data["raw_text"] = (text or scrapling_data.get("description_raw") or f"{data['name']} in {data['destination']} with verified accommodation and healthy meals.")[:20000]
     return data
 
 

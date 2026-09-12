@@ -82,6 +82,9 @@ AI_REPLACEMENT_TABLE = {
     r"\bgame-changer\b": "major step",
 }
 
+AI_WORDS_SET = {re.sub(r'\\b', '', k).strip() for k in AI_REPLACEMENT_TABLE.keys()}
+
+
 # 21 Pattern Categories for detection and scoring
 PATTERN_CATEGORIES = [
     ("Robotic Transition Words", [r"\bmoreover\b", r"\bfurthermore\b", r"\badditionally\b", r"\bin conclusion\b", r"\bto sum up\b"]),

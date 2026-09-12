@@ -14,6 +14,12 @@ class PackageInput(BaseModel):
     category: Optional[str] = Field("auto", description="Category: wellness, tour, stay, puja, or auto")
     center_name: Optional[str] = Field(None, description="Ashram / Center / Hotel name")
     cost: Optional[str] = Field(None, description="Cost per person or per night")
+    image_url: Optional[str] = Field(None, description="Hero image from source")
+    street_address: Optional[str] = Field(None, description="Street address")
+    check_in: Optional[str] = Field(None, description="Check-in timing")
+    check_out: Optional[str] = Field(None, description="Check-out timing")
+    star_rating: Optional[str] = Field(None, description="Property rating")
+    amenities: Optional[List[str]] = Field(default_factory=list, description="Extracted amenities")
     raw_html: Optional[str] = Field(None, description="Raw HTML for storage")
     raw_text: Optional[str] = Field(None, description="Cleaned raw text for the LLM context")
 
