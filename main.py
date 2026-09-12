@@ -1033,6 +1033,70 @@ def quality_audit_endpoint(req: QualityAuditRequest):
     }
 
 
+# =====================================================================
+# SEMRUSH SEO SUITE API ENDPOINTS
+# =====================================================================
+
+class SemrushDomainRequest(BaseModel):
+    domain: Optional[str] = "yatradham.org"
+
+
+class SemrushKeywordRequest(BaseModel):
+    keyword: Optional[str] = "chardham yatra"
+
+
+class SemrushSiteAuditRequest(BaseModel):
+    url: Optional[str] = "https://yatradham.org"
+
+
+class SemrushGapRequest(BaseModel):
+    domain_a: Optional[str] = None
+    domain_b: Optional[str] = None
+    domain1: Optional[str] = None
+    domain2: Optional[str] = None
+
+
+@app.api_route("/api/semrush/domain-overview", methods=["GET", "POST"])
+def semrush_domain_overview_endpoint(domain: Optional[str] = None, req: Optional[SemrushDomainRequest] = None):
+    """Semrush Domain Overview: Authority Score, Organic Traffic, Keywords, Competitors."""
+    from semrush_suite import get_domain_overview
+    target = (req.domain if req and req.domain else None) or domain or "yatradham.org"
+    return get_domain_overview(target)
+
+
+@app.api_route("/api/semrush/keyword-magic", methods=["GET", "POST"])
+def semrush_keyword_magic_endpoint(keyword: Optional[str] = None, limit: Optional[int] = 50, req: Optional[SemrushKeywordRequest] = None):
+    """Semrush Keyword Magic Tool: Real-time search volume, intent classification, KD%, and CPC."""
+    from semrush_suite import get_keyword_magic
+    target = (req.keyword if req and req.keyword else None) or keyword or "chardham yatra"
+    return get_keyword_magic(target, limit=limit or 50)
+
+
+@app.api_route("/api/semrush/site-audit", methods=["GET", "POST"])
+def semrush_site_audit_endpoint(url: Optional[str] = None, req: Optional[SemrushSiteAuditRequest] = None):
+    """Semrush Site Audit: 30-point technical crawl for HTTP codes, meta, H1, images, schema, security."""
+    from semrush_suite import run_site_audit
+    target = (req.url if req and req.url else None) or url or "https://yatradham.org"
+    return run_site_audit(target)
+
+
+@app.api_route("/api/semrush/backlinks", methods=["GET", "POST"])
+def semrush_backlinks_endpoint(domain: Optional[str] = None, req: Optional[SemrushDomainRequest] = None):
+    """Semrush Backlink Analytics: Authority Score, Referring Domains, Dofollow Ratio, Anchor texts."""
+    from semrush_suite import get_backlink_overview
+    target = (req.domain if req and req.domain else None) or domain or "yatradham.org"
+    return get_backlink_overview(target)
+
+
+@app.post("/api/semrush/keyword-gap")
+def semrush_keyword_gap_endpoint(req: SemrushGapRequest):
+    """Semrush Keyword Gap: Identifies shared, missing, and untapped ranking opportunities."""
+    from semrush_suite import get_keyword_gap
+    d1 = req.domain_a or req.domain1 or "yatradham.org"
+    d2 = req.domain_b or req.domain2 or "makemytrip.com"
+    return get_keyword_gap(d1, d2)
+
+
 @app.get("/stats")
 def stats():
     return get_stats()

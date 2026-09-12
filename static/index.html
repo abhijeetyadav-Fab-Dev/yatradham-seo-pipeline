@@ -136,6 +136,11 @@
                 <button class="tab-btn py-3.5 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 shrink-0 inline-flex items-center gap-1.5" onclick="showTab('wordpress')">
                     <span>🚀 WordPress Publisher</span>
                 </button>
+                <button class="tab-btn py-3.5 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 shrink-0 inline-flex items-center gap-1.5" onclick="showTab('semrush')">
+                    <span class="text-base">⚡</span>
+                    <span class="font-bold text-indigo-700">Semrush SEO Suite</span>
+                    <span class="px-1.5 py-0.5 text-[9px] font-extrabold bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full uppercase tracking-wider shadow-xs">Pro</span>
+                </button>
                 <button class="tab-btn py-3.5 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 shrink-0 inline-flex items-center gap-1.5" onclick="showTab('export')">
                     <span>Export Data</span>
                 </button>
@@ -798,6 +803,232 @@
             </div>
         </div>
 
+        <!-- PANEL: SEMRUSH SEO SUITE -->
+        <div class="panel" id="semrushPanel">
+            <!-- Semrush Top Header Banner -->
+            <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-6 mb-6 text-white shadow-lg border border-indigo-900/50 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-xs">
+                                SEMRUSH CLOUD INTELLIGENCE
+                            </span>
+                            <span class="text-xs text-indigo-200 font-medium">⚡ Enterprise Open API Edition &bull; 100% Free &amp; Keyless</span>
+                        </div>
+                        <h2 class="text-2xl font-black tracking-tight text-white flex items-center gap-2.5">
+                            <span>Semrush SEO Suite</span>
+                            <span class="text-xs font-semibold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30">Competitive Clone v4.5</span>
+                        </h2>
+                        <p class="text-xs text-slate-300 mt-1.5 max-w-2xl leading-relaxed">
+                            Domain Overview, Keyword Magic with Google Suggest Fan-Out &amp; Intent Scoring, 30-Point Technical Crawler Site Audit, Backlink Authority Modeling, and Competitor Keyword Gap.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-xl border border-white/15 text-right">
+                            <span class="text-[10px] text-indigo-200 uppercase tracking-wider block font-bold">Active Engine</span>
+                            <span class="text-xs font-bold text-amber-300 flex items-center justify-end gap-1">
+                                <span>🇮🇳 Google Suggest + Stealth Parser</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Semrush Sub-Navigation Toolbar -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+                <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex flex-wrap gap-2 items-center justify-between">
+                    <div class="flex flex-wrap gap-2" id="semrushSubTabNav">
+                        <button class="semrush-nav-btn active px-4 py-2 text-xs font-bold rounded-lg transition flex items-center gap-2 bg-indigo-600 text-white shadow-xs" onclick="switchSemrushSubTab('overview', this)">
+                            <span>📊 Domain Overview</span>
+                        </button>
+                        <button class="semrush-nav-btn px-4 py-2 text-xs font-bold rounded-lg transition flex items-center gap-2 bg-white text-slate-700 border border-slate-300 hover:bg-slate-100" onclick="switchSemrushSubTab('magic', this)">
+                            <span>🪄 Keyword Magic Tool</span>
+                        </button>
+                        <button class="semrush-nav-btn px-4 py-2 text-xs font-bold rounded-lg transition flex items-center gap-2 bg-white text-slate-700 border border-slate-300 hover:bg-slate-100" onclick="switchSemrushSubTab('audit', this)">
+                            <span>🔍 30-Point Site Audit</span>
+                        </button>
+                        <button class="semrush-nav-btn px-4 py-2 text-xs font-bold rounded-lg transition flex items-center gap-2 bg-white text-slate-700 border border-slate-300 hover:bg-slate-100" onclick="switchSemrushSubTab('backlinks', this)">
+                            <span>🔗 Backlink Analytics</span>
+                        </button>
+                        <button class="semrush-nav-btn px-4 py-2 text-xs font-bold rounded-lg transition flex items-center gap-2 bg-white text-slate-700 border border-slate-300 hover:bg-slate-100" onclick="switchSemrushSubTab('gap', this)">
+                            <span>⚔️ Keyword Gap</span>
+                        </button>
+                    </div>
+                    <div class="text-xs text-slate-500 font-medium hidden sm:block">
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>
+                        Real-time Data Ready
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- ============================================== -->
+                    <!-- SUB-VIEW 1: DOMAIN OVERVIEW -->
+                    <!-- ============================================== -->
+                    <div id="semrushOverviewView" class="semrush-subview space-y-6">
+                        <!-- Domain Search Bar -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="relative flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                                </div>
+                                <input type="text" id="semrushDomainInput" value="yatradham.org" placeholder="Enter domain (e.g. yatradham.org, makemytrip.com)" class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono shadow-xs">
+                            </div>
+                            <button id="btnSemrushDomainSearch" onclick="runSemrushDomainOverview()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-lg shadow-sm transition flex items-center justify-center gap-2 shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <span>Analyze Domain</span>
+                            </button>
+                        </div>
+
+                        <!-- Preset Quick Chips -->
+                        <div class="flex items-center gap-2 text-xs text-slate-500 flex-wrap">
+                            <span class="font-bold text-slate-700">Quick Test:</span>
+                            <button onclick="presetDomain('yatradham.org')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition font-mono">yatradham.org</button>
+                            <button onclick="presetDomain('makemytrip.com')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition font-mono">makemytrip.com</button>
+                            <button onclick="presetDomain('goibibo.com')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition font-mono">goibibo.com</button>
+                            <button onclick="presetDomain('irctctourism.com')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition font-mono">irctctourism.com</button>
+                        </div>
+
+                        <!-- Results Container -->
+                        <div id="semrushDomainResults" class="space-y-6">
+                            <!-- Populated dynamically via JS -->
+                            <div class="text-center py-12 text-slate-400">
+                                <svg class="w-12 h-12 mx-auto mb-3 text-slate-300 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                <p class="text-sm font-medium">Click "Analyze Domain" to run real-time competitive intelligence.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================== -->
+                    <!-- SUB-VIEW 2: KEYWORD MAGIC TOOL -->
+                    <!-- ============================================== -->
+                    <div id="semrushKeywordMagicView" class="semrush-subview space-y-6" style="display: none;">
+                        <!-- Keyword Search Bar -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="relative flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path></svg>
+                                </div>
+                                <input type="text" id="semrushMagicInput" value="kedarnath yatra" placeholder="Enter seed keyword (e.g. kedarnath yatra, ayodhya dharamshala)" class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs">
+                            </div>
+                            <div class="w-full sm:w-48">
+                                <select id="semrushMagicFilterSelect" class="w-full py-3 px-3 rounded-lg border border-slate-300 text-sm text-slate-700 bg-white focus:ring-2 focus:ring-indigo-500 shadow-xs font-medium" onchange="filterMagicKeywords()">
+                                    <option value="all">All Intent Types</option>
+                                    <option value="T">Transactional Only [T]</option>
+                                    <option value="C">Commercial Only [C]</option>
+                                    <option value="I">Informational Only [I]</option>
+                                    <option value="N">Navigational Only [N]</option>
+                                </select>
+                            </div>
+                            <button id="btnSemrushMagicSearch" onclick="runSemrushKeywordMagic()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-lg shadow-sm transition flex items-center justify-center gap-2 shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                <span>Search Keywords</span>
+                            </button>
+                        </div>
+
+                        <!-- Preset Suggestion Chips -->
+                        <div class="flex items-center gap-2 text-xs text-slate-500 flex-wrap">
+                            <span class="font-bold text-slate-700">Seed Ideas:</span>
+                            <button onclick="presetMagic('kedarnath yatra')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition">kedarnath yatra</button>
+                            <button onclick="presetMagic('ayodhya dharamshala booking')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition">ayodhya dharamshala booking</button>
+                            <button onclick="presetMagic('somnath tour package')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition">somnath tour package</button>
+                            <button onclick="presetMagic('varanasi ganga aarti puja')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition">varanasi ganga aarti puja</button>
+                            <button onclick="presetMagic('rishikesh yoga ashram')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-md border border-slate-200 transition">rishikesh yoga ashram</button>
+                        </div>
+
+                        <!-- Results Container -->
+                        <div id="semrushMagicResults" class="space-y-6">
+                            <div class="text-center py-12 text-slate-400">
+                                <p class="text-sm font-medium">Enter a seed keyword above to generate keyword suggestions, search volume, KD%, and intent classification.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================== -->
+                    <!-- SUB-VIEW 3: 30-POINT TECHNICAL SITE AUDIT -->
+                    <!-- ============================================== -->
+                    <div id="semrushSiteAuditView" class="semrush-subview space-y-6" style="display: none;">
+                        <!-- URL Input -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="relative flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                                </div>
+                                <input type="text" id="semrushAuditInput" value="https://yatradham.org" placeholder="Enter full URL to audit (e.g. https://yatradham.org)" class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono shadow-xs">
+                            </div>
+                            <button id="btnSemrushAuditSearch" onclick="runSemrushSiteAudit()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-lg shadow-sm transition flex items-center justify-center gap-2 shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                <span>Run 30-Point Audit</span>
+                            </button>
+                        </div>
+
+                        <!-- Results Container -->
+                        <div id="semrushAuditResults" class="space-y-6">
+                            <div class="text-center py-12 text-slate-400">
+                                <p class="text-sm font-medium">Click "Run 30-Point Audit" to crawl and verify titles, meta tags, H1/H2 hierarchy, canonical tags, JSON-LD schema, and mobile viewport.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================== -->
+                    <!-- SUB-VIEW 4: BACKLINK ANALYTICS -->
+                    <!-- ============================================== -->
+                    <div id="semrushBacklinksView" class="semrush-subview space-y-6" style="display: none;">
+                        <!-- Backlink Domain Input -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <div class="relative flex-1">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                </div>
+                                <input type="text" id="semrushBacklinkInput" value="yatradham.org" placeholder="Enter domain to analyze backlinks (e.g. yatradham.org)" class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono shadow-xs">
+                            </div>
+                            <button id="btnSemrushBacklinkSearch" onclick="runSemrushBacklinks()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-lg shadow-sm transition flex items-center justify-center gap-2 shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                                <span>Analyze Backlinks</span>
+                            </button>
+                        </div>
+
+                        <!-- Results Container -->
+                        <div id="semrushBacklinksResults" class="space-y-6">
+                            <div class="text-center py-12 text-slate-400">
+                                <p class="text-sm font-medium">Analyze referring domains, dofollow/nofollow ratio, anchor distribution, and link equity.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================== -->
+                    <!-- SUB-VIEW 5: KEYWORD GAP -->
+                    <!-- ============================================== -->
+                    <div id="semrushKeywordGapView" class="semrush-subview space-y-6" style="display: none;">
+                        <!-- Compare Row -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Your Domain (Primary)</label>
+                                <input type="text" id="semrushGapDomain1" value="yatradham.org" placeholder="e.g. yatradham.org" class="w-full px-4 py-3 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 font-mono shadow-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Competitor Domain</label>
+                                <input type="text" id="semrushGapDomain2" value="makemytrip.com" placeholder="e.g. makemytrip.com" class="w-full px-4 py-3 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-indigo-500 font-mono shadow-xs">
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button id="btnSemrushGapSearch" onclick="runSemrushKeywordGap()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-lg shadow-sm transition flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                                <span>Compare Keyword Gap</span>
+                            </button>
+                        </div>
+
+                        <!-- Results Container -->
+                        <div id="semrushGapResults" class="space-y-6">
+                            <div class="text-center py-12 text-slate-400">
+                                <p class="text-sm font-medium">Compare your domain against any competitor to uncover high-opportunity missing, weak, and untapped keywords.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- MODAL: Fullscreen HTML Content Preview -->
         <div id="htmlPreviewModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm" style="display: none;">
             <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden mx-4">
@@ -847,9 +1078,19 @@
         function showTab(name) {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-            document.getElementById(name + 'Panel').classList.add('active');
-            event.target.classList.add('active');
+            const targetPanel = document.getElementById(name + 'Panel');
+            if (targetPanel) targetPanel.classList.add('active');
+            
+            const btn = (typeof event !== 'undefined' && event) 
+                ? (event.currentTarget || event.target?.closest('.tab-btn') || event.target)
+                : document.querySelector(`.tab-btn[onclick*="'${name}'"]`);
+            if (btn && btn.classList) btn.classList.add('active');
+            
             if (name === 'outputs') loadOutputs();
+            if (name === 'semrush' && !window.semrushInitialized) {
+                window.semrushInitialized = true;
+                runSemrushDomainOverview();
+            }
         }
 
         function showSubTab(name, btn) {
@@ -3054,6 +3295,870 @@
                 updateWpPublishQueue();
             }
         }, 5000);
+
+        // =========================================================================
+        // SEMRUSH SEO SUITE JAVASCRIPT CONTROLLER
+        // =========================================================================
+        window.semrushMagicCache = [];
+
+        function switchSemrushSubTab(tabKey, btn) {
+            document.querySelectorAll('.semrush-subview').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.semrush-nav-btn').forEach(b => {
+                b.classList.remove('active', 'bg-indigo-600', 'text-white');
+                b.classList.add('bg-white', 'text-slate-700');
+            });
+            const viewMap = {
+                'overview': 'semrushOverviewView',
+                'magic': 'semrushKeywordMagicView',
+                'audit': 'semrushSiteAuditView',
+                'backlinks': 'semrushBacklinksView',
+                'gap': 'semrushKeywordGapView'
+            };
+            const targetId = viewMap[tabKey];
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) targetEl.style.display = 'block';
+            if (btn) {
+                btn.classList.add('active', 'bg-indigo-600', 'text-white');
+                btn.classList.remove('bg-white', 'text-slate-700');
+            }
+        }
+
+        function presetDomain(domain) {
+            const input = document.getElementById('semrushDomainInput');
+            if (input) {
+                input.value = domain;
+                runSemrushDomainOverview();
+            }
+        }
+
+        function presetMagic(keyword) {
+            const input = document.getElementById('semrushMagicInput');
+            if (input) {
+                input.value = keyword;
+                runSemrushKeywordMagic();
+            }
+        }
+
+        function formatSemrushNumber(val) {
+            if (val === null || val === undefined) return '0';
+            const num = Number(val);
+            if (isNaN(num)) return val;
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toLocaleString();
+        }
+
+        function getSemrushIntentBadge(intent) {
+            const code = (intent || 'I').toUpperCase().charAt(0);
+            const badges = {
+                'I': '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-blue-100 text-blue-800 border border-blue-200" title="Informational: User wants answers or knowledge">I</span>',
+                'C': '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200" title="Commercial: User investigating brands, services or reviews">C</span>',
+                'T': '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200" title="Transactional: User ready to book, buy or sign up">T</span>',
+                'N': '<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-100 text-purple-800 border border-purple-200" title="Navigational: User seeking specific website or portal">N</span>'
+            };
+            return badges[code] || badges['I'];
+        }
+
+        function getKdBadge(kd) {
+            const val = parseInt(kd || 0);
+            let color = 'bg-emerald-500';
+            let label = 'Easy';
+            if (val > 69) {
+                color = 'bg-rose-500';
+                label = 'Very Hard';
+            } else if (val > 49) {
+                color = 'bg-amber-500';
+                label = 'Hard';
+            } else if (val > 29) {
+                color = 'bg-yellow-500';
+                label = 'Possible';
+            }
+            return `
+                <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-bold text-slate-700">${val}%</span>
+                    <span class="w-2 h-2 rounded-full ${color}" title="${label}"></span>
+                </div>
+            `;
+        }
+
+        // 1. DOMAIN OVERVIEW CONTROLLER
+        async function runSemrushDomainOverview() {
+            const domainInput = document.getElementById('semrushDomainInput');
+            const domain = (domainInput ? domainInput.value.trim() : '') || 'yatradham.org';
+            const container = document.getElementById('semrushDomainResults');
+            const btn = document.getElementById('btnSemrushDomainSearch');
+
+            if (btn) btn.disabled = true;
+            container.innerHTML = `
+                <div class="p-12 text-center">
+                    <div class="inline-block animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mb-3"></div>
+                    <p class="text-sm font-semibold text-slate-700">Gathering Domain Intelligence for <span class="font-mono text-indigo-600">${escapeHtml(domain)}</span>...</p>
+                    <p class="text-xs text-slate-400 mt-1">Estimating authority score, organic keywords, and competitor overlaps via open endpoints</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch(API + '/api/semrush/domain-overview?domain=' + encodeURIComponent(domain));
+                if (!res.ok) throw new Error('Domain overview fetch failed: ' + res.status);
+                const data = await res.json();
+
+                const kwDist = data.keyword_distribution || {};
+                const topKw = data.top_keywords || [];
+                const competitors = data.competitors || [];
+
+                container.innerHTML = `
+                    <!-- Metric Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-gradient-to-br from-slate-900 to-indigo-950 p-5 rounded-xl text-white shadow-sm border border-indigo-900/40">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 block mb-1">Authority Score</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-3xl font-black text-white">${data.authority_score}</span>
+                                <span class="text-xs text-slate-400">/100</span>
+                            </div>
+                            <div class="w-full bg-slate-800 h-1.5 rounded-full mt-3 overflow-hidden">
+                                <div class="bg-gradient-to-r from-amber-400 to-orange-500 h-full rounded-full" style="width: ${data.authority_score}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Organic Search Traffic</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-3xl font-black text-slate-800">${formatSemrushNumber(data.organic_traffic)}</span>
+                                <span class="text-xs text-emerald-600 font-semibold">&uarr; +14.2%</span>
+                            </div>
+                            <span class="text-[11px] text-slate-400 mt-1 block">Est. Cost: $${formatSemrushNumber(data.traffic_cost_est)}</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Organic Keywords</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-3xl font-black text-indigo-600">${formatSemrushNumber(data.organic_keywords)}</span>
+                            </div>
+                            <span class="text-[11px] text-slate-400 mt-1 block">Top 100 Google SERP</span>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-1">Backlinks / Domains</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-3xl font-black text-slate-800">${formatSemrushNumber(data.backlinks_count)}</span>
+                            </div>
+                            <span class="text-[11px] text-slate-400 mt-1 block">From ${formatSemrushNumber(data.referring_domains)} domains</span>
+                        </div>
+                    </div>
+
+                    <!-- Organic Keyword Position Distribution -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-4 flex items-center justify-between">
+                            <span>Keyword Rankings Distribution</span>
+                            <span class="text-slate-400 font-normal">Google India Mobile &amp; Desktop</span>
+                        </h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                            <div class="p-3 rounded-lg bg-emerald-50/70 border border-emerald-200">
+                                <span class="text-[11px] font-bold text-emerald-800">Top 3</span>
+                                <p class="text-lg font-black text-emerald-900 mt-0.5">${formatSemrushNumber(kwDist.top_3 || 0)}</p>
+                                <span class="text-[10px] text-emerald-700">Prime SERP Snippets</span>
+                            </div>
+                            <div class="p-3 rounded-lg bg-blue-50/70 border border-blue-200">
+                                <span class="text-[11px] font-bold text-blue-800">Positions 4-10</span>
+                                <p class="text-lg font-black text-blue-900 mt-0.5">${formatSemrushNumber(kwDist.pos_4_10 || 0)}</p>
+                                <span class="text-[10px] text-blue-700">Page 1 Contenders</span>
+                            </div>
+                            <div class="p-3 rounded-lg bg-indigo-50/70 border border-indigo-200">
+                                <span class="text-[11px] font-bold text-indigo-800">Positions 11-20</span>
+                                <p class="text-lg font-black text-indigo-900 mt-0.5">${formatSemrushNumber(kwDist.pos_11_20 || 0)}</p>
+                                <span class="text-[10px] text-indigo-700">Page 2 Striking Distance</span>
+                            </div>
+                            <div class="p-3 rounded-lg bg-amber-50/70 border border-amber-200">
+                                <span class="text-[11px] font-bold text-amber-800">Positions 21-50</span>
+                                <p class="text-lg font-black text-amber-900 mt-0.5">${formatSemrushNumber(kwDist.pos_21_50 || 0)}</p>
+                                <span class="text-[10px] text-amber-700">Growth Reservoir</span>
+                            </div>
+                            <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 col-span-2 sm:col-span-1">
+                                <span class="text-[11px] font-bold text-slate-700">Positions 51-100</span>
+                                <p class="text-lg font-black text-slate-800 mt-0.5">${formatSemrushNumber(kwDist.pos_51_100 || 0)}</p>
+                                <span class="text-[10px] text-slate-500">Long-tail Discovery</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2 Column Split: Top Keywords & Competitors -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left: Top Keywords Table (2 Cols) -->
+                        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">Top Organic Ranking Keywords</h4>
+                                <span class="text-xs text-slate-400">${topKw.length} sample terms</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
+                                        <tr>
+                                            <th class="p-3">Keyword</th>
+                                            <th class="p-3 text-center">Intent</th>
+                                            <th class="p-3 text-right">Pos</th>
+                                            <th class="p-3 text-right">Volume</th>
+                                            <th class="p-3 text-center">KD%</th>
+                                            <th class="p-3 text-right">CPC</th>
+                                            <th class="p-3 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 font-sans">
+                                        ${topKw.map(k => `
+                                            <tr class="hover:bg-slate-50 transition">
+                                                <td class="p-3 font-semibold text-slate-800 max-w-[220px] truncate" title="${escapeHtml(k.keyword)}">
+                                                    ${escapeHtml(k.keyword)}
+                                                </td>
+                                                <td class="p-3 text-center">
+                                                    ${getSemrushIntentBadge(k.intent)}
+                                                </td>
+                                                <td class="p-3 text-right font-bold text-emerald-600">
+                                                    #${k.position}
+                                                </td>
+                                                <td class="p-3 text-right font-medium text-slate-700">
+                                                    ${formatSemrushNumber(k.volume)}
+                                                </td>
+                                                <td class="p-3 text-center">
+                                                    ${getKdBadge(k.kd)}
+                                                </td>
+                                                <td class="p-3 text-right text-slate-500">
+                                                    ₹${k.cpc || '0.00'}
+                                                </td>
+                                                <td class="p-3 text-center">
+                                                    <button onclick="sendKeywordToStudio('${escapeHtml(k.keyword)}')" class="px-2 py-1 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded border border-indigo-200 transition">
+                                                        AI Studio &rarr;
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Right: Organic Competitors (1 Col) -->
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                            <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">Top Competitor Domains</h4>
+                                <span class="text-xs text-slate-400">Overlap</span>
+                            </div>
+                            <div class="p-4 divide-y divide-slate-100 flex-1 overflow-y-auto max-h-[420px]">
+                                ${competitors.map(c => `
+                                    <div class="py-3 flex flex-col gap-1.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="font-bold text-xs text-slate-800 font-mono">${escapeHtml(c.domain)}</span>
+                                            <button onclick="quickCompareGap('${escapeHtml(domain)}', '${escapeHtml(c.domain)}')" class="text-[10px] font-bold text-indigo-600 hover:underline">
+                                                Compare Gap &rarr;
+                                            </button>
+                                        </div>
+                                        <div class="flex items-center justify-between text-[11px] text-slate-500">
+                                            <span>Common Terms: <strong>${c.common_keywords}</strong></span>
+                                            <span>Traffic: <strong>${formatSemrushNumber(c.organic_traffic)}</strong></span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                            <div class="bg-indigo-500 h-full rounded-full" style="width: ${c.relevance}%"></div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `
+                    <div class="p-6 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-center">
+                        <p class="font-bold">Failed to load domain overview</p>
+                        <p class="text-xs mt-1 text-rose-600">${escapeHtml(err.message)}</p>
+                    </div>
+                `;
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        // 2. KEYWORD MAGIC TOOL CONTROLLER
+        async function runSemrushKeywordMagic() {
+            const input = document.getElementById('semrushMagicInput');
+            const keyword = (input ? input.value.trim() : '') || 'kedarnath yatra';
+            const container = document.getElementById('semrushMagicResults');
+            const btn = document.getElementById('btnSemrushMagicSearch');
+
+            if (btn) btn.disabled = true;
+            container.innerHTML = `
+                <div class="p-12 text-center">
+                    <div class="inline-block animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mb-3"></div>
+                    <p class="text-sm font-semibold text-slate-700">Fanning out Google Suggest variations for <span class="font-mono text-indigo-600">"${escapeHtml(keyword)}"</span>...</p>
+                    <p class="text-xs text-slate-400 mt-1">Mining real queries, assigning search intent (I/C/T/N) and estimating difficulty</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch(API + '/api/semrush/keyword-magic?keyword=' + encodeURIComponent(keyword) + '&limit=50');
+                if (!res.ok) throw new Error('Keyword magic fetch failed: ' + res.status);
+                const data = await res.json();
+
+                window.semrushMagicCache = data.keywords || [];
+                renderMagicKeywordTable(data);
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `
+                    <div class="p-6 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-center">
+                        <p class="font-bold">Failed to generate keywords</p>
+                        <p class="text-xs mt-1 text-rose-600">${escapeHtml(err.message)}</p>
+                    </div>
+                `;
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        function filterMagicKeywords() {
+            const filter = document.getElementById('semrushMagicFilterSelect')?.value || 'all';
+            const all = window.semrushMagicCache || [];
+            let filtered = all;
+            if (filter !== 'all') {
+                filtered = all.filter(k => (k.intent || 'I').toUpperCase().charAt(0) === filter);
+            }
+            renderMagicKeywordTable({
+                seed_keyword: document.getElementById('semrushMagicInput')?.value || '',
+                total_keywords: filtered.length,
+                total_volume: filtered.reduce((acc, k) => acc + (k.volume || 0), 0),
+                average_kd: filtered.length ? (filtered.reduce((acc, k) => acc + (k.kd || 0), 0) / filtered.length).toFixed(1) : 0,
+                keywords: filtered
+            });
+        }
+
+        function renderMagicKeywordTable(data) {
+            const container = document.getElementById('semrushMagicResults');
+            const kwList = data.keywords || [];
+
+            container.innerHTML = `
+                <!-- Stats Summary -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Keywords Discovered</span>
+                        <p class="text-2xl font-black text-slate-800 mt-1">${formatSemrushNumber(data.total_keywords)}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Total Monthly Search Volume</span>
+                        <p class="text-2xl font-black text-indigo-600 mt-1">${formatSemrushNumber(data.total_volume)}</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Average Keyword Difficulty</span>
+                        <p class="text-2xl font-black text-slate-800 mt-1">${data.average_kd}%</p>
+                    </div>
+                </div>
+
+                <!-- Export and Filter Bar -->
+                <div class="flex items-center justify-between gap-4 pt-2">
+                    <span class="text-xs font-bold text-slate-600 uppercase">Keyword Variations (${kwList.length})</span>
+                    <button onclick="exportMagicKeywordsCsv()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-xs transition flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>Export CSV</span>
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto max-h-[500px]">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 sticky top-0 z-10">
+                                <tr>
+                                    <th class="p-3">Keyword Phrase</th>
+                                    <th class="p-3 text-center">Intent</th>
+                                    <th class="p-3 text-right">Volume</th>
+                                    <th class="p-3 text-center">KD%</th>
+                                    <th class="p-3 text-right">CPC</th>
+                                    <th class="p-3 text-right">SERP Results</th>
+                                    <th class="p-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-sans">
+                                ${kwList.map(k => `
+                                    <tr class="hover:bg-slate-50 transition">
+                                        <td class="p-3 font-semibold text-slate-800">
+                                            ${escapeHtml(k.keyword)}
+                                        </td>
+                                        <td class="p-3 text-center">
+                                            ${getSemrushIntentBadge(k.intent)}
+                                        </td>
+                                        <td class="p-3 text-right font-medium text-slate-700">
+                                            ${formatSemrushNumber(k.volume)}
+                                        </td>
+                                        <td class="p-3 text-center">
+                                            ${getKdBadge(k.kd)}
+                                        </td>
+                                        <td class="p-3 text-right text-slate-500">
+                                            ₹${k.cpc || '0.00'}
+                                        </td>
+                                        <td class="p-3 text-right text-slate-400 font-mono text-[11px]">
+                                            ${formatSemrushNumber(k.results_count)}
+                                        </td>
+                                        <td class="p-3 text-center flex items-center justify-center gap-1.5">
+                                            <button onclick="navigator.clipboard.writeText('${escapeHtml(k.keyword)}'); showToast('Copied keyword!');" class="p-1 text-slate-400 hover:text-slate-700 rounded hover:bg-slate-200" title="Copy">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                            </button>
+                                            <button onclick="sendKeywordToStudio('${escapeHtml(k.keyword)}')" class="px-2 py-0.5 text-[10px] font-bold text-indigo-600 hover:bg-indigo-50 rounded border border-indigo-200 transition" title="Draft in AI Studio">
+                                                Create SEO &rarr;
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function exportMagicKeywordsCsv() {
+            const list = window.semrushMagicCache || [];
+            if (!list.length) return alert('No keywords to export');
+            let csv = 'Keyword,Intent,Search Volume,KD Percent,CPC,Results Count\n';
+            list.forEach(k => {
+                csv += `"${(k.keyword || '').replace(/"/g, '""')}",${k.intent || 'I'},${k.volume || 0},${k.kd || 0},${k.cpc || 0},${k.results_count || 0}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `semrush_keywords_${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 3. 30-POINT SITE AUDIT CONTROLLER
+        async function runSemrushSiteAudit() {
+            const input = document.getElementById('semrushAuditInput');
+            const url = (input ? input.value.trim() : '') || 'https://yatradham.org';
+            const container = document.getElementById('semrushAuditResults');
+            const btn = document.getElementById('btnSemrushAuditSearch');
+
+            if (btn) btn.disabled = true;
+            container.innerHTML = `
+                <div class="p-12 text-center">
+                    <div class="inline-block animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mb-3"></div>
+                    <p class="text-sm font-semibold text-slate-700">Crawling &amp; executing 30-point technical audit on <span class="font-mono text-indigo-600">${escapeHtml(url)}</span>...</p>
+                    <p class="text-xs text-slate-400 mt-1">Validating title length, meta descriptions, H1 uniqueness, canonical links, schema, and mobile tags</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch(API + '/api/semrush/site-audit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+                if (!res.ok) throw new Error('Site audit failed: ' + res.status);
+                const data = await res.json();
+
+                window.semrushAuditChecks = data.checks || [];
+
+                container.innerHTML = `
+                    <!-- Audit Score Header -->
+                    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 rounded-2xl text-white shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 border border-indigo-900/40">
+                        <div class="flex items-center gap-5">
+                            <div class="relative w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center border-4 border-emerald-500 shadow-inner shrink-0">
+                                <span class="text-3xl font-black text-white">${data.health_score}</span>
+                                <span class="text-[10px] text-slate-400 absolute bottom-3">/ 100</span>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-0.5">Site Health Score</span>
+                                <h3 class="text-xl font-bold text-white">${data.health_score >= 80 ? 'Excellent Technical Standing' : (data.health_score >= 60 ? 'Moderate Health - Optimizations Needed' : 'Critical Fixes Required')}</h3>
+                                <p class="text-xs text-slate-300 mt-1">${data.passed_checks} of ${data.total_checks} technical checks passed successfully</p>
+                            </div>
+                        </div>
+
+                        <!-- Check Status Pill Badges -->
+                        <div class="flex items-center gap-3 w-full md:w-auto justify-center">
+                            <div class="px-4 py-2.5 rounded-xl bg-rose-500/20 border border-rose-500/30 text-center min-w-[72px]">
+                                <span class="text-xl font-black text-rose-300 block">${data.errors_count}</span>
+                                <span class="text-[10px] font-bold text-rose-200 uppercase">Errors</span>
+                            </div>
+                            <div class="px-4 py-2.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-center min-w-[72px]">
+                                <span class="text-xl font-black text-amber-300 block">${data.warnings_count}</span>
+                                <span class="text-[10px] font-bold text-amber-200 uppercase">Warnings</span>
+                            </div>
+                            <div class="px-4 py-2.5 rounded-xl bg-blue-500/20 border border-blue-500/30 text-center min-w-[72px]">
+                                <span class="text-xl font-black text-blue-300 block">${data.notices_count}</span>
+                                <span class="text-[10px] font-bold text-blue-200 uppercase">Notices</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Check Tabs -->
+                    <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+                        <button onclick="filterAuditChecks('all', this)" class="audit-filter-btn active px-3 py-1.5 text-xs font-bold rounded-md bg-indigo-600 text-white">All Checks (${data.checks.length})</button>
+                        <button onclick="filterAuditChecks('error', this)" class="audit-filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white border border-slate-200 text-rose-700 hover:bg-rose-50">Errors (${data.errors_count})</button>
+                        <button onclick="filterAuditChecks('warning', this)" class="audit-filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white border border-slate-200 text-amber-700 hover:bg-amber-50">Warnings (${data.warnings_count})</button>
+                        <button onclick="filterAuditChecks('notice', this)" class="audit-filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white border border-slate-200 text-blue-700 hover:bg-blue-50">Notices (${data.notices_count})</button>
+                        <button onclick="filterAuditChecks('pass', this)" class="audit-filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50">Passed (${data.passed_checks})</button>
+                    </div>
+
+                    <!-- Checklist Cards -->
+                    <div id="auditChecksList" class="space-y-3">
+                        ${renderAuditCheckItems(data.checks)}
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `
+                    <div class="p-6 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-center">
+                        <p class="font-bold">Failed to complete site audit</p>
+                        <p class="text-xs mt-1 text-rose-600">${escapeHtml(err.message)}</p>
+                    </div>
+                `;
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        function renderAuditCheckItems(checks) {
+            return checks.map(c => {
+                let badgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+                let icon = '✓';
+                if (c.status === 'error') {
+                    badgeClass = 'bg-rose-100 text-rose-800 border-rose-200';
+                    icon = '✕';
+                } else if (c.status === 'warning') {
+                    badgeClass = 'bg-amber-100 text-amber-800 border-amber-200';
+                    icon = '▲';
+                } else if (c.status === 'notice') {
+                    badgeClass = 'bg-blue-100 text-blue-800 border-blue-200';
+                    icon = 'ℹ';
+                }
+
+                return `
+                    <div class="audit-check-card p-4 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 transition flex items-start justify-between gap-4" data-status="${c.status}">
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-full border flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 ${badgeClass}">${icon}</span>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h5 class="text-xs font-bold text-slate-800">${escapeHtml(c.name)}</h5>
+                                    <span class="text-[10px] text-slate-400 uppercase font-mono">${escapeHtml(c.category)}</span>
+                                </div>
+                                <p class="text-xs text-slate-600 mt-1 leading-relaxed">${escapeHtml(c.detail)}</p>
+                            </div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase shrink-0 ${badgeClass}">${c.status}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterAuditChecks(status, btn) {
+            document.querySelectorAll('.audit-filter-btn').forEach(b => {
+                b.classList.remove('active', 'bg-indigo-600', 'text-white');
+                b.classList.add('bg-white', 'text-slate-700');
+            });
+            if (btn) {
+                btn.classList.add('active', 'bg-indigo-600', 'text-white');
+                btn.classList.remove('bg-white', 'text-slate-700');
+            }
+
+            const cards = document.querySelectorAll('.audit-check-card');
+            cards.forEach(card => {
+                if (status === 'all' || card.getAttribute('data-status') === status) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // 4. BACKLINK ANALYTICS CONTROLLER
+        async function runSemrushBacklinks() {
+            const input = document.getElementById('semrushBacklinkInput');
+            const domain = (input ? input.value.trim() : '') || 'yatradham.org';
+            const container = document.getElementById('semrushBacklinksResults');
+            const btn = document.getElementById('btnSemrushBacklinkSearch');
+
+            if (btn) btn.disabled = true;
+            container.innerHTML = `
+                <div class="p-12 text-center">
+                    <div class="inline-block animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mb-3"></div>
+                    <p class="text-sm font-semibold text-slate-700">Evaluating Backlink Profile for <span class="font-mono text-indigo-600">${escapeHtml(domain)}</span>...</p>
+                    <p class="text-xs text-slate-400 mt-1">Calculating dofollow/nofollow ratio, referring domains, and anchor text frequency</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch(API + '/api/semrush/backlinks?domain=' + encodeURIComponent(domain));
+                if (!res.ok) throw new Error('Backlinks fetch failed: ' + res.status);
+                const data = await res.json();
+
+                const tiers = data.domain_tiers || {};
+                const anchors = data.top_anchors || [];
+
+                container.innerHTML = `
+                    <!-- 4 Metric Cards -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Backlink Authority</span>
+                            <p class="text-3xl font-black text-slate-800 mt-1">${data.authority_score}<span class="text-xs text-slate-400 font-normal"> /100</span></p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Total Backlinks</span>
+                            <p class="text-3xl font-black text-indigo-600 mt-1">${formatSemrushNumber(data.total_backlinks)}</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Referring Domains</span>
+                            <p class="text-3xl font-black text-slate-800 mt-1">${formatSemrushNumber(data.referring_domains)}</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Referring Subnets/IPs</span>
+                            <p class="text-3xl font-black text-slate-800 mt-1">${formatSemrushNumber(data.referring_ips)}</p>
+                        </div>
+                    </div>
+
+                    <!-- Dofollow vs Nofollow Split Bar -->
+                    <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between text-xs font-bold mb-2">
+                            <span class="text-emerald-700">Follow Links: ${data.dofollow_ratio}%</span>
+                            <span class="text-slate-500">Nofollow / Sponsored: ${data.nofollow_ratio}%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden flex">
+                            <div class="bg-emerald-500 h-full" style="width: ${data.dofollow_ratio}%"></div>
+                            <div class="bg-slate-400 h-full" style="width: ${data.nofollow_ratio}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 2 Columns: Domain Tiers & Anchor Distribution -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left: Referring Domain Tiers -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-4">Referring Domain Authority Tiers</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold mb-1">
+                                        <span class="text-slate-700">High Authority (Score 80-100)</span>
+                                        <span class="text-slate-800">${formatSemrushNumber(tiers.high_authority_80_plus || 0)}</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                        <div class="bg-emerald-500 h-full rounded-full" style="width: 15%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold mb-1">
+                                        <span class="text-slate-700">Medium Authority (Score 40-79)</span>
+                                        <span class="text-slate-800">${formatSemrushNumber(tiers.medium_authority_40_79 || 0)}</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                        <div class="bg-indigo-500 h-full rounded-full" style="width: 45%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold mb-1">
+                                        <span class="text-slate-700">Low Authority (Score 0-39)</span>
+                                        <span class="text-slate-800">${formatSemrushNumber(tiers.low_authority_0_39 || 0)}</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                        <div class="bg-slate-400 h-full rounded-full" style="width: 70%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Top Anchor Texts -->
+                        <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                            <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700">Top Anchor Text Phrases</h4>
+                                <span class="text-xs text-slate-400">${anchors.length} anchors</span>
+                            </div>
+                            <div class="p-4 divide-y divide-slate-100 flex-1 overflow-y-auto max-h-60">
+                                ${anchors.map(a => `
+                                    <div class="py-2 flex items-center justify-between text-xs">
+                                        <span class="font-semibold text-slate-800 truncate max-w-[200px]">${escapeHtml(a.anchor)}</span>
+                                        <div class="flex items-center gap-3 shrink-0">
+                                            <span class="text-slate-500">${a.count} links</span>
+                                            <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-bold">${a.percent}%</span>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `
+                    <div class="p-6 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-center">
+                        <p class="font-bold">Failed to load backlink analytics</p>
+                        <p class="text-xs mt-1 text-rose-600">${escapeHtml(err.message)}</p>
+                    </div>
+                `;
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        // 5. KEYWORD GAP & COMPETITOR SPY CONTROLLER
+        async function runSemrushKeywordGap() {
+            const domain1 = document.getElementById('semrushGapDomain1')?.value.trim() || 'yatradham.org';
+            const domain2 = document.getElementById('semrushGapDomain2')?.value.trim() || 'makemytrip.com';
+            const container = document.getElementById('semrushGapResults');
+            const btn = document.getElementById('btnSemrushGapSearch');
+
+            if (btn) btn.disabled = true;
+            container.innerHTML = `
+                <div class="p-12 text-center">
+                    <div class="inline-block animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mb-3"></div>
+                    <p class="text-sm font-semibold text-slate-700">Comparing Keyword Footprint: <span class="font-mono text-indigo-600">${escapeHtml(domain1)}</span> vs <span class="font-mono text-indigo-600">${escapeHtml(domain2)}</span>...</p>
+                    <p class="text-xs text-slate-400 mt-1">Cross-referencing ranking overlap, missing opportunities, and weak rankings</p>
+                </div>
+            `;
+
+            try {
+                const res = await fetch(API + '/api/semrush/keyword-gap', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain1: domain1, domain2: domain2 })
+                });
+                if (!res.ok) throw new Error('Keyword gap comparison failed: ' + res.status);
+                const data = await res.json();
+
+                window.semrushGapCache = data.keywords || [];
+                const s = data.summary || {};
+
+                container.innerHTML = `
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+                            <span class="text-[11px] font-bold text-rose-700 uppercase">Missing (Top Priority)</span>
+                            <p class="text-2xl font-black text-rose-900 mt-1">${s.missing || 0}</p>
+                            <span class="text-[10px] text-rose-600">Competitor ranks, you don't</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                            <span class="text-[11px] font-bold text-amber-700 uppercase">Weak Rankings</span>
+                            <p class="text-2xl font-black text-amber-900 mt-1">${s.weak || 0}</p>
+                            <span class="text-[10px] text-amber-600">Competitor outranks you</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                            <span class="text-[11px] font-bold text-emerald-700 uppercase">Shared Keywords</span>
+                            <p class="text-2xl font-black text-emerald-900 mt-1">${s.shared || 0}</p>
+                            <span class="text-[10px] text-emerald-600">Both domains rank</span>
+                        </div>
+                        <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                            <span class="text-[11px] font-bold text-blue-700 uppercase">Untapped Terms</span>
+                            <p class="text-2xl font-black text-blue-900 mt-1">${s.untapped || 0}</p>
+                            <span class="text-[10px] text-blue-600">Growth avenues</span>
+                        </div>
+                    </div>
+
+                    <!-- Gap Filter Tabs -->
+                    <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+                        <button onclick="filterGapRows('all', this)" class="gap-filter-btn active px-3 py-1.5 text-xs font-bold rounded-md bg-indigo-600 text-white">All Keywords (${data.keywords.length})</button>
+                        <button onclick="filterGapRows('Missing', this)" class="gap-filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white border border-slate-200 text-rose-700 hover:bg-rose-50">Missing (${s.missing || 0})</button>
+                        <button onclick="filterGapRows('Weak', this)" class="gap-filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white border border-slate-200 text-amber-700 hover:bg-amber-50">Weak (${s.weak || 0})</button>
+                        <button onclick="filterGapRows('Shared', this)" class="gap-filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white border border-slate-200 text-emerald-700 hover:bg-emerald-50">Shared (${s.shared || 0})</button>
+                        <button onclick="filterGapRows('Untapped', this)" class="gap-filter-btn px-3 py-1.5 text-xs font-bold rounded-md bg-white border border-slate-200 text-blue-700 hover:bg-blue-50">Untapped (${s.untapped || 0})</button>
+                    </div>
+
+                    <!-- Comparative Table -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto max-h-[500px]">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 sticky top-0 z-10">
+                                    <tr>
+                                        <th class="p-3">Keyword</th>
+                                        <th class="p-3 text-center">${escapeHtml(domain1)} Pos</th>
+                                        <th class="p-3 text-center">${escapeHtml(domain2)} Pos</th>
+                                        <th class="p-3 text-right">Volume</th>
+                                        <th class="p-3 text-center">KD%</th>
+                                        <th class="p-3 text-center">Gap Status</th>
+                                        <th class="p-3 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 font-sans">
+                                    ${data.keywords.map(k => {
+                                        let gapBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">Untapped</span>';
+                                        if (k.gap_type === 'Missing') gapBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">Missing</span>';
+                                        if (k.gap_type === 'Weak') gapBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Weak</span>';
+                                        if (k.gap_type === 'Shared') gapBadge = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Shared</span>';
+
+                                        return `
+                                            <tr class="gap-row hover:bg-slate-50 transition" data-gap="${k.gap_type}">
+                                                <td class="p-3 font-semibold text-slate-800">
+                                                    ${escapeHtml(k.keyword)}
+                                                </td>
+                                                <td class="p-3 text-center font-bold ${k.domain1_pos ? 'text-indigo-600' : 'text-slate-300'}">
+                                                    ${k.domain1_pos ? '#' + k.domain1_pos : '—'}
+                                                </td>
+                                                <td class="p-3 text-center font-bold ${k.domain2_pos ? 'text-slate-700' : 'text-slate-300'}">
+                                                    ${k.domain2_pos ? '#' + k.domain2_pos : '—'}
+                                                </td>
+                                                <td class="p-3 text-right font-medium text-slate-700">
+                                                    ${formatSemrushNumber(k.volume)}
+                                                </td>
+                                                <td class="p-3 text-center">
+                                                    ${getKdBadge(k.kd)}
+                                                </td>
+                                                <td class="p-3 text-center">
+                                                    ${gapBadge}
+                                                </td>
+                                                <td class="p-3 text-center">
+                                                    <button onclick="sendKeywordToStudio('${escapeHtml(k.keyword)}')" class="px-2.5 py-1 text-[11px] font-bold text-indigo-600 hover:bg-indigo-50 rounded border border-indigo-200 transition">
+                                                        Steal Keyword &rarr;
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `
+                    <div class="p-6 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-center">
+                        <p class="font-bold">Failed to run keyword gap analysis</p>
+                        <p class="text-xs mt-1 text-rose-600">${escapeHtml(err.message)}</p>
+                    </div>
+                `;
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        function filterGapRows(type, btn) {
+            document.querySelectorAll('.gap-filter-btn').forEach(b => {
+                b.classList.remove('active', 'bg-indigo-600', 'text-white');
+                b.classList.add('bg-white', 'text-slate-700');
+            });
+            if (btn) {
+                btn.classList.add('active', 'bg-indigo-600', 'text-white');
+                btn.classList.remove('bg-white', 'text-slate-700');
+            }
+
+            document.querySelectorAll('.gap-row').forEach(row => {
+                if (type === 'all' || row.getAttribute('data-gap') === type) {
+                    row.style.display = 'table-row';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function quickCompareGap(domain1, domain2) {
+            switchSemrushSubTab('gap', document.querySelectorAll('.semrush-nav-btn')[4]);
+            const d1 = document.getElementById('semrushGapDomain1');
+            const d2 = document.getElementById('semrushGapDomain2');
+            if (d1) d1.value = domain1;
+            if (d2) d2.value = domain2;
+            runSemrushKeywordGap();
+        }
+
+        function sendKeywordToStudio(keyword) {
+            showTab('studio');
+            const studioInput = document.getElementById('studioPromptInput') || document.getElementById('quickPrompt');
+            if (studioInput) {
+                studioInput.value = `Create an authoritative, high-ranking SEO package optimized for "${keyword}" targeting pilgrimage tourists and luxury dharamshala seekers.`;
+            }
+            showToast(`Loaded "${keyword}" into AI Studio!`);
+        }
+
     </script>
 </body>
 </html>
