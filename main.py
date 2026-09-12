@@ -1097,6 +1097,136 @@ def semrush_keyword_gap_endpoint(req: SemrushGapRequest):
     return get_keyword_gap(d1, d2)
 
 
+# =====================================================================
+# EXTENDED SEMRUSH SUITE ENDPOINTS
+# =====================================================================
+@app.get("/api/semrush/dashboard")
+def semrush_dashboard_endpoint(domain: Optional[str] = "yatradham.org"):
+    """Semrush Consolidated Dashboard."""
+    from semrush_suite import get_semrush_dashboard
+    return get_semrush_dashboard(domain or "yatradham.org")
+
+
+@app.get("/api/semrush/site-performance")
+def semrush_site_performance_endpoint(url: Optional[str] = "https://yatradham.org"):
+    """Semrush Site Performance & Core Web Vitals."""
+    from semrush_suite import get_site_performance
+    return get_site_performance(url or "https://yatradham.org")
+
+
+@app.get("/api/semrush/position-tracking")
+def semrush_position_tracking_endpoint(domain: Optional[str] = "yatradham.org"):
+    """Semrush Position Tracking with Winners & Losers."""
+    from semrush_suite import get_position_tracking
+    return get_position_tracking(domain or "yatradham.org")
+
+
+@app.get("/api/semrush/top-pages")
+def semrush_top_pages_endpoint(domain: Optional[str] = "yatradham.org"):
+    """Semrush Top Pages Traffic Share."""
+    from semrush_suite import get_top_pages
+    return get_top_pages(domain or "yatradham.org")
+
+
+class SemrushCompareRequest(BaseModel):
+    domains: List[str] = ["yatradham.org", "makemytrip.com", "euttaranchal.com"]
+
+
+@app.post("/api/semrush/compare-domains")
+def semrush_compare_domains_endpoint(req: SemrushCompareRequest):
+    """Semrush Compare Domains (Multi-domain benchmark)."""
+    from semrush_suite import get_compare_domains
+    return get_compare_domains(req.domains)
+
+
+@app.post("/api/semrush/backlink-gap")
+def semrush_backlink_gap_endpoint(req: SemrushGapRequest):
+    """Semrush Backlink Gap: Find link opportunities."""
+    from semrush_suite import get_backlink_gap
+    d1 = req.domain_a or req.domain1 or "yatradham.org"
+    d2 = req.domain_b or req.domain2 or "makemytrip.com"
+    return get_backlink_gap(d1, d2)
+
+
+@app.get("/api/semrush/keyword-overview")
+def semrush_keyword_overview_endpoint(keyword: Optional[str] = "kedarnath yatra"):
+    """Semrush Keyword Overview: Deep-dive search volume, global breakdown, KD%."""
+    from semrush_suite import get_keyword_overview
+    return get_keyword_overview(keyword or "kedarnath yatra")
+
+
+@app.get("/api/semrush/keyword-strategy")
+def semrush_keyword_strategy_endpoint(keyword: Optional[str] = "chardham yatra"):
+    """Semrush Keyword Strategy Builder: Topic clusters & pillar architecture."""
+    from semrush_suite import get_keyword_strategy_builder
+    return get_keyword_strategy_builder(keyword or "chardham yatra")
+
+
+class SemrushWritingAssistantRequest(BaseModel):
+    text: Optional[str] = ""
+    keyword: Optional[str] = "kedarnath yatra"
+
+
+@app.post("/api/semrush/writing-assistant")
+def semrush_writing_assistant_endpoint(req: SemrushWritingAssistantRequest):
+    """Semrush SEO Writing Assistant: Readability, SEO score, tone of voice."""
+    from semrush_suite import get_seo_writing_assistant
+    return get_seo_writing_assistant(req.text or "", req.keyword or "kedarnath yatra")
+
+
+@app.get("/api/semrush/topic-research")
+def semrush_topic_research_endpoint(topic: Optional[str] = "somnath temple"):
+    """Semrush Topic Research: Mindmap cards, questions, and high-CTR headlines."""
+    from semrush_suite import get_topic_research
+    return get_topic_research(topic or "somnath temple")
+
+
+class SemrushOnPageRequest(BaseModel):
+    url: Optional[str] = "https://yatradham.org"
+
+
+@app.post("/api/semrush/on-page-checker")
+def semrush_on_page_checker_endpoint(req: SemrushOnPageRequest):
+    """Semrush On-Page SEO Checker: Actionable strategy, backlink, UX recommendations."""
+    from semrush_suite import get_on_page_seo_checker
+    return get_on_page_seo_checker(req.url or "https://yatradham.org")
+
+
+@app.get("/api/semrush/backlink-audit")
+def semrush_backlink_audit_endpoint(domain: Optional[str] = "yatradham.org"):
+    """Semrush Backlink Audit: Toxicity score and disavow candidates."""
+    from semrush_suite import get_backlink_audit
+    return get_backlink_audit(domain or "yatradham.org")
+
+
+@app.get("/api/semrush/sensor")
+def semrush_sensor_endpoint():
+    """Semrush Sensor: Google SERP Volatility gauge."""
+    from semrush_suite import get_semrush_sensor
+    return get_semrush_sensor()
+
+
+@app.get("/api/semrush/traffic-insights")
+def semrush_traffic_insights_endpoint(domain: Optional[str] = "yatradham.org"):
+    """Semrush Organic Traffic Insights: Landing pages & queries."""
+    from semrush_suite import get_organic_traffic_insights
+    return get_organic_traffic_insights(domain or "yatradham.org")
+
+
+@app.get("/api/semrush/ai-search")
+def semrush_ai_search_endpoint(target: Optional[str] = "yatradham.org"):
+    """Semrush AI Search & SGE Optimizer."""
+    from semrush_suite import get_ai_search_overview
+    return get_ai_search_overview(target or "yatradham.org")
+
+
+@app.get("/api/semrush/local-seo")
+def semrush_local_seo_endpoint(location: Optional[str] = "Somnath"):
+    """Semrush Local SEO: 3-Pack rank potential & GBP audit."""
+    from semrush_suite import get_local_seo_overview
+    return get_local_seo_overview(location or "Somnath")
+
+
 @app.get("/stats")
 def stats():
     return get_stats()
