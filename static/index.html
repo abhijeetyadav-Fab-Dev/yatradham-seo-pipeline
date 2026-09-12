@@ -3402,6 +3402,61 @@
                 if (!res.ok) throw new Error('Domain overview fetch failed: ' + res.status);
                 const data = await res.json();
 
+                if (data.is_live === false || data.authority_score === 0) {
+                    container.innerHTML = `
+                        <!-- NXDOMAIN / Unresolved Warning Banner -->
+                        <div class="p-6 bg-amber-50 border border-amber-300 rounded-2xl text-amber-950 shadow-sm mb-6">
+                            <div class="flex items-start gap-3.5">
+                                <span class="text-3xl leading-none">⚠️</span>
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="text-base font-extrabold text-amber-950">Domain Unresolved or Inactive (NXDOMAIN)</h4>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900 font-mono">Status: NXDOMAIN</span>
+                                    </div>
+                                    <p class="text-xs text-amber-800 mt-1.5 leading-relaxed">
+                                        The domain <strong class="font-mono text-indigo-700 bg-white/80 px-1.5 py-0.5 rounded border border-amber-200">${escapeHtml(domain)}</strong> does not have active DNS A-records pointing to an IP address. Googlebot and users cannot reach this hostname, resulting in <strong>0 Authority Score</strong>, <strong>0 Organic Traffic</strong>, and <strong>0 Indexed Keywords</strong>.
+                                    </p>
+                                    <div class="mt-3.5 p-3.5 bg-white/80 rounded-xl border border-amber-200 text-xs text-slate-700 space-y-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                                            <span><strong>DNS A-Record:</strong> Failed to resolve host via public DNS (Errno 11001 / NXDOMAIN).</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-rose-500 shrink-0"></span>
+                                            <span><strong>Organic Visibility:</strong> 0 Monthly Traffic, 0 Keywords, 0 Authority Score.</span>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                                            <span><strong>Root Cause:</strong> Domain is unregistered, expired, or nameservers are not configured.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 0 Stats Grid -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-80">
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Authority Score</span>
+                                <span class="text-3xl font-black text-slate-400">0<span class="text-xs font-normal">/100</span></span>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Organic Traffic</span>
+                                <span class="text-3xl font-black text-slate-400">0</span>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Organic Keywords</span>
+                                <span class="text-3xl font-black text-slate-400">0</span>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Backlinks / Domains</span>
+                                <span class="text-3xl font-black text-slate-400">0</span>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
                 const kwDist = data.keyword_distribution || {};
                 const topKw = data.top_keywords || [];
                 const competitors = data.competitors || [];
@@ -3753,18 +3808,20 @@
                 const data = await res.json();
 
                 window.semrushAuditChecks = data.checks || [];
+                const ringColor = data.health_score >= 80 ? 'border-emerald-500' : (data.health_score >= 50 ? 'border-amber-500' : 'border-rose-500');
+                const statusLabel = data.health_score >= 80 ? 'Excellent Technical Standing' : (data.health_score >= 50 ? 'Moderate Health - Optimizations Needed' : (data.is_live === false ? 'Critical Error: Host Unreachable (NXDOMAIN)' : 'Critical Fixes Required'));
 
                 container.innerHTML = `
                     <!-- Audit Score Header -->
                     <div class="bg-gradient-to-r from-slate-900 to-indigo-950 p-6 rounded-2xl text-white shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 border border-indigo-900/40">
                         <div class="flex items-center gap-5">
-                            <div class="relative w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center border-4 border-emerald-500 shadow-inner shrink-0">
+                            <div class="relative w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center border-4 ${ringColor} shadow-inner shrink-0">
                                 <span class="text-3xl font-black text-white">${data.health_score}</span>
                                 <span class="text-[10px] text-slate-400 absolute bottom-3">/ 100</span>
                             </div>
                             <div>
-                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 block mb-0.5">Site Health Score</span>
-                                <h3 class="text-xl font-bold text-white">${data.health_score >= 80 ? 'Excellent Technical Standing' : (data.health_score >= 60 ? 'Moderate Health - Optimizations Needed' : 'Critical Fixes Required')}</h3>
+                                <span class="text-xs font-bold uppercase tracking-wider ${data.health_score >= 80 ? 'text-emerald-400' : (data.health_score >= 50 ? 'text-amber-400' : 'text-rose-400')} block mb-0.5">Site Health Score</span>
+                                <h3 class="text-xl font-bold text-white">${statusLabel}</h3>
                                 <p class="text-xs text-slate-300 mt-1">${data.passed_checks} of ${data.total_checks} technical checks passed successfully</p>
                             </div>
                         </div>

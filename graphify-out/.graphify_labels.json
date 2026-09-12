@@ -6,7 +6,7 @@
   "4": "seo_toolkit.py",
   "5": "WordPressPublisher",
   "6": "1. Security & OWASP Hardening Layer",
-  "7": "main.py",
+  "7": "post",
   "8": "e2e_browser_test.py",
   "9": "live_qa.py",
   "10": "__init__.py",
@@ -22,5 +22,14 @@
   "20": "security_firewall.py",
   "21": "content_creator_agent.py",
   "22": "crawl_sitemap",
-  "26": "sanitize_xss"
+  "23": "main.py",
+  "24": "BaseModel",
+  "25": "semrush_backlinks_endpoint",
+  "26": ".sanitize_xss_and_prompt_injection",
+  "27": "sanitize_user_prompt",
+  "28": "batch_urls",
+  "29": "delete_single_output",
+  "30": "publish_to_wordpress",
+  "31": "quality_audit_endpoint",
+  "32": "scrape_stealth_endpoint"
 }
