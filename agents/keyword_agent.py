@@ -44,6 +44,8 @@ def run(package_data: Dict[str, Any], client: LLMClient) -> Dict[str, Any]:
             result["primary_keyword"] = f"Yoga Retreat {dest_clean}" if dest_clean else f"{name_clean[:20]} Retreat"
         elif cat == "stay":
             result["primary_keyword"] = f"Dharamshala in {dest_clean}" if dest_clean else f"{name_clean[:20]} Stay"
+        elif cat == "puja":
+            result["primary_keyword"] = f"{dest_clean} Puja Booking" if dest_clean else f"{name_clean[:20]} Puja"
         elif "chardham" in name_clean.lower():
             result["primary_keyword"] = "Char Dham Yatra Package"
         else:
@@ -54,7 +56,14 @@ def run(package_data: Dict[str, Any], client: LLMClient) -> Dict[str, Any]:
     try:
         from public_apis_enricher import fetch_semantic_lsi_keywords
         dest_term = package_data.get("destination", "").split(",")[0].strip()
-        lsi = fetch_semantic_lsi_keywords(f"{dest_term} yoga wellness", max_results=4)
+        cat_search_terms = {
+            "puja": "puja temple rituals",
+            "stay": "dharamshala ashram stay",
+            "tour": "tour travel pilgrimage",
+            "wellness": "yoga wellness ayurveda"
+        }
+        search_suffix = cat_search_terms.get(cat, "travel pilgrimage")
+        lsi = fetch_semantic_lsi_keywords(f"{dest_term} {search_suffix}", max_results=4)
         if lsi:
             existing = result.get("secondary_keywords", [])
             for term in lsi:

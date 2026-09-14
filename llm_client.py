@@ -5,14 +5,15 @@ import re
 from typing import Optional, Dict, Any, List
 from openai import OpenAI
 
-DEFAULT_OPENROUTER_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
+DEFAULT_OPENROUTER_MODEL = "nvidia/nemotron-3.5-lightning:free"
 OPENROUTER_FALLBACK_MODELS = [
-    "nvidia/nemotron-3-super-120b-a12b:free",
     "nvidia/nemotron-3.5-lightning:free",
-    "google/gemma-4-26b-a4b-it:free",
-    "google/gemma-4-31b-it:free",
     "liquid/lfm-2.5-2.6b:free",
     "poolside/laguna-s-2.1:free",
+    "nex-agi/nex-n2.5-mini:free",
+    "thinkingmachines/inkling-small:free",
+    "google/gemma-4-26b-a4b-it:free",
+    "google/gemma-4-31b-it:free",
 ]
 
 
@@ -134,6 +135,7 @@ class LLMClient:
         self.errors: Dict[str, str] = {}
         self.dry_run = False
         self.failed_providers = set()
+        self.provider_cooldowns: Dict[str, float] = {}
         
         # Initialize clients if keys exist
 
@@ -164,6 +166,8 @@ class LLMClient:
         clean_key = (api_key or "").strip().strip("'\"")
         if not clean_key:
             return
+        
+        self.provider_cooldowns.pop(provider, None)
         
         if provider == "nvidia":
             self.nvidia_api_key = clean_key
@@ -242,6 +246,7 @@ class LLMClient:
         if not clean_key:
             return {"success": False, "error": "API key is empty"}
         
+        self.provider_cooldowns.pop(provider, None)
         t0 = time.time()
         try:
             if provider == "nvidia":
@@ -395,6 +400,9 @@ class LLMClient:
         for provider_name, client_inst, candidate_models in providers:
             if provider_name in failed_providers_in_request:
                 continue
+            # Circuit breaker: skip provider if under cooldown due to rate limit/quota/auth failure
+            if time.time() < self.provider_cooldowns.get(provider_name, 0.0):
+                continue
 
             # Prioritize custom model if specified
             models_to_try = [model] if (model and provider_name in ["openrouter", "groq", "gemini", "nvidia"]) else candidate_models
@@ -417,8 +425,13 @@ class LLMClient:
                         kwargs["response_format"] = response_format
 
                     resp = client_inst.chat.completions.create(**kwargs)
-                    choice = resp.choices[0]
-                    content = choice.message.content or ""
+                    content = ""
+                    if resp and getattr(resp, 'choices', None) and len(resp.choices) > 0:
+                        choice = resp.choices[0]
+                        msg = getattr(choice, 'message', None)
+                        content = getattr(msg, 'content', None) or ""
+                        if not content.strip() and hasattr(msg, 'reasoning') and msg.reasoning:
+                            content = str(msg.reasoning)
 
                     if content.strip():
                         cleaned_content = self._strip_reasoning(content)
@@ -430,6 +443,16 @@ class LLMClient:
                     err_msg = str(e)
                     self.errors[f"{provider_name}:{active_model}"] = err_msg
                     logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}")
+                    # Detect account/quota/rate/auth fatal failures - trip circuit breaker for 300s
+                    err_lower = err_msg.lower()
+                    if any(term in err_lower for term in [
+                        "rate limit", "429", "quota", "credit", "free-models-per-day",
+                        "daily limit", "insufficient_quota", "invalid api key",
+                        "authentication", "401", "403"
+                    ]):
+                        self.provider_cooldowns[provider_name] = time.time() + 300.0
+                        failed_providers_in_request.add(provider_name)
+                        break
                     continue
 
             # Provider failed for THIS request only (isolated, never cross-request poisoning)
@@ -748,8 +771,19 @@ Embarking on this sacred pilgrimage to {destination} is a life-affirming journey
         
         # AGENT: Content Agent (19 Structured Sections JSON)
         if any(x in system_msg.lower() for x in ["19 structured sections", "expert content writer for yatradham", "package_overview", "sectionedcontent"]):
+            if pkg_category == "puja":
+                from agents.content_agent import get_category_aware_fallback
+                sections_dict = get_category_aware_fallback({
+                    "name": pkg_name,
+                    "destination": destination,
+                    "duration": duration,
+                    "cost": cost,
+                    "category": "puja",
+                    "url": custom_url
+                }, keyword)
+                return json.dumps(sections_dict)
             
-            if pkg_category == "wellness":
+            elif pkg_category == "wellness":
                 from retreat_generator import generate_archetype_content
                 sections_dict = generate_archetype_content(pkg_name, destination, duration, cost, custom_url)
 
@@ -1035,7 +1069,13 @@ Embarking on this sacred pilgrimage to {destination} is a life-affirming journey
 
         # AGENT: Title Tag Agent
         if "title tag" in system_msg.lower() or "title specialist" in system_msg.lower():
-            if pkg_category == "wellness":
+            if pkg_category == "puja":
+                clean_name = pkg_name.strip()
+                if "puja" in clean_name.lower():
+                    title_clean = f"{clean_name} Booking & Pandit Seva | YatraDham"
+                else:
+                    title_clean = f"{clean_name} Puja Booking & Pandit Seva | YatraDham"
+            elif pkg_category == "wellness":
                 title_clean = f"{pkg_name[:45]} | YatraDham.Org"
             elif pkg_category == "stay":
                 title_clean = f"{pkg_name[:45]} | YatraDham.Org"
@@ -1047,7 +1087,11 @@ Embarking on this sacred pilgrimage to {destination} is a life-affirming journey
 
         # AGENT: Keyword Agent
         if "keyword" in system_msg.lower() and "meta" not in system_msg.lower() and "overview" not in system_msg.lower():
-            if pkg_category == "wellness":
+            if pkg_category == "puja":
+                dest_clean = destination.split(",")[0].strip()
+                keyword = f"{dest_clean} Puja Booking" if dest_clean else f"{pkg_name[:20]} Puja"
+                secondary = [f"{dest_clean} temple puja", f"{pkg_name} cost", f"{dest_clean} pandit booking", "YatraDham puja booking"]
+            elif pkg_category == "wellness":
                 secondary = [f"{destination} wellness retreat", f"Ayurvedic retreat in {destination}", f"{pkg_name} cost", "YatraDham wellness"]
             elif pkg_category == "stay":
                 secondary = [f"{destination} dharamshala booking", f"best stay in {destination}", f"{pkg_name} price", "YatraDham stays"]
@@ -1060,7 +1104,9 @@ Embarking on this sacred pilgrimage to {destination} is a life-affirming journey
 
         # AGENT: Meta Description Agent
         if "meta description" in system_msg.lower():
-            if pkg_category == "wellness":
+            if pkg_category == "puja":
+                meta_desc = f"Book verified {pkg_name} in {destination}. Experienced Vedic pandits, complete samagri & certified rituals on YatraDham.Org. Reserve now!"
+            elif pkg_category == "wellness":
                 meta_desc = f"Experience authentic healing with {pkg_name} in {destination}. Verified wellness stays, doctor consultations & Satvik meals. Book now!"
             elif pkg_category == "stay":
                 meta_desc = f"Book verified stay at {pkg_name} in {destination}. Clean rooms, hot water & secure booking on YatraDham.Org. Reserve your spot now!"

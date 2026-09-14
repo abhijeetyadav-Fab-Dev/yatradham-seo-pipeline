@@ -94,6 +94,8 @@ CRITICAL: Do NOT repeat the package name. Write a FRESH, benefit-focused summary
             meta = f"Deepen your practice with a {dur} guided yoga retreat in {dest}. Experience daily pranayama, meditation & peaceful stays. Book now!"
         elif "chardham" in name.lower() or "yatra" in name.lower() or "darshan" in name.lower():
             meta = f"Plan your sacred {name[:35]} journey to {dest}. Enjoy verified Dharamshala bookings, guided darshan & reliable transport. Book now!"
+        elif "puja" in name.lower() or "pandit" in name.lower() or category == "puja":
+            meta = f"Book verified {name[:35]} in {dest}. Experienced Vedic Pandits, sacred samagri, gotra sankalp & temple blessings. Book now!"
         elif "detox" in name.lower() or "panchakarma" in primary_keyword.lower():
             meta = f"Cleanse your mind and body with authentic {dur} Panchakarma in {dest}. Expert consultations & organic Satvik meals. Enquire today!"
         else:
@@ -120,5 +122,6 @@ CRITICAL: Do NOT repeat the package name. Write a FRESH, benefit-focused summary
     if len(meta) > 160:
         meta = meta[:157].rsplit(" ", 1)[0] + "..."
 
+    meta = re.sub(r'\b([A-Za-z0-9]+)(?:[\s,]+)\1\b', r'\1', meta, flags=re.IGNORECASE)
     result["meta_description"] = meta
     return result

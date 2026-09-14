@@ -255,9 +255,21 @@ def run_validation(row: dict, existing_approved_rows: list[dict] | None = None) 
     if not ok:
         hard_failures.append(msg)
 
-    ok, msg = validate_no_duplicated_words(full_text_blob)
-    if not ok:
-        soft_flags.append(msg)  # grammar issue — annoying but not catastrophic
+    dupes = []
+    for k, v in row.items():
+        if isinstance(v, str):
+            d = find_duplicated_words(v)
+            if d: dupes.extend(d)
+        elif isinstance(v, list):
+            for item in v:
+                d = find_duplicated_words(str(item))
+                if d: dupes.extend(d)
+        elif isinstance(v, dict):
+            for item in v.values():
+                d = find_duplicated_words(str(item))
+                if d: dupes.extend(d)
+    if dupes:
+        soft_flags.append(f"Duplicated word(s) found: {sorted(set(dupes))}. Likely a prompt template bug — check master prompt.")
 
 
     ok, msg = validate_title_matches_product(

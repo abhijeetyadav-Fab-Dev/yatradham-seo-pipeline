@@ -28,19 +28,35 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
         f_content = executor.submit(content_agent.run, pkg_data, primary_keyword, client)
 
         try:
-            title_result = f_title.result(timeout=6.0)
+            title_result = f_title.result(timeout=25.0)
         except Exception:
             title_result = {"title_tag": f"{primary_keyword} | YatraDham.Org"}
 
         try:
-            meta_result = f_meta.result(timeout=6.0)
+            meta_result = f_meta.result(timeout=25.0)
         except Exception:
             meta_result = {"meta_description": f"Book your {primary_keyword} with verified stays and satvik meals on YatraDham.Org. Reserve your spot now!"}
 
         try:
-            content_result = f_content.result(timeout=8.0)
+            content_result = f_content.result(timeout=45.0)
         except Exception:
-            content_result = SectionedContent().model_dump()
+            from agents.content_agent import get_category_aware_fallback
+            content_result = get_category_aware_fallback(pkg_data, primary_keyword)
+
+        from agents.content_agent import get_category_aware_fallback
+        if not content_result or not content_result.get("package_overview") or not content_result.get("quick_facts"):
+            content_result = get_category_aware_fallback(pkg_data, primary_keyword)
+
+        # Defensive Ground-Truth Enforcement
+        qf = content_result.setdefault("quick_facts", {})
+        if not qf.get("destination") or qf.get("destination") == "India":
+            qf["destination"] = pkg_data.get("destination") or "India"
+        if not qf.get("cost"):
+            qf["cost"] = pkg_data.get("cost") or "Contact YatraDham for pricing"
+        if not qf.get("duration"):
+            qf["duration"] = pkg_data.get("duration") or "Flexible"
+        if not qf.get("package_name"):
+            qf["package_name"] = pkg_data.get("name") or "Spiritual Package"
 
 
 
@@ -77,13 +93,16 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
     if not content_result.get("geo_quick_answer"):
         dur = pkg_data.get("duration", "program")
         cost = pkg_data.get("cost", "verified rates")
-    # Clean and resolve any residual template variables
     def _clean_template_vars(obj, dest, name, cost, dur):
         if isinstance(obj, str):
             s = obj.replace("{destination}", dest).replace("{name}", name).replace("{cost}", cost).replace("{duration}", dur)
-            # Strip any other stray {placeholders}
-            s = re.sub(r'\{[a-zA-Z0-9_\-]+\}', dest, s)
-            return s
+            # Strip any other stray {placeholders} cleanly by removing them, NOT replacing with dest!
+            s = re.sub(r'\{[a-zA-Z0-9_\-]+\}', '', s)
+            # Deduplicate back-to-back words like 'Dwarka Dwarka' or 'Dwarka, Dwarka'
+            s = re.sub(r'\b([A-Za-z0-9]+)(?:[\s,]+)\1\b', r'\1', s, flags=re.IGNORECASE)
+            s = re.sub(r'\s{2,}', ' ', s)
+            s = re.sub(r',\s*,', ',', s)
+            return s.strip()
         elif isinstance(obj, dict):
             return {k: _clean_template_vars(v, dest, name, cost, dur) for k, v in obj.items()}
         elif isinstance(obj, list):

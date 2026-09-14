@@ -373,10 +373,24 @@
                                 <div class="flex items-center gap-2 flex-1 min-w-[200px]">
                                     <input type="password" id="key_openrouter" class="rounded border-slate-300 px-3 py-1.5 text-xs w-full font-mono focus:border-violet-500" placeholder="sk-or-...">
                                 </div>
-                                <div class="flex items-center gap-1.5">
+                                 <div class="flex items-center gap-1.5">
                                     <button onclick="saveSingleKey('openrouter')" class="px-3 py-1.5 rounded bg-violet-600 text-white font-medium hover:bg-violet-700 transition">Save</button>
                                     <button onclick="testKeyLive('openrouter')" id="btnTest_openrouter" class="px-3 py-1.5 rounded bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 border border-slate-300 transition">⚡ Test</button>
                                     <span id="status_openrouter" class="text-xs ml-1"></span>
+                                </div>
+                            </div>
+
+                            <!-- Admin Security Key -->
+                            <div class="bg-indigo-50/50 p-2.5 rounded-lg border border-indigo-200 shadow-sm flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2 min-w-[140px]">
+                                    <span class="font-semibold text-indigo-900">🛡️ Admin API Key:</span>
+                                </div>
+                                <div class="flex items-center gap-2 flex-1 min-w-[200px]">
+                                    <input type="password" id="key_admin" class="rounded border-slate-300 px-3 py-1.5 text-xs w-full font-mono focus:border-indigo-500" placeholder="yatradham-admin-secure-key-2026">
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="saveAdminKey()" class="px-3 py-1.5 rounded bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition">Save Key</button>
+                                    <span id="status_admin" class="text-xs ml-1 font-medium text-indigo-700"></span>
                                 </div>
                             </div>
                         </div>
@@ -802,11 +816,11 @@
                 <p class="text-slate-500 mb-8">Download all 19 generated SEO sections mapped to CMS-ready columns.</p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/export/csv?status=approved" class="inline-flex justify-center items-center rounded-lg border border-transparent bg-emerald-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-emerald-700 transition">
+                    <a href="/export/csv?status=approved" onclick="this.href='/export/csv?status=approved&admin_key='+encodeURIComponent(getAdminKey())" class="inline-flex justify-center items-center rounded-lg border border-transparent bg-emerald-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-emerald-700 transition">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         Download Approved Only
                     </a>
-                    <a href="/export/csv?status=" class="inline-flex justify-center items-center rounded-lg border border-slate-300 bg-white px-6 py-3 text-base font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition">
+                    <a href="/export/csv?status=" onclick="this.href='/export/csv?status=&admin_key='+encodeURIComponent(getAdminKey())" class="inline-flex justify-center items-center rounded-lg border border-slate-300 bg-white px-6 py-3 text-base font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition">
                         Download Everything
                     </a>
                 </div>
@@ -1507,6 +1521,31 @@
         const API = '';
         let debounceTimer;
 
+        function getAdminKey() {
+            return localStorage.getItem('yatradham_admin_key') || 'yatradham-admin-secure-key-2026';
+        }
+
+        function saveAdminKey() {
+            const input = document.getElementById('key_admin');
+            if (!input) return;
+            const val = input.value.trim() || 'yatradham-admin-secure-key-2026';
+            localStorage.setItem('yatradham_admin_key', val);
+            const statusEl = document.getElementById('status_admin');
+            if (statusEl) {
+                statusEl.innerHTML = '<span class="text-emerald-600 font-semibold">Saved!</span>';
+                setTimeout(() => { statusEl.innerHTML = ''; }, 2500);
+            }
+            if (typeof showToast === 'function') showToast('🛡️ Admin API Key saved');
+        }
+
+        function adminHeaders(extra = {}) {
+            return {
+                'Content-Type': 'application/json',
+                'X-Admin-Key': getAdminKey(),
+                ...extra
+            };
+        }
+
         // UI Helpers
         let allSelected = false;
         function toggleSelectAll() {
@@ -1734,7 +1773,7 @@
             try {
                 const r = await fetch(API + '/batch-urls', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: adminHeaders(),
                     body: JSON.stringify({ urls, category, keys })
                 });
                 const text = await r.text();
@@ -2604,15 +2643,20 @@
 
         async function updateStatus(id, status) {
             try {
-                await fetch(API + '/outputs/' + id, {
+                const res = await fetch(API + '/outputs/' + id, {
                     method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: adminHeaders(),
                     body: JSON.stringify({status})
                 });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    alert('Status update failed: ' + (err.detail || ('HTTP ' + res.status)));
+                    return;
+                }
                 loadOutputs();
                 loadStats();
                 showToast(`Output #${id} status set to ${status}`);
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error(e); alert('Error updating status: ' + e.message); }
         }
 
         async function bulkAction(action) {
@@ -2621,14 +2665,20 @@
             if (!ids.length) { alert('Select at least one item'); return; }
 
             try {
-                await fetch(API + '/bulk-action', {
+                const res = await fetch(API + '/bulk-action', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: adminHeaders(),
                     body: JSON.stringify({ids, action})
                 });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    alert('Bulk action failed: ' + (err.detail || ('HTTP ' + res.status)));
+                    return;
+                }
                 loadOutputs();
                 loadStats();
-            } catch(e) { console.error(e); }
+                showToast(`Bulk ${action} executed for ${ids.length} packages`);
+            } catch(e) { console.error(e); alert('Error executing bulk action: ' + e.message); }
         }
 
         async function clearCache() {
@@ -2636,7 +2686,10 @@
                 return;
             }
             try {
-                const res = await fetch(API + '/clear-cache', { method: 'POST' });
+                const res = await fetch(API + '/clear-cache', {
+                    method: 'POST',
+                    headers: adminHeaders()
+                });
                 const data = await res.json();
                 if (data.success) {
                     alert(data.message || "Cache cleared successfully!");
@@ -2665,6 +2718,7 @@
             if (document.getElementById('key_groq')) document.getElementById('key_groq').value = keys.groq || '';
             if (document.getElementById('key_gemini')) document.getElementById('key_gemini').value = keys.gemini || '';
             if (document.getElementById('key_openrouter')) document.getElementById('key_openrouter').value = keys.openrouter || '';
+            if (document.getElementById('key_admin')) document.getElementById('key_admin').value = getAdminKey();
         }
 
 
@@ -2720,7 +2774,7 @@
             try {
                 const res = await fetch(API + '/test-provider', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: adminHeaders(),
                     body: JSON.stringify({ provider, api_key: key })
                 });
                 const data = await res.json();
@@ -3673,7 +3727,7 @@
             try {
                 const res = await fetch(API + '/api/wp/verify', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: adminHeaders(),
                     body: JSON.stringify({site_url: url, username: user, app_password: pass})
                 });
                 const data = await res.json();
@@ -3715,7 +3769,7 @@
             try {
                 const res = await fetch(API + '/api/wp/publish', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: adminHeaders(),
                     body: JSON.stringify({
                         site_url: url,
                         username: user,

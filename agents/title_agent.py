@@ -88,7 +88,10 @@ CRITICAL: Do NOT repeat words. Match the exact program topic. End with " | Yatra
         elif category == "stay":
             base = f"{clean_name} Stay Booking in {dest_city}" if len(clean_name) < 38 else f"Dharamshala Stay in {dest_city}"
         elif category == "puja":
-            base = f"{clean_name} Online Puja Booking" if len(clean_name) < 40 else f"Online Puja & Pandit Booking in {dest_city}"
+            if "puja" in clean_name.lower():
+                base = f"{clean_name} Booking & Pandit Seva" if len(clean_name) < 35 else f"{clean_name} in {dest_city}"
+            else:
+                base = f"{clean_name} Online Puja Booking" if len(clean_name) < 40 else f"Online Puja & Pandit Booking in {dest_city}"
         else:
             base = f"{duration} {dest_city} Spiritual Yatra Tour"
 
@@ -110,4 +113,5 @@ CRITICAL: Do NOT repeat words. Match the exact program topic. End with " | Yatra
             main_part = shortened if shortened else main_part[:max_main_len]
         title = f"{main_part}{suffix}"
 
+    title = re.sub(r'\b([A-Za-z0-9]+)(?:[\s,]+)\1\b', r'\1', title, flags=re.IGNORECASE)
     return {"title_tag": title}
