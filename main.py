@@ -728,18 +728,22 @@ def publish_to_wordpress(req: WpPublishRequest, auth_ok: bool = Depends(verify_a
 
 class SitemapCrawlRequest(BaseModel):
     source_url: str
-    max_urls: int = Field(default=50, le=100)
+    max_urls: int = Field(default=50, le=500)
 
 
 @app.post("/api/sitemap/crawl")
 def crawl_sitemap(req: SitemapCrawlRequest):
     """Crawl an XML Sitemap or Category Landing Page to extract package links with SSRF check."""
+    url = req.source_url.strip()
+    if not url.startswith("http://") and not url.startswith("https://"):
+        url = f"https://{url}"
+
     from ssrf_protection import is_safe_url
-    safe, reason = is_safe_url(req.source_url)
+    safe, reason = is_safe_url(url)
     if not safe:
         raise HTTPException(status_code=400, detail=f"SSRF Violation on Sitemap URL: {reason}")
     from sitemap_crawler import SitemapCrawler
-    result = SitemapCrawler.fetch_urls(req.source_url, req.max_urls)
+    result = SitemapCrawler.fetch_urls(url, req.max_urls)
     return result
 
 

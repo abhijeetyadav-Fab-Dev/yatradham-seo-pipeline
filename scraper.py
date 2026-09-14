@@ -79,9 +79,9 @@ def detect_url_category(url: Optional[str] = "", text: Optional[str] = "") -> st
         return "wellness"
     if "temple.yatradham.org/pujas" in url_lower or "temple.yatradham.org/pandit-ji" in url_lower or "/puja" in url_lower or "/pandit" in url_lower:
         return "puja"
-    if "travel.yatradham.org" in url_lower or "chardham-package" in url_lower or "kumbh-mela" in url_lower or "-tour-package" in url_lower:
+    if "travel.yatradham.org" in url_lower or "chardham-package" in url_lower or "kumbh-mela" in url_lower or "-tour-package" in url_lower or "/package/" in url_lower:
         return "tour"
-    if "gmvn-" in url_lower or "-dharamshala" in url_lower or "-ashram" in url_lower or "-bhavan" in url_lower or "-hotel" in url_lower or "-trh" in url_lower:
+    if "gmvn-" in url_lower or "-dharamshala" in url_lower or "-ashram" in url_lower or "-bhavan" in url_lower or "-hotel" in url_lower or "-trh" in url_lower or "yatradham-destinations" in url_lower:
         return "stay"
 
     wellness_words = ["ayurved", "panchakarma", "massage", "rejuvenation", "retreat", "yoga vacation", "yoga institute", "wellness retreat", "detox", "naturopathy", "stress relief", "corporate excellence", "camp in delhi"]

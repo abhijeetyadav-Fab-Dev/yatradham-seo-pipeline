@@ -675,6 +675,8 @@
                                 <option value="50" selected>50 URLs</option>
                                 <option value="100">100 URLs</option>
                                 <option value="200">200 URLs</option>
+                                <option value="300">300 URLs</option>
+                                <option value="500">500 URLs</option>
                             </select>
                         </div>
                         <div class="flex items-end">
@@ -688,13 +690,21 @@
 
                 <!-- Crawl Results Box -->
                 <div id="sitemapResultsContainer" class="hidden">
-                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+                    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-4 pb-3 border-b border-slate-200 gap-3">
                         <div>
                             <h4 class="font-bold text-slate-800 text-base" id="sitemapFoundCount">Discovered URLs (0)</h4>
-                            <p class="text-xs text-slate-500">Select URLs to queue into the Content Pipeline</p>
+                            <p class="text-xs text-slate-500">Filter, select, and batch-ingest pilgrimage packages & stays</p>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button onclick="toggleSelectAllSitemap()" class="px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-300 hover:bg-slate-50 transition">Select All</button>
+                        <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto">
+                            <input type="text" id="sitemapFilterSearch" oninput="filterSitemapTable()" placeholder="🔍 Filter URLs or names..." class="px-3 py-2 text-xs rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary w-40 md:w-48 bg-white shadow-xs">
+                            <select id="sitemapFilterCategory" onchange="filterSitemapTable()" class="px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-medium focus:outline-none shadow-xs">
+                                <option value="all">All Categories</option>
+                                <option value="stay">🏨 Stays & Accommodations</option>
+                                <option value="tour">🛕 Tours & Packages</option>
+                                <option value="wellness">🌿 Wellness & Retreats</option>
+                                <option value="puja">🕉️ Pujas & Rituals</option>
+                            </select>
+                            <button onclick="toggleSelectAllSitemap()" class="px-3 py-2 text-xs font-semibold rounded-md border border-slate-300 bg-white hover:bg-slate-50 transition shadow-xs">Select All</button>
                             <button id="btnIngestSelected" onclick="ingestSelectedSitemapUrls()" class="px-5 py-2 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition flex items-center gap-1.5">
                                 <span>⚡ Batch Ingest Selected</span>
                             </button>
@@ -1510,9 +1520,10 @@
             const targetPanel = document.getElementById(name + 'Panel');
             if (targetPanel) targetPanel.classList.add('active');
             
-            const btn = (typeof event !== 'undefined' && event) 
-                ? (event.currentTarget || event.target?.closest('.tab-btn') || event.target)
-                : document.querySelector(`.tab-btn[onclick*="'${name}'"]`);
+            const eventBtn = (typeof event !== 'undefined' && event && event.target) 
+                ? (event.target.closest?.('.tab-btn') || (event.currentTarget?.classList?.contains('tab-btn') ? event.currentTarget : null))
+                : null;
+            const btn = eventBtn || document.querySelector(`.tab-btn[onclick*="'${name}'"]`);
             if (btn && btn.classList) btn.classList.add('active');
             
             if (name === 'outputs') loadOutputs();
@@ -1531,7 +1542,7 @@
             const targetPanel = document.getElementById(name + 'SubPanel');
             if (targetPanel) targetPanel.style.display = 'block';
             
-            const activeBtn = btn || (typeof event !== 'undefined' && event && event.target && event.target.classList && event.target.classList.contains('sub-tab-btn') ? event.target : document.querySelector(`.sub-tab-btn[onclick*="'${name}'"]`));
+            const activeBtn = btn || ((typeof event !== 'undefined' && event && event.target) ? event.target.closest?.('.sub-tab-btn') : null) || document.querySelector(`.sub-tab-btn[onclick*="'${name}'"]`);
             if (activeBtn) {
                 activeBtn.classList.add('active');
                 activeBtn.classList.remove('bg-white', 'text-slate-700');
@@ -3459,12 +3470,17 @@
         let discoveredSitemapItems = [];
 
         async function crawlSitemapUrls() {
-            const url = document.getElementById('sitemapInputUrl').value.trim();
+            let url = document.getElementById('sitemapInputUrl').value.trim();
             const maxUrls = parseInt(document.getElementById('sitemapMaxUrls').value, 10) || 50;
 
             if (!url) {
                 alert('Please enter a valid Sitemap XML or Category Hub URL.');
                 return;
+            }
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+                document.getElementById('sitemapInputUrl').value = url;
             }
 
             const btn = document.getElementById('btnCrawlSitemap');
@@ -3479,14 +3495,31 @@
                     body: JSON.stringify({source_url: url, max_urls: maxUrls})
                 });
                 const data = await res.json();
-                if (data.success && data.items) {
-                    discoveredSitemapItems = data.items;
-                    renderSitemapTable(data.items);
+
+                if (!res.ok) {
+                    let errMsg = data.detail;
+                    if (Array.isArray(errMsg)) {
+                        errMsg = errMsg.map(e => e.msg || JSON.stringify(e)).join('; ');
+                    } else if (typeof errMsg === 'object' && errMsg !== null) {
+                        errMsg = JSON.stringify(errMsg);
+                    }
+                    alert('Crawl failed: ' + (errMsg || data.error || ('HTTP ' + res.status)));
+                    return;
+                }
+
+                if (data.success && data.items && data.items.length > 0) {
+                    discoveredSitemapItems = data.items.map((item, idx) => ({ ...item, _id: idx }));
+                    const searchInput = document.getElementById('sitemapFilterSearch');
+                    const catFilter = document.getElementById('sitemapFilterCategory');
+                    if (searchInput) searchInput.value = '';
+                    if (catFilter) catFilter.value = 'all';
+
+                    renderSitemapTable(discoveredSitemapItems);
                     document.getElementById('sitemapResultsContainer').classList.remove('hidden');
                     document.getElementById('sitemapFoundCount').textContent = `Discovered Package URLs (${data.items.length})`;
-                    showToast(`🗺️ Discovered ${data.items.length} package links!`);
+                    showToast(`🗺️ Discovered ${data.items.length} pilgrimage packages & stays!`);
                 } else {
-                    alert('Crawl failed: ' + (data.error || 'No links found'));
+                    alert('Crawl finished: ' + (data.error || 'No relevant package or accommodation links found matching criteria.'));
                 }
             } catch(e) {
                 alert('Error crawling sitemap: ' + e.message);
@@ -3496,43 +3529,78 @@
             }
         }
 
+        function filterSitemapTable() {
+            const query = (document.getElementById('sitemapFilterSearch')?.value || '').toLowerCase().trim();
+            const selectedCat = document.getElementById('sitemapFilterCategory')?.value || 'all';
+
+            const filtered = discoveredSitemapItems.filter(item => {
+                const matchesCat = (selectedCat === 'all' || item.category === selectedCat);
+                const matchesSearch = !query || 
+                    item.url.toLowerCase().includes(query) || 
+                    (item.suggested_name && item.suggested_name.toLowerCase().includes(query));
+                return matchesCat && matchesSearch;
+            });
+
+            renderSitemapTable(filtered);
+            const countEl = document.getElementById('sitemapFoundCount');
+            if (countEl) {
+                countEl.textContent = `Discovered URLs (${filtered.length} of ${discoveredSitemapItems.length})`;
+            }
+        }
+
         function renderSitemapTable(items) {
             const tbody = document.getElementById('sitemapTableBody');
+            if (!tbody) return;
             if (!items.length) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">No links found matching filter criteria</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400 font-sans">No links found matching filter criteria</td></tr>`;
                 return;
             }
-            tbody.innerHTML = items.map((item, idx) => `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="px-4 py-2.5"><input type="checkbox" class="sitemap-cb w-4 h-4 rounded text-primary" value="${idx}" checked></td>
-                    <td class="px-4 py-2.5 max-w-xs truncate text-indigo-600 font-semibold"><a href="${item.url}" target="_blank">${escapeHtml(item.url)}</a></td>
-                    <td class="px-4 py-2.5 text-slate-800">${escapeHtml(item.suggested_name)}</td>
-                    <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-indigo-50 text-indigo-700 border border-indigo-200">${escapeHtml(item.category)}</span></td>
+
+            const categoryBadges = {
+                'stay': 'bg-amber-50 text-amber-800 border-amber-200',
+                'tour': 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                'wellness': 'bg-emerald-50 text-emerald-800 border-emerald-200',
+                'puja': 'bg-purple-50 text-purple-800 border-purple-200'
+            };
+
+            const categoryIcons = {
+                'stay': '🏨 Stay',
+                'tour': '🛕 Tour',
+                'wellness': '🌿 Wellness',
+                'puja': '🕉️ Puja'
+            };
+
+            tbody.innerHTML = items.map(item => `
+                <tr class="hover:bg-slate-50/80 transition">
+                    <td class="px-4 py-3"><input type="checkbox" class="sitemap-cb w-4 h-4 rounded text-primary" data-url="${escapeHtml(item.url)}" data-category="${escapeHtml(item.category)}" checked></td>
+                    <td class="px-4 py-3 max-w-sm truncate text-indigo-600 font-semibold"><a href="${escapeHtml(item.url)}" target="_blank" class="hover:underline font-mono text-xs">${escapeHtml(item.url)}</a></td>
+                    <td class="px-4 py-3 text-slate-800 font-medium font-sans">${escapeHtml(item.suggested_name)}</td>
+                    <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border shadow-2xs ${categoryBadges[item.category] || 'bg-slate-50 text-slate-700 border-slate-200'}">${categoryIcons[item.category] || escapeHtml(item.category)}</span></td>
                 </tr>
             `).join('');
+
+            const master = document.getElementById('checkAllSitemap');
+            if (master) master.checked = true;
         }
 
         function toggleSelectAllSitemap(checked) {
+            const checkboxes = document.querySelectorAll('.sitemap-cb');
             const isChecked = checked !== undefined ? checked : !document.querySelector('.sitemap-cb:checked');
-            document.querySelectorAll('.sitemap-cb').forEach(cb => cb.checked = isChecked);
+            checkboxes.forEach(cb => cb.checked = isChecked);
             const master = document.getElementById('checkAllSitemap');
             if (master) master.checked = isChecked;
         }
 
         async function ingestSelectedSitemapUrls() {
-            const selectedIndices = Array.from(document.querySelectorAll('.sitemap-cb:checked')).map(cb => parseInt(cb.value, 10));
-            if (!selectedIndices.length) {
-                alert('Please select at least one URL to ingest.');
+            const checkedBoxes = Array.from(document.querySelectorAll('.sitemap-cb:checked'));
+            if (!checkedBoxes.length) {
+                alert('Please select at least one URL from the table to ingest.');
                 return;
             }
 
-            if (!discoveredSitemapItems || !discoveredSitemapItems.length) {
-                alert('No crawled URLs available in memory. Please run crawl first.');
-                return;
-            }
-
-            const selectedItems = selectedIndices.map(i => discoveredSitemapItems[i]).filter(Boolean);
-            const urlsText = selectedItems.map(item => item.url).join('\n');
+            const urls = checkedBoxes.map(cb => cb.getAttribute('data-url')).filter(Boolean);
+            const categories = checkedBoxes.map(cb => cb.getAttribute('data-category')).filter(Boolean);
+            const urlsText = urls.join('\n');
 
             // Switch to Scrape tab and activate Batch URLs sub-tab
             showTab('scrape');
@@ -3541,7 +3609,18 @@
             const batchInput = document.getElementById('batchUrls');
             if (batchInput) {
                 batchInput.value = urlsText;
-                showToast(`⚡ ${selectedItems.length} URLs populated in Batch Processing queue!`);
+                
+                // If all selected items share the same category, auto-select it
+                const uniqueCats = Array.from(new Set(categories));
+                if (uniqueCats.length === 1 && uniqueCats[0]) {
+                    const catSelect = document.getElementById('packageCategory');
+                    if (catSelect) {
+                        catSelect.value = uniqueCats[0];
+                        if (typeof checkCategoryMismatch === 'function') checkCategoryMismatch();
+                    }
+                }
+
+                showToast(`⚡ ${urls.length} URLs populated into Batch Processing queue!`);
                 batchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 batchInput.focus();
             } else {
