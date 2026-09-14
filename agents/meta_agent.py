@@ -36,16 +36,18 @@ def run(package_data: Dict[str, Any], title_tag: str, primary_keyword: str, clie
     name = package_data.get('name', '')
     destination = package_data.get('destination', '')
     duration = package_data.get('duration', '')
+    category = (package_data.get('category') or 'tour').lower()
     raw_text = package_data.get('raw_text', '')[:500]  # First 500 chars for context
 
     user_msg = f"""Title Tag: {title_tag}
 Primary Keyword: {primary_keyword}
 Package Name: {name}
+Category: {category}
 Destination: {destination}
 Duration: {duration}
 Page Context: {raw_text}
 
-Generate ONE perfect SEO meta description between 145 and 155 characters.
+Generate ONE perfect SEO meta description between 145 and 155 characters for this {category.upper()} package.
 CRITICAL: Do NOT repeat the package name. Write a FRESH, benefit-focused summary ending with a CTA."""
 
     content = client.chat_completion(
@@ -82,24 +84,25 @@ CRITICAL: Do NOT repeat the package name. Write a FRESH, benefit-focused summary
 
     # Smart fallback if empty or too short
     if not meta or len(meta) < 40:
-        dest = destination if destination else "Yamunotri, Uttarakhand"
-        dur = duration if duration else "15 Days"
+        dest_clean = destination if destination else "India"
+        dur = duration if duration else "3 Days"
+        clean_name = re.sub(r'\s*\|.*$', '', name).strip()
+        clean_name = clean_name[:35]
 
-        # Build a natural description from components with distinct travel/stay angles
-        if "gmvn" in name.lower() or "trh" in name.lower() or "dharamshala" in name.lower() or "ashram" in name.lower():
-            meta = f"Book verified stay at {name[:35]} in {dest}. Features clean rooms, hot water, Satvik food & quick temple access. Reserve your room now!"
-        elif "ayurved" in name.lower() or "ayurved" in primary_keyword.lower():
-            meta = f"Recharge with a personalized {dur} Ayurvedic healing program in {dest}. Includes daily therapies, yoga & nourishing meals. Book today!"
-        elif "yoga" in name.lower() or "yoga" in primary_keyword.lower():
-            meta = f"Deepen your practice with a {dur} guided yoga retreat in {dest}. Experience daily pranayama, meditation & peaceful stays. Book now!"
-        elif "chardham" in name.lower() or "yatra" in name.lower() or "darshan" in name.lower():
-            meta = f"Plan your sacred {name[:35]} journey to {dest}. Enjoy verified Dharamshala bookings, guided darshan & reliable transport. Book now!"
-        elif "puja" in name.lower() or "pandit" in name.lower() or category == "puja":
-            meta = f"Book verified {name[:35]} in {dest}. Experienced Vedic Pandits, sacred samagri, gotra sankalp & temple blessings. Book now!"
-        elif "detox" in name.lower() or "panchakarma" in primary_keyword.lower():
-            meta = f"Cleanse your mind and body with authentic {dur} Panchakarma in {dest}. Expert consultations & organic Satvik meals. Enquire today!"
+        # Prevent duplicate location phrasing if location is already in clean_name
+        dest_short = dest_clean.split(",")[0].strip()
+        in_dest = f" in {dest_short}" if dest_short.lower() not in clean_name.lower() else ""
+
+        # Category-first deterministic templates for all product types
+        if category == "puja" or "puja" in clean_name.lower() or "pandit" in clean_name.lower():
+            meta = f"Book verified {clean_name}{in_dest}. Experienced Vedic Pandits, sacred samagri, gotra sankalp & temple blessings on YatraDham. Book now!"
+        elif category == "stay" or any(k in clean_name.lower() for k in ["dharamshala", "ashram", "hotel", "stay", "trh", "gmvn"]):
+            meta = f"Book verified stay at {clean_name}{in_dest}. Clean rooms, hot water, Satvik meals & quick temple access on YatraDham.Org. Reserve now!"
+        elif category == "wellness" or any(k in clean_name.lower() for k in ["ayurved", "yoga", "detox", "retreat", "panchakarma"]):
+            meta = f"Rejuvenate with {clean_name}{in_dest}. Doctor consultations, authentic Ayurvedic therapies & Satvik meals on YatraDham. Book now!"
         else:
-            meta = f"Experience authentic spiritual travel with {name[:35]} in {dest}. Verified lodging, Satvik dining & seamless support. Book now!"
+            meta = f"Book verified {clean_name}{in_dest} with YatraDham.Org. Comfortable transit, clean stays, Satvik meals & guided darshan. Book now!"
+
 
 
     # Clean double periods or whitespace glitches

@@ -91,8 +91,17 @@ def process_package(package_input: PackageInput, client: LLMClient) -> SEOOutput
 
     # Formulate GEO Quick Answer (Answer-First for Google SGE / AI Overviews)
     if not content_result.get("geo_quick_answer"):
+        p_name = pkg_data.get("name", "Package")
         dur = pkg_data.get("duration", "program")
         cost = pkg_data.get("cost", "verified rates")
+        if cat_val == "puja":
+            content_result["geo_quick_answer"] = f"{p_name} in {dest_val} is an authentic Vedic ritual service performed by verified temple pandits, including gotra sankalp, sacred samagri, and divine blessings. Booking starts from {cost} through YatraDham.Org."
+        elif cat_val == "stay":
+            content_result["geo_quick_answer"] = f"{p_name} offers verified accommodation in {dest_val} featuring clean rooms, hot water, and convenient temple proximity. Room booking starts from {cost} on YatraDham.Org."
+        elif cat_val == "wellness":
+            content_result["geo_quick_answer"] = f"{p_name} in {dest_val} is a {dur} holistic wellness retreat combining authentic Ayurvedic treatments, doctor consultations, guided yoga, and Satvik meals. Packages start from {cost} on YatraDham.Org."
+        else:
+            content_result["geo_quick_answer"] = f"{p_name} is a {dur} spiritual pilgrimage tour across {dest_val} including verified stays, dedicated transfers, satvik meals, and guided darshans. Packages start from {cost} on YatraDham.Org."
     def _clean_template_vars(obj, dest, name, cost, dur):
         if isinstance(obj, str):
             s = obj.replace("{destination}", dest).replace("{name}", name).replace("{cost}", cost).replace("{duration}", dur)

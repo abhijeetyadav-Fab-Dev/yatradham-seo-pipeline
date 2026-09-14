@@ -66,38 +66,89 @@ CRITICAL: Do NOT repeat words. Match the exact program topic. End with " | Yatra
 
     title = result.get("title_tag", "")
 
-    # If title is empty or generic, build an authentic title from package name
-    if not title or len(title) < 20 or "Tour Package" in title and category == "wellness":
+    # If title is empty, too short, or mismatched, build an authentic title from package name
+    if not title or len(title) < 20 or ("Tour Package" in title and category in ["wellness", "puja", "stay"]):
         dest_city = destination.split(",")[0].strip() if destination else "India"
         clean_name = re.sub(r'\s*\|.*$', '', name).strip()
-        
-        # Match product theme accurately
-        if "corporate" in clean_name.lower():
-            base = f"Corporate Wellness & Leadership Retreat in {dest_city}"
-        elif "ayurved" in clean_name.lower() or "panchakarma" in clean_name.lower():
-            if "panchakarma" in clean_name.lower():
-                base = f"{duration} Panchakarma Detox in {dest_city}"
-            else:
-                base = f"{duration} Ayurveda Retreat in {dest_city}"
-        elif "kriya" in clean_name.lower() or "silence" in clean_name.lower() or "ashram" in clean_name.lower():
-            base = f"{duration} Meditation & Ashram Stay in {dest_city}"
-        elif "yoga" in clean_name.lower():
-            base = f"{duration} Yoga & Wellness Retreat in {dest_city}"
-        elif category == "wellness":
-            base = f"{clean_name} in {dest_city}" if len(clean_name) < 40 else f"{duration} Wellness Retreat in {dest_city}"
-        elif category == "stay":
-            base = f"{clean_name} Stay Booking in {dest_city}" if len(clean_name) < 38 else f"Dharamshala Stay in {dest_city}"
-        elif category == "puja":
+        has_dest = dest_city.lower() in clean_name.lower()
+        in_dest = "" if has_dest else f" in {dest_city}"
+
+        # Match product theme accurately while retaining package name keywords
+        if category == "puja" or "puja" in clean_name.lower() or "pandit" in clean_name.lower():
             if "puja" in clean_name.lower():
-                base = f"{clean_name} Booking & Pandit Seva" if len(clean_name) < 35 else f"{clean_name} in {dest_city}"
+                base = f"{clean_name} Booking & Pandit Seva" if len(clean_name) <= 30 else f"{clean_name}{in_dest}"
             else:
-                base = f"{clean_name} Online Puja Booking" if len(clean_name) < 40 else f"Online Puja & Pandit Booking in {dest_city}"
+                base = f"{clean_name} Puja Booking & Pandit Seva" if len(clean_name) <= 25 else f"{clean_name} Puja{in_dest}"
+        elif category == "stay" or any(k in clean_name.lower() for k in ["dharamshala", "ashram", "hotel", "stay", "trh", "gmvn"]):
+            if any(k in clean_name.lower() for k in ["dharamshala", "ashram", "hotel", "stay", "room"]):
+                base = f"{clean_name} Room Booking{in_dest}" if len(clean_name) <= 28 else f"{clean_name}{in_dest}"
+            else:
+                base = f"{clean_name} Dharamshala Stay{in_dest}" if len(clean_name) <= 25 else f"{clean_name} Stay{in_dest}"
+        elif category == "wellness" or any(k in clean_name.lower() for k in ["ayurved", "yoga", "detox", "retreat", "panchakarma"]):
+            if any(k in clean_name.lower() for k in ["retreat", "program", "healing"]):
+                base = f"{clean_name}{in_dest}" if len(clean_name) <= 35 else f"{duration} {clean_name}"[:45]
+            else:
+                base = f"{clean_name} Wellness Retreat{in_dest}" if len(clean_name) <= 25 else f"{clean_name}{in_dest}"
         else:
-            base = f"{duration} {dest_city} Spiritual Yatra Tour"
+            if any(k in clean_name.lower() for k in ["yatra", "tour", "darshan"]):
+                base = f"{clean_name}{in_dest}" if len(clean_name) <= 35 else f"{duration} {clean_name}"[:45]
+            else:
+                base = f"{duration} {clean_name} Spiritual Tour{in_dest}" if len(clean_name) <= 25 else f"{clean_name} Tour{in_dest}"
 
         title = f"{base} | YatraDham"
 
-    # Enforce exact 50-60 character boundary cleanly at word boundaries
+    # Enforce exact 50-60 character boundary cleanly
+    title = re.sub(r'\b([A-Za-z0-9]+)(?:[\s,]+)\1\b', r'\1', title, flags=re.IGNORECASE)
+    title = re.sub(r'\s+', ' ', title).strip()
+
+    # If title is shorter than 50 chars, enhance suffix or brand representation
+    if len(title) < 50:
+        if title.endswith(" | YatraDham") and len(title) + 4 <= 60:
+            title = title[:-12] + " | YatraDham.Org"
+        elif not title.endswith("YatraDham") and not title.endswith("YatraDham.Org"):
+            if len(title) <= 45:
+                title = f"{title} | YatraDham.Org"
+            elif len(title) <= 48:
+                title = f"{title} | YatraDham"
+
+    # If still shorter than 50 chars, expand main title with category-relevant terms
+    if len(title) < 50:
+        main_part = title.split(" | ")[0]
+        brand = " | YatraDham.Org"
+        if category == "tour":
+            if "tour" not in main_part.lower() and "package" not in main_part.lower() and len(f"{main_part} Tour Package") + len(brand) <= 60:
+                title = f"{main_part} Tour Package{brand}"
+            elif "package" not in main_part.lower() and len(f"{main_part} Package") + len(brand) <= 60:
+                title = f"{main_part} Package{brand}"
+            elif len(f"{main_part} Yatra Booking") + len(brand) <= 60:
+                title = f"{main_part} Yatra Booking{brand}"
+            elif len(f"{main_part} Booking") + len(brand) <= 60:
+                title = f"{main_part} Booking{brand}"
+        elif category == "stay":
+            if "stay" not in main_part.lower() and "room" not in main_part.lower() and len(f"{main_part} Room Stay") + len(brand) <= 60:
+                title = f"{main_part} Room Stay{brand}"
+            elif "booking" not in main_part.lower() and len(f"{main_part} Room Booking") + len(brand) <= 60:
+                title = f"{main_part} Room Booking{brand}"
+            elif len(f"{main_part} Booking") + len(brand) <= 60:
+                title = f"{main_part} Booking{brand}"
+        elif category == "puja":
+            if "puja" not in main_part.lower() and len(f"{main_part} Puja Booking") + len(brand) <= 60:
+                title = f"{main_part} Puja Booking{brand}"
+            elif "booking" not in main_part.lower() and len(f"{main_part} Booking & Seva") + len(brand) <= 60:
+                title = f"{main_part} Booking & Seva{brand}"
+        elif category == "wellness":
+            if "retreat" not in main_part.lower() and len(f"{main_part} Wellness Retreat") + len(brand) <= 60:
+                title = f"{main_part} Wellness Retreat{brand}"
+            elif len(f"{main_part} Healing Retreat") + len(brand) <= 60:
+                title = f"{main_part} Healing Retreat{brand}"
+
+    if len(title) < 50:
+        main_part = title.split(" | ")[0]
+        if len(main_part) + len(" Online Booking | YatraDham") <= 60:
+            title = f"{main_part} Online Booking | YatraDham"
+        elif len(main_part) + len(" Guide | YatraDham.Org") <= 60:
+            title = f"{main_part} Guide | YatraDham.Org"
+
     if len(title) > 60:
         suffix = " | YatraDham"
         max_main_len = 60 - len(suffix)
