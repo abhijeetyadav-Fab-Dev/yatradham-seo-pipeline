@@ -313,8 +313,9 @@ def _generate_long_form_blog(
     tone: Optional[str] = None,
     word_count: int = 3000,
     additional_instructions: Optional[str] = None,
+    preferred_provider: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Single-pass unified generation for 3,000+ word comprehensive master guides adhering to top SEO ranking guardrails."""
+    """Single-pass unified generation for comprehensive master guides adhering to top SEO ranking guardrails."""
     
     brand_context = """You are an elite SEO Content Strategist & Travel Writer for Yatradham.Org (India's premier spiritual & wellness tourism platform since 2016).
 
@@ -481,6 +482,7 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
         ],
         max_tokens=4000,
         temperature=0.6,
+        preferred_provider=preferred_provider,
     )
 
     cleaned = _clean_markdown(raw_response)
@@ -506,13 +508,14 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
 
     full_content = _sanitize_repetition(part_content)
 
-    # Ensure ALL closing sections are 100% completed and not cut off mid-way
+    # Ensure closing sections are completed if word count target is large (> 2000 words) or content was truncated
     has_faqs = "## Frequently Asked Questions" in full_content or "## FAQs" in full_content
     has_final_thoughts = "## Final Thoughts" in full_content or "## Conclusion" in full_content
     has_related_articles = "## Related Articles" in full_content
     is_cut_off = full_content.strip().endswith(("-", "•", "–", ":", "and", "or", "the", "with", "to", "in", "of", "a", "..."))
+    is_short = len(full_content.split()) < 600
 
-    if not (has_faqs and has_final_thoughts and has_related_articles) or is_cut_off:
+    if (not (has_faqs and has_final_thoughts and has_related_articles) or is_cut_off) and (word_count >= 2000 or is_short):
         logger.info("Detecting incomplete or truncated sections in long-form blog. Running intelligent completion pass...")
         
         # If cut off inside an incomplete section, trim back to the last complete H2 header
@@ -557,15 +560,16 @@ CRITICAL: Output ONLY markdown text starting with the first missing section head
                 ],
                 max_tokens=3000,
                 temperature=0.6,
+                preferred_provider=preferred_provider,
             )
             cleaned_finale = _clean_markdown(finale_raw)
             if cleaned_finale:
                 full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_finale)}"
 
-    # Check word count against requested target and perform deep expansion if needed
+    # Check word count against requested target and perform deep expansion if needed (only for long articles)
     target_words = word_count if (word_count and word_count >= 1000) else 1500
     current_words = len(full_content.split())
-    if current_words < int(target_words * 0.85):
+    if word_count >= 2000 and current_words < int(target_words * 0.85):
         logger.info(f"Generated blog has {current_words} words, requested target is {target_words}. Running in-depth expansion pass...")
         expansion_prompt = f"""You are writing a comprehensive {target_words}-word master guide on: "{topic}".
 Current draft is {current_words} words.
@@ -589,6 +593,7 @@ Output ONLY this markdown section starting with the H2 header."""
             ],
             max_tokens=3000,
             temperature=0.6,
+            preferred_provider=preferred_provider,
         )
         cleaned_exp = _clean_markdown(exp_raw)
         if cleaned_exp:
@@ -618,6 +623,7 @@ def run(
     tone: Optional[str] = None,
     word_count: Optional[int] = None,
     additional_instructions: Optional[str] = None,
+    provider: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Generate net-new content based on user requirements using robust markdown parsing."""
     
@@ -632,8 +638,10 @@ def run(
             audience=audience,
             tone=tone,
             word_count=effective_words,
-            additional_instructions=additional_instructions
+            additional_instructions=additional_instructions,
+            preferred_provider=provider,
         )
+
 
     base_prompt = CONTENT_TYPE_PROMPTS.get(content_type, CONTENT_TYPE_PROMPTS["blog_post"])
     target_tokens = min(4000, max(2000, int((word_count or 1000) * 1.5)))
@@ -673,6 +681,7 @@ Follow all formatting rules and markdown heading conventions strictly."""
         ],
         max_tokens=target_tokens,
         temperature=0.6,
+        preferred_provider=provider,
     )
 
     content = _clean_markdown(content)

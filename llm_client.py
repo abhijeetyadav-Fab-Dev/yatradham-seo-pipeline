@@ -5,13 +5,14 @@ import re
 from typing import Optional, Dict, Any, List
 from openai import OpenAI
 
-DEFAULT_OPENROUTER_MODEL = "meta-llama/llama-3.3-70b-instruct:free"
+DEFAULT_OPENROUTER_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
 OPENROUTER_FALLBACK_MODELS = [
-    "meta-llama/llama-3.3-70b-instruct:free",
-    "google/gemini-2.0-flash-exp:free",
-    "qwen/qwen-2.5-72b-instruct:free",
-    "deepseek/deepseek-r1:free",
-    "meta-llama/llama-3.2-3b-instruct:free",
+    "nvidia/nemotron-3-super-120b-a12b:free",
+    "nvidia/nemotron-3.5-lightning:free",
+    "google/gemma-4-26b-a4b-it:free",
+    "google/gemma-4-31b-it:free",
+    "liquid/lfm-2.5-2.6b:free",
+    "poolside/laguna-s-2.1:free",
 ]
 
 
@@ -148,15 +149,15 @@ class LLMClient:
         if self.dry_run:
             return
         if self.nvidia_api_key:
-            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=self.nvidia_api_key, timeout=10.0, max_retries=0)
+            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=self.nvidia_api_key, timeout=45.0, max_retries=1)
         if self.groq_api_key:
-            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=self.groq_api_key, timeout=8.0, max_retries=0)
+            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=self.groq_api_key, timeout=35.0, max_retries=1)
         if self.gemini_api_key:
-            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=self.gemini_api_key, timeout=8.0, max_retries=0)
+            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=self.gemini_api_key, timeout=35.0, max_retries=1)
         if self.deepseek_api_key:
-            self.deepseek_client = OpenAI(base_url="https://api.deepseek.com/v1", api_key=self.deepseek_api_key, timeout=12.0, max_retries=0)
+            self.deepseek_client = OpenAI(base_url="https://api.deepseek.com/v1", api_key=self.deepseek_api_key, timeout=45.0, max_retries=1)
         if self.openrouter_api_key:
-            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=self.openrouter_api_key, timeout=6.0, max_retries=0)
+            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=self.openrouter_api_key, timeout=45.0, max_retries=1)
 
     def set_custom_keys(self, provider: str, api_key: str, model: Optional[str] = None):
         """Allow setting runtime keys dynamically for a request without server restart."""
@@ -167,23 +168,23 @@ class LLMClient:
         if provider == "nvidia":
             self.nvidia_api_key = clean_key
             if model: self.nvidia_model = model
-            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=clean_key, timeout=10.0, max_retries=0)
+            self.nvidia_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=clean_key, timeout=45.0, max_retries=1)
         elif provider == "groq":
             self.groq_api_key = clean_key
             if model: self.groq_model = model
-            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=8.0, max_retries=0)
+            self.groq_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=35.0, max_retries=1)
         elif provider == "gemini":
             self.gemini_api_key = clean_key
             if model: self.gemini_model = model
-            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=8.0, max_retries=0)
+            self.gemini_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=35.0, max_retries=1)
         elif provider == "deepseek":
             self.deepseek_api_key = clean_key
             if model: self.deepseek_model = model
-            self.deepseek_client = OpenAI(base_url="https://api.deepseek.com/v1", api_key=clean_key, timeout=12.0, max_retries=0)
+            self.deepseek_client = OpenAI(base_url="https://api.deepseek.com/v1", api_key=clean_key, timeout=45.0, max_retries=1)
         elif provider == "openrouter":
             self.openrouter_api_key = clean_key
             if model: self.openrouter_model = model
-            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=6.0, max_retries=0)
+            self.openrouter_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=45.0, max_retries=1)
 
 
     _model_cache = {}
@@ -244,16 +245,16 @@ class LLMClient:
         t0 = time.time()
         try:
             if provider == "nvidia":
-                test_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=clean_key, timeout=15.0)
+                test_client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=clean_key, timeout=25.0)
                 fallback_list = NVIDIA_FALLBACK_MODELS
             elif provider == "groq":
-                test_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=12.0)
+                test_client = OpenAI(base_url="https://api.groq.com/openai/v1", api_key=clean_key, timeout=20.0)
                 fallback_list = GROQ_FALLBACK_MODELS
             elif provider == "gemini":
-                test_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=12.0)
+                test_client = OpenAI(base_url="https://generativelanguage.googleapis.com/v1beta/openai/", api_key=clean_key, timeout=20.0)
                 fallback_list = GEMINI_FALLBACK_MODELS
             elif provider == "openrouter":
-                test_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=12.0)
+                test_client = OpenAI(base_url=self.openrouter_base_url, api_key=clean_key, timeout=25.0)
                 fallback_list = OPENROUTER_FALLBACK_MODELS
             else:
                 return {"success": False, "error": f"Unknown provider: {provider}"}
@@ -325,6 +326,19 @@ class LLMClient:
                 else:
                     text = text[:start_pos]
                     break
+        # Also clean un-tagged thinking preambles before markdown headers
+        first_h1 = re.search(r'(?:\n|^)(#[#]?\s+[A-Za-z0-9])', text)
+        if first_h1 and first_h1.start() > 0:
+            preamble = text[:first_h1.start()].strip()
+            if any(re.search(pat, preamble, re.IGNORECASE) for pat in [
+                r"here(?:'s|\s+is)\s+(?:a\s+)?(?:thinking|process|draft)",
+                r"okay,?\s+the\s+user",
+                r"let(?:'s|\s+me)\s+(?:unpack|think|break)",
+                r"the\s+user\s+wants",
+                r"we\s+need\s+to\s+respond",
+                r"^thinking\s*:"
+            ]):
+                text = text[first_h1.start():]
         return text.strip()
 
     def chat_completion(
@@ -334,75 +348,98 @@ class LLMClient:
         max_tokens: int = 4000,
         temperature: float = 0.7,
         response_format: Optional[Dict[str, str]] = None,
-        retries: int = 3,
+        retries: int = 2,
+        preferred_provider: Optional[str] = None,
     ) -> str:
         if self.dry_run:
             self.last_provider_used = "dry_run"
             return self._mock_response(messages)
 
-        # Build prioritized list: 1 best model per provider to eliminate cascading lag
+        # Build prioritized list: provider, client instance, and ordered candidate models
         providers = []
         if self.deepseek_client:
-            providers.append(("deepseek", self.deepseek_client, self.deepseek_model or "deepseek-chat"))
+            ds_models = [self.deepseek_model] if self.deepseek_model else DEEPSEEK_FALLBACK_MODELS
+            providers.append(("deepseek", self.deepseek_client, ds_models))
         if self.groq_client:
-            providers.append(("groq", self.groq_client, self.groq_model or "llama-3.3-70b-versatile"))
+            gq_models = [self.groq_model] if self.groq_model else GROQ_FALLBACK_MODELS
+            providers.append(("groq", self.groq_client, gq_models))
         if self.gemini_client:
-            providers.append(("gemini", self.gemini_client, self.gemini_model or "gemini-2.0-flash"))
+            gem_models = [self.gemini_model] if self.gemini_model else GEMINI_FALLBACK_MODELS
+            providers.append(("gemini", self.gemini_client, gem_models))
         if self.nvidia_client:
-            providers.append(("nvidia", self.nvidia_client, self.nvidia_model or "meta/llama-3.3-70b-instruct"))
+            nv_models = [self.nvidia_model] if self.nvidia_model else NVIDIA_FALLBACK_MODELS
+            providers.append(("nvidia", self.nvidia_client, nv_models))
         if self.openrouter_client:
-            providers.append(("openrouter", self.openrouter_client, self.openrouter_model or "nvidia/nemotron-3-super-120b-a12b:free"))
+            # Active verified free models on OpenRouter
+            active_or_models = []
+            if self.openrouter_model and ":free" in self.openrouter_model and not any(d in self.openrouter_model for d in ["llama-3.3-70b-instruct:free", "gemini-2.0-flash-exp:free"]):
+                active_or_models.append(self.openrouter_model)
+            for fm in OPENROUTER_FALLBACK_MODELS:
+                if fm not in active_or_models:
+                    active_or_models.append(fm)
+            providers.append(("openrouter", self.openrouter_client, active_or_models))
 
         if not providers:
             self.last_provider_used = "mock (no keys configured)"
-            self.last_error = "No API keys configured. Set GROQ_API_KEY, GEMINI_API_KEY, or NVIDIA_API_KEY."
+            self.last_error = "No API keys configured. Set GROQ_API_KEY, GEMINI_API_KEY, or OPENROUTER_API_KEY."
             return self._mock_response(messages)
 
-        failed_providers_in_request = set(self.failed_providers)
+        # If a preferred provider was requested and available, prioritize it
+        if preferred_provider and any(p[0] == preferred_provider for p in providers):
+            pref = [p for p in providers if p[0] == preferred_provider]
+            others = [p for p in providers if p[0] != preferred_provider]
+            providers = pref + others
+
+        failed_providers_in_request = set()
         self.errors = {}
-        for provider_name, client_inst, active_model in providers:
+        for provider_name, client_inst, candidate_models in providers:
             if provider_name in failed_providers_in_request:
                 continue
-            self._wait_for_rate_limit()
-            try:
-                safe_temp = max(0.2, min(temperature, 0.65))
-                safe_max_tokens = min(max_tokens, 3000) if provider_name == "groq" else max_tokens
-                kwargs = {
-                    "model": active_model,
-                    "messages": messages,
-                    "max_tokens": safe_max_tokens,
-                    "temperature": safe_temp,
-                    "timeout": 4.0,
-                }
-                if provider_name in ["groq", "openrouter"]:
-                    kwargs["top_p"] = 0.95
-                if response_format and provider_name != "groq":
-                    kwargs["response_format"] = response_format
 
-                resp = client_inst.chat.completions.create(**kwargs)
-                choice = resp.choices[0]
-                content = choice.message.content or ""
+            # Prioritize custom model if specified
+            models_to_try = [model] if (model and provider_name in ["openrouter", "groq", "gemini", "nvidia"]) else candidate_models
+            # Try up to 2 models per provider
+            for active_model in models_to_try[:2]:
+                self._wait_for_rate_limit()
+                try:
+                    safe_temp = max(0.2, min(temperature, 0.65))
+                    safe_max_tokens = min(max_tokens, 3000) if provider_name == "groq" else max_tokens
+                    kwargs = {
+                        "model": active_model,
+                        "messages": messages,
+                        "max_tokens": safe_max_tokens,
+                        "temperature": safe_temp,
+                        "timeout": 45.0,
+                    }
+                    if provider_name in ["groq", "openrouter"]:
+                        kwargs["top_p"] = 0.95
+                    if response_format and provider_name != "groq":
+                        kwargs["response_format"] = response_format
 
-                if content.strip():
-                    cleaned_content = self._strip_reasoning(content)
-                    self.last_provider_used = provider_name
-                    self.last_model_used = active_model
-                    self.last_error = None
-                    return cleaned_content
-            except Exception as e:
-                err_msg = str(e)
-                self.errors[f"{provider_name}:{active_model}"] = err_msg
-                logger.warning(f"Provider {provider_name} failed: {err_msg}. Instant failover to next provider...")
-                failed_providers_in_request.add(provider_name)
-                self.failed_providers.add(provider_name)
-                continue
+                    resp = client_inst.chat.completions.create(**kwargs)
+                    choice = resp.choices[0]
+                    content = choice.message.content or ""
 
+                    if content.strip():
+                        cleaned_content = self._strip_reasoning(content)
+                        self.last_provider_used = provider_name
+                        self.last_model_used = active_model
+                        self.last_error = None
+                        return cleaned_content
+                except Exception as e:
+                    err_msg = str(e)
+                    self.errors[f"{provider_name}:{active_model}"] = err_msg
+                    logger.warning(f"Provider {provider_name} ({active_model}) failed: {err_msg}")
+                    continue
 
+            # Provider failed for THIS request only (isolated, never cross-request poisoning)
+            failed_providers_in_request.add(provider_name)
 
         # If all providers fail, record error and return mock
         self.last_provider_used = "mock (all providers failed)"
         self.last_error = "; ".join([f"{k}: {v}" for k, v in self.errors.items()][:2])
         return self._mock_response(messages)
+
 
 
 

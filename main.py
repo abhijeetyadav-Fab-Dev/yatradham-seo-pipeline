@@ -597,6 +597,7 @@ def generate_content(request: ContentGenerateRequest):
             tone=request.tone,
             word_count=request.word_count,
             additional_instructions=sanitized_instructions,
+            provider=request.provider,
         )
 
         
