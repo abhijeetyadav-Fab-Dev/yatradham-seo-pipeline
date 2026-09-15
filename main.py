@@ -1539,6 +1539,7 @@ class SERPAnalyzeRequest(BaseModel):
     output_id: Optional[int] = None
 
 
+@app.post("/serp/analyze")
 @app.post("/api/serp/analyze")
 def analyze_serp_endpoint(req: SERPAnalyzeRequest):
     """
@@ -1577,6 +1578,7 @@ def analyze_serp_endpoint(req: SERPAnalyzeRequest):
     }
 
 
+@app.get("/outputs/{output_id}/serp-audit")
 @app.get("/api/outputs/{output_id}/serp-audit")
 def get_output_serp_audit(output_id: int):
     """Run real-time SERP competitor and Information Gain audit on a saved SEO output."""
