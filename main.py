@@ -1533,6 +1533,82 @@ def humanize_endpoint(req: HumanizeRequest):
 
 
 
+class SERPAnalyzeRequest(BaseModel):
+    keyword: str
+    content: Optional[str] = None
+    output_id: Optional[int] = None
+
+
+@app.post("/api/serp/analyze")
+def analyze_serp_endpoint(req: SERPAnalyzeRequest):
+    """
+    Native SERP Competitor & Information Gain Analyzer endpoint.
+    Scrapes live SERP competitors, retrieves Google Searcher entities,
+    and returns a full Surfer/Clearscope-style audit with outrank recommendations.
+    """
+    from serp_analyzer import analyze_serp_and_grade_content
+    content_text = req.content or ""
+    if req.output_id and not content_text:
+        existing = get_output(req.output_id)
+        if existing:
+            # Reconstruct content text from output sections
+            sec = existing.sections
+            parts = [
+                existing.title_tag,
+                existing.meta_description,
+                sec.package_overview,
+                sec.why_choose_heading,
+                " ".join(sec.why_choose_bullets),
+                " ".join(sec.inclusions),
+                " ".join(sec.exclusions),
+                " ".join([f"{f.question} {f.answer}" for f in sec.faq]),
+                f"Cost: {sec.quick_facts.cost} Location: {sec.quick_facts.destination}"
+            ]
+            content_text = " ".join([p for p in parts if p])
+
+    if not content_text:
+        content_text = f"Guide for {req.keyword} booking, pricing, and rituals."
+
+    result = analyze_serp_and_grade_content(req.keyword, content_text)
+    return {
+        "success": True,
+        "keyword": req.keyword,
+        "report": result
+    }
+
+
+@app.get("/api/outputs/{output_id}/serp-audit")
+def get_output_serp_audit(output_id: int):
+    """Run real-time SERP competitor and Information Gain audit on a saved SEO output."""
+    existing = get_output(output_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="Output not found")
+
+    sec = existing.sections
+    parts = [
+        existing.title_tag,
+        existing.meta_description,
+        sec.package_overview,
+        sec.why_choose_heading,
+        " ".join(sec.why_choose_bullets),
+        " ".join(sec.inclusions),
+        " ".join(sec.exclusions),
+        " ".join([f"{f.question} {f.answer}" for f in sec.faq]),
+        f"Cost: {sec.quick_facts.cost} Location: {sec.quick_facts.destination}"
+    ]
+    content_text = " ".join([p for p in parts if p])
+    kw = existing.primary_keyword or existing.package_input.name
+
+    from serp_analyzer import analyze_serp_and_grade_content
+    result = analyze_serp_and_grade_content(kw, content_text)
+    return {
+        "success": True,
+        "output_id": output_id,
+        "keyword": kw,
+        "report": result
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=False)
