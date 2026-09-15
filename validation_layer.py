@@ -44,37 +44,102 @@ DESTINATION_BLOCKLIST_WORDS = {
 }
 
 
+INDIAN_CITIES_TO_STATE = {
+    "lonavala": "maharashtra", "mumbai": "maharashtra", "pune": "maharashtra", "shirdi": "maharashtra", "nashik": "maharashtra", "nagpur": "maharashtra", "mahabaleshwar": "maharashtra",
+    "rishikesh": "uttarakhand", "haridwar": "uttarakhand", "dehradun": "uttarakhand", "badrinath": "uttarakhand", "kedarnath": "uttarakhand", "gangotri": "uttarakhand", "yamunotri": "uttarakhand", "nainital": "uttarakhand", "mussoorie": "uttarakhand",
+    "ahmedabad": "gujarat", "nalsarovar": "gujarat", "somnath": "gujarat", "dwarka": "gujarat", "surat": "gujarat", "vadodara": "gujarat", "rajkot": "gujarat", "bhuj": "gujarat", "ambaji": "gujarat", "dakor": "gujarat", "gir": "gujarat",
+    "kanyakumari": "tamil nadu", "chennai": "tamil nadu", "madurai": "tamil nadu", "rameswaram": "tamil nadu", "coimbatore": "tamil nadu", "ooty": "tamil nadu", "kanchipuram": "tamil nadu", "thanjavur": "tamil nadu", "tiruvannamalai": "tamil nadu",
+    "hyderabad": "telangana", "warangal": "telangana", "yadagirigutta": "telangana",
+    "bengaluru": "karnataka", "bangalore": "karnataka", "mysuru": "karnataka", "mysore": "karnataka", "hampi": "karnataka", "gokarna": "karnataka", "udupi": "karnataka", "dharmasthala": "karnataka",
+    "kochi": "kerala", "cochin": "kerala", "thiruvananthapuram": "kerala", "trivandrum": "kerala", "munnar": "kerala", "alleppey": "kerala", "alappuzha": "kerala", "wayanad": "kerala", "palakkad": "kerala", "varkala": "kerala", "guruvayur": "kerala",
+    "varanasi": "uttar pradesh", "kashi": "uttar pradesh", "ayodhya": "uttar pradesh", "mathura": "uttar pradesh", "vrindavan": "uttar pradesh", "agra": "uttar pradesh", "lucknow": "uttar pradesh", "prayagraj": "uttar pradesh", "allahabad": "uttar pradesh",
+    "jaipur": "rajasthan", "udaipur": "rajasthan", "jodhpur": "rajasthan", "pushkar": "rajasthan", "khatu": "rajasthan", "salasar": "rajasthan", "jaisalmer": "rajasthan", "mount abu": "rajasthan",
+    "puri": "odisha", "bhubaneswar": "odisha", "konark": "odisha",
+    "amritsar": "punjab", "shimla": "himachal pradesh", "manali": "himachal pradesh", "dharamshala": "himachal pradesh", "kullu": "himachal pradesh",
+    "ujjain": "madhya pradesh", "omkareshwar": "madhya pradesh", "indore": "madhya pradesh", "bhopal": "madhya pradesh", "khajuraho": "madhya pradesh", "gwalior": "madhya pradesh",
+    "tirupati": "andhra pradesh", "vijayawada": "andhra pradesh", "visakhapatnam": "andhra pradesh", "srisailam": "andhra pradesh",
+    "kolkata": "west bengal", "darjeeling": "west bengal", "gangtok": "sikkim", "patna": "bihar", "gaya": "bihar", "bodhgaya": "bihar",
+    "guwahati": "assam", "kamakhya": "assam", "shillong": "meghalaya", "panaji": "goa", "north goa": "goa", "south goa": "goa",
+}
+
+# Standalone junk phrases that should NOT be valid locations
+HALLUCINATED_LOCATION_PHRASES = {
+    "wellness.yatradham.org", "travel.yatradham.org", "temple.yatradham.org", "yatradham.org",
+    "seven days ayurveda", "weekend yoga", "one day yoga", "online puja", "naturopathy packages",
+}
+
+
 def validate_destination(destination: str) -> tuple[bool, str]:
     """
     Returns (is_valid, error_message).
-    Hard fail if destination is missing, malformed, or contains a
-    blocklisted word (strong signal of an LLM-hallucinated location).
+    Validates destination against Indian states/UTs and recognized Indian hubs.
+    Gracefully handles multi-part locations (e.g. 'Nalsarovar, Ahmedabad, Gujarat'),
+    'City, India' formats, and property names containing branding words.
     """
     if not destination or not destination.strip():
         return False, "Destination is empty."
 
-    dest_lower = destination.lower()
+    cleaned = destination.strip()
+    dest_lower = cleaned.lower()
 
-    # Must contain a comma separating city from state (our data format)
-    if "," not in destination:
-        return False, f"Destination '{destination}' is not in 'City, State' format."
+    # Reject obvious web URLs or pure template junk
+    if any(junk in dest_lower for junk in [".org", ".com", "yatradham.org", "http://", "https://"]):
+        return False, f"Destination '{destination}' appears to be a domain or URL, not a real place."
 
-    city_part, state_part = [p.strip() for p in destination.split(",", 1)]
+    # Reject specific hallucinated non-places
+    for phrase in HALLUCINATED_LOCATION_PHRASES:
+        if phrase in dest_lower:
+            return False, f"Destination '{destination}' contains invalid phrase '{phrase}' — not a real place."
 
-    # Reject if any blocklisted word appears anywhere in the string
-    for word in DESTINATION_BLOCKLIST_WORDS:
-        if word in dest_lower:
-            return False, f"Destination '{destination}' contains suspicious term '{word}' — likely hallucinated, not a real place."
+    parts = [p.strip() for p in cleaned.split(",") if p.strip()]
+    if not parts:
+        return False, "Destination is empty."
 
-    # State part must match a known Indian state/UT (case-insensitive)
-    st_low = state_part.lower()
-    ct_low = city_part.lower()
-    if st_low not in INDIAN_STATES_UTS:
-        if st_low in ["india", "bharat"] and ct_low in INDIAN_STATES_UTS:
+    # Case 1: Multiple parts like ["Nalsarovar", "Ahmedabad", "Gujarat"] or ["Lonavala", "Maharashtra"]
+    last_part = parts[-1].lower()
+    first_part = parts[0].lower()
+
+    # Check if last part is directly a known state
+    if last_part in INDIAN_STATES_UTS:
+        return True, "OK"
+
+    # Check if last part is "India" / "Bharat"
+    if last_part in ["india", "bharat"]:
+        # If there's a middle or first part that matches a state
+        for p in parts[:-1]:
+            pl = p.lower()
+            if pl in INDIAN_STATES_UTS:
+                return True, "OK"
+            # Or if any word matches a known Indian city
+            for token in re.findall(r"[a-z]+", pl):
+                if token in INDIAN_CITIES_TO_STATE:
+                    return True, "OK"
+        # If the destination contains known pilgrimage/tourism cities
+        for city in INDIAN_CITIES_TO_STATE:
+            if city in dest_lower:
+                return True, "OK"
+
+    # Check if any part matches an Indian state
+    for p in parts:
+        if p.lower() in INDIAN_STATES_UTS:
             return True, "OK"
-        return False, f"State '{state_part}' not recognized — verify or add to INDIAN_STATES_UTS list."
 
-    return True, "OK"
+    # Check if any recognized city appears in the destination string
+    for city in INDIAN_CITIES_TO_STATE:
+        if re.search(r"\b" + re.escape(city) + r"\b", dest_lower):
+            return True, "OK"
+
+    # Strict check on blocklisted words only if NO known city or state was found
+    for word in DESTINATION_BLOCKLIST_WORDS:
+        # Check if the word is the ENTIRE location or dominates it
+        if re.search(r"\b" + re.escape(word) + r"\b", dest_lower):
+            return False, f"Destination '{destination}' contains suspicious term '{word}' and no recognized Indian city/state."
+
+    # If format was City, State but state is unknown
+    if len(parts) >= 2:
+        return False, f"State '{parts[-1]}' not recognized — verify or add to INDIAN_STATES_UTS list."
+
+    return False, f"Destination '{destination}' is not in 'City, State' format or unrecognized."
 
 
 

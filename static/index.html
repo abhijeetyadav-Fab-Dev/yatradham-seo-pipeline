@@ -256,6 +256,7 @@
                         <select id="statusFilter" class="block rounded-md border-slate-300 border px-4 py-2 text-sm focus:border-primary focus:ring-primary shadow-sm bg-white" onchange="loadOutputs()">
                             <option value="">All Statuses</option>
                             <option value="approved">Approved</option>
+                            <option value="approved_candidate">✅ Approved Candidate</option>
                             <option value="flagged_review">⚠️ Flagged for Review</option>
                             <option value="pending">Pending</option>
                             <option value="rejected">Rejected</option>
@@ -2215,6 +2216,7 @@
             const statusColors = {
                 pending: 'bg-amber-100 text-amber-800 border-amber-200',
                 approved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+                approved_candidate: 'bg-emerald-100 text-emerald-800 border-emerald-200',
                 flagged_review: 'bg-rose-100 text-rose-800 border-rose-200',
                 rejected: 'bg-slate-100 text-slate-800 border-slate-200'
             };
