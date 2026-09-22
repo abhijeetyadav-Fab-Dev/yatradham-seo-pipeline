@@ -1339,16 +1339,27 @@ class CheckAIRequest(BaseModel):
     text: Optional[str] = None
     content: Optional[str] = None
     markdown: Optional[str] = None
+    voice: Optional[str] = "professional"
 
 
 class HumanizeRequest(BaseModel):
     text: Optional[str] = None
     content: Optional[str] = None
     markdown: Optional[str] = None
+    voice: Optional[str] = "professional"
     copyleaks_email: Optional[str] = None
     copyleaks_api_key: Optional[str] = None
 
-from anti_ai_guardrails import calculate_copyleaks_metrics, detect_ai_isms, de_slop_and_humanize, check_copyleaks_api, generate_copyleaks_recommendations
+from anti_ai_guardrails import (
+    calculate_copyleaks_metrics,
+    detect_ai_isms,
+    detect_55_patterns,
+    de_slop_and_humanize,
+    check_copyleaks_api,
+    generate_copyleaks_recommendations,
+    VOICE_PROFILES,
+    HUMANIZER_55_PATTERNS
+)
 
 def query_undetectable_detector(text: str) -> dict:
     url = "https://www.undetectableai.pro/api/detector"
@@ -1405,13 +1416,13 @@ def humanize_single_chunk(text_chunk: str, session_id: str) -> str:
     return text_chunk
 
 
-def humanize_markdown_content(markdown_text: str) -> str:
-    """Humanize multi-section markdown text concurrently with 21-pattern de-slopper and neural humanizer."""
+def humanize_markdown_content(markdown_text: str, voice: str = "professional") -> str:
+    """Humanize multi-section markdown text concurrently with 55-pattern de-slopper, voice profile, and neural humanizer."""
     if not markdown_text or len(markdown_text.strip()) < 30:
         return markdown_text
 
-    # Pre-pass: Deterministic de-slopping & 43-table replacements
-    cleaned_input = de_slop_and_humanize(markdown_text)
+    # Pre-pass: Deterministic de-slopping, em-dash eradication & 110+ table replacements
+    cleaned_input = de_slop_and_humanize(markdown_text, voice=voice)
 
     raw_sections = re.split(r'\n(?=#{1,4}\s)', cleaned_input)
     
@@ -1451,8 +1462,19 @@ def humanize_markdown_content(markdown_text: str) -> str:
 
     joined_result = "\n\n".join([r for r in results if r])
     
-    # Final cleanup pass
-    return de_slop_and_humanize(joined_result)
+    # Final cleanup pass with voice profile
+    return de_slop_and_humanize(joined_result, voice=voice)
+
+
+@app.get("/api/humanizer/patterns")
+def get_humanizer_patterns():
+    """Returns the registered 55 humanizer patterns and available voice profiles."""
+    return {
+        "success": True,
+        "patterns": HUMANIZER_55_PATTERNS,
+        "total_patterns": len(HUMANIZER_55_PATTERNS),
+        "voices": VOICE_PROFILES
+    }
 
 
 @app.post("/api/check-ai")
@@ -1461,7 +1483,10 @@ def check_ai_endpoint(req: CheckAIRequest):
     if not raw.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
     
-    # 1. Copyleaks & E-E-A-T Perplexity / Burstiness metrics
+    # 1. 55-Pattern Suite Diagnostics (Aboudjem & blader)
+    pattern_report = detect_55_patterns(raw)
+
+    # 2. Copyleaks & E-E-A-T Perplexity / Burstiness metrics
     copyleaks = check_copyleaks_api(raw)
     copyleaks_ai = copyleaks.get("copyleaks_ai_score", 10.0)
     copyleaks_human = copyleaks.get("copyleaks_human_score", 90.0)
@@ -1470,8 +1495,7 @@ def check_ai_endpoint(req: CheckAIRequest):
     ai_finds = copyleaks.get("ai_isms_detected", [])
     recommendations = copyleaks.get("copyleaks_recommendations", [])
 
-
-    # 2. Undetectable AI detection
+    # 3. Undetectable AI detection
     undetectable_res = query_undetectable_detector(raw)
     undetectable_ai = undetectable_res.get("score", copyleaks_ai)
     undetectable_human = max(0.0, min(100.0, round(100.0 - undetectable_ai, 2)))
@@ -1490,10 +1514,15 @@ def check_ai_endpoint(req: CheckAIRequest):
         "undetectable_ai_score": undetectable_ai,
         "eeat_score": eeat_score,
         "burstiness_score": burstiness,
+        "burstiness_details": copyleaks.get("burstiness_details", {}),
         "ai_isms_detected": ai_finds,
+        "patterns_detected": pattern_report.get("detected_patterns", []),
+        "pattern_count": pattern_report.get("total_pattern_count", 0),
+        "pattern_score": pattern_report.get("pattern_score", 0.0),
+        "category_breakdown": pattern_report.get("category_breakdown", {}),
         "total_ai_markers": copyleaks.get("total_ai_markers", 0),
         "copyleaks_recommendations": recommendations,
-        "engine": copyleaks.get("engine", "Copyleaks AI Neural Engine v3 + Google E-E-A-T"),
+        "engine": copyleaks.get("engine", "Copyleaks AI Neural Engine v4 (55-Pattern Suite) + Google E-E-A-T"),
         "status": status,
         "verdict": f"{composite_human}% Human (Copyleaks: {copyleaks_human}%, Undetectable: {undetectable_human}%)"
     }
@@ -1505,10 +1534,12 @@ def humanize_endpoint(req: HumanizeRequest):
     if not raw or len(raw.strip()) < 30:
         raise HTTPException(status_code=400, detail="Text must be at least 30 characters")
     
-    humanized = humanize_markdown_content(raw)
+    voice = req.voice or "professional"
+    humanized = humanize_markdown_content(raw, voice=voice)
     
     copyleaks = check_copyleaks_api(humanized, req.copyleaks_email, req.copyleaks_api_key)
     det_res = query_undetectable_detector(humanized)
+    pattern_report = detect_55_patterns(humanized)
     
     copyleaks_human = copyleaks.get("copyleaks_human_score", 90.0)
     copyleaks_ai = copyleaks.get("copyleaks_ai_score", 10.0)
@@ -1519,6 +1550,7 @@ def humanize_endpoint(req: HumanizeRequest):
     return {
         "success": True,
         "humanized_text": humanized,
+        "voice_used": voice,
         "human_score": composite_human,
         "ai_score": round(100.0 - composite_human, 1),
         "copyleaks_human_score": copyleaks_human,
@@ -1526,8 +1558,12 @@ def humanize_endpoint(req: HumanizeRequest):
         "undetectable_human_score": undetectable_human,
         "eeat_score": copyleaks.get("eeat_score", 85.0),
         "burstiness_score": copyleaks.get("burstiness_score", 75.0),
+        "burstiness_details": copyleaks.get("burstiness_details", {}),
+        "patterns_detected": pattern_report.get("detected_patterns", []),
+        "pattern_count": pattern_report.get("total_pattern_count", 0),
+        "pattern_score": pattern_report.get("pattern_score", 0.0),
         "copyleaks_recommendations": copyleaks.get("copyleaks_recommendations", []),
-        "engine": copyleaks.get("engine", "Copyleaks AI Neural Engine v3 + Google E-E-A-T"),
+        "engine": copyleaks.get("engine", "Copyleaks AI Neural Engine v4 (55-Pattern Suite) + Google E-E-A-T"),
         "verdict": f"{composite_human}% Human (Copyleaks: {copyleaks_human}%, Undetectable: {undetectable_human}%)"
     }
 

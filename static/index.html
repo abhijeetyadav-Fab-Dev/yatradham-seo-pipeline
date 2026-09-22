@@ -556,9 +556,23 @@
                     
                     <textarea id="standaloneInput" rows="13" class="block w-full rounded-lg border-slate-300 border p-4 text-sm font-sans focus:border-indigo-500 focus:ring-indigo-500 shadow-sm leading-relaxed" placeholder="Paste your blog, article, or pilgrimage guide here to scan with Copyleaks AI and humanize..."></textarea>
                     
-                    <div class="flex items-center justify-between text-xs text-slate-400 mt-2 mb-4">
+                    <div class="flex items-center justify-between text-xs text-slate-400 mt-2 mb-3">
                         <span id="standaloneWordCount">Words: 0 | Chars: 0</span>
                         <span class="text-slate-400">Min 30 words recommended</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                            <span>Humanizer Voice Profile</span>
+                            <span class="text-[10px] text-indigo-600 font-semibold normal-case">5 Profiles • 55 AI Patterns</span>
+                        </label>
+                        <select id="standaloneVoice" class="w-full px-3 py-2 text-xs font-medium rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs">
+                            <option value="professional" selected>👔 Professional (Authoritative, Clear, Zero Sludge)</option>
+                            <option value="casual">😊 Casual & Conversational (Friendly, Natural Contractions)</option>
+                            <option value="technical">⚙️ Technical & Exact (Facts, Prices & Logistics, No Fluff)</option>
+                            <option value="warm">🙏 Warm & Welcoming (Pilgrim Hospitality & Compassion)</option>
+                            <option value="blunt">⚡ Blunt & Direct (Punchy, No Sugarcoating, Zero Hedging)</option>
+                        </select>
                     </div>
 
                     <div class="grid grid-cols-2 gap-3 mt-auto">
@@ -642,20 +656,20 @@
                         <p class="text-[11px] text-slate-600 mt-2">Natural sentence length variance standard deviation.</p>
                     </div>
 
-                    <!-- Gauge 4: AI-isms Count -->
+                    <!-- Gauge 4: 55-Pattern AI Markers Count -->
                     <div class="p-4 rounded-lg bg-rose-50/50 border border-rose-100 flex flex-col justify-between">
                         <div>
-                            <span class="text-xs font-semibold text-rose-700 uppercase tracking-wider">Robotic AI Markers</span>
+                            <span class="text-xs font-semibold text-rose-700 uppercase tracking-wider">55-Pattern AI Tells</span>
                             <div class="flex items-baseline gap-2 mt-1">
                                 <span id="telemetryAiMarkersCount" class="text-2xl font-extrabold text-rose-900">0</span>
                                 <span class="text-xs font-medium text-slate-500">Flagged</span>
                             </div>
                         </div>
-                        <p class="text-[11px] text-slate-600 mt-2">21-pattern AI transition clichés & copulas.</p>
+                        <p class="text-[11px] text-slate-600 mt-2">Aboudjem & blader 55-pattern suite.</p>
                     </div>
                 </div>
 
-                <!-- AI-isms Pill Cloud -->
+                <!-- 55-Pattern AI-isms Pill Cloud -->
                 <div id="telemetryAiIsmsCloud" class="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-2">
                     <span class="text-xs font-medium text-slate-500">Detected Patterns:</span>
                     <span class="text-xs text-slate-400 italic">None</span>
@@ -3355,12 +3369,14 @@
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 20000);
+            const toneSelect = document.getElementById('structTone');
+            const voice = (toneSelect && toneSelect.value) ? toneSelect.value : 'professional';
 
             try {
                 const res = await fetch(API + '/api/check-ai', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text: raw}),
+                    body: JSON.stringify({text: raw, voice: voice}),
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
@@ -3409,12 +3425,14 @@
 
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 45000);
+            const toneSelect = document.getElementById('structTone');
+            const voice = (toneSelect && toneSelect.value) ? toneSelect.value : 'professional';
 
             try {
                 const res = await fetch(API + '/api/humanize', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text: raw}),
+                    body: JSON.stringify({text: raw, voice: voice}),
                     signal: controller.signal
                 });
                 clearTimeout(timeoutId);
@@ -3484,13 +3502,14 @@
             const badge = document.getElementById('standaloneScoreBadge');
             const origHtml = btn.innerHTML;
             btn.disabled = true;
-            btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-1.5 text-indigo-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Scanning...`;
+            btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-1.5 text-indigo-600" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Scanning 55 Patterns...`;
+            const voice = document.getElementById('standaloneVoice')?.value || 'professional';
 
             try {
                 const res = await fetch(API + '/api/check-ai', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text: text})
+                    body: JSON.stringify({text: text, voice: voice})
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -3536,12 +3555,13 @@
             const origHtml = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = `<svg class="animate-spin w-4 h-4 mr-1.5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> De-Slopping & Bypassing...`;
+            const voice = document.getElementById('standaloneVoice')?.value || 'professional';
 
             try {
                 const res = await fetch(API + '/api/humanize', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({text: text})
+                    body: JSON.stringify({text: text, voice: voice})
                 });
                 const data = await res.json();
                 if (data.success && data.humanized_text) {
@@ -3577,7 +3597,7 @@
             const copyHuman = data.copyleaks_human_score != null ? data.copyleaks_human_score : data.human_score;
             const eeat = data.eeat_score != null ? data.eeat_score : 90;
             const burstiness = data.burstiness_score != null ? data.burstiness_score : 85;
-            const aiMarkers = data.ai_isms_detected ? data.ai_isms_detected.reduce((acc, f) => acc + (f.count || 1), 0) : (data.total_ai_markers || 0);
+            const aiMarkers = data.pattern_count != null ? data.pattern_count : (data.ai_isms_detected ? data.ai_isms_detected.reduce((acc, f) => acc + (f.count || 1), 0) : (data.total_ai_markers || 0));
 
             document.getElementById('telemetryCopyleaksHuman').textContent = `${copyHuman}%`;
             document.getElementById('telemetryEeatScore').textContent = `${eeat}%`;
@@ -3598,13 +3618,21 @@
             }
 
             const cloudEl = document.getElementById('telemetryAiIsmsCloud');
-            if (data.ai_isms_detected && data.ai_isms_detected.length > 0) {
+            const patterns = data.patterns_detected || [];
+            if (patterns.length > 0) {
+                const tags = patterns.map(item => {
+                    const idStr = item.id ? `<strong>[${item.id}]</strong> ` : '';
+                    const hint = item.replacement_hint ? `title="${item.replacement_hint.replace(/"/g, '&quot;')}"` : '';
+                    return `<span class="px-2.5 py-1 text-xs rounded-md bg-rose-50 text-rose-800 border border-rose-200 font-medium cursor-help shadow-xs" ${hint}>⚠️ ${idStr}${item.name} <span class="bg-rose-200/80 text-rose-900 px-1.5 py-0.5 rounded-full text-[10px] font-bold ml-1">${item.count}x</span></span>`;
+                }).join(' ');
+                cloudEl.innerHTML = `<div class="w-full flex items-center justify-between mb-2"><span class="text-xs font-bold text-slate-800 uppercase tracking-wider">Flagged 55-Pattern Suite Tells:</span><span class="text-[11px] text-slate-500 font-normal">Hover pill for replacement hint</span></div><div class="flex flex-wrap items-center gap-1.5">${tags}</div>`;
+            } else if (data.ai_isms_detected && data.ai_isms_detected.length > 0) {
                 const tags = data.ai_isms_detected.map(item => 
                     `<span class="px-2 py-0.5 text-[11px] rounded bg-rose-100 text-rose-800 border border-rose-200 font-medium">⚠️ ${item.pattern || item.category} (${item.count}x)</span>`
                 ).join(' ');
                 cloudEl.innerHTML = `<span class="text-xs font-semibold text-slate-700">Flagged Patterns:</span> ${tags}`;
             } else {
-                cloudEl.innerHTML = `<span class="text-xs font-semibold text-slate-700">Detected Patterns:</span> <span class="px-2 py-0.5 text-[11px] rounded bg-emerald-100 text-emerald-800 border border-emerald-200 font-medium">✨ 0 AI Clichés Found (Clean Human Content)</span>`;
+                cloudEl.innerHTML = `<span class="text-xs font-semibold text-slate-700">Detected Patterns:</span> <span class="px-2.5 py-1 text-xs rounded bg-emerald-100 text-emerald-800 border border-emerald-200 font-medium shadow-xs">✨ 0 AI Clichés Found (100% Clean Human Content)</span>`;
             }
 
             const recBox = document.getElementById('telemetryRecommendations');
@@ -3612,7 +3640,7 @@
                 if (data.copyleaks_recommendations && data.copyleaks_recommendations.length > 0) {
                     recBox.classList.remove('hidden');
                     const recsHtml = data.copyleaks_recommendations.map(r => `<li class="text-xs text-indigo-900">• ${r}</li>`).join('');
-                    recBox.innerHTML = `<span class="text-xs font-bold text-indigo-800">💡 Copyleaks Actionable Guidance:</span><ul class="mt-1 space-y-1">${recsHtml}</ul>`;
+                    recBox.innerHTML = `<span class="text-xs font-bold text-indigo-800">💡 Copyleaks & Humanizer Actionable Guidance:</span><ul class="mt-1 space-y-1">${recsHtml}</ul>`;
                 } else {
                     recBox.classList.add('hidden');
                 }
