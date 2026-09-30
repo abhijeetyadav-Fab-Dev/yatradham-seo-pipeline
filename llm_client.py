@@ -5,15 +5,12 @@ import re
 from typing import Optional, Dict, Any, List
 from openai import OpenAI
 
-DEFAULT_OPENROUTER_MODEL = "nvidia/nemotron-3.5-lightning:free"
+DEFAULT_OPENROUTER_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
 OPENROUTER_FALLBACK_MODELS = [
-    "nvidia/nemotron-3.5-lightning:free",
-    "liquid/lfm-2.5-2.6b:free",
+    "nvidia/nemotron-3-super-120b-a12b:free",
+    "nvidia/nemotron-3-ultra-550b-a55b:free",
     "poolside/laguna-s-2.1:free",
-    "nex-agi/nex-n2.5-mini:free",
-    "thinkingmachines/inkling-small:free",
-    "google/gemma-4-26b-a4b-it:free",
-    "google/gemma-4-31b-it:free",
+    "stealth/space-bunny-alpha",
 ]
 
 
@@ -417,10 +414,12 @@ class LLMClient:
                         "messages": messages,
                         "max_tokens": safe_max_tokens,
                         "temperature": safe_temp,
-                        "timeout": 45.0,
+                        "timeout": 30.0,
                     }
                     if provider_name in ["groq", "openrouter"]:
                         kwargs["top_p"] = 0.95
+                    if provider_name == "openrouter" and "nemotron" in active_model.lower():
+                        kwargs["extra_body"] = {"reasoning": {"effort": "none"}}
                     if response_format and provider_name != "groq":
                         kwargs["response_format"] = response_format
 

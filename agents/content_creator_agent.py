@@ -305,13 +305,314 @@ def _clean_markdown(content: str) -> str:
     return content.strip()
 
 
+def _detect_blog_intent(topic: str, instructions: Optional[str] = None) -> str:
+    """Classify search intent to generate topic-authentic structures rather than forcing a 7-day retreat template."""
+    text = f"{topic} {instructions or ''}".lower()
+    if any(k in text for k in ["dharamshala", "ashram stay", "room booking", "where to stay", "bhavan", "sanatorium", "hotel stay"]):
+        return "stay_guide"
+    if any(k in text for k in ["itinerary", "tour package", "day 1", "day 2", "days tour", "days trip", "days route", "yatra package", "circuit", "trek", "road trip"]):
+        return "itinerary_guide"
+    if any(k in text for k in ["temple", "mandir", "darshan", "aarti", "puja", "jyotirlinga", "dham", "shrine", "vidhi", "pandit", "abhishek"]):
+        return "temple_guide"
+    if any(k in text for k in ["yoga", "retreat", "wellness", "ayurved", "panchakarma", "detox", "meditation", "healing", "spa"]):
+        return "wellness_guide"
+    return "general_spiritual_guide"
+
+
+def _get_intent_structure(intent: str, topic: str, keyword: str) -> str:
+    """Return tailored, high-intent outline with calibrated word budgets ensuring 100% completion in 1 single pass."""
+    kw = keyword or topic
+    if intent == "temple_guide":
+        return f"""EXACT OUTPUT STRUCTURE REQUIRED:
+
+# TITLE
+[High-CTR, search-optimized title including '{kw}']
+
+# META DESCRIPTION
+[Engaging meta description with keyword and value hook (150-160 characters)]
+
+# SUGGESTED TAGS
+[Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
+
+# CONTENT
+## Sacred History, Legend & Spiritual Significance
+(Write ~150 words. Explain the ancient lore, deity significance, and why devotees undertake this sacred darshan).
+
+## Temple Darshan Timings & Daily Aarti Schedule
+(Write ~150 words. Detail morning and evening darshan slots, Mangala Aarti, Bhog, and evening Shayan Aarti timings).
+
+## Step-by-Step Darshan Flow, Rituals & Dress Code
+(Write ~150 words. Explain queue entry gates, VIP pass rules, dress code requirements, mobile locker counters, and holy parikrama).
+
+## Best Time to Visit & Seasonal Guide
+(Write ~120 words. Detail favorable weather months, festival rush days like Shivratri/Navratri, and crowd avoidance tips).
+
+## How to Reach: Air, Rail & Road Access
+(Write ~140 words. Nearest airport, major railway station, highway connectivity, and local cab options).
+
+## Verified Dharamshala Stays & Satvik Food via YatraDham.Org
+(Write ~150 words. Detail clean ashram and dharamshala rooms, hot water facilities, proximity to temple gates, and pure satvik dining options vetted on YatraDham.Org).
+
+## Realistic Pilgrim Budget & Local Commute Costs (in INR)
+(Write ~140 words. Realistic cost breakdown: stay ₹600–₹2,500/night, satvik meals ₹300–₹500/day, auto rickshaw fares, and zero hidden agent fees).
+
+## Frequently Asked Questions
+### Q1: What are the main darshan and aarti timings for {topic}?
+(Direct 2-3 sentence answer with specific timings).
+
+### Q2: What is the mandatory dress code for entering the temple?
+(Direct 2-3 sentence answer with clothing etiquette).
+
+### Q3: How do I book verified dharamshalas near the temple?
+(Direct 2-3 sentence answer highlighting YatraDham.Org).
+
+### Q4: Is this temple yatra suitable for senior citizens and families?
+(Direct 2-3 sentence answer on wheelchairs, ramps, and accessibility).
+
+## Final Reflections & Planning Your Yatra
+(Write ~120 words. Inspiring conclusion encouraging devotees to plan ahead, with a natural call-to-action to explore verified stays and services on YatraDham.Org).
+
+## Related Guides & Recommended Reading
+- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)"""
+
+    elif intent == "itinerary_guide":
+        return f"""EXACT OUTPUT STRUCTURE REQUIRED:
+
+# TITLE
+[High-CTR, search-optimized title including '{kw}']
+
+# META DESCRIPTION
+[Engaging meta description with keyword and value hook (150-160 characters)]
+
+# SUGGESTED TAGS
+[Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
+
+# CONTENT
+## Trip Overview & Sacred Highlights
+(Write ~150 words. Open with an engaging hook. Summarize the yatra experience, key shrines, and total journey span).
+
+## Essential Planning & Best Season to Visit
+(Write ~130 words. Detail peak vs. shoulder months, weather conditions, permits/registrations, and packing essentials).
+
+## How to Reach the Starting Hub
+(Write ~130 words. Nearest airport, train junctions, road connections, and starting checkpoint transfers).
+
+## Complete Day-by-Day Journey & Darshan Route
+### Day 1: Arrival, Settling In & Evening Aarti
+(Write ~140 words. Check-in flow, local sacred ghat stroll, witnessing grand evening aarti, and satvik dinner).
+- **Practical Insider Tip:** (Check-in timings and first-day route advice).
+
+### Day 2: Main Shrine Darshan, Rituals & Cultural Sights
+(Write ~140 words. Early morning Mangala Aarti, sacred parikrama, participating in puja, and exploring adjacent holy sites).
+- **Practical Insider Tip:** (Queue shortcuts, token collection, and photography rules).
+
+### Day 3: Heritage Excursion, Holy Prasad & Departure
+(Write ~140 words. Morning visit to nearby sacred kunds/temples, picking authentic local prasad, checkout, and return transit).
+- **Practical Insider Tip:** (Departure transit coordination and safe luggage storage).
+
+## 4 Ways YatraDham.Org Makes Your Journey Seamless & Safe
+(Write ~150 words explaining vetted dharamshalas, dedicated taxi transit, authentic pandit bookings, and 24/7 pilgrim helpline).
+- Verified accommodations with transparent rates
+- Reliable local transfers and station pickups
+- Curated temple aarti and darshan schedules
+- Dedicated customer helpline and booking guarantee
+
+## The Real Logistics: Costs, Stays & Commutes (in INR)
+(Write ~150 words detailing realistic pricing: daily stay ₹800–₹2,000, transport ₹1,500–₹3,500, meals ₹350–₹600/day, and avoiding roadside touts).
+
+## Frequently Asked Questions
+### Q1: What is the total estimated budget for this itinerary?
+(Direct 2-3 sentence answer covering solo, couple, and family estimates in INR).
+
+### Q2: What is the best month to undertake this journey?
+(Direct 2-3 sentence answer on weather and crowd levels).
+
+### Q3: How do I book verified dharamshalas along the route?
+(Direct 2-3 sentence answer highlighting YatraDham.Org).
+
+### Q4: Is this trip manageable for senior citizens and children?
+(Direct 2-3 sentence answer covering transit and rest breaks).
+
+## Final Thoughts & Planning Your Trip
+(Write ~120 words. Inspiring conclusion with a natural call-to-action to reserve verified stays on YatraDham.Org).
+
+## Related Guides & Recommended Reading
+- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)"""
+
+    elif intent == "stay_guide":
+        return f"""EXACT OUTPUT STRUCTURE REQUIRED:
+
+# TITLE
+[High-CTR, search-optimized title including '{kw}']
+
+# META DESCRIPTION
+[Engaging meta description with keyword and value hook (150-160 characters)]
+
+# SUGGESTED TAGS
+[Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
+
+# CONTENT
+## Destination Overview & Why Location Matters for Stays
+(Write ~150 words. Explain why staying near the main temple/ghat saves hours in queues and ensures a peaceful pilgrimage).
+
+## Top Verified Dharamshalas & Ashrams (Features & Amenities)
+(Write ~180 words. Highlight 3-4 trusted verified property types: AC/Non-AC rooms, family suites, cleanliness, and proximity).
+
+## Room Facilities, Hot Water & Satvik Food Arrangements
+(Write ~140 words. Detail essential pilgrim amenities: 24-hour hot water, clean bedding, drinking water, and hygienic in-house dining/bhojanalaya).
+
+## Walking Distance & Proximity to Main Temple Gates
+(Write ~130 words. Highlight walking distance (5-10 mins), auto access, luggage assistance, and safety for late-night Aarti returns).
+
+## Why Book Verified Accommodations via YatraDham.Org
+(Write ~140 words. Emphasize verified photos, zero hidden fees, instant booking confirmations, and 24/7 pilgrim helpline).
+
+## Realistic Tariffs & Seasonal Pricing Tips (in INR)
+(Write ~140 words. Detail realistic nightly rates: budget rooms ₹400–₹900, family rooms ₹1,000–₹2,200, and booking 2-3 weeks ahead during festivals).
+
+## Frequently Asked Questions
+### Q1: What are the check-in and check-out timings for dharamshalas?
+(Direct 2-3 sentence answer with typical hours and 24-hr check-in advice).
+
+### Q2: Is pure satvik and Jain food available at these properties?
+(Direct 2-3 sentence answer on bhojanalaya meals).
+
+### Q3: How can I book verified dharamshalas safely online?
+(Direct 2-3 sentence answer recommending YatraDham.Org).
+
+### Q4: Are dharamshalas safe for solo female travelers and families?
+(Direct 2-3 sentence answer on CCTV, gated security, and pilgrim trust).
+
+## Final Advice for a Peaceful Stay
+(Write ~120 words. Summary advice on early reservations and booking confirmed rooms through YatraDham.Org).
+
+## Related Guides & Recommended Reading
+- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)"""
+
+    elif intent == "wellness_guide":
+        return f"""EXACT OUTPUT STRUCTURE REQUIRED:
+
+# TITLE
+[High-CTR, search-optimized title including '{kw}']
+
+# META DESCRIPTION
+[Engaging meta description with keyword and value hook (150-160 characters)]
+
+# SUGGESTED TAGS
+[Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
+
+# CONTENT
+## Healing Atmosphere & Spiritual Sanctuary
+(Write ~150 words. Explain how the natural surroundings, fresh mountain/river air, and sacred aura foster true rejuvenation).
+
+## Core Holistic Therapies, Daily Yoga & Meditation
+(Write ~160 words. Detail morning pranayama, traditional Ayurvedic consultations, Abhyanga oil therapies, and sound healing).
+
+## Mindful Daily Routine & Pure Satvik Nutrition
+(Write ~140 words. Describe a typical nourishing daily flow: sunrise movement, fresh seasonal organic meals, silence hours, and restorative sleep).
+
+## Best Season, Weather & What to Pack
+(Write ~130 words. Detail ideal months for wellness retreats, temperature variations, and essential comfortable attire).
+
+## How to Reach: Transit Hubs & Peaceful Arrival
+(Write ~130 words. Nearest airport, rail connectivity, scenic road transfers, and stress-free transit tips).
+
+## Verified Wellness Retreat Stays via YatraDham.Org
+(Write ~140 words. Highlight verified wellness centers, authentic ashrams, transparent package pricing, and dedicated traveler support).
+
+## Transparent Package Costs & Investment (in INR)
+(Write ~140 words. Realistic price ranges: budget retreats ₹1,500–₹3,500/day, comprehensive wellness programs ₹4,000–₹9,000/day including stay, food, and treatments).
+
+## Frequently Asked Questions
+### Q1: Are these retreats suitable for absolute beginners in yoga and Ayurveda?
+(Direct 2-3 sentence answer welcoming all experience levels).
+
+### Q2: What kind of food is served during the wellness program?
+(Direct 2-3 sentence answer detailing fresh vegetarian/satvik nutrition).
+
+### Q3: How do I book a verified retreat through YatraDham.Org?
+(Direct 2-3 sentence answer detailing verified options).
+
+### Q4: What is the recommended minimum stay for noticeable health benefits?
+(Direct 2-3 sentence answer recommending 3 to 7 days).
+
+## Final Thoughts & Beginning Your Wellness Journey
+(Write ~120 words. Encouraging closing thoughts on holistic well-being with a call-to-action on YatraDham.Org).
+
+## Related Guides & Recommended Reading
+- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)"""
+
+    else:
+        return f"""EXACT OUTPUT STRUCTURE REQUIRED:
+
+# TITLE
+[High-CTR, search-optimized title including '{kw}']
+
+# META DESCRIPTION
+[Engaging meta description with keyword and value hook (150-160 characters)]
+
+# SUGGESTED TAGS
+[Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
+
+# CONTENT
+## Spiritual Background & Cultural Significance
+(Write ~150 words. Open with an engaging hook exploring the sacred lore, cultural prominence, and why travelers visit).
+
+## Key Highlights & Must-Experience Sights
+(Write ~150 words. Detail the essential sacred spots, ancient architecture, holy water bodies, and authentic rituals).
+
+## Step-by-Step Pilgrim Guide & Local Customs
+(Write ~140 words. Practical advice on traditional etiquette, timing recommendations, footwear/dress codes, and photography rules).
+
+## Best Time to Visit & Climate Guide
+(Write ~120 words. Detail seasonal weather patterns, festive celebrations, and comfortable visiting windows).
+
+## How to Reach & Local Transport Access
+(Write ~130 words. Major flight, rail, and highway routes with transit distances from the nearest major junction).
+
+## Verified Stays & Dedicated Support via YatraDham.Org
+(Write ~140 words. Highlight vetted dharamshalas, clean amenities, transparent pricing, and 24/7 pilgrim assistance).
+
+## Realistic Travel Costs & Budgeting Advice (in INR)
+(Write ~140 words. Realistic breakdowns: daily stay ₹700–₹2,000, food ₹300–₹500, transport estimates, and money-saving tips).
+
+## Frequently Asked Questions
+### Q1: What is the best way to plan a visit to {topic}?
+(Direct 2-3 sentence answer with practical planning advice).
+
+### Q2: How many days are ideal to explore this destination?
+(Direct 2-3 sentence answer with duration recommendations).
+
+### Q3: Where should I stay for easy access to holy sites?
+(Direct 2-3 sentence answer highlighting YatraDham verified dharamshalas).
+
+### Q4: Are facilities easily accessible for elderly pilgrims?
+(Direct 2-3 sentence answer with mobility and safety notes).
+
+## Final Thoughts & Planning Your Sacred Journey
+(Write ~120 words. Concluding inspiring thought with an invitation to book verified stays on YatraDham.Org).
+
+## Related Guides & Recommended Reading
+- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)"""
+
+
 def _generate_long_form_blog(
     topic: str,
     client: LLMClient,
     target_keyword: Optional[str] = None,
     audience: Optional[str] = None,
     tone: Optional[str] = None,
-    word_count: int = 3000,
+    word_count: int = 1400,
     additional_instructions: Optional[str] = None,
     preferred_provider: Optional[str] = None,
 ) -> Dict[str, Any]:
@@ -348,130 +649,22 @@ CORE SEO & EDITORIAL GUARDRAILS (SECOND-LAYER AUTHENTIC WRITING STANDARDS):
         custom_rules.append(f"User Instructions:\n{additional_instructions}")
     rules_text = "\n".join(custom_rules)
 
+    intent = _detect_blog_intent(topic, additional_instructions)
+    structure_text = _get_intent_structure(intent, topic, target_keyword or topic)
+
+    target_words = max(800, min(word_count or 1400, 2200))
     master_prompt = f"""{brand_context}
 {rules_text}
 
-TASK: Generate a complete, exhaustive, 3,000-word master travel and wellness guide on: "{topic}".
-Target word count: ~{word_count or 3000} words.
+TASK: Generate a complete, comprehensive, search-optimized travel and spiritual guide on: "{topic}".
+Target word count: ~{target_words} words.
 
 CRITICAL INSTRUCTIONS:
-- Write in rich, descriptive narrative detail across all sections with full paragraphs.
-- For EVERY single day (Day 1 through Day 7), provide the complete breakdown: Morning, Afternoon, Evening, and a Practical Insider Tip.
-- Do NOT skip any days or compress them into single short paragraphs. Each day must be rich with practical advice, timings, and local context.
-- Follow the exact structure below once from top to bottom.
+- Write in rich, descriptive narrative detail across all sections with organic paragraphs (120-180 words per major section).
+- Do NOT skip any sections or compress them into bullet fragments. Complete every section through to the end.
+- Output clean, complete markdown from # TITLE to # CONTENT to Frequently Asked Questions to Final Thoughts and Related Reading.
 
-EXACT OUTPUT STRUCTURE REQUIRED:
-
-# TITLE
-[Search-optimized, high CTR title with target keyword]
-
-# META DESCRIPTION
-[Engaging meta description with keyword and value hook (150-160 characters)]
-
-# SUGGESTED TAGS
-[Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
-
-# CONTENT
-## Introduction: The Sacred Energy & Spiritual Allure
-(Write ~300 words. Open with an engaging hook. Explain the history, spiritual allure, and why this journey resets your body and mind).
-
-## Essential Planning & Preparation Before You Go
-(Write ~350 words covering Best Time to Visit, How to Reach with airport/train routes, Verified Stay Advice via Yatradham.Org, and a quick bulleted packing checklist).
-
-## Day 1: Arrival, Settling In & Gentle Immersion
-- **Morning & Afternoon:** (Write ~150 words. Arrival flow, checking into your Yatradham-verified stay, exploring the serene surroundings, and settling in).
-- **Evening:** (Write ~150 words. First stroll along the sacred river/ghats, witnessing evening rituals/aarti, and enjoying a light sattvic welcome dinner).
-- **Practical Insider Tip:** (Specific timings, route notes, and check-in guidance).
-
-## Day 2: Awakening the Body & Mindful Movement
-- **Morning:** (Write ~150 words. Sunrise yoga/darshan session, pranayama breathwork, and nourishing breakfast).
-- **Afternoon & Evening:** (Write ~150 words. Introduction to Ayurvedic wellness, restorative self-care workshop, mindful walking, and peaceful dinner).
-- **Practical Insider Tip:** (Hydration, yoga/temple recommendations, and meal advice).
-
-## Day 3: Nature Trails, Waterfalls & Sacred Spaces
-- **Morning:** (Write ~150 words. Scenic nature walk, hill trail or waterfall trek, forest bathing, and panoramic views).
-- **Afternoon & Evening:** (Write ~150 words. Local herbal tea tasting, cultural interaction, sunset meditation by the riverbank, and fire ceremony).
-- **Practical Insider Tip:** (Trek difficulty, footwear tips, and local guide advice).
-
-## Day 4: Deep Detox, Healing Therapies & Rejuvenation
-- **Morning:** (Write ~150 words. Traditional Ayurvedic consultation, herbal oil therapy/Abhyanga, and dosha balancing).
-- **Afternoon & Evening:** (Write ~150 words. Sattvic cooking workshop, restorative yoga nidra relaxation, and calming herbal infusions).
-- **Practical Insider Tip:** (Therapy cost ranges in INR and booking verified centers).
-
-## Day 5: Ancient Temples, Sacred Shrines & Living Culture
-- **Morning:** (Write ~150 words. Early temple darshan, understanding sacred rituals, and participating in seva/selfless service).
-- **Afternoon & Evening:** (Write ~150 words. Cultural walk through historic ashrams/bazaars, attending grand evening Aarti, and group reflection).
-- **Practical Insider Tip:** (Temple etiquette, photography guidelines, and aarti timings).
-
-## Day 6: Sound Healing, Silence & Deep Stillness
-- **Morning:** (Write ~150 words. Silent walking meditation along the riverbank, guided breath awareness, and wholesome breakfast).
-- **Afternoon & Evening:** (Write ~150 words. Singing bowl sound healing session, quiet journaling, and evening campfire reflection).
-- **Practical Insider Tip:** (Sound bath preparation and mental stillness practices).
-
-## Day 7: Integration, Departure & Carrying the Peace Home
-- **Morning:** (Write ~150 words. Closing gratitude ritual, building a sustainable home wellness routine, and picking up authentic local herbs/souvenirs).
-- **Afternoon & Evening:** (Write ~150 words. Mindful checkout, luggage assistance via Yatradham stay, departure transit, and final reflections).
-- **Practical Insider Tip:** (Late checkout advice and maintaining daily habits at home).
-
-## 3 Key Takeaways From This 7-Day Journey
-### 1. Pacing Drives True Rejuvenation
-(Write 2-3 paragraphs. Explain why rushing ruins a spiritual wellness trip and how allocating 2-3 hours per practice creates long-lasting benefits).
-
-### 2. High-Value Experiences Win Over Crowded Sightseeing
-(Write 2-3 paragraphs. Explain why personalized Ayurveda, quiet meditation, and authentic ashram stays deliver 10x more value than tourist traps).
-
-### 3. Local Etiquette & Trust Build the Connection
-(Write 2-3 paragraphs. Detail temple customs, sacred river protocols, and respecting local culture).
-
-## 4 Ways Yatradham.Org Makes Your Journey Seamless & Safe
-### 1. Verified Accommodations & Transparent Pricing
-(Explain how Yatradham vets dharamshalas, ashrams, and wellness retreats for hygiene, transparent rates with zero hidden broker fees).
-- Zero surprise checkout charges
-- Verified photos and guest reviews
-- Prime locations near sacred ghats
-
-### 2. Dedicated Yatra & Transport Coordination
-(Explain how Yatradham assists with reliable local transfers, station pickups, and transparent taxi rates).
-- Pre-negotiated fares from Dehradun and Haridwar
-- Trusted, background-verified drivers
-- Direct helpline for route updates
-
-### 3. Tailored Spiritual & Wellness Itineraries
-(Explain how Yatradham guides travelers to authentic ashram schedules, certified Ayurvedic doctors, and genuine meditation halls).
-- Curated daily routines for beginners and seasoned seekers
-- Direct access to authentic temple aarti timings
-- Guidance on sattvic dining options
-
-### 4. 24/7 Pilgrim Support & Flexible Booking
-(Explain Yatradham's dedicated customer support for seamless date adjustments and on-ground help).
-- Round-the-clock helpline
-- Flexible cancellation on select partner properties
-- Real-time WhatsApp assistance
-
-## 3 Actionable Tips to Plan Your Journey Today
-### 1. Plan Around Search & Seasonal Intent
-(Explain how choosing shoulder months like October-November or February-March maximizes weather comfort and avoids peak holiday surges).
-
-### 2. Book Your Verified Stay in Advance
-(Explain why booking verified ashrams and dharamshalas early prevents last-minute scams and ensures clean rooms near the ghats).
-
-### 3. Maintain Consistency With Daily Routines
-(Explain how keeping simple morning and evening habits built during the trip anchors your wellness routine when returning home).
-
-## The Real Logistics: Costs, Stays & Commutes
-(Write ~400 words detailing flight/train connections with fares in INR, realistic daily budget breakdowns from budget to luxury, local commute rates, and why booking verified dharamshalas and wellness stays through Yatradham.Org guarantees transparent pricing and safety).
-
-## Frequently Asked Questions
-(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo female safety, packing, sattvic meals, and best booking seasons).
-
-## Final Thoughts & Planning Your Trip
-(Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org).
-
-## Related Articles & Recommended Reading
-(Provide 3 formatted internal article suggestions for readers planning spiritual/wellness travel):
-- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
-- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
-- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)
+{structure_text}
 
 CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structure completely."""
 
@@ -481,7 +674,7 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
                 {"role": "system", "content": brand_context},
                 {"role": "user", "content": master_prompt}
             ],
-            max_tokens=4000,
+            max_tokens=3000,
             temperature=0.6,
             preferred_provider=preferred_provider,
         )
@@ -504,7 +697,6 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
     tags_str = sections.get("SUGGESTED TAGS", "")
     tags = [_sanitize_repetition(t).lstrip("#").strip() for t in tags_str.split(",") if _sanitize_repetition(t).strip()] if tags_str else [topic, "Pilgrimage", "YatraDham"]
 
-
     part_content = sections.get("CONTENT", "")
     if not part_content:
         h2_idx = cleaned.find("## ")
@@ -515,100 +707,83 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
 
     full_content = _sanitize_repetition(part_content)
 
-    # Ensure closing sections are completed if word count target is large (> 2000 words) or content was truncated
-    has_faqs = "## Frequently Asked Questions" in full_content or "## FAQs" in full_content
-    has_final_thoughts = "## Final Thoughts" in full_content or "## Conclusion" in full_content
-    has_related_articles = "## Related Articles" in full_content
+    # Check for complete closing sections (FAQs, Final Thoughts, Related Reading)
+    has_faqs = "## Frequently Asked Questions" in full_content or "## FAQs" in full_content or "### Q1" in full_content
+    has_final_thoughts = "## Final Thoughts" in full_content or "## Final Advice" in full_content or "## Final Reflections" in full_content or "## Conclusion" in full_content
+    has_related_articles = "## Related Guides" in full_content or "## Related Articles" in full_content
     is_cut_off = full_content.strip().endswith(("-", "•", "–", ":", "and", "or", "the", "with", "to", "in", "of", "a", "..."))
-    is_short = len(full_content.split()) < 600
 
-    if (not (has_faqs and has_final_thoughts and has_related_articles) or is_cut_off) and (word_count >= 2000 or is_short):
-        logger.info("Detecting incomplete or truncated sections in long-form blog. Running intelligent completion pass...")
+    # Fast surgical finisher pass if content ended mid-sentence or lacks closing sections
+    if not (has_faqs and has_final_thoughts) or is_cut_off:
+        logger.info("Detecting incomplete closing sections or truncation. Running fast surgical finisher pass...")
         
-        # If cut off inside an incomplete section, trim back to the last complete H2 header
-        last_h2_idx = full_content.rfind("\n## ")
-        if is_cut_off and last_h2_idx != -1:
-            last_sec_text = full_content[last_h2_idx:]
-            if not has_faqs and ("## The Real Logistics" in last_sec_text or "## 3 Actionable Tips" in last_sec_text or "## 4 Ways Yatradham" in last_sec_text or "## 3 Key Takeaways" in last_sec_text):
-                full_content = full_content[:last_h2_idx].strip()
+        # If cut off mid-sentence, trim back to the last complete sentence
+        if is_cut_off:
+            last_period = max(full_content.rfind(". "), full_content.rfind(".\n"))
+            if last_period > len(full_content) - 400:
+                full_content = full_content[:last_period + 1].strip()
 
-        missing_requirements = []
-        if "## 3 Key Takeaways" not in full_content and "## Key Takeaways" not in full_content:
-            missing_requirements.append("## 3 Key Takeaways From This 7-Day Journey\n(Write 3 detailed takeaway subsections: 1. Pacing Drives True Rejuvenation, 2. High-Value Experiences Win Over Crowded Sightseeing, 3. Local Etiquette & Trust Build the Connection)")
-        if "## 4 Ways Yatradham" not in full_content and "## Ways Yatradham" not in full_content:
-            missing_requirements.append("## 4 Ways Yatradham.Org Makes Your Journey Seamless & Safe\n(Write 4 subsections with bullet points: 1. Verified Accommodations & Transparent Pricing, 2. Dedicated Yatra & Transport Coordination, 3. Tailored Spiritual & Wellness Itineraries, 4. 24/7 Pilgrim Support & Flexible Booking)")
-        if "## 3 Actionable Tips" not in full_content and "## Actionable Tips" not in full_content:
-            missing_requirements.append("## 3 Actionable Tips to Plan Your Journey Today\n(Write 3 subsections: 1. Plan Around Search & Seasonal Intent, 2. Book Your Verified Stay in Advance, 3. Maintain Consistency With Daily Routines)")
-        if "## The Real Logistics" not in full_content and "## Real Logistics" not in full_content:
-            missing_requirements.append("## The Real Logistics: Costs, Stays & Commutes\n(Write ~400 words detailing flight/train connections with exact fares in INR, realistic daily budget breakdowns from budget to luxury, local commute rates, and Yatradham stay benefits)")
+        missing_sections = []
         if not has_faqs:
-            missing_requirements.append("## Frequently Asked Questions\n(Provide exactly 6 distinct, search-focused FAQs with thorough, direct answers covering budget, beginner friendliness, solo female safety, packing, meals, and best booking seasons)")
+            missing_sections.append(f"""## Frequently Asked Questions
+### Q1: What are the primary timings and schedules for {topic}?
+(Direct 2-3 sentence answer with specific hours).
+
+### Q2: What dress code and local customs should visitors follow?
+(Direct 2-3 sentence answer with etiquette advice).
+
+### Q3: How do I book verified dharamshalas and stays safely?
+(Direct 2-3 sentence answer recommending YatraDham.Org).
+
+### Q4: Is this trip manageable for senior citizens and families?
+(Direct 2-3 sentence answer with practical accessibility tips).""")
+
         if not has_final_thoughts:
-            missing_requirements.append("## Final Thoughts & Planning Your Trip\n(Write ~200 words. An inspiring conclusion encouraging the reader to take the first step, with a natural call-to-action to explore verified accommodations and packages on Yatradham.Org)")
+            missing_sections.append(f"""## Final Thoughts & Planning Your Trip
+(Write ~120 words. Inspiring conclusion encouraging travelers to plan ahead, with a natural call-to-action to explore verified accommodations and travel support on YatraDham.Org).""")
+
         if not has_related_articles:
-            missing_requirements.append("## Related Articles & Recommended Reading\n(Provide 3 formatted internal article suggestions with Title, Author, Date, and 1-line topic summary)")
+            missing_sections.append("""## Related Guides & Recommended Reading
+- **Title:** Complete Yatra Essentials & Packing Checklist (YatraDham Editorial • 2026 • Essential luggage and temple etiquette tips)
+- **Title:** Top Verified Dharamshalas Near Holy Ghats & Temples (YatraDham Editorial • 2026 • Verified room categories, hot water and tariffs)
+- **Title:** Budget Pilgrimage Guide: Routes, Fares & Satvik Dining (YatraDham Editorial • 2026 • Cost breakdowns and travel routes)""")
 
-        if missing_requirements:
-            reqs_str = "\n\n".join(missing_requirements)
-            finale_prompt = f"""You have written the preceding part of the guide for: "{topic}".
+        if missing_sections:
+            finisher_prompt = f"""You have written the first portion of the guide for: "{topic}".
+Current text ends at: "{full_content[-150:]}"
 
-Now generate ONLY the remaining missing closing sections below to complete the full 3,000-word authoritative blog post:
+Now write ONLY the following missing closing sections to complete the guide cleanly:
 
-{reqs_str}
+{chr(10).join(missing_sections)}
 
-CRITICAL: Output ONLY markdown text starting with the first missing section heading. Follow all editorial standards and do not repeat anything already written above."""
+CRITICAL: Output ONLY markdown text starting with the first missing section heading."""
 
-            finale_raw = client.chat_completion(
-                messages=[
-                    {"role": "system", "content": brand_context},
-                    {"role": "user", "content": master_prompt},
-                    {"role": "assistant", "content": full_content},
-                    {"role": "user", "content": finale_prompt}
-                ],
-                max_tokens=3000,
-                temperature=0.6,
-                preferred_provider=preferred_provider,
-            )
-            cleaned_finale = _clean_markdown(finale_raw)
-            if cleaned_finale:
-                full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_finale)}"
-
-    # Check word count against requested target and perform deep expansion if needed (only for long articles)
-    target_words = word_count if (word_count and word_count >= 1000) else 1500
-    current_words = len(full_content.split())
-    if word_count >= 2000 and current_words < int(target_words * 0.85):
-        logger.info(f"Generated blog has {current_words} words, requested target is {target_words}. Running in-depth expansion pass...")
-        expansion_prompt = f"""You are writing a comprehensive {target_words}-word master guide on: "{topic}".
-Current draft is {current_words} words.
-
-Generate an in-depth expansion section titled:
-## Detailed Route Distances, Temple Darshan Guidelines & Logistics Breakdown
-(Write ~500-800 words. Provide:
-1. Exact road distances and travel times between key checkpoints from the starting hub.
-2. Temple opening schedules, Mangala Aarti timings, special puja booking steps, and registration requirements (e.g. biometric registration, token counters).
-3. Complete transport alternatives: government bus routes, private taxi fares in INR, helicopter booking procedures, and trekking/pony government rates.
-4. Comprehensive accommodation guide: dharamshala room types, hot water facilities, and satvik meal arrangements via YatraDham.Org).
-
-Output ONLY this markdown section starting with the H2 header."""
-
-        exp_raw = client.chat_completion(
-            messages=[
-                {"role": "system", "content": brand_context},
-                {"role": "user", "content": master_prompt},
-                {"role": "assistant", "content": full_content},
-                {"role": "user", "content": expansion_prompt}
-            ],
-            max_tokens=3000,
-            temperature=0.6,
-            preferred_provider=preferred_provider,
-        )
-        cleaned_exp = _clean_markdown(exp_raw)
-        if cleaned_exp:
-            full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_exp)}"
+            try:
+                finale_raw = client.chat_completion(
+                    messages=[
+                        {"role": "system", "content": brand_context},
+                        {"role": "user", "content": master_prompt},
+                        {"role": "assistant", "content": full_content},
+                        {"role": "user", "content": finisher_prompt}
+                    ],
+                    max_tokens=1200,
+                    temperature=0.5,
+                    preferred_provider=preferred_provider,
+                )
+                cleaned_finale = _clean_markdown(finale_raw)
+                if cleaned_finale:
+                    full_content = f"{full_content}\n\n{_sanitize_repetition(cleaned_finale)}"
+            except Exception as fin_err:
+                logger.warning(f"Surgical finisher pass failed: {fin_err}. Applying graceful closer.")
+                if not has_faqs:
+                    full_content += f"\n\n## Frequently Asked Questions\n### Q1: What are the main timings for {topic}?\nVisiting hours typically start early at 5:30 AM for morning rituals and continue until 9:00 PM with afternoon breaks. Always verify the latest timings before arriving.\n\n### Q2: Where can I book verified dharamshalas?\nYou can reserve verified, clean dharamshalas and ashram stays with transparent pricing directly on [YatraDham.Org](https://yatradham.org/).\n\n### Q3: Is this destination suitable for senior citizens?\nYes, accessible paths, electric rickshaws, and ground-floor room options at verified stays make it convenient for elderly pilgrims."
+                if not has_final_thoughts:
+                    full_content += f"\n\n## Final Thoughts & Planning Your Trip\nEmbarking on this spiritual journey to {topic} offers deep peace and rejuvenation. By booking verified accommodations and planning your route in advance through [YatraDham.Org](https://yatradham.org/), you can focus wholeheartedly on devotion and blessed memories."
+                if not has_related_articles:
+                    full_content += f"\n\n## Related Guides & Recommended Reading\n- **Title:** Complete Temple Darshan & Ritual Guidelines (YatraDham Editorial • 2026 • Queue guidelines and aarti schedules)\n- **Title:** Top Dharamshala Stays Near Sanctum Gates (YatraDham Editorial • 2026 • Room amenities and advance reservation tips)\n- **Title:** Pilgrim Transit & Fare Guide (YatraDham Editorial • 2026 • Rail, road and local commute details)"
 
     # Apply automatic Google Helpful Content & Copyleaks de-slopping to ensure 95%+ Human score
     clean_human_content = de_slop_and_humanize(full_content)
-
 
     return {
         "title": title,
@@ -637,7 +812,7 @@ def run(
     # Always route blog posts and destination guides to the comprehensive multi-stage generator
     # to strictly enforce 1,500 - 3,500 word length requirements
     if content_type in ["blog_post", "destination_guide"]:
-        effective_words = word_count if (word_count and word_count >= 1000) else 1500
+        effective_words = word_count if (word_count and word_count >= 500) else 1400
         return _generate_long_form_blog(
             topic=topic,
             client=client,
