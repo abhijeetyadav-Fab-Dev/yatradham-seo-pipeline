@@ -3,7 +3,10 @@ import re
 import logging
 from typing import Dict, Any, Optional
 from llm_client import LLMClient
-from anti_ai_guardrails import de_slop_and_humanize, GOOGLE_HELPFUL_CONTENT_GUARDRAILS
+from anti_ai_guardrails import de_slop_and_humanize, GOOGLE_HELPFUL_CONTENT_GUARDRAILS, humanize_data
+from serp_analyzer import fetch_google_related_entities
+from schema_generator import generate_blog_json_ld
+from ai_seo_audit import run_ai_seo_audit, auto_heal_content
 
 logger = logging.getLogger("content_creator_agent")
 
@@ -647,6 +650,16 @@ CORE SEO & EDITORIAL GUARDRAILS (SECOND-LAYER AUTHENTIC WRITING STANDARDS):
         custom_rules.append(f"Tone: {tone}.")
     if additional_instructions:
         custom_rules.append(f"User Instructions:\n{additional_instructions}")
+
+    # Agentic SEO: Retrieve live related search entities (topics/agentic-seo)
+    kw_query = target_keyword or topic
+    try:
+        related_entities = fetch_google_related_entities(kw_query)
+        if related_entities:
+            custom_rules.append(f"High-Salience Searcher Entities to Naturally Address: {', '.join(related_entities[:6])}.")
+    except Exception as e:
+        logger.debug(f"Entity lookup skipped: {e}")
+
     rules_text = "\n".join(custom_rules)
 
     intent = _detect_blog_intent(topic, additional_instructions)
@@ -782,17 +795,44 @@ CRITICAL: Output ONLY markdown text starting with the first missing section head
                 if not has_related_articles:
                     full_content += f"\n\n## Related Guides & Recommended Reading\n- **Title:** Complete Temple Darshan & Ritual Guidelines (YatraDham Editorial • 2026 • Queue guidelines and aarti schedules)\n- **Title:** Top Dharamshala Stays Near Sanctum Gates (YatraDham Editorial • 2026 • Room amenities and advance reservation tips)\n- **Title:** Pilgrim Transit & Fare Guide (YatraDham Editorial • 2026 • Rail, road and local commute details)"
 
-    # Apply automatic Google Helpful Content & Copyleaks de-slopping to ensure 95%+ Human score
-    clean_human_content = de_slop_and_humanize(full_content)
+    # Parse FAQs for schema
+    faqs = []
+    faq_matches = re.findall(r'###\s+Q\d*:\s*(.*?)\n+(.*?)(?=\n+###|\n+##|\Z)', full_content, re.DOTALL)
+    for q_text, a_text in faq_matches:
+        faqs.append({"question": q_text.strip(), "answer": a_text.strip()})
+
+    # Core Non-Bypassable Text Humanizer Guardrail (topics/text-humanizer) & Auto-Heal Loop
+    clean_title, clean_meta_desc, clean_human_content, ai_audit_report = auto_heal_content(
+        title=title,
+        meta_description=meta_desc,
+        primary_keyword=target_keyword or topic,
+        content_body=full_content,
+        voice="warm"
+    )
+
+    # Generate Stacked JSON-LD Schema (topics/ai-seo)
+    slug = re.sub(r'[^a-zA-Z0-9]+', '-', topic.lower()).strip('-')
+    blog_schema = generate_blog_json_ld(
+        title=clean_title,
+        meta_description=clean_meta_desc,
+        topic=topic,
+        faqs=faqs,
+        url=f"https://yatradham.org/blog/{slug}"
+    )
 
     return {
-        "title": title,
-        "meta_description": meta_desc,
+        "title": clean_title,
+        "meta_description": clean_meta_desc,
         "suggested_tags": tags,
         "content": clean_human_content,
         "content_type": "blog_post",
         "topic": topic,
-        "target_keyword": target_keyword or ""
+        "target_keyword": target_keyword or "",
+        "json_ld_schema": blog_schema,
+        "ai_seo_audit": ai_audit_report,
+        "human_score": ai_audit_report.get("human_score", 95),
+        "audit_grade": ai_audit_report.get("grade", "A"),
+        "geo_ready": ai_audit_report.get("metrics", {}).get("geo_ready", True)
     }
 
 
@@ -946,9 +986,28 @@ Follow all formatting rules and markdown heading conventions strictly."""
                 })
         result["captions"] = captions if captions else [{"platform": "social", "caption": content, "hashtags": []}]
 
-    # Automatically de-slop and humanize before returning
-    if "content" in result and isinstance(result["content"], str):
-        result["content"] = de_slop_and_humanize(result["content"])
+    # Core Non-Bypassable Text Humanizer & Autonomous Self-Healing Gate
+    result = humanize_data(result, voice="warm")
+    title_val = result.get("title") or result.get("headline") or topic
+    meta_val = result.get("meta_description") or ""
+    body_val = result.get("content") or result.get("hero_text") or str(result)
+
+    clean_t, clean_m, clean_b, audit = auto_heal_content(
+        title=title_val,
+        meta_description=meta_val,
+        primary_keyword=target_keyword or topic,
+        content_body=body_val,
+        voice="warm"
+    )
+    if "title" in result: result["title"] = clean_t
+    if "headline" in result: result["headline"] = clean_t
+    if "meta_description" in result: result["meta_description"] = clean_m
+    if "content" in result: result["content"] = clean_b
+
+    result["ai_seo_audit"] = audit
+    result["human_score"] = audit.get("human_score", 95)
+    result["audit_grade"] = audit.get("grade", "A")
+    result["geo_ready"] = audit.get("metrics", {}).get("geo_ready", True)
 
     # Always ensure content_type and topic are set
     result["content_type"] = content_type

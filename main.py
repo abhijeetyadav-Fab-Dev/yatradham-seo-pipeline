@@ -824,6 +824,42 @@ def get_seo_audit_score_endpoint(title: str, meta_description: str, primary_keyw
     )
 
 
+class AIAuditRequest(BaseModel):
+    title: str = ""
+    meta_description: str = ""
+    primary_keyword: str = ""
+    content: str = ""
+    destination: Optional[str] = None
+    pricing: Optional[str] = None
+
+
+@app.api_route("/api/seo/ai-audit", methods=["GET", "POST"])
+def get_ai_seo_audit_endpoint(
+    req: Optional[AIAuditRequest] = None,
+    title: Optional[str] = None,
+    meta_description: Optional[str] = None,
+    primary_keyword: Optional[str] = None,
+    content: Optional[str] = None
+):
+    """
+    15-Point Automated AI-SEO-Audit Gate
+    (marketplace/actions/ai-seo-audit + topics/text-humanizer + topics/ai-visibility)
+    """
+    from ai_seo_audit import run_ai_seo_audit
+    t = (req.title if req else title) or ""
+    m = (req.meta_description if req else meta_description) or ""
+    k = (req.primary_keyword if req else primary_keyword) or ""
+    c = (req.content if req else content) or ""
+    dest = (req.destination if req else None)
+    price = (req.pricing if req else None)
+    res = run_ai_seo_audit(title=t, meta_description=m, primary_keyword=k, content_body=c, destination=dest, pricing_str=price)
+    return {
+        "success": True,
+        "audit": res,
+        **res
+    }
+
+
 @app.get("/api/seo/serp-search")
 def get_serp_search_endpoint(query: str, num_results: int = 10):
     """Live SERP search results, competitor rankings, and People Also Ask questions."""

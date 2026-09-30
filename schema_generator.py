@@ -1,14 +1,49 @@
 """Schema.org JSON-LD Structured Data Generator for YatraDham Packages."""
 import json
 import re
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 
-def generate_json_ld(output_dict: Dict[str, Any]) -> Dict[str, Any]:
+def generate_json_ld(output_dict: Optional[Dict[str, Any]] = None, **kwargs: Any) -> Dict[str, Any]:
     """
     Generate comprehensive stacked Schema.org JSON-LD for Google Rich Results,
     SGE / AI Overviews, and Bing/Perplexity citation.
+    Supports either pipeline output dict or direct keyword arguments.
     """
+    if output_dict is None:
+        output_dict = {}
+    elif not isinstance(output_dict, dict):
+        output_dict = {}
+
+    if kwargs:
+        out_copy = dict(output_dict)
+        pkg_in = dict(out_copy.get("package_input", {}))
+        sec = dict(out_copy.get("sections", {}))
+        qf = dict(sec.get("quick_facts", {}))
+
+        if "product_type" in kwargs:
+            pkg_in["category"] = kwargs["product_type"]
+        if "category" in kwargs:
+            pkg_in["category"] = kwargs["category"]
+        if "name" in kwargs:
+            pkg_in["name"] = kwargs["name"]
+            out_copy["title_tag"] = kwargs["name"]
+        if "description" in kwargs:
+            out_copy["meta_description"] = kwargs["description"]
+        if "destination" in kwargs:
+            pkg_in["destination"] = kwargs["destination"]
+            qf["destination"] = kwargs["destination"]
+        if "price" in kwargs:
+            qf["cost"] = f"₹{kwargs['price']}"
+            pkg_in["cost"] = f"₹{kwargs['price']}"
+        if "url" in kwargs:
+            pkg_in["url"] = kwargs["url"]
+
+        sec["quick_facts"] = qf
+        out_copy["package_input"] = pkg_in
+        out_copy["sections"] = sec
+        output_dict = out_copy
+
     pkg_input = output_dict.get("package_input", {})
     sections = output_dict.get("sections", {})
     qf = sections.get("quick_facts", {})
@@ -26,8 +61,37 @@ def generate_json_ld(output_dict: Dict[str, Any]) -> Dict[str, Any]:
     graph: List[Dict[str, Any]] = []
 
 
-    # 1. Primary Entity (TouristTrip vs HealthAndBeautyBusiness vs Hotel / Lodging)
-    if category == "wellness":
+    # 1. Primary Entity (TouristTrip vs HealthAndBeautyBusiness vs Hotel / Lodging vs BlogPosting)
+    if category in ["blog_post", "blog", "article", "destination_guide"]:
+        primary_entity = {
+            "@type": "BlogPosting",
+            "@id": f"{url}#article",
+            "headline": output_dict.get("title_tag") or pkg_name,
+            "description": description,
+            "url": url,
+            "inLanguage": "en-US",
+            "author": {
+                "@type": "Organization",
+                "name": "YatraDham Editorial Team",
+                "url": "https://yatradham.org"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "YatraDham.Org",
+                "url": "https://yatradham.org",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://yatradham.org/media/logo.png"
+                }
+            },
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": url
+            },
+            "datePublished": "2026-01-15T08:00:00+05:30",
+            "dateModified": "2026-03-30T10:00:00+05:30"
+        }
+    elif category == "wellness":
         primary_entity = {
             "@type": ["HealthAndBeautyBusiness", "LodgingBusiness"],
             "@id": f"{url}#wellness-center",
@@ -224,3 +288,85 @@ def generate_json_ld(output_dict: Dict[str, Any]) -> Dict[str, Any]:
         "@context": "https://schema.org",
         "@graph": graph
     }
+
+
+def generate_blog_json_ld(
+    title: str,
+    meta_description: str,
+    topic: str = "",
+    faqs: Optional[List[Dict[str, str]]] = None,
+    url: str = "https://yatradham.org/blog",
+    canonical_url: Optional[str] = None,
+    primary_keyword: Optional[str] = None,
+    date_published: Optional[str] = None,
+    word_count: Optional[int] = None,
+    **kwargs: Any
+) -> Dict[str, Any]:
+    """Generates standalone BlogPosting + FAQPage + Organization JSON-LD for AI Content Studio blogs."""
+    final_url = canonical_url or url
+    final_headline = title or topic or primary_keyword or "Spiritual Travel Guide"
+    pub_date = date_published or "2026-01-15T08:00:00+05:30"
+    graph = [
+        {
+            "@type": "BlogPosting",
+            "@id": f"{final_url}#article",
+            "headline": final_headline,
+            "description": meta_description or f"Complete spiritual guide and travel insights for {topic or final_headline}.",
+            "url": final_url,
+            "inLanguage": "en-US",
+            "author": {
+                "@type": "Organization",
+                "name": "YatraDham Editorial Team",
+                "url": "https://yatradham.org"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "name": "YatraDham.Org",
+                "url": "https://yatradham.org",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://yatradham.org/media/logo.png"
+                }
+            },
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": url
+            },
+            "datePublished": "2026-01-15T08:00:00+05:30",
+            "dateModified": "2026-03-30T10:00:00+05:30"
+        },
+        {
+            "@type": "Organization",
+            "@id": "https://yatradham.org/#organization",
+            "name": "YatraDham.Org",
+            "url": "https://yatradham.org",
+            "logo": "https://yatradham.org/media/logo.png"
+        }
+    ]
+
+    if faqs:
+        faq_entities = []
+        for f in faqs:
+            q = f.get("question") or f.get("q")
+            a = f.get("answer") or f.get("a")
+            if q and a:
+                faq_entities.append({
+                    "@type": "Question",
+                    "name": q,
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": a
+                    }
+                })
+        if faq_entities:
+            graph.append({
+                "@type": "FAQPage",
+                "@id": f"{url}#faq",
+                "mainEntity": faq_entities
+            })
+
+    return {
+        "@context": "https://schema.org",
+        "@graph": graph
+    }
+

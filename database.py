@@ -311,6 +311,12 @@ def _row_to_output(row: sqlite3.Row) -> SEOOutput:
     }
     json_ld = generate_json_ld(prelim)
     linter_metrics = run_seo_linter(title_tag, meta_desc, row["primary_keyword"] or "", sections.model_dump(), json_ld_present=True)
+    from ai_seo_audit import run_ai_seo_audit
+    ai_audit = run_ai_seo_audit(title_tag, meta_desc, row["primary_keyword"] or "", sections.model_dump(), json_ld_schema=json_ld)
+    linter_metrics["ai_seo_audit"] = ai_audit
+    linter_metrics["human_score"] = ai_audit.get("human_score", 95)
+    linter_metrics["audit_grade"] = ai_audit.get("grade", "A")
+    linter_metrics["geo_ready"] = ai_audit.get("metrics", {}).get("geo_ready", True)
     
     return SEOOutput(
         id=row["id"],

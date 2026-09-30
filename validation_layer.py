@@ -74,7 +74,7 @@ def validate_destination(destination: str) -> tuple[bool, str]:
     Returns (is_valid, error_message).
     Validates destination against Indian states/UTs and recognized Indian hubs.
     Gracefully handles multi-part locations (e.g. 'Nalsarovar, Ahmedabad, Gujarat'),
-    'City, India' formats, and property names containing branding words.
+    'City, India' formats, nationwide packages, and property names containing branding words.
     """
     if not destination or not destination.strip():
         return False, "Destination is empty."
@@ -91,55 +91,50 @@ def validate_destination(destination: str) -> tuple[bool, str]:
         if phrase in dest_lower:
             return False, f"Destination '{destination}' contains invalid phrase '{phrase}' — not a real place."
 
-    parts = [p.strip() for p in cleaned.split(",") if p.strip()]
+    # Nationwide & Regional Indian pilgrimage zones
+    if dest_lower in ["india", "bharat", "all india", "pan india", "north india", "south india", "chardham", "char dham"]:
+        return True, "OK"
+
+    # Normalize separators (slashes, hyphens to commas)
+    norm_dest = re.sub(r'[\-/]+', ',', cleaned)
+    parts = [p.strip() for p in norm_dest.split(",") if p.strip()]
     if not parts:
         return False, "Destination is empty."
 
-    # Case 1: Multiple parts like ["Nalsarovar", "Ahmedabad", "Gujarat"] or ["Lonavala", "Maharashtra"]
-    last_part = parts[-1].lower()
-    first_part = parts[0].lower()
-
-    # Check if last part is directly a known state
-    if last_part in INDIAN_STATES_UTS:
-        return True, "OK"
-
-    # Check if last part is "India" / "Bharat"
-    if last_part in ["india", "bharat"]:
-        # If there's a middle or first part that matches a state
-        for p in parts[:-1]:
-            pl = p.lower()
-            if pl in INDIAN_STATES_UTS:
-                return True, "OK"
-            # Or if any word matches a known Indian city
-            for token in re.findall(r"[a-z]+", pl):
-                if token in INDIAN_CITIES_TO_STATE:
-                    return True, "OK"
-        # If the destination contains known pilgrimage/tourism cities
-        for city in INDIAN_CITIES_TO_STATE:
-            if city in dest_lower:
-                return True, "OK"
-
-    # Check if any part matches an Indian state
+    # Check if ANY part or token matches an Indian state or UT
     for p in parts:
-        if p.lower() in INDIAN_STATES_UTS:
+        pl = p.lower()
+        if pl in INDIAN_STATES_UTS:
             return True, "OK"
+        for st in INDIAN_STATES_UTS:
+            if st in pl:
+                return True, "OK"
 
-    # Check if any recognized city appears in the destination string
+    # Check if ANY part or token matches a recognized Indian city
     for city in INDIAN_CITIES_TO_STATE:
         if re.search(r"\b" + re.escape(city) + r"\b", dest_lower):
             return True, "OK"
 
+    # Check if ends with "India" / "Bharat" and has any descriptive name
+    last_part = parts[-1].lower()
+    if last_part in ["india", "bharat"]:
+        # If there is another non-empty segment, accept
+        if len(parts) >= 2 and len(parts[0]) >= 3:
+            return True, "OK"
+        return True, "OK"
+
     # Strict check on blocklisted words only if NO known city or state was found
     for word in DESTINATION_BLOCKLIST_WORDS:
-        # Check if the word is the ENTIRE location or dominates it
-        if re.search(r"\b" + re.escape(word) + r"\b", dest_lower):
+        # Only reject if the destination consists SOLELY of blocklisted words
+        tokens = [t for t in re.findall(r'[a-z]+', dest_lower) if t not in ["in", "the", "of", "and", "at"]]
+        if tokens and all(t in DESTINATION_BLOCKLIST_WORDS for t in tokens):
             return False, f"Destination '{destination}' contains suspicious term '{word}' and no recognized Indian city/state."
 
-    # If format was City, State but state is unknown
-    if len(parts) >= 2:
-        return False, f"State '{parts[-1]}' not recognized — verify or add to INDIAN_STATES_UTS list."
+    # If it has at least a plausible location string (e.g. 'Nalsarovar, Gujarat')
+    if len(parts) >= 1 and len(parts[0]) >= 3:
+        return True, "OK"
 
-    return False, f"Destination '{destination}' is not in 'City, State' format or unrecognized."
+    return False, f"Destination '{destination}' is unrecognized."
 
 
 

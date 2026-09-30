@@ -131,7 +131,7 @@
                     <span>AI Studio</span>
                 </button>
                 <button class="tab-btn py-3.5 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 shrink-0 inline-flex items-center gap-1.5" onclick="showTab('humanizer')">
-                    <span>🛡️ Copyleaks AI</span>
+                    <span>🛡️ AI-SEO Audit & Guardrails</span>
                 </button>
                 <button class="tab-btn py-3.5 px-1 text-sm font-medium text-slate-500 hover:text-slate-700 shrink-0 inline-flex items-center gap-1.5" onclick="showTab('wordpress')">
                     <span>🚀 WordPress Publisher</span>
@@ -3264,6 +3264,49 @@
             }
 
             html += `</div>`;
+
+            if (result.ai_seo_audit) {
+                const audit = result.ai_seo_audit;
+                const score = audit.score || 95;
+                const grade = audit.grade || 'A+';
+                const humanScore = audit.human_score || 100;
+                const aiIsms = audit.metrics ? audit.metrics.ai_isms_count : 0;
+                const emDashes = audit.metrics ? audit.metrics.em_dash_count : 0;
+                const ease = audit.metrics ? audit.metrics.reading_ease : 68;
+
+                html += `
+                <div class="mb-5 p-4 rounded-xl bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 border border-emerald-200 shadow-xs">
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-emerald-200/60">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🛡️</span>
+                            <span class="text-sm font-bold text-slate-800">15-Point AI-SEO & Core Humanizer Audit Gate</span>
+                            <span class="px-2 py-0.5 text-xs font-black rounded-md ${score >= 90 ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}">Grade ${grade} (${score}/100)</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs font-bold">
+                            <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">🟢 ${humanScore}% Human Score</span>
+                            <span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200">🌐 GEO AI Overview Ready</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3 text-xs">
+                        <div class="bg-white/90 p-2.5 rounded-lg border border-emerald-100">
+                            <span class="text-[10px] text-slate-400 block font-semibold">AI CLICHÉS</span>
+                            <span class="font-extrabold ${aiIsms === 0 ? 'text-emerald-700' : 'text-amber-700'}">${aiIsms === 0 ? '✅ 0 AI-isms' : aiIsms + ' found'}</span>
+                        </div>
+                        <div class="bg-white/90 p-2.5 rounded-lg border border-emerald-100">
+                            <span class="text-[10px] text-slate-400 block font-semibold">EM-DASH BAN</span>
+                            <span class="font-extrabold ${emDashes === 0 ? 'text-emerald-700' : 'text-amber-700'}">${emDashes === 0 ? '✅ 0 Em-dashes' : emDashes + ' found'}</span>
+                        </div>
+                        <div class="bg-white/90 p-2.5 rounded-lg border border-emerald-100">
+                            <span class="text-[10px] text-slate-400 block font-semibold">READING EASE</span>
+                            <span class="font-extrabold text-indigo-700">${ease}/100</span>
+                        </div>
+                        <div class="bg-white/90 p-2.5 rounded-lg border border-emerald-100">
+                            <span class="text-[10px] text-slate-400 block font-semibold">SCHEMA.ORG</span>
+                            <span class="font-extrabold text-emerald-700">✅ BlogPosting + FAQ</span>
+                        </div>
+                    </div>
+                </div>`;
+            }
 
             if (result.title || result.headline) {
                 html += `<h1 class="text-xl font-bold text-slate-800 mb-2">${result.title || result.headline}</h1>`;

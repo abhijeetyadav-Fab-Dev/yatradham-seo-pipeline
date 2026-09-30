@@ -924,75 +924,113 @@ Embarking on this sacred pilgrimage to {destination} is a life-affirming journey
 Discover the real {keyword.lower()} with our complete 2026 guide. Verified dharamshalas, exact route pricing, Satvik meals & 24/7 pilgrim support on YatraDham. Book now!
 
 # SUGGESTED TAGS
-{destination}, Pilgrimage Packages, Temple Darshan, YatraDham
+{destination}, Pilgrimage Packages, Temple Darshan, YatraDham, Aarti Timings
 
 # CONTENT
 ## Introduction & Sacred Significance
 
-The sacred pilgrimage to {destination} represents one of the most spiritually uplifting journeys. Planning your trip with verified stays and dedicated transit ensures total peace of mind, allowing you and your family to focus entirely on devotion and holy darshan.
+The sacred pilgrimage to {destination} represents one of the most spiritually uplifting journeys in India. Devotees travel from across the country to seek divine blessings, participate in ancient temple rituals, and experience the quiet sanctity of this revered destination. Planning your pilgrimage with verified accommodations and dedicated transport ensures complete peace of mind, allowing you and your family to focus entirely on prayer, sacred rituals, and holy darshan.
 
-For devotees exploring the **{keyword}**, choosing a transparent, verified itinerary ensures total comfort, reliable local hill transport, and clean ashram stays.
+When exploring the **{keyword}**, choosing a transparent, verified itinerary eliminates common travel hassles such as unauthorized roadside touts, unreliable vehicle operators, and unhygienic rooms. Having verified bookings arranged before departure guarantees clean ashram rooms, punctual temple transfers, and authentic Satvik vegetarian dining.
 
-Direct Package Booking & Details: You can check official package inclusions and reserve dates directly at [{pkg_name}]({custom_url}).
+Direct Package Booking & Details: Devotees can view verified package inclusions and reserve advance dates directly at [{pkg_name}]({custom_url}).
+
+---
+
+## Temple Darshan Timings & Daily Aarti Schedule
+
+Understanding the daily sanctum schedule helps you organize your day without standing in long queues during peak afternoon heat. The temple follows a time-honored Vedic schedule from dawn to night:
+
+- **Mangala Aarti:** 5:00 AM – 5:45 AM (Auspicious morning awakening prayers with special Vedic chanting)
+- **Morning Darshan:** 6:00 AM – 12:30 PM (General public entry and special protocol queues)
+- **Madhyahna Bhog:** 12:30 PM – 1:30 PM (Sanctum doors temporarily close for sacred food offering)
+- **Afternoon Darshan:** 4:00 PM – 7:30 PM (Reopening of sanctum for evening visitors)
+- **Sandhya Evening Aarti:** 7:30 PM – 8:15 PM (Divine lamp lighting ceremony accompanied by traditional instruments)
+- **Shayan Aarti & Temple Closing:** 9:00 PM – 9:30 PM (Final night prayers before the deities rest)
+
+Visitors are encouraged to arrive at least 30 minutes before Aarti timings to secure seating within the prayer mandapam.
 
 ---
 
 ## Complete Day-by-Day Route & Darshan Itinerary
 
-### Day 1: Arrival, Check-in & Evening Aarti
-Arrive in {destination} and check into your verified [YatraDham Dharamshala](https://yatradham.org/). Freshen up with hot water facilities and proceed for your afternoon sanctum darshan. In the evening, immerse yourself in the divine temple Aarti and sacred parikrama before returning for a fresh Satvik dinner.
+### Day 1: Arrival, Check-in & Evening Sandhya Aarti
+Arrive at the nearest railway station or airport and meet your assigned YatraDham transit representative. Transfer comfortably to your verified [YatraDham Dharamshala](https://yatradham.org/) located within easy walking distance of the temple complex. Complete quick check-in formalities, refresh with hot water amenities, and relax after your journey.
 
-### Day 2: Morning Mangala Darshan, Sightseeing & Departure
-Wake up early for the auspicious Mangala Aarti darshan. Visit adjacent sacred kunds, temples, and heritage sites in {destination}. Enjoy traditional breakfast, collect holy prasad, and complete your journey with blessed memories.
+In the late afternoon, proceed for your initial temple orientation and parikrama around the sacred complex. Attend the divine Sandhya Aarti at 7:30 PM, where thousands of oil lamps create an unforgettable atmosphere of spiritual peace. Following the Aarti, enjoy a fresh, hygienic Satvik dinner at the dharamshala bhojanalaya and rest for the evening.
+
+### Day 2: Morning Mangala Darshan, Sacred Kund Snan & Departure
+Begin your morning at 4:30 AM to join the auspicious Mangala Darshan. Participating in early morning prayers offers intimate viewing of the deities before general visitor crowds arrive. Afterward, proceed to the nearby holy kund or river ghat for traditional snan and sankalp rituals guided by local Vedic pandits.
+
+Return to your accommodation for a wholesome satvik breakfast. Check out by 11:00 AM, visit nearby local shrines and historic spots, and safely transfer to your departure junction with blessed memories and sanctified prasad.
+
+---
+
+## Step-by-Step Darshan Flow, Rituals & Dress Code
+
+To ensure respect for sacred traditions and a smooth entry into the inner sanctum, visitors should observe the following guidelines:
+
+- **Traditional Dress Code:** Men must wear traditional dhotis, kurtas, or formal trousers. Women should wear sarees, salwar suits, or modest traditional Indian attire. Western casuals, shorts, and sleeveless tops are not permitted inside the sanctum.
+- **Footwear & Electronic Counters:** Mobile phones, cameras, leather belts, and footwear must be deposited at the official cloakroom counters located outside Gate 1. Token numbers are issued for secure retrieval.
+- **VIP & Senior Citizen Access:** A dedicated queue is available for senior citizens above 60 years and differently-abled devotees, minimizing standing time to under 20 minutes.
+- **Holy Prasad Counters:** Authenticated temple trust prasad (laddus, panchamrit, and dry fruits) can be purchased at designated counters near the main exit.
 
 ---
 
 ## 3 Key Takeaways for Planning Your Journey
 
 ### 1. Pacing Drives True Spiritual Rejuvenation
-Rushing through sacred shrines causes fatigue. Allocating 2-3 hours for each darshan allows the mind to absorb the divine atmosphere.
+Rushing through sacred shrines causes physical fatigue and mental distraction. Allocating 2 to 3 unhurried hours for each major darshan allows the mind to absorb the divine sanctity of the holy grounds.
 
 ### 2. High-Value Experiences Win Over Crowded Sightseeing
-A peaceful ashram stay, unhurried morning Aarti, and authentic Satvik meals deliver ten times the value of a rushed generic tour.
+A peaceful ashram stay, unhurried morning Aarti, and authentic Satvik meals deliver ten times the spiritual value of a rushed, commercial tour package.
 
-### 3. Transparent Route Costs Prevent Surprises
-Booking verified packages in advance protects you from unauthorized roadside agents and sudden surge pricing.
+### 3. Transparent Route Costs Prevent Unexpected Surprises
+Booking verified packages in advance on YatraDham.Org protects you from unauthorized roadside agents, sudden taxi surge pricing, and disputed room rates upon arrival.
 
 ---
 
 ## 4 Ways YatraDham.Org Makes Your Journey Seamless & Safe
 
-- **1. Verified Accommodations:** Every dharamshala and hotel is vetted for hot water, clean bedding, and vegetarian dining on [YatraDham.Org](https://yatradham.org/).
-- **2. Dedicated Yatra & Transport Coordination:** Punctual transfers with reliable local drivers via [YatraDham Travel Packages](https://travel.yatradham.org/).
-- **3. Authentic Temple Pujas & Pandit Bookings:** Arrange special Sankalp pujas and Abhishek through [YatraDham Temple Pujas](https://temple.yatradham.org/pujas).
-- **4. 24/7 Pilgrim Support & Flexible Booking:** Round-the-clock WhatsApp assistance and verified booking guarantees.
+- **1. Verified Accommodations:** Every dharamshala, ashram, and hotel listed on [YatraDham.Org](https://yatradham.org/) is physically vetted for hot water, clean bedding, and pure vegetarian dining.
+- **2. Dedicated Yatra & Transport Coordination:** Punctual private transfers with verified local drivers via [YatraDham Travel Packages](https://travel.yatradham.org/).
+- **3. Authentic Temple Pujas & Pandit Bookings:** Arrange special Sankalp pujas, Abhishek, and Havans through [YatraDham Temple Pujas](https://temple.yatradham.org/pujas).
+- **4. 24/7 Pilgrim Support & Flexible Booking:** Dedicated WhatsApp customer support, elder-care assistance, and transparent booking confirmations with zero hidden fees.
 
 ---
 
-## The Real Logistics: Costs, Stays & Commutes
+## The Real Logistics: Costs, Stays & Commutes (in INR)
 
-- **Package Pricing:** A complete {duration} package for {destination} typically ranges between ₹1,800 and ₹4,500 per person including transport, accommodation, and Satvik meals.
-- **Direct Official Booking:** For transparent rates and confirmed dates, visit: [{custom_url}]({custom_url}).
-- **Daily Food Expenses:** Budget ₹300–₹600 per day for fresh Satvik meals and local transfers.
+| Expense Category | Budget Option | Standard Comfortable | Premium Family |
+| :--- | :--- | :--- | :--- |
+| **Dharamshala / Hotel Stay** | ₹600 – ₹1,200 / night | ₹1,500 – ₹2,500 / night | ₹3,000 – ₹5,000 / night |
+| **Pure Satvik Meals** | ₹250 – ₹400 / day | ₹450 – ₹700 / day | ₹800 – ₹1,200 / day |
+| **Local Auto / Taxi Transit** | ₹200 – ₹400 / day | ₹600 – ₹1,200 / day | ₹1,500 – ₹2,500 / day |
+| **Complete Yatra Package** | ₹2,500 – ₹4,500 / person | ₹5,500 – ₹8,500 / person | ₹9,500 – ₹14,000 / person |
+
+Direct Official Booking: For verified packages with confirmed dates and room allocations, visit: [{custom_url}]({custom_url}).
 
 ---
 
 ## Frequently Asked Questions
 
 ### Q1. What is the average price of this tour package?
-The package starts from {cost} per person depending on group size and vehicle choice.
+The verified package starts from {cost} per person depending on group size, vehicle preference, and chosen room category.
 
-### Q2. Is this package safe for senior citizens?
-Yes. With YatraDham's verified transport, ground-floor dharamshala rooms, and temple-gate drops, seniors travel with total comfort.
+### Q2. Is this pilgrimage suitable for senior citizens and young children?
+Yes. With YatraDham's verified transport, ground-floor dharamshala rooms, and temple-gate drops, seniors and children travel with complete safety and comfort.
 
 ### Q3. Where can I book verified packages and dharamshalas?
-You can book verified packages directly through the [Official YatraDham Portal]({custom_url}) and verified stays on [YatraDham.Org](https://yatradham.org/).
+You can book verified packages directly through the [Official YatraDham Portal]({custom_url}) and inspect verified stays on [YatraDham.Org](https://yatradham.org/).
+
+### Q4. Are pure satvik vegetarian meals easily available?
+Yes. All YatraDham partner dharamshalas and bhojanalayas serve 100% vegetarian satvik meals prepared according to strict purity standards. Jain food without onion or garlic is readily available upon advance request.
 
 ---
 
 ## Final Thoughts & Planning Your Trip
 
-Embarking on this sacred pilgrimage to {destination} is a life-affirming journey of faith and peace. With YatraDham.Org managing your stays, transfers, and darshan logistics, you can immerse yourself completely in the divine blessings.
+Embarking on this sacred pilgrimage to {destination} is a meaningful journey of devotion, tranquility, and faith. With YatraDham.Org managing your stays, road transfers, and darshan logistics, you can immerse yourself completely in the divine atmosphere without logistical stress.
 
 **Book your verified package today: [Click here to explore the official {pkg_name} on YatraDham.org]({custom_url}).**"""
 

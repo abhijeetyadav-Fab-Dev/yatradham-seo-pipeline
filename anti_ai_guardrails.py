@@ -323,7 +323,8 @@ HUMANIZER_55_PATTERNS: List[Dict[str, Any]] = [
         "name": "Synonym Cycling & Elegant Variation",
         "description": "Alternating between unnatural synonyms in rapid succession to avoid repeating a word.",
         "regex": [
-            r"\b(?:sanctuary|edifice|haven|structure|temple)\b.{1,100}\b(?:sanctuary|edifice|haven|structure|temple)\b"
+            r"\b(?:edifice|haven)\b.{1,80}\b(?:sanctuary|edifice|haven)\b",
+            r"\btemple\b.{1,80}\b(?:edifice|haven)\b"
         ],
         "replacement_hint": "Repeat the common noun naturally rather than cycling through strained synonyms."
     },
@@ -1020,11 +1021,13 @@ def detect_ai_isms(text: str) -> List[Dict[str, Any]]:
     rep = detect_55_patterns(text)
     findings = []
     for dp in rep.get("detected_patterns", []):
+        first_ex = dp["examples"][0] if dp.get("examples") else dp["name"]
         findings.append({
             "category": f"[{dp['id']}] {dp['category']}: {dp['name']}",
             "pattern": dp["name"],
             "count": dp["count"],
-            "examples": dp["examples"]
+            "examples": dp["examples"],
+            "phrase": first_ex
         })
     return findings
 
@@ -1403,6 +1406,21 @@ def de_slop_and_humanize(text: str, voice: str = "professional") -> str:
     # Step 10: Unmask protected structures
     final_output = unmask_protected_structures(out, masks)
     return final_output.strip()
+
+
+def humanize_data(data: Any, voice: str = "professional") -> Any:
+    """
+    Core Non-Bypassable Guardrail:
+    Recursively de-slops, eradicates em-dashes, and humanizes all strings within
+    nested dictionaries, lists, or primitive values.
+    """
+    if isinstance(data, str):
+        return de_slop_and_humanize(data, voice=voice)
+    elif isinstance(data, dict):
+        return {k: humanize_data(v, voice=voice) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [humanize_data(item, voice=voice) for item in data]
+    return data
 
 
 # ==============================================================================

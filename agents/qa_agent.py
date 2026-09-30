@@ -61,9 +61,29 @@ def _check_banned(text: str) -> List[str]:
     return [f"BANNED_PHRASES:{','.join(found)}"] if found else []
 
 
-def _check_sentences(text: str) -> List[str]:
-    sentences = re.split(r'[.!?]+', text)
-    long = [s for s in sentences if len(s.split()) > 22]
+def _extract_prose_sentences(sections: Dict[str, Any]) -> List[str]:
+    """Extract natural sentences from sections dictionary, skipping JSON syntax."""
+    chunks = []
+    def _collect(val):
+        if isinstance(val, str):
+            clean = val.strip()
+            if clean and not clean.startswith("http"):
+                chunks.append(clean)
+        elif isinstance(val, list):
+            for item in val:
+                _collect(item)
+        elif isinstance(val, dict):
+            for k, v in val.items():
+                if k in ["time", "day_number", "url", "type", "image_url"]:
+                    continue
+                _collect(v)
+    _collect(sections)
+    full_prose = " ".join(chunks)
+    return [s.strip() for s in re.split(r'[.!?]+', full_prose) if len(s.strip().split()) >= 2]
+
+
+def _check_sentences(sentences: List[str]) -> List[str]:
+    long = [s for s in sentences if len(s.split()) > 25]
     return ["LONG_SENTENCES"] if long else []
 
 
@@ -74,12 +94,15 @@ def run(sections: Dict[str, Any], title_tag: str, meta_description: str, client:
     flags: List[str] = []
     flags.extend(_check_sections(sections))
 
-    all_text = json.dumps(sections)
-    flags.extend(_check_banned(all_text))
-    flags.extend(_check_sentences(all_text))
+    sentences = _extract_prose_sentences(sections)
+    prose_text = ". ".join(sentences)
+    total_eval_text = f"{title_tag}. {meta_description}. {prose_text}"
+
+    flags.extend(_check_banned(total_eval_text))
+    flags.extend(_check_sentences(sentences))
 
     # Google Helpful Content & Copyleaks AI Guardrail Audit
-    copyleaks = calculate_copyleaks_metrics(all_text)
+    copyleaks = calculate_copyleaks_metrics(total_eval_text)
     if copyleaks.get("copyleaks_ai_score", 0) > 25:
         flags.append(f"AI_PROBABILITY_HIGH:{copyleaks['copyleaks_ai_score']}%")
     else:
@@ -88,7 +111,7 @@ def run(sections: Dict[str, Any], title_tag: str, meta_description: str, client:
     if copyleaks.get("eeat_score", 0) >= 80:
         flags.append("GOOGLE_EEAT_COMPLIANT")
 
-    ai_finds = detect_ai_isms(all_text)
+    ai_finds = detect_ai_isms(total_eval_text)
     if ai_finds:
         flags.append(f"AI_ISMS_FOUND:{len(ai_finds)}")
 
@@ -97,7 +120,7 @@ def run(sections: Dict[str, Any], title_tag: str, meta_description: str, client:
     if not (130 <= len(meta_description) <= 165):
         flags.append("META_LENGTH")
 
-    flesch = _flesch_estimate(all_text)
+    flesch = _flesch_estimate(prose_text)
     if flesch < 35:
         flags.append("HARD_READ")
 

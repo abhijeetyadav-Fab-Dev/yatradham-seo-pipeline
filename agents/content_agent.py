@@ -161,7 +161,8 @@ IMPORTANT REMINDERS:
         logger.warning(f"Content agent execution failed: {e}. Generating category-aware fallback.")
         result = get_category_aware_fallback(package_data, primary_keyword)
 
-    return result
+    from anti_ai_guardrails import humanize_data
+    return humanize_data(result, voice="warm")
 
 
 def get_category_aware_fallback(package_data: Dict[str, Any], primary_keyword: str = "") -> Dict[str, Any]:
