@@ -1197,11 +1197,16 @@ def mask_protected_structures(text: str) -> Tuple[str, Dict[str, str]]:
     # 2. Mask markdown tables
     text = re.sub(r'(?:^\|[^\n]+\|\r?\n)+', lambda m: store_mask(m.group(0)), text, flags=re.MULTILINE)
 
-    # 3. Mask URLs and markdown links
-    text = re.sub(r'\[([^\]]+)\]\((https?://[^\s\)]+)\)', lambda m: f"[{m.group(1)}]({store_mask(m.group(2))})", text)
-    text = re.sub(r'https?://[^\s\)]+', lambda m: store_mask(m.group(0)), text)
+    # 3. Mask markdown horizontal dividers (e.g. ---, ***, ___)
+    text = re.sub(r'(?m)^\s*[-*_]{3,}\s*$', lambda m: store_mask(m.group(0)), text)
 
-    # 4. Mask HTML tags
+    # 4. Mask complete markdown links [text](url) to protect URLs and anchor formatting from fragmentation
+    text = re.sub(r'\[[^\]]+\]\([^\)]+\)', lambda m: store_mask(m.group(0)), text)
+
+    # 5. Mask standalone URLs
+    text = re.sub(r'https?://[^\s<>\"\')]+', lambda m: store_mask(m.group(0)), text)
+
+    # 6. Mask HTML tags
     text = re.sub(r'<[^>]+>', lambda m: store_mask(m.group(0)), text)
 
     return text, masks
@@ -1209,8 +1214,13 @@ def mask_protected_structures(text: str) -> Tuple[str, Dict[str, str]]:
 
 def unmask_protected_structures(text: str, masks: Dict[str, str]) -> str:
     """Restores all protected structures exactly as they were."""
-    for key, original in masks.items():
-        text = text.replace(key, original)
+    token_keys = sorted(
+        masks.keys(),
+        key=lambda k: int(re.search(r'\d+', k).group(0)) if re.search(r'\d+', k) else 0,
+        reverse=True
+    )
+    for key in token_keys:
+        text = text.replace(key, masks[key])
     return text
 
 
@@ -1219,12 +1229,12 @@ def eradicate_em_dashes(text: str) -> str:
     Aboudjem Humanizer Rule: Zero-tolerance on em dashes ('—') and conversational '--'.
     Replaces with appropriate commas, colons, or clean periods.
     """
-    # Replace '--' with commas or clean breaks
-    text = re.sub(r'\s+--\s+', ', ', text)
-    text = re.sub(r'--', ', ', text)
-
-    # Replace em-dashes surrounded by spaces: ' — ' -> ', '
+    # Replace em-dashes '—' with commas
     text = re.sub(r'\s*—\s*', ', ', text)
+
+    # Replace conversational '--' between words or surrounded by spaces
+    text = re.sub(r'(?<=\w)\s*--\s*(?=\w)', ', ', text)
+    text = re.sub(r'\s+--\s+', ', ', text)
 
     # Clean double commas and punctuation glitches
     text = re.sub(r',\s*,', ',', text)

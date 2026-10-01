@@ -603,6 +603,7 @@ def generate_content(request: ContentGenerateRequest):
             word_count=request.word_count,
             additional_instructions=sanitized_instructions,
             provider=request.provider,
+            model=request.model,
         )
 
         

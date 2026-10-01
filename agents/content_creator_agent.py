@@ -618,6 +618,7 @@ def _generate_long_form_blog(
     word_count: int = 1400,
     additional_instructions: Optional[str] = None,
     preferred_provider: Optional[str] = None,
+    model: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Single-pass unified generation for comprehensive master guides adhering to top SEO ranking guardrails."""
     
@@ -666,7 +667,10 @@ CORE SEO & EDITORIAL GUARDRAILS (SECOND-LAYER AUTHENTIC WRITING STANDARDS):
     structure_text = _get_intent_structure(intent, topic, target_keyword or topic)
 
     target_words = max(800, min(word_count or 1400, 2200))
-    master_prompt = f"""{brand_context}
+    master_prompt = f"""Topic: {topic}
+Target Keyword: {target_keyword or topic}
+
+{brand_context}
 {rules_text}
 
 TASK: Generate a complete, comprehensive, search-optimized travel and spiritual guide on: "{topic}".
@@ -687,6 +691,7 @@ CRITICAL: Output ONLY markdown text starting with `# TITLE`. Follow the structur
                 {"role": "system", "content": brand_context},
                 {"role": "user", "content": master_prompt}
             ],
+            model=model,
             max_tokens=3000,
             temperature=0.6,
             preferred_provider=preferred_provider,
@@ -846,6 +851,7 @@ def run(
     word_count: Optional[int] = None,
     additional_instructions: Optional[str] = None,
     provider: Optional[str] = None,
+    model: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Generate net-new content based on user requirements using robust markdown parsing."""
     
@@ -862,6 +868,7 @@ def run(
             word_count=effective_words,
             additional_instructions=additional_instructions,
             preferred_provider=provider,
+            model=model,
         )
 
 

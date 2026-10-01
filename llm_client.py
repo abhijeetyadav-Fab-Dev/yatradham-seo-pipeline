@@ -14,26 +14,26 @@ OPENROUTER_FALLBACK_MODELS = [
 ]
 
 
-GROQ_DEFAULT_MODEL = "llama-3.3-70b-versatile"
+GROQ_DEFAULT_MODEL = "llama-3.1-8b-instant"
 GROQ_FALLBACK_MODELS = [
-    "llama-3.3-70b-versatile",
     "llama-3.1-8b-instant",
-    "gemma2-9b-it",
     "llama3-70b-8192",
+    "gemma2-9b-it",
     "llama3-8b-8192",
+    "llama-3.3-70b-versatile",
 ]
 
-GEMINI_DEFAULT_MODEL = "gemini-2.0-flash"
+GEMINI_DEFAULT_MODEL = "gemini-2.5-flash"
 GEMINI_FALLBACK_MODELS = [
-    "gemini-2.0-flash",
+    "gemini-2.5-flash",
     "gemini-1.5-flash",
-    "gemini-1.5-flash-8b",
+    "gemini-3.8-flash",
     "gemini-1.5-pro",
+    "gemini-2.0-flash",
 ]
 
-NVIDIA_DEFAULT_MODEL = "meta/llama-3.3-70b-instruct"
+NVIDIA_DEFAULT_MODEL = "nvidia/llama-3.1-nemotron-70b-instruct"
 NVIDIA_FALLBACK_MODELS = [
-    "meta/llama-3.3-70b-instruct",
     "nvidia/llama-3.1-nemotron-70b-instruct",
     "meta/llama-3.1-70b-instruct",
     "meta/llama-3.1-8b-instruct",
@@ -217,10 +217,13 @@ class LLMClient:
             if model_ids:
                 # Prioritize stable fast models
                 if provider == "nvidia":
-                    priority = ["meta/llama-3.3-70b-instruct", "nvidia/llama-3.1-nemotron-70b-instruct", "meta/llama-3.1-70b-instruct", "meta/llama-3.1-8b-instruct"]
+                    priority = ["nvidia/llama-3.1-nemotron-70b-instruct", "meta/llama-3.1-70b-instruct", "meta/llama-3.1-8b-instruct", "mistralai/mistral-large-2-instruct"]
                     model_ids.sort(key=lambda x: priority.index(x) if x in priority else 99)
                 elif provider == "groq":
-                    priority = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it", "llama3-70b-8192", "llama3-8b-8192"]
+                    priority = ["llama-3.1-8b-instant", "llama3-70b-8192", "gemma2-9b-it", "llama3-8b-8192", "llama-3.3-70b-versatile"]
+                    model_ids.sort(key=lambda x: priority.index(x) if x in priority else 99)
+                elif provider == "gemini":
+                    priority = ["gemini-2.5-flash", "gemini-1.5-flash", "gemini-3.8-flash", "gemini-1.5-pro", "gemini-2.0-flash"]
                     model_ids.sort(key=lambda x: priority.index(x) if x in priority else 99)
                 self._model_cache[provider] = model_ids
                 return model_ids
@@ -360,16 +363,36 @@ class LLMClient:
         # Build prioritized list: provider, client instance, and ordered candidate models
         providers = []
         if self.deepseek_client:
-            ds_models = [self.deepseek_model] if self.deepseek_model else DEEPSEEK_FALLBACK_MODELS
+            ds_models = []
+            if self.deepseek_model:
+                ds_models.append(self.deepseek_model)
+            for m in DEEPSEEK_FALLBACK_MODELS:
+                if m not in ds_models:
+                    ds_models.append(m)
             providers.append(("deepseek", self.deepseek_client, ds_models))
         if self.groq_client:
-            gq_models = [self.groq_model] if self.groq_model else GROQ_FALLBACK_MODELS
+            gq_models = []
+            if self.groq_model:
+                gq_models.append(self.groq_model)
+            for m in GROQ_FALLBACK_MODELS:
+                if m not in gq_models:
+                    gq_models.append(m)
             providers.append(("groq", self.groq_client, gq_models))
         if self.gemini_client:
-            gem_models = [self.gemini_model] if self.gemini_model else GEMINI_FALLBACK_MODELS
+            gem_models = []
+            if self.gemini_model:
+                gem_models.append(self.gemini_model)
+            for m in GEMINI_FALLBACK_MODELS:
+                if m not in gem_models:
+                    gem_models.append(m)
             providers.append(("gemini", self.gemini_client, gem_models))
         if self.nvidia_client:
-            nv_models = [self.nvidia_model] if self.nvidia_model else NVIDIA_FALLBACK_MODELS
+            nv_models = []
+            if self.nvidia_model:
+                nv_models.append(self.nvidia_model)
+            for m in NVIDIA_FALLBACK_MODELS:
+                if m not in nv_models:
+                    nv_models.append(m)
             providers.append(("nvidia", self.nvidia_client, nv_models))
         if self.openrouter_client:
             # Active verified free models on OpenRouter
@@ -401,10 +424,13 @@ class LLMClient:
             if time.time() < self.provider_cooldowns.get(provider_name, 0.0):
                 continue
 
-            # Prioritize custom model if specified
-            models_to_try = [model] if (model and provider_name in ["openrouter", "groq", "gemini", "nvidia"]) else candidate_models
-            # Try up to 2 models per provider
-            for active_model in models_to_try[:2]:
+            # Prioritize custom model if specified, then try candidate fallback models
+            if model and provider_name in ["openrouter", "groq", "gemini", "nvidia", "deepseek"]:
+                models_to_try = [model] + [m for m in candidate_models if m != model]
+            else:
+                models_to_try = candidate_models
+            # Try up to 3 models per provider
+            for active_model in models_to_try[:3]:
                 self._wait_for_rate_limit()
                 try:
                     safe_temp = max(0.2, min(temperature, 0.65))
@@ -518,32 +544,53 @@ class LLMClient:
             else:
                 pkg_name = "Spiritual Tour Package"
 
-        # Scope location checks to user message and package name first
-        loc_scope = f"{pkg_name} {user_msg}".lower()
+        # Extract duration from package name or combined text if not explicitly set
+        dur_match = re.search(r'(\d+)\s*(?:days?|nights?)', f"{pkg_name} {combined_text}", re.IGNORECASE)
+        if dur_match:
+            duration = f"{dur_match.group(1)} Days"
+
+        # Scope location checks: check package/topic name first to prevent system prompt contamination
+        pkg_lower = pkg_name.lower()
         if not destination:
             dest_match = re.search(r'Destination:\s*([^\n]+)', user_msg, re.IGNORECASE)
             if dest_match:
                 destination = dest_match.group(1).strip()
-            elif "chardham" in loc_scope:
-                destination = "Haridwar & Uttarakhand"
-            elif "haridwar" in loc_scope:
-                destination = "Haridwar, Uttarakhand"
-            elif "rishikesh" in loc_scope:
-                destination = "Rishikesh, Uttarakhand"
-            elif "vrindavan" in loc_scope or "barsana" in loc_scope:
-                destination = "Vrindavan, Uttar Pradesh"
-            elif "kerala" in loc_scope or "palakkad" in loc_scope:
-                destination = "Palakkad, Kerala"
-            elif "alibaug" in loc_scope:
-                destination = "Alibaug, Maharashtra"
-            elif "gangasagar" in loc_scope:
-                destination = "Gangasagar, West Bengal"
-            elif "delhi" in loc_scope:
-                destination = "New Delhi, Delhi"
-            elif "kangra" in loc_scope or "himachal" in loc_scope:
-                destination = "Kangra, Himachal Pradesh"
             else:
-                destination = "India"
+                check_places = [
+                    ("rishikesh", "Rishikesh, Uttarakhand"),
+                    ("dwarka", "Dwarka, Gujarat"),
+                    ("somnath", "Somnath, Gujarat"),
+                    ("varanasi", "Varanasi, Uttar Pradesh"),
+                    ("kashi", "Varanasi, Uttar Pradesh"),
+                    ("ayodhya", "Ayodhya, Uttar Pradesh"),
+                    ("ujjain", "Ujjain, Madhya Pradesh"),
+                    ("shirdi", "Shirdi, Maharashtra"),
+                    ("tirupati", "Tirupati, Andhra Pradesh"),
+                    ("puri", "Puri, Odisha"),
+                    ("vrindavan", "Vrindavan, Uttar Pradesh"),
+                    ("barsana", "Vrindavan, Uttar Pradesh"),
+                    ("chardham", "Haridwar & Uttarakhand"),
+                    ("haridwar", "Haridwar, Uttarakhand"),
+                    ("kerala", "Palakkad, Kerala"),
+                    ("palakkad", "Palakkad, Kerala"),
+                    ("alibaug", "Alibaug, Maharashtra"),
+                    ("gangasagar", "Gangasagar, West Bengal"),
+                    ("delhi", "New Delhi, Delhi"),
+                    ("kangra", "Kangra, Himachal Pradesh"),
+                    ("himachal", "Kangra, Himachal Pradesh"),
+                ]
+                for place, place_dest in check_places:
+                    if place in pkg_lower:
+                        destination = place_dest
+                        break
+                if not destination:
+                    loc_scope = f"{pkg_name} {user_msg}".lower()
+                    for place, place_dest in check_places:
+                        if place in loc_scope:
+                            destination = place_dest
+                            break
+                if not destination:
+                    destination = "India"
 
         # 2. DETECT CATEGORY STRICTLY (Wellness vs Pilgrimage vs Stay vs Puja)
         explicit_cat_match = re.search(r'Category:\s*([a-z_]+)', combined_text, re.IGNORECASE)
@@ -554,9 +601,9 @@ class LLMClient:
         
         check_text = f"{pkg_name} {destination} {page_raw_text} {custom_url}".lower()
         wellness_keywords = [
-            "ayurved", "panchakarma", "massage", "rejuvenation", "retreat",
+            "ayurved", "panchakarma", "massage", "rejuvenation", "rejuvenate", "retreat",
             "detox", "naturopathy", "healing", "stress relief", "abhyangam",
-            "shirodhara", "yoga", "wellness"
+            "shirodhara", "yoga", "wellness", "meditation"
         ]
         stay_keywords = ["dharamshala", "ashram stay", "bhavan", "sanatorium", "room booking", "trh", "gmvn", "hotel stay"]
 
@@ -917,7 +964,285 @@ Embarking on this sacred pilgrimage to {destination} is a life-affirming journey
             return json.dumps({"score": 95, "flags": ["PASS"], "notes": f"All 19 sections verified for {pkg_category} category."})
 
         # Content Studio & Long-form Blog Generation
-        return f"""# TITLE
+        if pkg_category == "wellness":
+            return f"""# TITLE
+{pkg_name} — Complete Route, Daily Routine & Verified Retreat Guide | YatraDham
+
+# META DESCRIPTION
+Discover the real {keyword.lower()} with our complete 2026 guide. Verified ashrams, daily yoga & pranayama schedules, Satvik nutrition & 24/7 support on YatraDham. Book now!
+
+# SUGGESTED TAGS
+{destination}, Wellness Retreat, Yoga & Meditation, Ayurveda, YatraDham, Satvik Living
+
+# CONTENT
+## Holistic Healing & Spiritual Sanctuary in {destination}
+
+{destination} stands among the most revered spiritual sanctuaries for mind, body, and soul rejuvenation in India. Seekers and travelers journey from across the country to breathe fresh mountain and river air, learn authentic Vedic yoga from certified ashram masters, and undergo deep Ayurvedic detoxification. Scheduling your retreat with verified accommodations and accredited wellness centers ensures complete peace of mind, allowing you and your loved ones to focus fully on healing, restorative yoga, and spiritual tranquility.
+
+When exploring the **{keyword}**, choosing a transparent, verified wellness package eliminates common travel uncertainties such as uncertified instructors, unvetted massage centers, and unexpected therapy fees. Having verified bookings arranged before arrival guarantees clean, peaceful ashram rooms, punctual transit transfers, authentic Ayurvedic doctor consultations, and freshly prepared Satvik vegetarian dining.
+
+Direct Retreat Booking & Guidance: Seekers can inspect verified retreat inclusions and reserve advance dates directly at [{pkg_name}]({custom_url}).
+
+## Core Daily Wellness Routine & Yoga Schedule
+
+A structured daily rhythm aligns your circadian cycle with nature's Vedic clock, restoring vitality and mental clarity:
+
+- **Brahma Muhurta Awakening (5:30 AM – 6:15 AM):** Sacred morning wake-up with warm herbal water, tongue cleaning, and quiet contemplation along the holy riverbanks.
+- **Morning Hatha & Ashtanga Yoga (6:30 AM – 8:00 AM):** Guided asanas focused on spinal alignment, joint flexibility, and energy unblocking led by experienced ashram yogis.
+- **Pranayama & Breathwork (8:00 AM – 8:45 AM):** Nadi Shodhana, Kapalabhati, and Bhramari breathing to calm the nervous system and enhance mental focus.
+- **Wholesome Satvik Breakfast (9:00 AM – 10:00 AM):** Fresh seasonal fruits, herbal porridge, sprouted legumes, and herbal digestive teas.
+- **Doctor Consultation & Ayurvedic Therapies (10:30 AM – 1:00 PM):** Individual pulse diagnosis (Nadi Pariksha) followed by prescribed Abhyanga oil massage, Shirodhara, or herbal steam baths.
+- **Mindful Satvik Lunch & Rest (1:00 PM – 3:30 PM):** Light, freshly cooked vegetarian meals followed by silence (Mouna) and contemplative journaling.
+- **Evening Meditation & Sound Healing (4:30 PM – 6:00 PM):** Guided yoga nidra, sound bath sessions with Tibetan singing bowls, and evening riverfront Aarti meditation.
+- **Light Satvik Dinner & Restorative Sleep (7:00 PM – 9:30 PM):** Nourishing soups, steamed vegetables, and early rest to promote cellular recovery.
+
+## Complete Day-by-Day Wellness Itinerary
+
+### Day 1: Mindful Arrival, Orientation & Sacred Evening Aarti
+Arrive at {destination} and transfer smoothly to your verified wellness ashram or retreat center via YatraDham transit coordination. Check into your peaceful room, enjoy a welcome herbal tonic, and join your initial orientation with the resident Ayurvedic physician. At sunset, gather by the sacred ghats for the peaceful Sandhya Aarti, listening to reverberating Vedic mantras as oil lamps float gently across the water. Enjoy a light satvik dinner and rest early.
+
+### Day 2 to Day 6: Daily Asanas, Panchakarma Therapies & Guided Meditation
+Each morning begins with rejuvenating sunrise pranayama and dynamic yoga flow. Following a nourishing satvik breakfast, attend your daily personalized Ayurvedic therapy sessions including warm herbal oil Abhyanga and soothing herbal poultices. Midday brings quiet nature walks through serene trails, mindful breathwork workshops, and philosophy discussions on Vedic lifestyle principles. Evenings are dedicated to sacred kirtan, restorative yoga nidra, and sunset meditation sessions overlooking pristine nature.
+
+### Day 7: Sacred Sankalp, Wholesome Nutrition & Departure
+Complete your final morning yoga practice and sound healing circle. Meet your wellness physician for personalized take-home dietary guidelines and seasonal lifestyle recommendations to sustain your wellness gains back home. Check out by late morning, receive blessed prasad and herbal wellness gifts, and comfortably transfer to your return junction feeling renewed, balanced, and deeply recharged.
+
+## Step-by-Step Wellness Guidelines & Etiquette
+
+To gain maximum benefits from your retreat, observe these time-tested guidelines:
+
+- **Comfortable Natural Attire:** Pack loose-fitting cotton or linen clothes suitable for yoga stretches and meditation posture. White or light earthy tones are traditionally preferred.
+- **Digital Detox Policy:** Guests are encouraged to disconnect from mobile devices and work emails during therapy hours and evening meditation to allow the nervous system to settle.
+- **Purity & Diet Observance:** All meals are 100% vegetarian, organic, and cooked without onion, garlic, or refined sugars. Alcohol, tobacco, and non-vegetarian food are strictly prohibited on retreat grounds.
+- **Medical Transparency:** Devotees should disclose any existing joint injuries, chronic ailments, or medications during their initial consultation so therapists can customize treatment intensity safely.
+
+## 3 Key Takeaways for Your Wellness Journey
+
+### 1. Consistency Outweighs Intensity
+A gentle, consistent 7-day routine resets sleep hormones, metabolic digestion, and mental anxiety far more effectively than isolated intense workouts.
+
+### 2. Pure Satvik Nutrition Fuels Natural Healing
+Eating freshly cooked, seasonal plant-based food free of processed oils and preservatives gives your digestive tract the rest it needs to self-repair.
+
+### 3. Verified Accommodations Assure Peace of Mind
+Booking verified retreats through YatraDham.Org protects you from commercial tourist traps, ensuring genuine Vedic teachers, hygienic amenities, and transparent pricing.
+
+## 4 Ways YatraDham.Org Makes Your Wellness Journey Seamless & Safe
+
+- **1. Physically Verified Retreats:** Every partner center listed on [YatraDham.Org](https://yatradham.org/) is vetted for experienced yoga masters, accredited doctors, and spotless rooms.
+- **2. Dedicated Station & Airport Transfers:** Punctual private transfers with verified local drivers via [YatraDham Travel Packages](https://travel.yatradham.org/).
+- **3. Authentic Temple Pujas & Sevas:** Seamlessly add sacred rituals or riverfront Sankalp pujas through [YatraDham Temple Pujas](https://temple.yatradham.org/pujas).
+- **4. 24/7 Pilgrim & Seeker Helpline:** Dedicated WhatsApp assistance, elder-care support, and flexible booking confirmations with zero hidden charges.
+
+## The Real Logistics: Costs, Stays & Inclusions (in INR)
+
+| Package Inclusions | Budget Ashram Retreat | Standard Holistic Center | Luxury Ayurvedic Resort |
+| :--- | :--- | :--- | :--- |
+| **Verified Stay / Night** | ₹1,200 – ₹2,200 | ₹2,800 – ₹4,500 | ₹5,500 – ₹10,000 |
+| **Organic Satvik Meals / Day** | Included | Included | Included |
+| **Daily Yoga & Meditation** | Included | Included | Included |
+| **Doctor Consultation & Therapies** | ₹800 – ₹1,500 / session | Included in Package | Included in Package |
+| **Complete 7-Day Package** | ₹12,000 – ₹18,000 / person | ₹22,000 – ₹32,000 / person | ₹45,000 – ₹75,000 / person |
+
+Direct Official Booking: For verified retreat dates and room allocations, visit: [Official YatraDham Portal]({custom_url}).
+
+## Frequently Asked Questions
+
+### Q1. Are these wellness retreats suitable for complete beginners in yoga?
+Yes. All instructors accommodate beginners with gentle modifications, props, and individualized posture guidance suitable for all age groups and flexibility levels.
+
+### Q2. What kind of food is served during the retreat?
+All retreat centers provide 100% pure vegetarian satvik meals prepared with seasonal organic vegetables, whole grains, and digestive Ayurvedic herbs. Special gluten-free and Jain meals are available on advance notice.
+
+### Q3. Where can I book verified retreats and ashram stays in {destination}?
+You can book verified stays and complete wellness packages directly through the [Official YatraDham Portal]({custom_url}) and browse verified centers on [YatraDham.Org](https://yatradham.org/).
+
+### Q4. What is the ideal duration for noticeable wellness results?
+While even a 3-day retreat offers immediate relaxation, a 7-day program is ideal for deep cellular detoxification, resetting circadian sleep cycles, and establishing lasting habits.
+
+## Final Thoughts & Beginning Your Wellness Journey
+
+Starting this sacred wellness retreat in {destination} is a life-affirming investment in your health, clarity, and inner balance. With YatraDham.Org managing your accommodations, meals, and transit details, you can step away from daily stress and give your body and soul the restorative care they deserve.
+
+**Book your verified package today: [Click here to explore the official {pkg_name} on YatraDham.org]({custom_url}).**"""
+
+        elif pkg_category == "stay":
+            return f"""# TITLE
+{pkg_name} — Verified Rooms, Pricing & Dharamshala Booking Guide | YatraDham
+
+# META DESCRIPTION
+Book verified {keyword.lower()} with our 2026 accommodation guide. Clean rooms, hot water, Satvik bhojanalaya & direct temple proximity on YatraDham. Reserve now!
+
+# SUGGESTED TAGS
+{destination}, Dharamshala Booking, Ashram Stay, YatraDham, Clean Rooms, Satvik Food
+
+# CONTENT
+## Sacred Stays & Peaceful Pilgrimage Accommodations in {destination}
+
+Finding a clean, trustworthy, and peaceful place to stay is the essential foundation of any meaningful pilgrimage to {destination}. Devotees arriving after long rail or road journeys seek comfortable rooms with reliable hot water, spotless bedding, and a peaceful spiritual environment close to the sacred shrines. Booking verified accommodations through YatraDham eliminates uncertainty, ensuring you and your family have confirmed rooms waiting upon arrival.
+
+Choosing verified stays on YatraDham protects travelers from unauthorized agents, exorbitant walk-in rates during festivals, and unhygienic guest houses. Every listed dharamshala and ashram adheres to strict standards of cleanliness, family-friendly security, and pure Satvik vegetarian dining.
+
+Direct Stay Booking & Room Verification: Devotees can view room amenities and reserve advance dates directly at [{pkg_name}]({custom_url}).
+
+## Room Amenities, Hygiene Standards & Facilities
+
+Understanding the available amenities helps you select the ideal accommodation for your group:
+
+- **Air-Cooled & AC Rooms:** Well-ventilated standard non-AC and premium air-conditioned family rooms with comfortable bedding.
+- **Attached Bathrooms & Hot Water:** Dedicated western and Indian toilets with 24-hour geyser hot water amenities.
+- **Satvik Bhojanalaya:** On-premises dining halls serving wholesome vegetarian thalis without onion or garlic.
+- **Luggage Storage & Cloakroom:** Secure lockers for safely storing bags during early morning or late evening darshan.
+- **Lift & Senior Citizen Accessibility:** Wheelchair ramps, elevator access, and ground-floor room priority for elderly pilgrims.
+
+## Step-by-Step Check-in Flow & Ashram Etiquette
+
+To ensure a smooth arrival and peaceful stay, keep these guidelines in mind:
+
+- **Check-in & Check-out Timings:** Standard ashram check-in is typically 12:00 PM and check-out is 10:00 AM, with early morning luggage holding available upon request.
+- **Identity Proof Verification:** All adult guests must carry an original government-issued photo ID (Aadhar Card, Voter ID, or Passport).
+- **Peace & Spiritual Sanctuary:** Ashrams observe quiet hours between 10:00 PM and 5:00 AM. Alcohol, smoking, and loud music are strictly forbidden.
+- **Advance Booking Recommendation:** During peak festive periods and Shravan months, reserve rooms at least 2 to 4 weeks early on YatraDham.Org.
+
+## 3 Key Reasons Devotees Choose Verified Dharamshalas
+
+### 1. Transparent Pricing with Zero Hidden Charges
+Booking through YatraDham guarantees locked-in rates without sudden surge pricing or roadside tout commissions.
+
+### 2. Physical Verification for Hygiene & Family Safety
+Every property is inspected to ensure clean washrooms, hygienic drinking water, and safe gated premises for families and seniors.
+
+### 3. Temple Proximity Minimizes Walking Fatigue
+Partner ashrams are located within 500 meters to 1.5 km from the main temple gates, making daily aarti attendance effortless.
+
+## 4 Ways YatraDham.Org Makes Your Stay Smooth & Safe
+
+- **1. Physically Verified Accommodations:** Over 700+ pilgrimage cities with personally inspected dharamshalas and bhawans.
+- **2. Punctual Station Pickups:** Coordinate private cab and auto transfers directly from transit hubs.
+- **3. Authentic Temple Pujas & Sevas:** Seamlessly add special Sankalp and Abhishek rituals through [YatraDham Temple Pujas](https://temple.yatradham.org/pujas).
+- **4. 24/7 Dedicated Support:** Direct WhatsApp customer care for check-in assistance and elder-care requirements.
+
+## The Real Logistics: Room Pricing & Meal Costs (in INR)
+
+| Room Category | Average Price / Night | Best For | Typical Amenities |
+| :--- | :--- | :--- | :--- |
+| **Standard Non-AC Room** | ₹500 – ₹1,000 | Budget pilgrims & couples | Double bed, attached bath, hot water |
+| **Comfort AC Room** | ₹1,200 – ₹2,200 | Small families | Air conditioning, geyser, clean linens |
+| **Deluxe Family Suite (3-4 Bed)** | ₹2,500 – ₹4,500 | Large family groups | Multiple beds, sitting area, elevator |
+| **Satvik Thali / Meal** | ₹100 – ₹200 / person | All visitors | Wholesome, pure vegetarian dining |
+
+Direct Official Booking: For verified rooms and confirmed dates, visit: [Official YatraDham Portal]({custom_url}).
+
+## Frequently Asked Questions
+
+### Q1. What are the check-in and check-out timings?
+Most dharamshalas operate on a 10:00 AM or 12:00 PM cycle. Luggage storage is provided if you arrive prior to your allocated check-in hour.
+
+### Q2. Is hot water available in all rooms?
+Yes. Partner dharamshalas provide solar or electric geyser hot water in attached washrooms.
+
+### Q3. Can families with senior citizens request ground-floor rooms?
+Yes. Mention senior citizen requirements during advance booking on YatraDham.Org, and ground-floor rooms or lift-accessible rooms will be prioritized.
+
+### Q4. Are outside food items allowed on premises?
+Pure vegetarian food is welcome, but non-vegetarian items, alcohol, and tobacco are strictly prohibited across all ashrams and dharamshalas.
+
+## Final Thoughts & Planning Your Stay
+
+A peaceful dharamshala stay ensures your spiritual journey to {destination} is comfortable, respectful, and budget-friendly. With YatraDham.Org taking care of verified bookings and customer support, you can immerse yourself completely in prayer and sacred rituals.
+
+**Book your verified stay today: [Click here to reserve rooms on YatraDham.org]({custom_url}).**"""
+
+        elif pkg_category == "puja":
+            return f"""# TITLE
+{pkg_name} — Authentic Vedic Vidhi, Timings & Pandit Booking Guide | YatraDham
+
+# META DESCRIPTION
+Book authentic {keyword.lower()} with verified Vedic Pandits on YatraDham. Complete samagri, gotra sankalp & sacred temple blessings. Reserve your puja today!
+
+# SUGGESTED TAGS
+{destination}, Online Puja Booking, Vedic Pandits, Temple Rituals, Gotra Sankalp, YatraDham
+
+# CONTENT
+## Sacred Significance of Vedic Pujas in {destination}
+
+Performing sacred rituals and pujas in {destination} has been an integral Vedic tradition for millennia. Devotees offer special prayers to seek divine grace, family prosperity, peace for departed ancestors, and resolution of astrological doshas. Arranging your puja through YatraDham ensures every step follows authentic Vedic scriptures, guided by experienced, verified Pandit Ji.
+
+Choosing an authenticated puja booking protects devotees from unverified commercial operators and ensures complete transparent pricing. All sacred samagri, temple access, gotra sankalp, and mantra recitations are handled with absolute devotion, whether you participate in person or via live online streaming.
+
+Direct Puja Booking & Ritual Details: Devotees can view ritual options and reserve advance dates directly at [{pkg_name}]({custom_url}).
+
+## Step-by-Step Puja Vidhi & Sacred Offerings
+
+The sacred puja follows time-honored Vedic rituals performed with pure samagri:
+
+- **Gotra Sankalp:** The Vedic Pandit Ji invokes your family gotra, birth names, and specific prayer intentions.
+- **Pavitra Abhishek & Panchamrit Snan:** Sanctifying the deity with sacred water, milk, honey, curd, and holy river water.
+- **Vedic Mantra Chanting & Hawan:** Chanting of authentic mantras, Rudri path, or specific stotras accompanied by sacred fire offerings.
+- **Maha Aarti & Bhog Offering:** Presenting traditional sanctified sweets, fruits, and holy prasad to the divine sanctum.
+- **Blessings & Prasad Dispatch:** Receiving holy threads, sacred ash (vibhuti/chandan), and blessed temple prasad at your doorstep or directly after the ritual.
+
+## Pilgrim Preparation, Dress Code & Requirements
+
+To maintain sanctity during the sacred ritual, observe the following guidelines:
+
+- **Sacred Dress Code:** Men should wear traditional dhotis or kurtas. Women are requested to wear sarees or modest traditional Indian dress.
+- **Fasting & Purity:** Light fasting or consuming only fruits and milk prior to morning pujas is traditionally recommended for maximum spiritual benefit.
+- **Details Required for Sankalp:** Have the full names, gotra, nakshatra, and birth details of participating family members ready when booking.
+- **Online Participation Option:** Devotees unable to travel can participate via live video link, with energized prasad delivered via registered speed post.
+
+## 3 Key Reasons to Book Pujas via YatraDham
+
+### 1. Authenticated Vedic Pandits
+Every Pandit Ji affiliated with YatraDham is vetted for classical Vedic scholarship, gotra knowledge, and ritual experience.
+
+### 2. Complete Pure Samagri Included
+All pure ghee, holy wood, herbal samagri, and temple offerings are arranged in advance without unexpected on-spot requests.
+
+### 3. Transparent Dakshina with No Hidden Demands
+Fixed, transparent booking costs ensure peace of mind, allowing you to focus entirely on devotion and prayer.
+
+## 4 Ways YatraDham.Org Makes Your Ritual Smooth & Meaningful
+
+- **1. Scriptural Authenticity:** Every ritual is conducted in strict accordance with classical Vedic vidhi.
+- **2. Dedicated Yatra & Puja Coordination:** Coordinated transport and priority temple entry assistance for devotees attending in person.
+- **3. Pan-India Sacred Prasad Delivery:** Blessed prasad packets dispatched with tracking to your registered address.
+- **4. 24/7 Devotee Helpline:** WhatsApp and phone assistance for gotra verification and timing confirmations.
+
+## The Real Logistics: Puja Packages & Dakshina (in INR)
+
+| Puja Category | Standard Dakshina | Duration | What is Included |
+| :--- | :--- | :--- | :--- |
+| **Individual Sankalp Puja** | ₹1,100 – ₹2,500 | 45 – 60 Mins | Gotra sankalp, basic abhishek, prasad |
+| **Comprehensive Family Hawan** | ₹3,500 – ₹7,000 | 90 – 120 Mins | Full Vedic hawan, samagri, 2 pandits |
+| **Special Maha Abhishek / Seva** | ₹5,500 – ₹11,000 | 2 – 3 Hours | Exclusive sanctum ritual, elaborate offerings |
+| **Prasad Speed Post Shipping** | Included | 3 – 5 Days | Tracked doorstep delivery across India |
+
+Direct Official Booking: For verified puja dates and pandit coordination, visit: [Official YatraDham Portal]({custom_url}).
+
+## Frequently Asked Questions
+
+### Q1. What if I do not know my gotra?
+Devotees who do not know their family gotra are initiated under the universal 'Kashyapa Gotra' as prescribed in Vedic scriptures.
+
+### Q2. Can I participate in the puja online?
+Yes. YatraDham provides live video streaming links for family members who cannot physically visit the temple.
+
+### Q3. How long does the sanctified prasad take to arrive?
+Blessed prasad packets are carefully packed and dispatched via tracked courier within 48 hours of puja completion.
+
+### Q4. Are all puja materials and flowers included in the package?
+Yes. The complete list of flowers, fruits, pure ghee, gangajal, and hawan samagri is fully arranged by YatraDham.
+
+## Final Thoughts & Reserving Your Puja
+
+Participating in authentic temple pujas in {destination} brings deep spiritual fulfillment and peace to your family. With YatraDham.Org taking care of Vedic pandits, pure samagri, and ritual coordination, you can offer your prayers with complete devotion.
+
+**Book your verified puja today: [Click here to book verified rituals on YatraDham.org]({custom_url}).**"""
+
+        else:
+            # Default: Pilgrimage Tour & Yatra Itinerary
+            return f"""# TITLE
 {pkg_name} — Complete Cost Breakdown, Route & Verified Booking Guide | YatraDham
 
 # META DESCRIPTION
@@ -935,8 +1260,6 @@ When exploring the **{keyword}**, choosing a transparent, verified itinerary eli
 
 Direct Package Booking & Details: Devotees can view verified package inclusions and reserve advance dates directly at [{pkg_name}]({custom_url}).
 
----
-
 ## Temple Darshan Timings & Daily Aarti Schedule
 
 Understanding the daily sanctum schedule helps you organize your day without standing in long queues during peak afternoon heat. The temple follows a time-honored Vedic schedule from dawn to night:
@@ -950,8 +1273,6 @@ Understanding the daily sanctum schedule helps you organize your day without sta
 
 Visitors are encouraged to arrive at least 30 minutes before Aarti timings to secure seating within the prayer mandapam.
 
----
-
 ## Complete Day-by-Day Route & Darshan Itinerary
 
 ### Day 1: Arrival, Check-in & Evening Sandhya Aarti
@@ -964,8 +1285,6 @@ Begin your morning at 4:30 AM to join the auspicious Mangala Darshan. Participat
 
 Return to your accommodation for a wholesome satvik breakfast. Check out by 11:00 AM, visit nearby local shrines and historic spots, and safely transfer to your departure junction with blessed memories and sanctified prasad.
 
----
-
 ## Step-by-Step Darshan Flow, Rituals & Dress Code
 
 To ensure respect for sacred traditions and a smooth entry into the inner sanctum, visitors should observe the following guidelines:
@@ -974,8 +1293,6 @@ To ensure respect for sacred traditions and a smooth entry into the inner sanctu
 - **Footwear & Electronic Counters:** Mobile phones, cameras, leather belts, and footwear must be deposited at the official cloakroom counters located outside Gate 1. Token numbers are issued for secure retrieval.
 - **VIP & Senior Citizen Access:** A dedicated queue is available for senior citizens above 60 years and differently-abled devotees, minimizing standing time to under 20 minutes.
 - **Holy Prasad Counters:** Authenticated temple trust prasad (laddus, panchamrit, and dry fruits) can be purchased at designated counters near the main exit.
-
----
 
 ## 3 Key Takeaways for Planning Your Journey
 
@@ -988,16 +1305,12 @@ A peaceful ashram stay, unhurried morning Aarti, and authentic Satvik meals deli
 ### 3. Transparent Route Costs Prevent Unexpected Surprises
 Booking verified packages in advance on YatraDham.Org protects you from unauthorized roadside agents, sudden taxi surge pricing, and disputed room rates upon arrival.
 
----
-
 ## 4 Ways YatraDham.Org Makes Your Journey Seamless & Safe
 
 - **1. Verified Accommodations:** Every dharamshala, ashram, and hotel listed on [YatraDham.Org](https://yatradham.org/) is physically vetted for hot water, clean bedding, and pure vegetarian dining.
 - **2. Dedicated Yatra & Transport Coordination:** Punctual private transfers with verified local drivers via [YatraDham Travel Packages](https://travel.yatradham.org/).
 - **3. Authentic Temple Pujas & Pandit Bookings:** Arrange special Sankalp pujas, Abhishek, and Havans through [YatraDham Temple Pujas](https://temple.yatradham.org/pujas).
 - **4. 24/7 Pilgrim Support & Flexible Booking:** Dedicated WhatsApp customer support, elder-care assistance, and transparent booking confirmations with zero hidden fees.
-
----
 
 ## The Real Logistics: Costs, Stays & Commutes (in INR)
 
@@ -1008,9 +1321,7 @@ Booking verified packages in advance on YatraDham.Org protects you from unauthor
 | **Local Auto / Taxi Transit** | ₹200 – ₹400 / day | ₹600 – ₹1,200 / day | ₹1,500 – ₹2,500 / day |
 | **Complete Yatra Package** | ₹2,500 – ₹4,500 / person | ₹5,500 – ₹8,500 / person | ₹9,500 – ₹14,000 / person |
 
-Direct Official Booking: For verified packages with confirmed dates and room allocations, visit: [{custom_url}]({custom_url}).
-
----
+Direct Official Booking: For verified packages with confirmed dates and room allocations, visit: [Official YatraDham Portal]({custom_url}).
 
 ## Frequently Asked Questions
 
@@ -1025,8 +1336,6 @@ You can book verified packages directly through the [Official YatraDham Portal](
 
 ### Q4. Are pure satvik vegetarian meals easily available?
 Yes. All YatraDham partner dharamshalas and bhojanalayas serve 100% vegetarian satvik meals prepared according to strict purity standards. Jain food without onion or garlic is readily available upon advance request.
-
----
 
 ## Final Thoughts & Planning Your Trip
 

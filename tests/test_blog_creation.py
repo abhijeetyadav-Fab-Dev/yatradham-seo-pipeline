@@ -83,3 +83,62 @@ def test_live_blog_creation_speed_and_completeness():
     assert "Frequently Asked Questions" in content or "### Q1" in content, "Missing FAQs section"
     assert "Final" in content or "Conclusion" in content, "Missing Final Thoughts section"
     assert not content.strip().endswith(("-", "•", "–", ":", "and", "or", "the", "with", "to", "in", "of", "a")), "Content abruptly cut off"
+
+
+def test_wellness_itinerary_mock_fallback():
+    """Verify that a wellness itinerary topic produces an authentic wellness & yoga retreat guide, not temple darshan."""
+    client = LLMClient()
+    client.dry_run = True
+
+    topic = "7 Days Wellness Itinerary for Rishikesh: A Complete Guide to Rejuvenate Body & Soul"
+    res = run("blog_post", topic, client=client, word_count=1400)
+
+    assert "Wellness" in res["title"] or "Retreat" in res["title"]
+    content = res["content"]
+    # Must contain wellness topics
+    assert any(w in content.lower() for w in ["yoga", "pranayama", "ayurved", "rejuvenat", "meditation"])
+    # Must NOT have temple darshan or aarti queue schedule headers
+    assert "Temple Darshan Timings & Daily Aarti Schedule" not in content
+    # Must NOT contain comma-dash artifact
+    assert ", -" not in content
+    # Must NOT leak protected token
+    assert "__PROTECTED_TOKEN_" not in content
+
+
+def test_provider_model_fallback_on_404():
+    """Verify that when a model returns a 404/410, chat_completion tries the next candidate model."""
+    from unittest.mock import MagicMock
+
+    client = LLMClient()
+    mock_groq_client = MagicMock()
+
+    call_models = []
+
+    def mock_chat_create(**kwargs):
+        called_model = kwargs.get("model")
+        call_models.append(called_model)
+        if called_model == "llama-3.3-70b-versatile":
+            # Simulate Groq 404 model not found
+            raise Exception("Error code: 404 - {'error': {'message': 'The model llama-3.3-70b-versatile does not exist', 'type': 'invalid_request_error', 'code': 'model_not_found'}}")
+        # Fallback model succeeds
+        mock_resp = MagicMock()
+        mock_choice = MagicMock()
+        mock_choice.message.content = "# TITLE\nVerified Guide\n\n# META DESCRIPTION\nDescription\n\n# SUGGESTED TAGS\nTag1\n\n# CONTENT\n## Section\nContent here"
+        mock_choice.message.reasoning = None
+        mock_resp.choices = [mock_choice]
+        return mock_resp
+
+    mock_groq_client.chat.completions.create.side_effect = mock_chat_create
+    client.groq_client = mock_groq_client
+    client.groq_model = "llama-3.3-70b-versatile"
+
+    res = client.chat_completion(
+        messages=[{"role": "user", "content": "ping"}],
+        preferred_provider="groq"
+    )
+
+    assert "llama-3.3-70b-versatile" in call_models
+    assert len(call_models) > 1, "Should have fallen back to second candidate model after 404"
+    assert client.last_provider_used == "groq"
+    assert client.last_model_used == call_models[1]
+
