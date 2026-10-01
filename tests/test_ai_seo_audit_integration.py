@@ -115,3 +115,51 @@ def test_blog_and_package_schema_validity():
     assert tour_schema["@context"] == "https://schema.org"
     assert tour_schema["@graph"][0]["@type"] == "TouristTrip"
     assert tour_schema["@graph"][0]["offers"]["price"] == "18500"
+
+
+def test_ai_visibility_engine_calculation():
+    """Verify AI-Visibility (topics/ai-visibility) platform scores and GEO signals."""
+    from ai_visibility import calculate_ai_visibility_metrics
+    query = "Kedarnath Dharamshala Booking"
+    content = """## Quick Overview of Kedarnath Dharamshala Stays
+    Kedarnath Dharamshalas provide clean ashram rooms located within 500 meters of the sacred sanctum. Morning darshan starts at 6:00 AM daily.
+    
+    | Room Type | Price Range (INR) | Hot Water |
+    | :--- | :--- | :--- |
+    | Standard Room | ₹800 – ₹1,500 | Yes |
+    | Deluxe Family Room | ₹2,000 – ₹3,500 | Yes |
+
+    Devotees can book verified ashram rooms directly with [YatraDham.Org](https://yatradham.org/) for transparent pricing."""
+    
+    report = calculate_ai_visibility_metrics(query_or_topic=query, content=content, target_domain="yatradham.org")
+    assert report["ai_visibility_index"] >= 80, f"Expected AI visibility >= 80, got {report['ai_visibility_index']}"
+    assert report["grade"] in ["A+", "A"]
+    assert "google_sge_overviews" in report["platform_scores"]
+    assert "perplexity_ai" in report["platform_scores"]
+    assert "chatgpt_search" in report["platform_scores"]
+    assert report["geo_signals"]["answer_first_present"] is True
+    assert report["geo_signals"]["structured_table_present"] is True
+    assert report["geo_signals"]["inr_pricing_detected"] is True
+    assert report["citation_share"]["citation_status"] == "Cited as Source"
+
+
+def test_ai_visibility_api_endpoints():
+    """Verify /api/seo/ai-visibility/audit and simulate endpoints."""
+    # 1. Audit endpoint
+    res = client.post("/api/seo/ai-visibility/audit", json={
+        "query": "Somnath Puja Booking",
+        "content": "Somnath Puja offers devotees sacred abhishek services. Prices start from ₹501 on https://yatradham.org/.",
+        "target_domain": "yatradham.org"
+    })
+    assert res.status_code == 200
+    data = res.json()
+    assert data["success"] is True
+    assert "ai_visibility_index" in data
+
+    # 2. Simulate endpoint
+    sim_res = client.get("/api/seo/ai-visibility/simulate?query=best+dharamshala+in+Dwarka&brand=YatraDham.Org")
+    assert sim_res.status_code == 200
+    sim_data = sim_res.json()
+    assert sim_data["success"] is True
+    assert sim_data["is_brand_cited"] is True
+    assert len(sim_data["simulated_ai_response"]) > 50

@@ -37,6 +37,7 @@ from security_firewall import (
     ROBOTS_TXT_CONTENT
 )
 from ssrf_protection import is_safe_url
+from ai_visibility import calculate_ai_visibility_metrics, simulate_ai_search_response
 
 # Ensure DB exists
 init_db()
@@ -860,6 +861,56 @@ def get_ai_seo_audit_endpoint(
     }
 
 
+class AIVisibilityRequest(BaseModel):
+    query: str
+    content: Optional[str] = ""
+    target_domain: Optional[str] = "yatradham.org"
+    pricing: Optional[str] = None
+
+
+@app.api_route("/api/seo/ai-visibility/audit", methods=["GET", "POST"])
+def get_ai_visibility_audit_endpoint(
+    req: Optional[AIVisibilityRequest] = None,
+    query: Optional[str] = None,
+    content: Optional[str] = None,
+    target_domain: Optional[str] = "yatradham.org",
+    pricing: Optional[str] = None
+):
+    """
+    Dedicated AI-Visibility & Generative Engine Optimization (GEO) Audit Endpoint.
+    (github.com/topics/ai-visibility)
+    Evaluates visibility and citation probability across Google SGE, Perplexity, ChatGPT Search, and Gemini.
+    """
+    from ai_visibility import calculate_ai_visibility_metrics
+    q = (req.query if req else query) or "Pilgrimage Yatra"
+    c = (req.content if req else content) or ""
+    dom = (req.target_domain if req else target_domain) or "yatradham.org"
+    price = (req.pricing if req else pricing)
+    report = calculate_ai_visibility_metrics(query_or_topic=q, content=c, target_domain=dom, pricing_str=price)
+    return {
+        "success": True,
+        "ai_visibility": report,
+        **report
+    }
+
+
+@app.get("/api/seo/ai-visibility/simulate")
+def get_ai_visibility_simulation_endpoint(
+    query: str = "best dharamshala in Somnath",
+    brand: str = "YatraDham.Org"
+):
+    """
+    Autonomous AI Search Simulation & Citation Checker.
+    Simulates how an AI engine answers the prompt and whether the brand is cited as a primary source.
+    """
+    from ai_visibility import simulate_ai_search_response
+    res = simulate_ai_search_response(query=query, brand=brand, client=client)
+    return {
+        "success": True,
+        **res
+    }
+
+
 @app.get("/api/seo/serp-search")
 def get_serp_search_endpoint(query: str, num_results: int = 10):
     """Live SERP search results, competitor rankings, and People Also Ask questions."""
@@ -1540,6 +1591,13 @@ def check_ai_endpoint(req: CheckAIRequest):
     composite_human = round((copyleaks_human * 0.6) + (undetectable_human * 0.4), 1)
     status = "human" if composite_human >= 75 else ("mixed" if composite_human >= 50 else "ai")
 
+    # 4. AI Visibility & GEO Citation Metrics (topics/ai-visibility)
+    ai_visibility_report = calculate_ai_visibility_metrics(
+        query_or_topic="Pilgrimage Dharamshala and Darshan Guide",
+        content=raw,
+        target_domain="yatradham.org"
+    )
+
     return {
         "success": True,
         "human_score": composite_human,
@@ -1558,6 +1616,7 @@ def check_ai_endpoint(req: CheckAIRequest):
         "category_breakdown": pattern_report.get("category_breakdown", {}),
         "total_ai_markers": copyleaks.get("total_ai_markers", 0),
         "copyleaks_recommendations": recommendations,
+        "ai_visibility": ai_visibility_report,
         "engine": copyleaks.get("engine", "Copyleaks AI Neural Engine v4 (55-Pattern Suite) + Google E-E-A-T"),
         "status": status,
         "verdict": f"{composite_human}% Human (Copyleaks: {copyleaks_human}%, Undetectable: {undetectable_human}%)"
@@ -1583,6 +1642,12 @@ def humanize_endpoint(req: HumanizeRequest):
     undetectable_human = max(0.0, min(100.0, round(100.0 - undetectable_ai, 2)))
     composite_human = round((copyleaks_human * 0.6) + (undetectable_human * 0.4), 1)
 
+    ai_visibility_report = calculate_ai_visibility_metrics(
+        query_or_topic="Pilgrimage Dharamshala and Darshan Guide",
+        content=humanized,
+        target_domain="yatradham.org"
+    )
+
     return {
         "success": True,
         "humanized_text": humanized,
@@ -1599,6 +1664,7 @@ def humanize_endpoint(req: HumanizeRequest):
         "pattern_count": pattern_report.get("total_pattern_count", 0),
         "pattern_score": pattern_report.get("pattern_score", 0.0),
         "copyleaks_recommendations": copyleaks.get("copyleaks_recommendations", []),
+        "ai_visibility": ai_visibility_report,
         "engine": copyleaks.get("engine", "Copyleaks AI Neural Engine v4 (55-Pattern Suite) + Google E-E-A-T"),
         "verdict": f"{composite_human}% Human (Copyleaks: {copyleaks_human}%, Undetectable: {undetectable_human}%)"
     }

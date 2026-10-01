@@ -1,11 +1,11 @@
 # Graph Report - yatradham-seo-pipeline  (2026-10-01)
 
 ## Corpus Check
-- 48 files · ~107,747 words
+- 48 files · ~107,704 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 802 nodes · 1632 edges · 67 communities (52 shown, 15 thin omitted)
+- 802 nodes · 1631 edges · 67 communities (52 shown, 15 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 61 edges (avg confidence: 0.52)
 - Token cost: 0 input · 0 output
 
@@ -314,7 +314,7 @@ Nodes (3): Config, OutputUpdateRequest, BaseModel
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `LLMClient` connect `LLMClient` to `test_e2e_suite.py`, `batch_process`, `localize_content`, `keyword_agent.py`, `meta_agent.py`, `main.py`, `title_agent.py`, `llm_client.py`, `content_creator_agent.py`, `pipeline.py`, `TestArchitecturalDecoupling`, `generate_content`, `qa_agent.py`?**
-  _High betweenness centrality (0.115) - this node is a cross-community bridge._
+  _High betweenness centrality (0.117) - this node is a cross-community bridge._
 - **Why does `de_slop_and_humanize()` connect `de_slop_and_humanize` to `anti_ai_guardrails.py`, `main.py`, `llm_client.py`, `content_creator_agent.py`, `run_ai_seo_audit`?**
   _High betweenness centrality (0.071) - this node is a cross-community bridge._
 - **Why does `detect_55_patterns()` connect `anti_ai_guardrails.py` to `run_ai_seo_audit`, `TestHumanizer55Patterns`, `main.py`?**

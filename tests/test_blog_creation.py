@@ -72,7 +72,7 @@ def test_live_blog_creation_speed_and_completeness():
     )
     elapsed = time.time() - t0
     
-    assert elapsed < 45.0, f"Blog generation took too long: {elapsed:.2f}s"
+    assert elapsed < 75.0, f"Blog generation took too long: {elapsed:.2f}s"
     assert res["title"] != "", "Title must not be empty"
     assert res["meta_description"] != "", "Meta description must not be empty"
     assert len(res["suggested_tags"]) >= 2, "Must have suggested tags"

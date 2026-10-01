@@ -582,11 +582,24 @@ def run_ai_seo_audit(
     human_score = max(50, min(100, int(100 - (ai_count * 10) - (5 if has_em_dashes else 0) + (5 if std_dev >= 8.0 else 0))))
 
     status = "EXCELLENT" if final_score >= 88 else ("GOOD" if final_score >= 75 else ("NEEDS_IMPROVEMENT" if final_score >= 60 else "POOR"))
+    
+    from ai_visibility import calculate_ai_visibility_metrics
+    ai_vis_report = calculate_ai_visibility_metrics(
+        query_or_topic=kw or title or "Pilgrimage Yatra",
+        content=total_text,
+        target_domain="yatradham.org",
+        pricing_str=pricing_str
+    )
+    
     geo_visibility = {
         "geo_ready": has_answer_first,
         "has_inr_pricing": has_inr_pricing,
         "has_answer_first": has_answer_first,
         "has_structured_tables": has_structured_tables_or_bullets,
+        "ai_visibility_index": ai_vis_report["ai_visibility_index"],
+        "platform_scores": ai_vis_report["platform_scores"],
+        "citation_share": ai_vis_report["citation_share"],
+        "actionable_directives": ai_vis_report["actionable_directives"]
     }
 
     return {
@@ -600,6 +613,7 @@ def run_ai_seo_audit(
         "checks": checks,
         "recommendations": recommendations,
         "geo_visibility": geo_visibility,
+        "ai_visibility": ai_vis_report,
         "metrics": {
             "word_count": total_words,
             "keyword_density": keyword_density,

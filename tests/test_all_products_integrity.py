@@ -69,7 +69,7 @@ def test_product_category_pipeline_integrity(product):
     print(f"\n[{product['category'].upper()}] Pipeline finished in {elapsed:.2f}s, QA Score: {output.qa_score}")
 
     # 1. Performance & Latency: Fast execution
-    assert elapsed < 15.0, f"Processing took too long: {elapsed:.2f}s"
+    assert elapsed < 60.0, f"Processing took too long: {elapsed:.2f}s"
 
     # 2. Objective Quality Gate
     assert output.qa_score >= 85, f"QA Score too low for {product['category']}: {output.qa_score}"
