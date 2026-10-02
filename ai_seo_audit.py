@@ -8,6 +8,7 @@ Implements:
 4. https://github.com/topics/ai-seo & topics/seo (Keyword prominence, density, meta boundaries, internal links)
 5. https://github.com/topics/ai-visibility (GEO / Generative Engine Optimization for AI Overviews / SGE)
 6. https://github.com/topics/agentic-seo & topics/ai-seo-agent (Information gain & entity gap analysis)
+7. https://developers.google.com/search/docs/fundamentals/using-gen-ai-content (Google Search's Guidance on Using Generative AI Content)
 """
 
 import re
@@ -602,6 +603,16 @@ def run_ai_seo_audit(
         "actionable_directives": ai_vis_report["actionable_directives"]
     }
 
+    from google_genai_checker import audit_google_genai_compliance
+    google_genai_report = audit_google_genai_compliance(
+        content=content_body,
+        title=t,
+        meta_description=m,
+        json_ld_schema=json_ld_schema,
+        target_keyword=kw,
+        pricing_str=pricing_str
+    )
+
     return {
         "score": final_score,
         "grade": grade,
@@ -614,6 +625,7 @@ def run_ai_seo_audit(
         "recommendations": recommendations,
         "geo_visibility": geo_visibility,
         "ai_visibility": ai_vis_report,
+        "google_genai_compliance": google_genai_report,
         "metrics": {
             "word_count": total_words,
             "keyword_density": keyword_density,
@@ -625,6 +637,8 @@ def run_ai_seo_audit(
             "geo_ready": has_answer_first,
             "inr_pricing_present": has_inr_pricing,
             "schema_present": has_valid_schema,
+            "google_genai_score": google_genai_report["score"],
+            "google_genai_verdict": google_genai_report["verdict"]
         }
     }
 

@@ -1,16 +1,16 @@
-# Graph Report - yatradham-seo-pipeline  (2026-10-01)
+# Graph Report - yatradham-seo-pipeline  (2026-10-02)
 
 ## Corpus Check
-- 48 files · ~111,221 words
+- 50 files · ~116,586 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 806 nodes · 1639 edges · 52 communities (38 shown, 14 thin omitted)
+- 845 nodes · 1717 edges · 59 communities (45 shown, 14 thin omitted)
 - Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 63 edges (avg confidence: 0.52)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2076a892`
+- Built from commit: `28e5dffb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,16 +19,16 @@
 - security_firewall.py
 - test_e2e_suite.py
 - enrich_destination_data
-- TestVoiceProfiles
+- de_slop_and_humanize
 - WordPressPublisher
 - 1. Security & OWASP Hardening Layer
-- post
+- semrush_backlink_gap_endpoint
 - anti_ai_guardrails.py
-- simulate_ai_search_response
+- audit_google_genai_compliance
 - validation_layer.py
-- extract_package_data
+- scraper.py
 - nlp_and_safety_toolkit.py
-- content_agent.py
+- TestHumanizer55Patterns
 - content_creator_agent.py
 - get
 - semrush_suite.py
@@ -38,61 +38,68 @@
 - BaseModel
 - LLMClient
 - api_route
-- de_slop_and_humanize
+- run_ai_seo_audit
 - TestArchitecturalDecoupling
 - check_serp_rank
-- TestDeSlopAndHumanize
+- models.py
 - generate_content
 - run_seo_linter
-- batch_urls
-- batch_process
+- post
+- qa_agent.py
+- TestBurstinessMetrics
+- .client
 - seo_toolkit.py
+- delete_single_output
 - get_output_serp_audit
-- check_disallowed_xss_patterns
+- check_google_genai_endpoint
 - semrush_backlink_audit_endpoint
 - localize
 - generate_json_ld
+- crawl_sitemap
+- quality_audit_endpoint
 - main.py
+- semrush_compare_domains_endpoint
+- verify_wordpress_connection
+- export_csv_endpoint
+- get_audit_trail_endpoint
 - semrush_top_pages_endpoint
+- get_single_output
+- semrush_traffic_insights_endpoint
 - semrush_ai_search_endpoint
-- favicon
-- get_humanizer_patterns
 - get_providers_status
 - get_robots_txt
-- semrush_dashboard_endpoint
 - semrush_position_tracking_endpoint
 - semrush_topic_research_endpoint
-- semrush_sensor_endpoint
 - semrush_local_seo_endpoint
 
 ## God Nodes (most connected - your core abstractions)
 1. `LLMClient` - 50 edges
 2. `process_package()` - 28 edges
 3. `de_slop_and_humanize()` - 25 edges
-4. `PackageInput` - 19 edges
-5. `run_suite()` - 19 edges
-6. `run_ai_seo_audit()` - 18 edges
+4. `run_ai_seo_audit()` - 19 edges
+5. `PackageInput` - 19 edges
+6. `run_suite()` - 19 edges
 7. `detect_55_patterns()` - 18 edges
-8. `SEOOutput` - 17 edges
-9. `clean_domain_name()` - 16 edges
-10. `run()` - 15 edges
+8. `audit_google_genai_compliance()` - 17 edges
+9. `SEOOutput` - 17 edges
+10. `clean_domain_name()` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `run()` --uses--> `LLMClient`  [INFERRED]
-  agents/content_agent.py → llm_client.py
 - `_generate_long_form_blog()` --uses--> `LLMClient`  [INFERRED]
   agents/content_creator_agent.py → llm_client.py
 - `run()` --uses--> `LLMClient`  [INFERRED]
   agents/content_creator_agent.py → llm_client.py
 - `run()` --uses--> `LLMClient`  [INFERRED]
-  agents/keyword_agent.py → llm_client.py
-- `run()` --uses--> `LLMClient`  [INFERRED]
-  agents/meta_agent.py → llm_client.py
+  agents/qa_agent.py → llm_client.py
+- `simulate_ai_search_response()` --uses--> `LLMClient`  [INFERRED]
+  ai_visibility.py → llm_client.py
+- `_sections_to_dict()` --uses--> `SectionedContent`  [INFERRED]
+  database.py → models.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (52 total, 14 thin omitted)
+## Communities (59 total, 14 thin omitted)
 
 ### Community 0 - "📅 Day-by-Day Comprehensive Itinerary"
 Cohesion: 0.10
@@ -100,71 +107,71 @@ Nodes (20): 7-Day Haridwar Spiritual & Wellness Retreat | YatraDham, Day 1, Day 
 
 ### Community 1 - "security_firewall.py"
 Cohesion: 0.06
-Nodes (30): BaseHTTPMiddleware, HTTPAuthorizationCredentials, LogRecord, Request, RateLimitingMiddleware, Injects enterprise OWASP security headers on all HTTP responses., Enforces token-bucket rate limiting per IP across all endpoints (returns HTTP…, root() (+22 more)
+Nodes (33): BaseHTTPMiddleware, Exception, HTTPAuthorizationCredentials, LogRecord, Request, RateLimitingMiddleware, Injects enterprise OWASP security headers on all HTTP responses., Enforces token-bucket rate limiting per IP across all endpoints (returns HTTP… (+25 more)
 
 ### Community 2 - "test_e2e_suite.py"
-Cohesion: 0.06
-Nodes (70): bulk_update_status(), clear_all_outputs(), delete_output(), _dict_to_sections(), _execute_with_retry(), get_audit_trail(), get_conn(), get_output() (+62 more)
+Cohesion: 0.10
+Nodes (45): bulk_update_status(), clear_all_outputs(), delete_output(), _dict_to_sections(), _execute_with_retry(), get_audit_trail(), get_conn(), get_output() (+37 more)
 
 ### Community 3 - "enrich_destination_data"
 Cohesion: 0.09
-Nodes (28): enrich_destination_endpoint(), get_forex_rates_endpoint(), get_serp_intelligence_endpoint(), get_transit_distance_endpoint(), Destination intelligence fusing OSM Nominatim, Wikipedia, Open-Meteo, Sunrise-…, Enrich destination using 4 free public APIs (OSM Geocoding, Wikipedia, Open-…, Convert INR price to USD, EUR, GBP, AUD, CAD, SGD via Frankfurter API (free,…, Calculate driving distance and duration via Open Source Routing Machine (OSRM). (+20 more)
+Nodes (28): enrich_destination_endpoint(), get_forex_rates_endpoint(), get_serp_intelligence_endpoint(), get_transit_distance_endpoint(), Return live search intent, LSI keyword entities, and competitor heading…, Destination intelligence fusing OSM Nominatim, Wikipedia, Open-Meteo, Sunrise-…, Enrich destination using 4 free public APIs (OSM Geocoding, Wikipedia, Open-…, Convert INR price to USD, EUR, GBP, AUD, CAD, SGD via Frankfurter API (free,… (+20 more)
 
-### Community 4 - "TestVoiceProfiles"
-Cohesion: 0.17
-Nodes (7): Verify that the 5 distinct voice profiles apply their characteristics., Casual voice introduces natural contractions and conversational tone., Blunt voice strips hedging and fluff., Technical voice preserves facts and strips flowery praise., Warm voice maintains compassionate, pilgrim-friendly atmosphere., Professional voice ensures clear, authoritative prose without corporate jargon., TestVoiceProfiles
+### Community 4 - "de_slop_and_humanize"
+Cohesion: 0.07
+Nodes (27): apply_voice_transformations(), de_slop_and_humanize(), mask_protected_structures(), Masks markdown code blocks, tables, URLs, HTML tags, and template variables so…, Restores all protected structures exactly as they were., blader & Aboudjem Humanizer Rule: Transforms formulaic 'not only X, but also Y'…, Applies style-specific linguistic adjustments for the selected voice profile:…, Deterministic Anti-AI De-Slopper & Humanizer Pipeline: 1. Masks code blocks,… (+19 more)
 
 ### Community 6 - "1. Security & OWASP Hardening Layer"
 Cohesion: 0.08
 Nodes (23): 1.1 API Authentication & Role-Based Access Control, 1.2 SSRF Defense & URL Sanitization, 1.3 Stored & Reflected XSS Sanitization, 1.4 Mass Assignment Prevention, 1.5 Prompt Injection & Jailbreak Firewall, 1.6 Secret Encryption at Rest & Log Scrubber, 1.7 Enterprise Security Headers & Rate Limiting (DoS Defense), 1. Security & OWASP Hardening Layer (+15 more)
 
-### Community 7 - "post"
-Cohesion: 0.11
-Nodes (20): clear_cache(), crawl_sitemap(), Scrapling + curl_cffi Chrome 124 stealth scrape with deep JSON-LD extraction., Semrush Keyword Gap: Identifies shared, missing, and untapped ranking…, Semrush Backlink Gap: Find link opportunities., Semrush On-Page SEO Checker: Actionable strategy, backlink, UX recommendations., Wipe all outputs from the database to start fresh (Protected Admin Action)., Crawl an XML Sitemap or Category Landing Page to extract package links with… (+12 more)
+### Community 7 - "semrush_backlink_gap_endpoint"
+Cohesion: 0.40
+Nodes (5): Semrush Keyword Gap: Identifies shared, missing, and untapped ranking…, Semrush Backlink Gap: Find link opportunities., semrush_backlink_gap_endpoint(), semrush_keyword_gap_endpoint(), SemrushGapRequest
 
 ### Community 11 - "anti_ai_guardrails.py"
-Cohesion: 0.05
-Nodes (48): _check_banned(), _check_sections(), _check_sentences(), _extract_prose_sentences(), _flesch_estimate(), Any, QA agent: validates all 19 sections + readability., Extract natural sentences from sections dictionary, skipping JSON syntax. (+40 more)
+Cohesion: 0.17
+Nodes (20): calculate_burstiness_metrics(), calculate_copyleaks_metrics(), check_copyleaks_api(), detect_55_patterns(), detect_ai_isms(), generate_copyleaks_recommendations(), humanize_data(), Any (+12 more)
 
-### Community 12 - "simulate_ai_search_response"
-Cohesion: 0.40
-Nodes (4): Any, AI Visibility & Generative Engine Optimization (GEO / AEO) Module. Inspired by…, Simulates how an AI search engine (Perplexity / ChatGPT Search / SGE)…, simulate_ai_search_response()
+### Community 12 - "audit_google_genai_compliance"
+Cohesion: 0.10
+Nodes (31): audit_google_genai_compliance(), check_eeat_firsthand_experience(), check_factual_accuracy_and_hallucinations(), check_humanizer_and_anti_slop(), check_metadata_and_structured_data(), check_scaled_content_abuse(), check_transparency_who_how_why(), extract_plain_text() (+23 more)
 
 ### Community 13 - "validation_layer.py"
 Cohesion: 0.15
 Nodes (19): check_duplicate_content(), extract_price_number(), find_duplicated_words(), _is_empty_val(), Any, Yatradham SEO Pipeline — Validation Layer…, Extract the numeric ₹ amount from a string like 'Starting From ₹ 13,125.00 Per…, Find any immediately-repeated word, e.g. 'Guided Guided', 'the the'. (+11 more)
 
-### Community 14 - "extract_package_data"
-Cohesion: 0.11
-Nodes (22): _extract_numeric_price(), Any, Enterprise Ground-Truth Fact Checker & Anti-Hallucination Verification Gate.…, verify_ground_truth(), generate_archetype_content(), Any, Multi-Archetype Content Generation Engine for YatraDham Wellness. Produces…, clean_price_string() (+14 more)
+### Community 14 - "scraper.py"
+Cohesion: 0.15
+Nodes (15): _extract_numeric_price(), Enterprise Ground-Truth Fact Checker & Anti-Hallucination Verification Gate.…, generate_archetype_content(), Any, Multi-Archetype Content Generation Engine for YatraDham Wellness. Produces…, clean_price_string(), normalize_duration_string(), Extract structured data from Yatradham HTML pages. (+7 more)
 
 ### Community 15 - "nlp_and_safety_toolkit.py"
-Cohesion: 0.11
-Nodes (20): get_dictionary_endpoint(), link_safety_preview_endpoint(), moderate_text_endpoint(), proofread_endpoint(), Lookup English definitions, phonetics, parts of speech via Free Dictionary API., Grammar, spellcheck & stylistic review via LanguageTool API., Evaluate tone sentiment, spiritual reverence, and toxicity., Scan URL safety protocol, SSL certificate, and extract OpenGraph preview. (+12 more)
+Cohesion: 0.08
+Nodes (25): analyze_keywords_endpoint(), get_dictionary_endpoint(), link_safety_preview_endpoint(), Any, field_validator, Lookup English definitions, phonetics, parts of speech via Free Dictionary API., Extract top unigrams, bigrams, trigrams & Flesch reading score., Scan URL safety protocol, SSL certificate, and extract OpenGraph preview. (+17 more)
 
-### Community 16 - "content_agent.py"
-Cohesion: 0.29
-Nodes (9): _extract_json_from_response(), get_category_aware_fallback(), Any, Content agent: generates all 19 structured sections from scraped page data., Generates complete, enterprise-grade 19 sections strictly adhering to category…, Robustly extract JSON from LLM response, handling markdown blocks and…, run(), humanize_data() (+1 more)
+### Community 16 - "TestHumanizer55Patterns"
+Cohesion: 0.12
+Nodes (9): Verify that all 55 patterns are defined, detectable, and actionable., Ensure all 55 patterns (P01 through P55) are correctly registered., P01: Detects 'stands as a testament to' and 'pivotal role'., P13: Detects em-dash overuse., P09: Detects 'not only X, but also Y'., P03: Detects trailing -ing phrases., P18: Detects chatbot residue like 'Certainly! Here is a guide'., P20: Detects 'In today's fast-paced world' and 'When it comes to'. (+1 more)
 
 ### Community 17 - "content_creator_agent.py"
-Cohesion: 0.10
-Nodes (31): _clean_markdown(), _detect_blog_intent(), _generate_long_form_blog(), _get_intent_structure(), _parse_markdown_sections(), Any, Content Creator Agent: Generates net-new SEO content from scratch., Parse a markdown string into a dictionary based on H1 headings and H2… (+23 more)
+Cohesion: 0.11
+Nodes (29): _clean_markdown(), _detect_blog_intent(), _generate_long_form_blog(), _get_intent_structure(), _parse_markdown_sections(), Any, Content Creator Agent: Generates net-new SEO content from scratch., Parse a markdown string into a dictionary based on H1 headings and H2… (+21 more)
 
 ### Community 18 - "get"
 Cohesion: 0.11
-Nodes (18): get, export_csv_endpoint(), get_audit_trail_endpoint(), get_outputs(), get_single_output(), Semrush Site Performance & Core Web Vitals., Semrush Keyword Overview: Deep-dive search volume, global breakdown, KD%., Semrush Keyword Strategy Builder: Topic clusters & pillar architecture. (+10 more)
+Nodes (18): get, favicon(), get_humanizer_patterns(), get_outputs(), Semrush Consolidated Dashboard., Semrush Site Performance & Core Web Vitals., Semrush Keyword Overview: Deep-dive search volume, global breakdown, KD%., Semrush Keyword Strategy Builder: Topic clusters & pillar architecture. (+10 more)
 
 ### Community 19 - "semrush_suite.py"
 Cohesion: 0.05
-Nodes (75): process_batch_background(), Scrape a Yatradham URL and auto-process through all 5 agents with custom…, scrape_and_process(), fetch_url_html(), Scrapling-Powered Modern Scraping & DOM Parsing Engine for YatraDham SEO…, Fetch URL with SSRF protection, browser TLS fingerprint spoofing (curl_cffi…, clean_domain_name(), detect_domain_category() (+67 more)
+Nodes (74): fetch_url_html(), Scrapling-Powered Modern Scraping & DOM Parsing Engine for YatraDham SEO…, Fetch URL with SSRF protection, browser TLS fingerprint spoofing (curl_cffi…, clean_domain_name(), detect_domain_category(), extract_brand_tokens(), fetch_live_google_suggest(), get_ai_search_overview() (+66 more)
 
 ### Community 20 - "ProviderSettingsRequest"
 Cohesion: 0.40
 Nodes (5): ProviderSettingsRequest, Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime…, Test a provider API key live and return latency & status (Admin Protected)., test_provider_endpoint(), update_provider_settings()
 
 ### Community 21 - "pipeline.py"
-Cohesion: 0.09
-Nodes (25): Any, Keyword agent: enforces 2-4 word primary keyword., run(), Any, Meta description agent: 145-155 chars, natural language, no repetition., run(), Any, Title tag agent: 50-60 chars, optimized for click-through rate with accurate… (+17 more)
+Cohesion: 0.10
+Nodes (30): get_smart_internal_links(), Intelligent Cross-Domain Internal Linking Engine for YatraDham Ecosystem., Return contextual internal links filtered to avoid linking to the current page…, process_batch_background(), process_single(), Scrape a Yatradham URL and auto-process through all 5 agents with custom…, Process a single package through all 5 agents (manual JSON input)., scrape_and_process() (+22 more)
 
 ### Community 22 - "SitemapCrawler"
 Cohesion: 0.09
@@ -172,31 +179,31 @@ Nodes (21): detect_url_category(), Classify the URL or page text into 'wellness'
 
 ### Community 23 - "BaseModel"
 Cohesion: 0.17
-Nodes (12): analyze_serp_endpoint(), CheckAIRequest, HumanizeRequest, BaseModel, Semrush Compare Domains (Multi-domain benchmark)., Semrush SEO Writing Assistant: Readability, SEO score, tone of voice., Native SERP Competitor & Information Gain Analyzer endpoint. Scrapes live SERP…, semrush_compare_domains_endpoint() (+4 more)
+Nodes (12): analyze_serp_endpoint(), CheckAIRequest, HumanizeRequest, inject_google_disclosure_endpoint(), InjectDisclosureRequest, BaseModel, Scrapling + curl_cffi Chrome 124 stealth scrape with deep JSON-LD extraction., Native SERP Competitor & Information Gain Analyzer endpoint. Scrapes live SERP… (+4 more)
 
 ### Community 24 - "LLMClient"
-Cohesion: 0.12
-Nodes (13): Indic Multi-Language Localization Engine for YatraDham (Hindi & Gujarati)., clean_price_string(), LLMClient, Any, Execute DeepSeek two-stage reasoning protocol: 1. Stage 1 (<thinking>): Deep…, Allow setting runtime keys dynamically for a request without server restart., Dynamically query the provider's live models list to avoid model_not_found…, Test a provider API key with a fast 1-word prompt to verify connection. (+5 more)
+Cohesion: 0.07
+Nodes (28): _extract_json_from_response(), get_category_aware_fallback(), Any, Content agent: generates all 19 structured sections from scraped page data., Generates complete, enterprise-grade 19 sections strictly adhering to category…, Robustly extract JSON from LLM response, handling markdown blocks and…, run(), Any (+20 more)
 
 ### Community 25 - "api_route"
-Cohesion: 0.14
-Nodes (15): api_route, AIAuditRequest, get_ai_seo_audit_endpoint(), Semrush Domain Overview: Authority Score, Organic Traffic, Keywords,…, Semrush Keyword Magic Tool: Real-time search volume, intent classification,…, Semrush Site Audit: 30-point technical crawl for HTTP codes, meta, H1, images,…, Semrush Backlink Analytics: Authority Score, Referring Domains, Dofollow Ratio,…, 15-Point Automated AI-SEO-Audit Gate (marketplace/actions/ai-seo-audit +… (+7 more)
+Cohesion: 0.12
+Nodes (18): api_route, AIAuditRequest, AIVisibilityRequest, get_ai_seo_audit_endpoint(), get_ai_visibility_audit_endpoint(), Semrush Domain Overview: Authority Score, Organic Traffic, Keywords,…, Semrush Keyword Magic Tool: Real-time search volume, intent classification,…, Semrush Site Audit: 30-point technical crawl for HTTP codes, meta, H1, images,… (+10 more)
 
-### Community 26 - "de_slop_and_humanize"
+### Community 26 - "run_ai_seo_audit"
 Cohesion: 0.11
-Nodes (28): auto_heal_content(), calculate_burstiness_variance(), calculate_readability_metrics(), extract_clean_prose(), Any, AI SEO Audit & Autonomous Quality Gate Engine…, Executes the comprehensive 15-Point AI-SEO-Audit Gate. Returns: - score (0 -…, Extract readable prose from nested dicts, lists, or markdown strings, skipping… (+20 more)
+Nodes (26): auto_heal_content(), calculate_burstiness_variance(), calculate_readability_metrics(), extract_clean_prose(), Any, AI SEO Audit & Autonomous Quality Gate Engine…, Executes the comprehensive 15-Point AI-SEO-Audit Gate. Returns: - score (0 -…, Extract readable prose from nested dicts, lists, or markdown strings, skipping… (+18 more)
 
 ### Community 27 - "TestArchitecturalDecoupling"
-Cohesion: 0.14
-Nodes (8): Rigorous verification that subsystems maintain clean boundary isolation., Scraper & Scrapling engine must be pure parsers with no LLM or Database imports., Validation layer and fact checker must be pure verification functions., Content Creator Agent (AI Studio) must be decoupled from 19-section pipeline., 19-Section Pipeline must be decoupled from AI Studio., LLMClient instances must be stateless between requests with zero shared lockout…, Public APIs enricher must work autonomously without pipeline or studio…, TestArchitecturalDecoupling
+Cohesion: 0.12
+Nodes (9): Architectural Decoupling & Zero-Leakage Verification Suite Ensures that all…, Rigorous verification that subsystems maintain clean boundary isolation., Scraper & Scrapling engine must be pure parsers with no LLM or Database imports., Validation layer and fact checker must be pure verification functions., Content Creator Agent (AI Studio) must be decoupled from 19-section pipeline., 19-Section Pipeline must be decoupled from AI Studio., LLMClient instances must be stateless between requests with zero shared lockout…, Public APIs enricher must work autonomously without pipeline or studio… (+1 more)
 
 ### Community 28 - "check_serp_rank"
 Cohesion: 0.17
-Nodes (13): get_seo_audit_score_endpoint(), get_serp_rank_endpoint(), get_serp_search_endpoint(), On-page SEO score & recommendations (Title, Meta, Keyword, Depth, Density)., Live SERP search results, competitor rankings, and People Also Ask questions., Check SERP ranking position of target domain for a specific keyword., audit_onpage_seo_score(), check_serp_rank() (+5 more)
+Nodes (13): get_seo_audit_score_endpoint(), get_serp_rank_endpoint(), get_serp_search_endpoint(), Live SERP search results, competitor rankings, and People Also Ask questions., Check SERP ranking position of target domain for a specific keyword., On-page SEO score & recommendations (Title, Meta, Keyword, Depth, Density)., audit_onpage_seo_score(), check_serp_rank() (+5 more)
 
-### Community 29 - "TestDeSlopAndHumanize"
-Cohesion: 0.17
-Nodes (7): Key AI buzzwords must be replaced with clean plain English., Markdown tables, URLs, and code blocks must not be corrupted., Smart curly quotes must be normalized to straight ASCII quotes., Verify deterministic de-slopping, em-dash removal, and replacements., Em dashes must be replaced with commas, colons, or clean punctuation., not only X, but also Y' should be transformed to natural 'X and Y'., TestDeSlopAndHumanize
+### Community 29 - "models.py"
+Cohesion: 0.23
+Nodes (13): batch_process(), Process multiple packages from JSON (Admin Protected, Max 25 items)., BatchRequest, BulkActionRequest, FAQItem, ItineraryDay, NearbyLocation, PricingRow (+5 more)
 
 ### Community 30 - "generate_content"
 Cohesion: 0.25
@@ -206,21 +213,33 @@ Nodes (8): ContentGenerateRequest, deepseek_reasoning_endpoint(), DeepSeekReason
 Cohesion: 0.50
 Nodes (4): calculate_flesch_reading_ease(), Any, Real-Time Dynamic SEO & GEO Linter for YatraDham. Performs rigorous, non-…, run_seo_linter()
 
-### Community 32 - "batch_urls"
-Cohesion: 0.50
-Nodes (4): BackgroundTasks, batch_urls(), BatchURLRequest, Scrape and process multiple URLs automatically in the background (Admin…
-
-### Community 35 - "batch_process"
+### Community 32 - "post"
 Cohesion: 0.12
-Nodes (13): Exception, fixture, batch_process(), get_ai_visibility_simulation_endpoint(), Process multiple packages from JSON (Admin Protected, Max 25 items)., Autonomous AI Search Simulation & Citation Checker. Simulates how an AI engine…, Sanitizes raw python exception traces for public consumption., sanitize_error_detail() (+5 more)
+Nodes (16): BackgroundTasks, batch_urls(), BatchURLRequest, bulk_action(), clear_cache(), moderate_text_endpoint(), proofread_endpoint(), Grammar, spellcheck & stylistic review via LanguageTool API. (+8 more)
+
+### Community 33 - "qa_agent.py"
+Cohesion: 0.36
+Nodes (9): _check_banned(), _check_sections(), _check_sentences(), _extract_prose_sentences(), _flesch_estimate(), Any, QA agent: validates all 19 sections + readability., Extract natural sentences from sections dictionary, skipping JSON syntax. (+1 more)
+
+### Community 34 - "TestBurstinessMetrics"
+Cohesion: 0.33
+Nodes (4): Verify statistical burstiness calculation., Human text with short and long sentences should yield high burstiness., Monotonous text with uniform sentence lengths yields lower burstiness., TestBurstinessMetrics
+
+### Community 35 - ".client"
+Cohesion: 0.12
+Nodes (12): Any, AI Visibility & Generative Engine Optimization (GEO / AEO) Module. Inspired by…, Simulates how an AI search engine (Perplexity / ChatGPT Search / SGE)…, simulate_ai_search_response(), fixture, get_ai_visibility_simulation_endpoint(), Autonomous AI Search Simulation & Citation Checker. Simulates how an AI engine…, Verify the FastAPI HTTP endpoints for check-ai, humanize, and patterns. (+4 more)
 
 ### Community 36 - "seo_toolkit.py"
 Cohesion: 0.20
 Nodes (9): get_screenshot_preview_endpoint(), get_seo_tags_generator_endpoint(), Generate HTML Meta tags, OpenGraph tags, and Twitter Cards., Generate screenshot preview card URL for any landing page or competitor site., generate_screenshot_preview_url(), generate_seo_tags(), Advanced SEO & SERP Toolkit for YatraDham SEO Pipeline. Integrates 6…, Generates standard HTML SEO Meta Tags, OpenGraph Tags, and Twitter Cards. (+1 more)
 
-### Community 39 - "check_disallowed_xss_patterns"
-Cohesion: 0.25
-Nodes (7): analyze_keywords_endpoint(), Any, field_validator, Extract top unigrams, bigrams, trigrams & Flesch reading score., URLRequest, check_disallowed_xss_patterns(), Raises ValueError (resulting in 422 HTTP status) if dangerous XSS payloads are…
+### Community 37 - "delete_single_output"
+Cohesion: 0.67
+Nodes (3): delete, delete_single_output(), Delete a single output with admin authorization.
+
+### Community 39 - "check_google_genai_endpoint"
+Cohesion: 0.67
+Nodes (3): check_google_genai_endpoint(), GoogleGenAIRequest, Google Search Guidance on Generative AI Content Compliance Checker.…
 
 ### Community 41 - "localize"
 Cohesion: 0.33
@@ -230,9 +249,25 @@ Nodes (6): localize_content(), Any, Translate and culturally localize SEOOutput 
 Cohesion: 0.28
 Nodes (8): generate_blog_json_ld(), generate_json_ld(), Any, Schema.org JSON-LD Structured Data Generator for YatraDham Packages., Generates standalone BlogPosting + FAQPage + Organization JSON-LD for AI…, Generate comprehensive stacked Schema.org JSON-LD for Google Rich Results, SGE…, Verify JSON-LD schema generation for both packages and blog articles., test_blog_and_package_schema_validity()
 
+### Community 43 - "crawl_sitemap"
+Cohesion: 0.67
+Nodes (3): crawl_sitemap(), Crawl an XML Sitemap or Category Landing Page to extract package links with…, SitemapCrawlRequest
+
+### Community 44 - "quality_audit_endpoint"
+Cohesion: 0.67
+Nodes (3): quality_audit_endpoint(), QualityAuditRequest, Enterprise 100M-scale content quality, safety, readability, and AI-slop auditor.
+
 ### Community 45 - "main.py"
-Cohesion: 0.13
-Nodes (18): FastAPI, AIVisibilityRequest, get_ai_visibility_audit_endpoint(), lifespan(), publish_to_wordpress(), quality_audit_endpoint(), QualityAuditRequest, FastAPI server with .env auto-loading, URL auto-scraping, batch processing,… (+10 more)
+Cohesion: 0.15
+Nodes (15): FastAPI, lifespan(), publish_to_wordpress(), FastAPI server with .env auto-loading, URL auto-scraping, batch processing,…, Semrush SEO Writing Assistant: Readability, SEO score, tone of voice., Semrush On-Page SEO Checker: Actionable strategy, backlink, UX recommendations., Publish generated SEO content directly to WordPress (Admin Protected)., Enterprise code-based validation endpoint. (+7 more)
+
+### Community 46 - "semrush_compare_domains_endpoint"
+Cohesion: 0.67
+Nodes (3): Semrush Compare Domains (Multi-domain benchmark)., semrush_compare_domains_endpoint(), SemrushCompareRequest
+
+### Community 47 - "verify_wordpress_connection"
+Cohesion: 0.67
+Nodes (3): Verify WordPress credentials and REST API availability (Admin Protected)., verify_wordpress_connection(), WpVerifyRequest
 
 ## Knowledge Gaps
 - **37 isolated node(s):** `Config`, `Executive Summary`, `1.1 API Authentication & Role-Based Access Control`, `1.2 SSRF Defense & URL Sanitization`, `1.3 Stored & Reflected XSS Sanitization` (+32 more)
@@ -242,12 +277,12 @@ Nodes (18): FastAPI, AIVisibilityRequest, get_ai_visibility_audit_endpoint(), li
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `LLMClient` connect `LLMClient` to `test_e2e_suite.py`, `localize`, `anti_ai_guardrails.py`, `simulate_ai_search_response`, `main.py`, `content_agent.py`, `content_creator_agent.py`, `semrush_suite.py`, `pipeline.py`, `TestArchitecturalDecoupling`, `generate_content`?**
-  _High betweenness centrality (0.123) - this node is a cross-community bridge._
-- **Why does `de_slop_and_humanize()` connect `de_slop_and_humanize` to `test_e2e_suite.py`, `TestVoiceProfiles`, `anti_ai_guardrails.py`, `main.py`, `content_agent.py`, `content_creator_agent.py`, `TestDeSlopAndHumanize`?**
-  _High betweenness centrality (0.071) - this node is a cross-community bridge._
-- **Why does `detect_55_patterns()` connect `anti_ai_guardrails.py` to `de_slop_and_humanize`, `main.py`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
+- **Why does `LLMClient` connect `LLMClient` to `qa_agent.py`, `test_e2e_suite.py`, `.client`, `localize`, `main.py`, `content_creator_agent.py`, `pipeline.py`, `TestArchitecturalDecoupling`, `generate_content`?**
+  _High betweenness centrality (0.117) - this node is a cross-community bridge._
+- **Why does `de_slop_and_humanize()` connect `de_slop_and_humanize` to `anti_ai_guardrails.py`, `main.py`, `content_creator_agent.py`, `LLMClient`, `run_ai_seo_audit`?**
+  _High betweenness centrality (0.068) - this node is a cross-community bridge._
+- **Why does `detect_55_patterns()` connect `anti_ai_guardrails.py` to `TestHumanizer55Patterns`, `run_ai_seo_audit`, `main.py`?**
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._
 - **Are the 22 inferred relationships involving `LLMClient` (e.g. with `run()` and `_generate_long_form_blog()`) actually correct?**
   _`LLMClient` has 22 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 4 inferred relationships involving `process_package()` (e.g. with `LLMClient` and `PackageInput`) actually correct?**

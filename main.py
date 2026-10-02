@@ -862,6 +862,102 @@ def get_ai_seo_audit_endpoint(
     }
 
 
+class GoogleGenAIRequest(BaseModel):
+    content: Optional[str] = ""
+    text: Optional[str] = ""
+    markdown: Optional[str] = ""
+    title: Optional[str] = ""
+    meta_description: Optional[str] = ""
+    author: Optional[str] = "YatraDham.Org Editorial Team"
+    methodology_disclosure: Optional[str] = None
+    target_keyword: Optional[str] = None
+    pricing_str: Optional[str] = None
+    json_ld_schema: Optional[Dict[str, Any]] = None
+    images: Optional[List[Dict[str, str]]] = None
+
+
+@app.api_route("/api/check-google-genai", methods=["GET", "POST"])
+@app.api_route("/api/seo/google-genai-audit", methods=["GET", "POST"])
+@app.api_route("/api/google-genai/audit", methods=["GET", "POST"])
+def check_google_genai_endpoint(
+    req: Optional[GoogleGenAIRequest] = None,
+    content: Optional[str] = None,
+    title: Optional[str] = None,
+    meta_description: Optional[str] = None,
+    author: Optional[str] = None
+):
+    """
+    Google Search Guidance on Generative AI Content Compliance Checker.
+    (https://developers.google.com/search/docs/fundamentals/using-gen-ai-content)
+    Audits scaled content abuse, hallucination risks, Who/How/Why transparency,
+    metadata integrity, humanizer quality, and E-E-A-T firsthand grounding.
+    """
+    from google_genai_checker import audit_google_genai_compliance
+    raw_content = ""
+    t = ""
+    m = ""
+    auth = None
+    disc = None
+    kw = None
+    price = None
+    schema = None
+    imgs = None
+
+    if req:
+        raw_content = req.content or req.text or req.markdown or ""
+        t = req.title or ""
+        m = req.meta_description or ""
+        auth = req.author
+        disc = req.methodology_disclosure
+        kw = req.target_keyword
+        price = req.pricing_str
+        schema = req.json_ld_schema
+        imgs = req.images
+    else:
+        raw_content = content or ""
+        t = title or ""
+        m = meta_description or ""
+        auth = author
+
+    if not raw_content and not t:
+        raise HTTPException(status_code=400, detail="Content or title is required for Google Gen-AI audit.")
+
+    report = audit_google_genai_compliance(
+        content=raw_content,
+        title=t,
+        meta_description=m,
+        author=auth,
+        methodology_disclosure=disc,
+        json_ld_schema=schema,
+        images=imgs,
+        target_keyword=kw,
+        pricing_str=price
+    )
+    return {
+        "success": True,
+        "compliance": report,
+        **report
+    }
+
+
+class InjectDisclosureRequest(BaseModel):
+    content: str
+    author_name: Optional[str] = "YatraDham.Org Editorial Team"
+    fact_checker: Optional[str] = "Pilgrim Care Specialists"
+
+
+@app.post("/api/google-genai/inject-disclosure")
+def inject_google_disclosure_endpoint(req: InjectDisclosureRequest):
+    """Inject official Google 'Give users context' transparency disclosure into markdown content."""
+    from google_genai_checker import inject_google_compliance_disclosure
+    healed = inject_google_compliance_disclosure(
+        req.content,
+        author_name=req.author_name or "YatraDham.Org Editorial Team",
+        fact_checker=req.fact_checker or "Pilgrim Care Specialists"
+    )
+    return {"success": True, "content": healed}
+
+
 class AIVisibilityRequest(BaseModel):
     query: str
     content: Optional[str] = ""
