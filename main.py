@@ -1041,6 +1041,75 @@ def get_champion_benchmark_profile_endpoint():
     }
 
 
+# =====================================================================
+# HIGH-INTENT PILGRIMAGE TRANSIT BOTTLENECK ENGINE & GUARDRAILS
+# =====================================================================
+class TransitAnalyzeRequest(BaseModel):
+    query_or_route: str
+    time_saved_hours: Optional[float] = None
+    distance_saved_km: Optional[float] = None
+    has_steep_climb: Optional[bool] = False
+    is_weather_vulnerable: Optional[bool] = False
+
+
+class TransitBlueprintRequest(BaseModel):
+    bottleneck_id: str
+
+
+class TransitGuardrailRequest(BaseModel):
+    content: str
+    title: Optional[str] = ""
+
+
+@app.get("/api/transit-bottlenecks/catalog")
+def get_transit_bottlenecks_catalog_endpoint():
+    """Returns the catalog of all pre-indexed high-intent pilgrimage transit bottlenecks."""
+    from transit_bottleneck_engine import get_all_bottlenecks
+    catalog = get_all_bottlenecks()
+    return {
+        "success": True,
+        "total_bottlenecks": len(catalog),
+        "bottlenecks": catalog
+    }
+
+
+@app.post("/api/transit-bottlenecks/analyze")
+def analyze_transit_bottleneck_endpoint(req: TransitAnalyzeRequest):
+    """Analyzes a pilgrimage transit route, computing bottleneck intensity and SERP opportunity."""
+    from transit_bottleneck_engine import calculate_bottleneck_intensity
+    report = calculate_bottleneck_intensity(
+        query_or_route=req.query_or_route,
+        time_saved_hours=req.time_saved_hours,
+        distance_saved_km=req.distance_saved_km,
+        has_steep_climb=req.has_steep_climb or False,
+        is_weather_vulnerable=req.is_weather_vulnerable or False
+    )
+    return {
+        "success": True,
+        "query_or_route": req.query_or_route,
+        **report
+    }
+
+
+@app.post("/api/transit-bottlenecks/generate-blueprint")
+def generate_transit_blueprint_endpoint(req: TransitBlueprintRequest):
+    """Generates a complete, 10-checkpoint publication-ready pillar guide for a transit bottleneck."""
+    from transit_bottleneck_engine import generate_transit_champion_blueprint
+    blueprint = generate_transit_champion_blueprint(req.bottleneck_id)
+    return blueprint
+
+
+@app.post("/api/transit-bottlenecks/guardrail-check")
+def check_transit_guardrails_endpoint(req: TransitGuardrailRequest):
+    """Validates transit bottleneck content against mandatory factual and safety guardrails."""
+    from transit_bottleneck_engine import validate_transit_bottleneck_guardrails
+    report = validate_transit_bottleneck_guardrails(req.content, title=req.title or "")
+    return {
+        "success": True,
+        **report
+    }
+
+
 class AIVisibilityRequest(BaseModel):
     query: str
     content: Optional[str] = ""
