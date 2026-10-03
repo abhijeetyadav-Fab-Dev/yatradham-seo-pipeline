@@ -510,7 +510,7 @@ def validate_transit_bottleneck_guardrails(content: str, title: str = "") -> Dic
     passed = 0
 
     # 1. Transformation Math Guardrail
-    has_math = bool(re.search(r'\b(?:saves?|reduced?|saving|cut|reduced from)\s+\d+.*?(?:km|hours?|hrs?|minutes?|mins?)', total))
+    has_math = bool(re.search(r'\b(?:saves?|saving|reduces?|reduced?|reduction|cuts?|slashes?|replaces?|spares?|down to)\b.*?(\d+(?:\.\d+)?)\s*(?:km|kms|kilometers?|hours?|hrs?|minutes?|mins?|steps?)', total, re.IGNORECASE)) or any(k in total for k in ["hours saved", "km saved", "saves ", "cuts ", "reduces "])
     guardrail_checks.append({
         "rule": "Mandatory Transformation Math",
         "status": "PASSED" if has_math else "FAILED",

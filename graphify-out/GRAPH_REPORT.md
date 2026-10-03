@@ -1,16 +1,16 @@
 # Graph Report - yatradham-seo-pipeline  (2026-10-03)
 
 ## Corpus Check
-- 55 files · ~130,989 words
+- 55 files · ~131,314 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 910 nodes · 1839 edges · 59 communities (44 shown, 15 thin omitted)
+- 910 nodes · 1839 edges · 63 communities (48 shown, 15 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 63 edges (avg confidence: 0.52)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `85d7b436`
+- Built from commit: `df1462ef`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +22,7 @@
 - de_slop_and_humanize
 - WordPressPublisher
 - 1. Security & OWASP Hardening Layer
-- BaseModel
+- post
 - anti_ai_guardrails.py
 - audit_google_genai_compliance
 - validation_layer.py
@@ -35,7 +35,7 @@
 - test_transit_bottlenecks.py
 - process_package
 - SitemapCrawler
-- post
+- ProviderSettingsRequest
 - LLMClient
 - api_route
 - test_champion_benchmark_auditor.py
@@ -53,24 +53,28 @@
 - generate_transit_blueprint_endpoint
 - get_outputs
 - semrush_backlink_audit_endpoint
-- quality_audit_endpoint
+- BaseModel
 - run_ai_seo_audit
 - test_semrush_suite_endpoints.py
 - semrush_site_performance_endpoint
 - main.py
 - get_audit_trail_endpoint
-- check_disallowed_xss_patterns
+- semrush_keyword_magic_endpoint
 - get_humanizer_patterns
 - semrush_dashboard_endpoint
 - semrush_sensor_endpoint
 - semrush_ai_search_endpoint
+- analyze_serp_endpoint
 - get_smart_internal_links
-- inject_google_disclosure_endpoint
+- crawl_sitemap
+- semrush_compare_domains_endpoint
+- validate_category
+- verify_wordpress_connection
+- semrush_keyword_strategy_endpoint
 - get_providers_status
 - get_robots_txt
 - semrush_position_tracking_endpoint
 - semrush_topic_research_endpoint
-- semrush_local_seo_endpoint
 
 ## God Nodes (most connected - your core abstractions)
 1. `LLMClient` - 50 edges
@@ -99,15 +103,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (59 total, 15 thin omitted)
+## Communities (63 total, 15 thin omitted)
 
 ### Community 0 - "📅 Day-by-Day Comprehensive Itinerary"
 Cohesion: 0.10
 Nodes (20): 7-Day Haridwar Spiritual & Wellness Retreat | YatraDham, Day 1, Day 2, Day 3, Day 4, Day 5, Day 6, Day 7 (+12 more)
 
 ### Community 1 - "security_firewall.py"
-Cohesion: 0.05
-Nodes (35): BaseHTTPMiddleware, HTTPAuthorizationCredentials, LogRecord, Request, RateLimitingMiddleware, Injects enterprise OWASP security headers on all HTTP responses., Enforces token-bucket rate limiting per IP across all endpoints (returns HTTP…, root() (+27 more)
+Cohesion: 0.06
+Nodes (30): BaseHTTPMiddleware, HTTPAuthorizationCredentials, LogRecord, Request, RateLimitingMiddleware, Injects enterprise OWASP security headers on all HTTP responses., Enforces token-bucket rate limiting per IP across all endpoints (returns HTTP…, root() (+22 more)
 
 ### Community 2 - "test_e2e_suite.py"
 Cohesion: 0.07
@@ -125,9 +129,9 @@ Nodes (24): apply_voice_transformations(), de_slop_and_humanize(), mask_protecte
 Cohesion: 0.08
 Nodes (23): 1.1 API Authentication & Role-Based Access Control, 1.2 SSRF Defense & URL Sanitization, 1.3 Stored & Reflected XSS Sanitization, 1.4 Mass Assignment Prevention, 1.5 Prompt Injection & Jailbreak Firewall, 1.6 Secret Encryption at Rest & Log Scrubber, 1.7 Enterprise Security Headers & Rate Limiting (DoS Defense), 1. Security & OWASP Hardening Layer (+15 more)
 
-### Community 7 - "BaseModel"
+### Community 7 - "post"
 Cohesion: 0.12
-Nodes (16): BackgroundTasks, AIVisibilityRequest, batch_urls(), BatchURLRequest, CheckAIRequest, get_ai_visibility_audit_endpoint(), HumanizeRequest, publish_to_wordpress() (+8 more)
+Nodes (17): BackgroundTasks, batch_urls(), BatchURLRequest, check_transit_guardrails_endpoint(), clear_cache(), moderate_text_endpoint(), proofread_endpoint(), quality_audit_endpoint() (+9 more)
 
 ### Community 11 - "anti_ai_guardrails.py"
 Cohesion: 0.15
@@ -146,8 +150,8 @@ Cohesion: 0.13
 Nodes (17): _extract_numeric_price(), Any, Enterprise Ground-Truth Fact Checker & Anti-Hallucination Verification Gate.…, verify_ground_truth(), generate_archetype_content(), Any, Multi-Archetype Content Generation Engine for YatraDham Wellness. Produces…, clean_price_string() (+9 more)
 
 ### Community 15 - "nlp_and_safety_toolkit.py"
-Cohesion: 0.11
-Nodes (20): get_dictionary_endpoint(), link_safety_preview_endpoint(), moderate_text_endpoint(), proofread_endpoint(), Lookup English definitions, phonetics, parts of speech via Free Dictionary API., Grammar, spellcheck & stylistic review via LanguageTool API., Evaluate tone sentiment, spiritual reverence, and toxicity., Scan URL safety protocol, SSL certificate, and extract OpenGraph preview. (+12 more)
+Cohesion: 0.07
+Nodes (28): analyze_keywords_endpoint(), get_dictionary_endpoint(), link_safety_preview_endpoint(), Any, field_validator, Lookup English definitions, phonetics, parts of speech via Free Dictionary API., Extract top unigrams, bigrams, trigrams & Flesch reading score., Scan URL safety protocol, SSL certificate, and extract OpenGraph preview. (+20 more)
 
 ### Community 16 - "TestHumanizer55Patterns"
 Cohesion: 0.12
@@ -159,7 +163,7 @@ Nodes (52): _clean_markdown(), _detect_blog_intent(), _generate_long_form_blog()
 
 ### Community 18 - "get"
 Cohesion: 0.11
-Nodes (18): get, export_csv_endpoint(), favicon(), get_champion_benchmark_profile_endpoint(), get_single_output(), Returns the gold-standard benchmark profile extracted from the #1 Ro-Pax…, Semrush Top Pages Traffic Share., Semrush Keyword Overview: Deep-dive search volume, global breakdown, KD%. (+10 more)
+Nodes (18): get, export_csv_endpoint(), favicon(), get_champion_benchmark_profile_endpoint(), get_single_output(), Returns the gold-standard benchmark profile extracted from the #1 Ro-Pax…, Semrush Top Pages Traffic Share., Serve favicon directly for root browser icon requests. (+10 more)
 
 ### Community 19 - "semrush_suite.py"
 Cohesion: 0.08
@@ -177,17 +181,17 @@ Nodes (13): Any, run(), PackageInput, parametrize, process_package(), Run the fu
 Cohesion: 0.09
 Nodes (21): detect_url_category(), Classify the URL or page text into 'wellness', 'tour', 'stay', or 'puja'., Any, Prioritizes bookable pilgrimage packages, destination stays, pujas, and…, Accurately classifies discovered links into stay, tour, wellness, or puja., Derives a clean human-readable title from URL segments when anchor text is…, Parses XML sitemaps with namespace stripping, index recursing, and regex…, Parses HTML category pages, capturing clean anchor titles and canonical URLs. (+13 more)
 
-### Community 23 - "post"
-Cohesion: 0.11
-Nodes (20): analyze_serp_endpoint(), analyze_transit_bottleneck_endpoint(), clear_cache(), ProviderSettingsRequest, Analyzes a pilgrimage transit route, computing bottleneck intensity and SERP…, Native SERP Competitor & Information Gain Analyzer endpoint. Scrapes live SERP…, Wipe all outputs from the database to start fresh (Protected Admin Action)., Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime… (+12 more)
+### Community 23 - "ProviderSettingsRequest"
+Cohesion: 0.40
+Nodes (5): ProviderSettingsRequest, Dynamically configure LLM providers (Groq, Gemini, OpenRouter) at runtime…, Test a provider API key live and return latency & status (Admin Protected)., test_provider_endpoint(), update_provider_settings()
 
 ### Community 24 - "LLMClient"
 Cohesion: 0.12
 Nodes (14): Any, run(), Indic Multi-Language Localization Engine for YatraDham (Hindi & Gujarati)., clean_price_string(), LLMClient, Any, Execute DeepSeek two-stage reasoning protocol: 1. Stage 1 (<thinking>): Deep…, Allow setting runtime keys dynamically for a request without server restart. (+6 more)
 
 ### Community 25 - "api_route"
-Cohesion: 0.10
-Nodes (22): api_route, AIAuditRequest, ChampionBenchmarkRequest, check_champion_benchmark_endpoint(), get_ai_seo_audit_endpoint(), Semrush Domain Overview: Authority Score, Organic Traffic, Keywords,…, Semrush Keyword Magic Tool: Real-time search volume, intent classification,…, Semrush Site Audit: 30-point technical crawl for HTTP codes, meta, H1, images,… (+14 more)
+Cohesion: 0.12
+Nodes (18): api_route, AIVisibilityRequest, ChampionBenchmarkRequest, check_champion_benchmark_endpoint(), get_ai_visibility_audit_endpoint(), Dedicated AI-Visibility & Generative Engine Optimization (GEO) Audit Endpoint.…, Semrush Domain Overview: Authority Score, Organic Traffic, Keywords,…, Semrush Site Audit: 30-point technical crawl for HTTP codes, meta, H1, images,… (+10 more)
 
 ### Community 26 - "test_champion_benchmark_auditor.py"
 Cohesion: 0.16
@@ -241,29 +245,45 @@ Nodes (3): check_google_genai_endpoint(), GoogleGenAIRequest, Google Search Guid
 Cohesion: 0.67
 Nodes (3): generate_transit_blueprint_endpoint(), Generates a complete, 10-checkpoint publication-ready pillar guide for a…, TransitBlueprintRequest
 
-### Community 41 - "quality_audit_endpoint"
-Cohesion: 0.67
-Nodes (3): quality_audit_endpoint(), QualityAuditRequest, Enterprise 100M-scale content quality, safety, readability, and AI-slop auditor.
+### Community 41 - "BaseModel"
+Cohesion: 0.17
+Nodes (12): AIAuditRequest, CheckAIRequest, get_ai_seo_audit_endpoint(), HumanizeRequest, BaseModel, Scrapling + curl_cffi Chrome 124 stealth scrape with deep JSON-LD extraction., Semrush On-Page SEO Checker: Actionable strategy, backlink, UX recommendations., 15-Point Automated AI-SEO-Audit Gate (marketplace/actions/ai-seo-audit +… (+4 more)
 
 ### Community 42 - "run_ai_seo_audit"
 Cohesion: 0.10
 Nodes (27): auto_heal_content(), calculate_burstiness_variance(), calculate_readability_metrics(), extract_clean_prose(), Any, AI SEO Audit & Autonomous Quality Gate Engine…, Executes the comprehensive 15-Point AI-SEO-Audit Gate. Returns: - score (0 -…, Extract readable prose from nested dicts, lists, or markdown strings, skipping… (+19 more)
 
 ### Community 45 - "main.py"
-Cohesion: 0.11
-Nodes (21): FastAPI, check_transit_guardrails_endpoint(), crawl_sitemap(), lifespan(), FastAPI server with .env auto-loading, URL auto-scraping, batch processing,…, Validates transit bottleneck content against mandatory factual and safety…, Scrapling + curl_cffi Chrome 124 stealth scrape with deep JSON-LD extraction., Semrush SEO Writing Assistant: Readability, SEO score, tone of voice. (+13 more)
+Cohesion: 0.13
+Nodes (18): FastAPI, analyze_transit_bottleneck_endpoint(), inject_google_disclosure_endpoint(), InjectDisclosureRequest, lifespan(), publish_to_wordpress(), FastAPI server with .env auto-loading, URL auto-scraping, batch processing,…, Analyzes a pilgrimage transit route, computing bottleneck intensity and SERP… (+10 more)
 
-### Community 47 - "check_disallowed_xss_patterns"
-Cohesion: 0.25
-Nodes (7): analyze_keywords_endpoint(), Any, field_validator, Extract top unigrams, bigrams, trigrams & Flesch reading score., URLRequest, check_disallowed_xss_patterns(), Raises ValueError (resulting in 422 HTTP status) if dangerous XSS payloads are…
+### Community 47 - "semrush_keyword_magic_endpoint"
+Cohesion: 0.50
+Nodes (4): Semrush Keyword Magic Tool: Real-time search volume, intent classification,…, Semrush Keyword Magic Tool: Fan-out suggest mining with intent classification., semrush_keyword_magic_endpoint(), SemrushKeywordRequest
+
+### Community 52 - "analyze_serp_endpoint"
+Cohesion: 0.67
+Nodes (3): analyze_serp_endpoint(), Native SERP Competitor & Information Gain Analyzer endpoint. Scrapes live SERP…, SERPAnalyzeRequest
 
 ### Community 53 - "get_smart_internal_links"
 Cohesion: 0.50
 Nodes (3): get_smart_internal_links(), Intelligent Cross-Domain Internal Linking Engine for YatraDham Ecosystem., Return contextual internal links filtered to avoid linking to the current page…
 
-### Community 58 - "inject_google_disclosure_endpoint"
+### Community 54 - "crawl_sitemap"
 Cohesion: 0.67
-Nodes (3): inject_google_disclosure_endpoint(), InjectDisclosureRequest, Inject official Google 'Give users context' transparency disclosure into…
+Nodes (3): crawl_sitemap(), Crawl an XML Sitemap or Category Landing Page to extract package links with…, SitemapCrawlRequest
+
+### Community 55 - "semrush_compare_domains_endpoint"
+Cohesion: 0.67
+Nodes (3): Semrush Compare Domains (Multi-domain benchmark)., semrush_compare_domains_endpoint(), SemrushCompareRequest
+
+### Community 56 - "validate_category"
+Cohesion: 0.67
+Nodes (3): Validate if the selected category matches the target URL., validate_category(), ValidateCategoryRequest
+
+### Community 57 - "verify_wordpress_connection"
+Cohesion: 0.67
+Nodes (3): Verify WordPress credentials and REST API availability (Admin Protected)., verify_wordpress_connection(), WpVerifyRequest
 
 ## Knowledge Gaps
 - **37 isolated node(s):** `Config`, `Executive Summary`, `1.1 API Authentication & Role-Based Access Control`, `1.2 SSRF Defense & URL Sanitization`, `1.3 Stored & Reflected XSS Sanitization` (+32 more)

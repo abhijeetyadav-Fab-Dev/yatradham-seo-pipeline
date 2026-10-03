@@ -7605,7 +7605,7 @@
                 }
 
                 // Update individual checks
-                const checks = data.checks || {};
+                const checks = data.checks_dict || data.checks || {};
                 updateCheckRow('grCheck_transformation_math', checks.transformation_math);
                 updateCheckRow('grCheck_structured_tables', checks.structured_tables);
                 updateCheckRow('grCheck_concrete_pricing_inr', checks.concrete_pricing_inr);
