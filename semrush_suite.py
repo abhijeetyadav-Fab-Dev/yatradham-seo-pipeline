@@ -486,6 +486,12 @@ def run_site_audit(target_url: str) -> Dict[str, Any]:
             "errors_count": len(checks),
             "warnings_count": 0,
             "notices_count": 0,
+            "checks_summary": {
+                "passed": 0,
+                "warnings": 0,
+                "errors": len(checks),
+                "notices": 0
+            },
             "checks": checks,
             "crawl_latency_ms": 0,
             "error_summary": f"DNS Resolution Failed (NXDOMAIN): '{clean_dom}' does not point to an active server."
@@ -721,6 +727,12 @@ def run_site_audit(target_url: str) -> Dict[str, Any]:
         "errors_count": errors_count,
         "warnings_count": warnings_count,
         "notices_count": notices_count,
+        "checks_summary": {
+            "passed": passed_count,
+            "warnings": warnings_count,
+            "errors": errors_count,
+            "notices": notices_count
+        },
         "checks": checks,
         "crawl_latency_ms": latency_ms
     }
@@ -1487,8 +1499,13 @@ def get_semrush_sensor() -> Dict[str, Any]:
         {"category": "Health & Fitness", "score": round(max(4.5, vol_score - 1.5), 1), "status": "Normal Volatility"}
     ]
 
+    category_breakdown = {c["category"]: c["score"] for c in categories}
+
     return {
         "overall_score": vol_score,
+        "volatility_score": vol_score,
+        "volatility_index": vol_score,
+        "category_breakdown": category_breakdown,
         "status": "High Volatility - SERP fluctuations detected across Google India" if vol_score >= 7.0 else "Normal Volatility",
         "last_updated": time.strftime("%Y-%m-%d %H:00 UTC"),
         "ai_overview_serp_presence_percent": 41.8,

@@ -1420,6 +1420,41 @@ def semrush_local_seo_endpoint(location: Optional[str] = "Somnath"):
     return get_local_seo_overview(location or "Somnath")
 
 
+@app.get("/api/semrush/domain-overview")
+def semrush_domain_overview_endpoint(domain: Optional[str] = "yatradham.org"):
+    """Semrush Domain Overview: Authority score, traffic, keywords, competitors."""
+    from semrush_suite import get_domain_overview
+    return get_domain_overview(domain or "yatradham.org")
+
+
+@app.get("/api/semrush/keyword-magic")
+def semrush_keyword_magic_endpoint(
+    keyword: Optional[str] = "kedarnath yatra",
+    limit: Optional[int] = 50,
+):
+    """Semrush Keyword Magic Tool: Fan-out suggest mining with intent classification."""
+    from semrush_suite import get_keyword_magic
+    return get_keyword_magic(keyword or "kedarnath yatra", limit or 50)
+
+
+class SemrushSiteAuditRequest(BaseModel):
+    url: Optional[str] = "https://yatradham.org"
+
+
+@app.post("/api/semrush/site-audit")
+def semrush_site_audit_endpoint(req: SemrushSiteAuditRequest):
+    """Semrush Site Audit: 30-point technical SEO diagnostic with DNS ground truth."""
+    from semrush_suite import run_site_audit
+    return run_site_audit(req.url or "https://yatradham.org")
+
+
+@app.get("/api/semrush/backlinks")
+def semrush_backlinks_endpoint(domain: Optional[str] = "yatradham.org"):
+    """Semrush Backlink Analytics: Link profile, referring domains, authority tiers."""
+    from semrush_suite import get_backlink_overview
+    return get_backlink_overview(domain or "yatradham.org")
+
+
 @app.get("/stats")
 def stats():
     return get_stats()
