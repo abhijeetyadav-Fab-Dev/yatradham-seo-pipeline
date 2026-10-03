@@ -958,6 +958,89 @@ def inject_google_disclosure_endpoint(req: InjectDisclosureRequest):
     return {"success": True, "content": healed}
 
 
+class ChampionBenchmarkRequest(BaseModel):
+    content: Optional[str] = ""
+    text: Optional[str] = ""
+    markdown: Optional[str] = ""
+    title: Optional[str] = ""
+    meta_description: Optional[str] = ""
+    target_keyword: Optional[str] = ""
+    url: Optional[str] = None
+
+
+@app.api_route("/api/blog/champion-audit", methods=["GET", "POST"])
+def check_champion_benchmark_endpoint(
+    req: Optional[ChampionBenchmarkRequest] = None,
+    content: Optional[str] = None,
+    title: Optional[str] = None,
+    target_keyword: Optional[str] = None,
+    url: Optional[str] = None
+):
+    """
+    Evaluates blog content against the 10 Golden Checkpoints of YatraDham's #1 All-Time Ro-Pax Blog.
+    Reverse-engineered from https://blog.yatradham.org/ro-ro-ropax-service-from-ghogha-to-hazira/.
+    """
+    from champion_benchmark_auditor import audit_champion_blog_benchmarks
+    raw_content = ""
+    t = ""
+    m = ""
+    kw = ""
+    target_url = None
+
+    if req:
+        raw_content = req.content or req.text or req.markdown or ""
+        t = req.title or ""
+        m = req.meta_description or ""
+        kw = req.target_keyword or ""
+        target_url = req.url
+    else:
+        raw_content = content or ""
+        t = title or ""
+        kw = target_keyword or ""
+        target_url = url
+
+    # If URL is passed but no content, fetch the HTML from the live page
+    if target_url and not raw_content:
+        from ssrf_protection import is_safe_url
+        safe, _ = is_safe_url(target_url)
+        if safe:
+            from scrapling_engine import fetch_url_html
+            from bs4 import BeautifulSoup
+            html = fetch_url_html(target_url, timeout=8.0)
+            if html:
+                soup = BeautifulSoup(html, "html.parser")
+                t = t or (soup.title.string if soup.title else "")
+                meta_tag = soup.find("meta", attrs={"name": "description"})
+                m = m or (meta_tag["content"] if meta_tag else "")
+                article = soup.find("article") or soup.find("div", class_="entry-content") or soup.body
+                raw_content = article.get_text() if article else html
+
+    if not raw_content and not t and not target_url:
+        raise HTTPException(status_code=400, detail="Content, title, or target URL is required for Champion Benchmark audit.")
+
+    report = audit_champion_blog_benchmarks(
+        content=raw_content,
+        title=t,
+        meta_description=m,
+        target_keyword=kw,
+        url=target_url
+    )
+    return {
+        "success": True,
+        **report
+    }
+
+
+@app.get("/api/blog/champion-profile")
+def get_champion_benchmark_profile_endpoint():
+    """Returns the gold-standard benchmark profile extracted from the #1 Ro-Pax Ghogha-Hazira blog."""
+    from champion_benchmark_auditor import ROPAX_CHAMPION_PROFILE
+    return {
+        "success": True,
+        "champion_profile": ROPAX_CHAMPION_PROFILE
+    }
+
+
 class AIVisibilityRequest(BaseModel):
     query: str
     content: Optional[str] = ""

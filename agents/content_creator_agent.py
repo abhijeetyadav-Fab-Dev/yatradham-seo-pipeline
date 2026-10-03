@@ -311,6 +311,8 @@ def _clean_markdown(content: str) -> str:
 def _detect_blog_intent(topic: str, instructions: Optional[str] = None) -> str:
     """Classify search intent to generate topic-authentic structures rather than forcing a 7-day retreat template."""
     text = f"{topic} {instructions or ''}".lower()
+    if any(k in text for k in ["ferry", "roro", "ro-ro", "ropax", "helicopter", "heli", "ropeway", "cable car", "train route", "special train", "bus service", "bus route", "timings and ticket price", "ticket price and timetable", "fare and schedule", "transit", "distance and route"]):
+        return "transit_logistics_champion"
     if any(k in text for k in ["dharamshala", "ashram stay", "room booking", "where to stay", "bhavan", "sanatorium", "hotel stay"]):
         return "stay_guide"
     if any(k in text for k in ["itinerary", "tour package", "day 1", "day 2", "days tour", "days trip", "days route", "yatra package", "circuit", "trek", "road trip"]):
@@ -325,7 +327,97 @@ def _detect_blog_intent(topic: str, instructions: Optional[str] = None) -> str:
 def _get_intent_structure(intent: str, topic: str, keyword: str) -> str:
     """Return tailored, high-intent outline with calibrated word budgets ensuring 100% completion in 1 single pass."""
     kw = keyword or topic
-    if intent == "temple_guide":
+    if intent == "transit_logistics_champion":
+        return f"""EXACT OUTPUT STRUCTURE REQUIRED:
+
+# TITLE
+[High-CTR, search-optimized title including '{kw}']
+
+# META DESCRIPTION
+[Engaging meta description with keyword, time/distance savings, and value hook (150-160 characters)]
+
+# SUGGESTED TAGS
+[Tag 1, Tag 2, Tag 3, Tag 4, Tag 5]
+
+# CONTENT
+## Service Overview & Traveler Transformation Math
+(Write ~160 words. Quantify the core traveler benefit: exact kilometers saved, travel hours cut, and how this service replaces a strenuous road/transit journey).
+
+## Official Timetable & Daily Schedule
+(Present a structured Markdown comparison table with Morning and Evening departure slots, boarding terminal names, and reporting deadlines).
+
+| Trip Route | Departure Time | Arrival Time | Reporting Deadline | Frequency |
+|---|---|---|---|---|
+| Origin to Destination | 08:00 AM | 12:00 PM | 07:00 AM | Daily |
+| Return Route | 04:00 PM | 08:00 PM | 03:00 PM | Daily |
+
+## Class-Wise Passenger Ticket Fares & Booking Process
+(Present a structured Markdown comparison table detailing passenger classes: Executive, Sleeper, Business, VIP Lounge, and infant/child concessions in exact INR ₹).
+
+| Travel Class | Tariff (Per Seat) | Amenities & Seating | Luggage Allowance |
+|---|---|---|---|
+| Executive Class | ₹600 | Reclining seats, AC deck | Up to 15 kg |
+| Business Class | ₹750 | Priority boarding, panoramic view | Up to 20 kg |
+| Sleeper / Lounge | ₹1,200 | Flat berth / lounge comfort | Up to 25 kg |
+
+## Vehicle Transportation Tariffs & Capacity Rules
+(Present a structured Markdown table detailing vehicle carriage rates for two-wheelers, cars, tempos, and buses with key carriage rules).
+
+| Vehicle Category | Fare (in INR ₹) | Driver Ticket Included? | Dimensions / Weight Limit |
+|---|---|---|---|
+| Two-Wheeler / Bike | ₹200 | No (Separate Seat Required) | Standard motorcycle |
+| Four-Wheeler / Car | ₹1,300 | No (Separate Seat Required) | Sedan / SUV / Hatchback |
+| Commercial / Tempo | ₹3,000 | Yes (1 Driver Included) | Up to 3.5 Tonnes |
+
+## Boarding Protocols, Reporting Cutoff & Baggage Policies
+(Write ~150 words. Explain terminal reporting cutoff times, mandatory government photo ID requirements, luggage limits, and pet/tobacco restrictions).
+
+## Connecting Public Transit & First-Mile/Last-Mile Transfers
+(Write ~150 words. Detail connecting state transport buses, route numbers, ticket fares like ₹23-₹50, nearest railhead, and terminal taxi/auto options).
+
+## Onward Pilgrimage Circuit & Hub-and-Spoke Spacing
+(Present a structured Markdown table mapping 3 to 5 connected onward temples/destinations with driving distances in km and route connectivity).
+
+| Onward Destination | Distance from Terminal | Travel Time | Major Sacred Attractions |
+|---|---|---|---|
+| Sacred Shrine 1 | ~75 km | ~1.5 Hours | Main Temple & Darshan |
+| Sacred Shrine 2 | ~260 km | ~4.5 Hours | Jyotirlinga / Historic Dham |
+| Wildlife / Nature Hub | ~225 km | ~4 Hours | Sanctuary / National Park |
+
+## Verified Dharamshalas & Stay Bookings via YatraDham.Org
+(Write ~160 words. Highlight verified dharamshalas, ashrams, and budget pilgrim stays available at the onward destinations with pure satvik dining and hot water amenities vetted on YatraDham.Org).
+
+## Cancellation, Refund & Weather Disruption Policy
+(Write ~140 words. Detail explicit refund tiers: 90% refund >30 days, 60% refund 2-30 days, 0% refund on same day, and full refund policies during maritime/weather cancellations).
+
+## Frequently Asked Questions
+### Q1: What is the exact travel duration and how much distance does this service save?
+(Direct 2-3 sentence answer with specific kilometers and hours saved).
+
+### Q2: Can passengers remain seated inside their cars or vehicles during transit?
+(Direct 2-3 sentence answer explaining safety protocols and designated passenger lounge rules).
+
+### Q3: Are pets and domestic animals allowed on board?
+(Direct 2-3 sentence answer detailing operator terms and animal carrier rules).
+
+### Q4: Is overnight or multi-day parking available at the departure terminal?
+(Direct 2-3 sentence answer detailing secure terminal parking facilities and rates).
+
+### Q5: How do I book verified pilgrim stays and dharamshalas near the arrival port?
+(Direct 2-3 sentence answer recommending YatraDham.Org for guaranteed bookings).
+
+### Q6: What happens to tickets if the service is canceled due to bad weather or government orders?
+(Direct 2-3 sentence answer explaining 100% automatic refund or date rescheduling).
+
+## Final Travel Tips & Planning Ahead
+(Write ~120 words. Inspiring summary advising travelers to reserve vehicle slots in advance, with a direct call-to-action to plan stays and travel through YatraDham.Org).
+
+## Related Guides & Recommended Reading
+- **Title:** [Related Guide 1 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 2 Title] (Author • Date • 1-line topic summary)
+- **Title:** [Related Guide 3 Title] (Author • Date • 1-line topic summary)"""
+
+    elif intent == "temple_guide":
         return f"""EXACT OUTPUT STRUCTURE REQUIRED:
 
 # TITLE

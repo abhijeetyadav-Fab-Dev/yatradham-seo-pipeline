@@ -613,6 +613,14 @@ def run_ai_seo_audit(
         pricing_str=pricing_str
     )
 
+    from champion_benchmark_auditor import audit_champion_blog_benchmarks
+    champion_report = audit_champion_blog_benchmarks(
+        content=content_body,
+        title=t,
+        meta_description=m,
+        target_keyword=kw
+    )
+
     return {
         "score": final_score,
         "grade": grade,
@@ -626,6 +634,7 @@ def run_ai_seo_audit(
         "geo_visibility": geo_visibility,
         "ai_visibility": ai_vis_report,
         "google_genai_compliance": google_genai_report,
+        "champion_benchmark": champion_report,
         "metrics": {
             "word_count": total_words,
             "keyword_density": keyword_density,
@@ -638,7 +647,9 @@ def run_ai_seo_audit(
             "inr_pricing_present": has_inr_pricing,
             "schema_present": has_valid_schema,
             "google_genai_score": google_genai_report["score"],
-            "google_genai_verdict": google_genai_report["verdict"]
+            "google_genai_verdict": google_genai_report["verdict"],
+            "champion_score": champion_report["champion_score"],
+            "champion_verdict": champion_report["verdict"]
         }
     }
 

@@ -576,7 +576,7 @@
                         </select>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-auto">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-auto">
                         <button id="btnStandaloneCheck" onclick="scanStandaloneAi()" class="inline-flex justify-center items-center rounded-lg border border-indigo-200 bg-indigo-50/70 px-2.5 py-2.5 text-xs font-bold text-indigo-700 shadow-sm hover:bg-indigo-100 transition active:scale-95">
                             <svg class="w-3.5 h-3.5 mr-1 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                             🛡️ Copyleaks AI
@@ -584,6 +584,9 @@
                         <button id="btnAuditGoogleGenAI" onclick="auditGoogleGenAI()" class="inline-flex justify-center items-center rounded-lg border border-blue-200 bg-blue-50/70 px-2.5 py-2.5 text-xs font-bold text-blue-700 shadow-sm hover:bg-blue-100 transition active:scale-95">
                             <svg class="w-3.5 h-3.5 mr-1 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             🔍 Google Gen-AI
+                        </button>
+                        <button id="btnAuditChampion" onclick="auditChampionBenchmark()" class="inline-flex justify-center items-center rounded-lg border border-amber-300 bg-amber-50/80 px-2.5 py-2.5 text-xs font-bold text-amber-800 shadow-sm hover:bg-amber-100 transition active:scale-95">
+                            🏆 Rank-1 Standard
                         </button>
                         <button id="btnStandaloneHumanize" onclick="humanizeStandalone()" class="inline-flex justify-center items-center rounded-lg border border-transparent bg-gradient-to-r from-emerald-600 to-teal-600 px-2.5 py-2.5 text-xs font-bold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition active:scale-95">
                             <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
@@ -909,6 +912,66 @@
                     <button onclick="injectGoogleDisclosureToInput()" class="px-3.5 py-1.5 text-xs font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition shadow-sm whitespace-nowrap active:scale-95">
                         ➕ Inject Transparency Disclosure
                     </button>
+                </div>
+            </div>
+
+            <!-- CHAMPION BLOG BENCHMARK AUDITOR CARD -->
+            <div id="championBenchmarkCard" class="hidden mt-6 bg-white rounded-xl shadow-sm border border-amber-300 p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-amber-100 gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white text-xl shadow-sm">🏆</div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h4 class="text-base font-black text-slate-800">Rank-1 Champion Benchmark Auditor</h4>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-200">Ro-Pax Ghogha-Hazira Model</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5">Audits content against the 10 golden checkpoints of YatraDham's #1 all-time ranking blog.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="championVerdictBadge" class="text-xs px-3 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-300">Evaluating...</span>
+                    </div>
+                </div>
+
+                <!-- Highlight Gauges -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-4">
+                    <div class="p-3.5 bg-amber-50/60 rounded-xl border border-amber-200 text-center">
+                        <span class="text-[10px] uppercase font-bold text-amber-800 block">Champion Score</span>
+                        <div id="championScore" class="text-2xl font-black text-amber-700 mt-1">--/100</div>
+                        <span id="championCheckpointsCount" class="text-[10px] font-bold text-amber-600">--/10 Passed</span>
+                    </div>
+                    <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block">Structured Tables</span>
+                        <div id="championTableCount" class="text-2xl font-black text-slate-800 mt-1">--</div>
+                        <span class="text-[10px] text-slate-400">Target: 3+ (Ro-Pax: 14)</span>
+                    </div>
+                    <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block">Word & Depth Count</span>
+                        <div id="championWordCount" class="text-2xl font-black text-slate-800 mt-1">--</div>
+                        <span class="text-[10px] text-slate-400">Ro-Pax Benchmark: ~4.8K</span>
+                    </div>
+                    <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-center">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block">FAQ & Q&A Units</span>
+                        <div id="championFaqCount" class="text-2xl font-black text-slate-800 mt-1">--</div>
+                        <span class="text-[10px] text-slate-400">Target: 6-8 Q&As</span>
+                    </div>
+                </div>
+
+                <!-- 10 Checkpoints Breakdown -->
+                <div class="mt-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h5 class="text-xs font-bold uppercase tracking-wider text-slate-700">10-Point Champion Checkpoints Checklist</h5>
+                        <span id="championPassedRatio" class="text-xs font-bold text-amber-700">--/10 Passed</span>
+                    </div>
+                    <div id="championCheckpointsList" class="space-y-2"></div>
+                </div>
+
+                <!-- Actionable Gap Recommendations -->
+                <div id="championRecommendationsBox" class="hidden mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200 text-xs">
+                    <span class="font-bold text-amber-900 block mb-1.5 flex items-center gap-1.5">
+                        <span>💡</span> Actionable Gaps to Claim &amp; Defend Rank 1:
+                    </span>
+                    <ul id="championRecommendationsList" class="list-disc list-inside space-y-1 text-amber-800 text-[11px]"></ul>
                 </div>
             </div>
         </div>
@@ -4272,6 +4335,121 @@
             if (ts) ts.textContent = 'Audited at ' + new Date().toLocaleTimeString();
 
             // Smooth scroll into view
+            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // =========================================================================
+        // CHAMPION BLOG BENCHMARK CONTROLLER (Ro-Pax Gold Standard)
+        // =========================================================================
+        async function auditChampionBenchmark() {
+            const text = document.getElementById('standaloneInput').value.trim();
+            if (!text || text.length < 30) {
+                alert('Please enter or generate content first (at least 30 words) to audit against the Rank-1 Champion Benchmark.');
+                return;
+            }
+
+            const btn = document.getElementById('btnAuditChampion');
+            const origHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<svg class="animate-spin w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Auditing Benchmark...`;
+
+            try {
+                const firstLine = text.split('\n')[0].replace(/^#+\s*/, '').trim();
+                const title = firstLine.length > 5 ? firstLine : 'Pilgrimage Darshan & Stay Guide';
+
+                const res = await fetch(API + '/api/blog/champion-audit', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        content: text,
+                        title: title,
+                        target_keyword: title
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    renderChampionBenchmarkTelemetry(data);
+                } else {
+                    alert('Champion Benchmark Audit failed: ' + (data.detail || 'Unknown error'));
+                }
+            } catch(e) {
+                alert('Error running Champion Benchmark Audit: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+            }
+        }
+
+        function renderChampionBenchmarkTelemetry(data) {
+            const card = document.getElementById('championBenchmarkCard');
+            if (!card) return;
+            card.classList.remove('hidden');
+
+            document.getElementById('championScore').textContent = (data.champion_score || 0) + '/100';
+            const verdictBadge = document.getElementById('championVerdictBadge');
+            
+            if (data.champion_score >= 85) {
+                verdictBadge.className = 'text-xs px-3 py-1 rounded-full font-bold bg-amber-100 text-amber-900 border border-amber-300';
+                verdictBadge.textContent = '🏆 Rank-1 Champion Ready';
+            } else if (data.champion_score >= 70) {
+                verdictBadge.className = 'text-xs px-3 py-1 rounded-full font-bold bg-blue-100 text-blue-800 border border-blue-300';
+                verdictBadge.textContent = '🥈 High Potential Contender';
+            } else if (data.champion_score >= 50) {
+                verdictBadge.className = 'text-xs px-3 py-1 rounded-full font-bold bg-slate-100 text-slate-800 border border-slate-300';
+                verdictBadge.textContent = '🥉 Average Guide (Gaps Found)';
+            } else {
+                verdictBadge.className = 'text-xs px-3 py-1 rounded-full font-bold bg-rose-100 text-rose-800 border border-rose-300';
+                verdictBadge.textContent = '⚠️ Superficial / At-Risk';
+            }
+
+            const comp = data.benchmark_comparison?.metrics || {};
+            const tableVal = comp.tables_count ? comp.tables_count.current : 0;
+            const wordVal = comp.word_count ? comp.word_count.current : 0;
+            const faqVal = comp.faqs_count ? comp.faqs_count.current : 0;
+
+            document.getElementById('championTableCount').textContent = tableVal;
+            document.getElementById('championWordCount').textContent = wordVal >= 1000 ? (wordVal / 1000).toFixed(1) + 'K' : wordVal;
+            document.getElementById('championFaqCount').textContent = faqVal;
+
+            const passedRatio = `${data.passed_checkpoints || 0}/${data.total_checkpoints || 10} Passed`;
+            document.getElementById('championCheckpointsCount').textContent = passedRatio;
+            document.getElementById('championPassedRatio').textContent = passedRatio;
+
+            // Render Checkpoints
+            const listEl = document.getElementById('championCheckpointsList');
+            if (listEl) {
+                const cps = data.checkpoints || [];
+                listEl.innerHTML = cps.map(c => {
+                    const isPass = c.status === 'PASSED';
+                    const icon = isPass ? '✅' : (c.status === 'PARTIAL' ? '⚡' : '❌');
+                    const badgeClass = isPass ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (c.status === 'PARTIAL' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200');
+                    return `
+                    <div class="p-3 bg-slate-50/80 hover:bg-slate-100/70 rounded-xl border border-slate-200 transition flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-800 text-xs">${icon} ${c.name}</span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded border ${badgeClass}">${c.score}/${c.weight} pts</span>
+                                <span class="text-[10px] font-mono text-slate-400">(${c.actual_value || '-'})</span>
+                            </div>
+                            <p class="text-[11px] text-slate-600 mt-1">${c.detail}</p>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            // Recommendations
+            const recBox = document.getElementById('championRecommendationsBox');
+            const recList = document.getElementById('championRecommendationsList');
+            const recs = data.recommendations || [];
+            if (recBox && recList) {
+                if (recs.length > 0) {
+                    recBox.classList.remove('hidden');
+                    recList.innerHTML = recs.map(r => `<li>${r}</li>`).join('');
+                } else {
+                    recBox.classList.add('hidden');
+                }
+            }
+
             card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
